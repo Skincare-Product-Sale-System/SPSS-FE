@@ -47,14 +47,26 @@ export default function ShopDetailsTab({ product }) {
                       <div className="right">
                         <h3 className="fs-16 fw-5">Instruction</h3>
                         <ul>
-                          <li>Storage: {product.storageInstruction}</li>
-                          <li>Usage {product.usageInstruction}</li>
+                          <li>
+                            <span className="desc-li">Storage:</span>{" "}
+                            {product.storageInstruction}
+                          </li>
+                          <li>
+                            <span className="desc-li">Usage:</span>{" "}
+                            {product.usageInstruction}
+                          </li>
                         </ul>
                         <h3 className="fs-16 fw-5">Ingredients</h3>
                         <ul className="mb-0">
-                          <li>{product.detailedIngredients}</li>
                           <li>
-                            Key Ingredient: {product.keyActiveIngredients}
+                            <span className="desc-li">
+                              Detailed Ingredients:
+                            </span>{" "}
+                            {product.detailedIngredients}
+                          </li>
+                          <li>
+                            <span className="desc-li">Key Ingredients:</span>{" "}
+                            {product.keyActiveIngredients}
                           </li>
                         </ul>
                       </div>
@@ -62,18 +74,26 @@ export default function ShopDetailsTab({ product }) {
                         <h3 className="fs-16 fw-5">Description</h3>
                         <div className="d-flex gap-10 mb_15 align-items-center">
                           <ul className="mb-0">
-                            <li>Volume Weight: {product.volumeWeight}</li>
-
-                            <li>Function: {product.mainFunction}</li>
-                            <li>Texture: {product.texture}</li>
-                            <li>For Skin Issues: {product.skinIssues}</li>
                             <li>
-                              Expiry Date:{" "}
+                              <span className="desc-li">Volume Weight:</span>{" "}
+                              {product.volumeWeight}g
+                            </li>
+                            <li>
+                              <span className="desc-li">Function:</span>{" "}
+                              {product.mainFunction}
+                            </li>
+                            <li>
+                              <span className="desc-li">Texture:</span>{" "}
+                              {product.texture}
+                            </li>
+                            <li>
+                              <span className="desc-li">For Skin Issues:</span>{" "}
+                              {product.skinIssues}
+                            </li>
+                            <li>
+                              <span className="desc-li">Expiry Date:</span>{" "}
                               {dayjs(product.expiryDate).format("DD/MM/YYYY")}
                             </li>
-
-                            <li>Care: Hand wash</li>
-                            <li>Imported</li>
                           </ul>
                         </div>
                       </div>

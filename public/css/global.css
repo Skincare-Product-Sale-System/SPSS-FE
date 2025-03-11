@@ -15,3 +15,8 @@ nextjs-portal {
 .icon-star:before {
   content: "\e95b";
 }
+
+.desc-li {
+  font-weight: 600;
+  color: #000000b2 !important;
+}

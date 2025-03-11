@@ -34,7 +34,7 @@ export default function Context({ children }) {
     );
     if (
       cartProducts.length == 0 ||
-      !cartProducts.filter((elm) => elm?.id == cartItem?.id)
+      !cartProducts.some((elm) => elm?.id == cartItem?.id)
     ) {
       // const item = {
       //   ...allProducts.filter((elm) => elm.id == id)[0],
