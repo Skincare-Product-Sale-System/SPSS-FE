@@ -124,7 +124,7 @@ export const ProductCard = ({ product }) => {
       </div>
       <div className="card-product-info">
         <Link href={`/product-detail/${product.id}`} className="title link">
-          {product.name}
+          {product.englishName}
         </Link>
         <span className="price" style={{ color: "#ff0000" }}>
           ${product.price.toLocaleString()}

@@ -7,6 +7,9 @@ import { useContextElement } from "@/context/Context";
 import Link from "next/link";
 import { Navigation, Pagination } from "swiper/modules";
 import { useEffect, useState } from "react";
+import { defaultProductImage } from "@/utlis/default";
+import request from "@/utlis/axios";
+
 export default function Products() {
   const {
     setQuickViewItem,
@@ -16,14 +19,28 @@ export default function Products() {
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
-  const tabs = ["Essentials", "Gift Sets"];
+  const tabs = [
+    "Essentials",
+    // , "Gift Sets"
+  ];
   const [activeTab, setActiveTab] = useState(tabs[0]);
-  const [filtered, setFiltered] = useState(products5);
+  const [filtered, setFiltered] = useState([]);
+  const [products, setProducts] = useState([]);
+
   useEffect(() => {
-    setFiltered(
-      [...products5].filter((el) => el.filterCategories.includes(activeTab))
-    );
-  }, [activeTab, products5]);
+    (async () => {
+      const { data } = await request.get("/Product/all?Page=1&PageSize=200");
+      // console.log("data?.data?.results", data?.data?.results);
+
+      setFiltered(data?.data?.results);
+      // setProducts(data?.data?.results);
+      // setFiltered(
+      //   data?.data?.results.filter((el) =>
+      //     el.filterCategories.includes(activeTab)
+      //   )
+      // );
+    })();
+  }, [activeTab, products]);
 
   return (
     <section className="flat-spacing-9 bg_grey-6 flat-spacing-26">
@@ -72,20 +89,20 @@ export default function Products() {
                     <SwiperSlide key={index}>
                       <div className="card-product style-skincare">
                         <div className="card-product-wrapper">
-                          <a href={product.link} className="product-img">
+                          <a href={product.id} className="product-img">
                             <Image
                               className="lazyload img-product"
-                              data-src={product.imgSrc}
+                              data-src={defaultProductImage}
                               alt="image-product"
-                              src={product.imgSrc}
+                              src={defaultProductImage}
                               width={360}
                               height={384}
                             />
                             <Image
                               className="lazyload img-hover"
-                              data-src={product.imgHoverSrc}
+                              data-src={defaultProductImage}
                               alt="image-product"
-                              src={product.imgHoverSrc}
+                              src={defaultProductImage}
                               width={360}
                               height={384}
                             />
@@ -107,7 +124,7 @@ export default function Products() {
                               </span>
                               <span className="icon icon-delete" />
                             </a>
-                            <a
+                            {/* <a
                               href="#compare"
                               data-bs-toggle="offcanvas"
                               aria-controls="offcanvasLeft"
@@ -128,7 +145,7 @@ export default function Products() {
                                   : "Add to Compare"}
                               </span>
                               <span className="icon icon-check" />
-                            </a>
+                            </a> */}
                             <a
                               href="#quick_view"
                               onClick={() => setQuickViewItem(product)}
@@ -145,20 +162,20 @@ export default function Products() {
                             href={`/product-detail/${product.id}`}
                             className="title link"
                           >
-                            {product.title}
+                            {product.name}
                           </Link>
                           <span className="price">
-                            {product.oldPrice && (
+                            {product.marketPrice && (
                               <span className="fw-4 text-sale">
-                                {product.oldPrice}
+                                {product.marketPrice}
                               </span>
                             )}{" "}
                             <span className="text_primary">
-                              ${product.price.toFixed(2)}
+                              ${product.price.toLocaleString()}
                             </span>
                           </span>
                           <div className="tf-size-list">
-                            {product.sizes.map((size, i) => (
+                            {["300ml", "500ml", "700ml"].map((size, i) => (
                               <span
                                 key={i}
                                 className="tf-size-list-item fw-6 radius-3"
@@ -166,15 +183,23 @@ export default function Products() {
                                 {size}
                               </span>
                             ))}
+                            {/* {product.sizes.map((size, i) => (
+                              <span
+                                key={i}
+                                className="tf-size-list-item fw-6 radius-3"
+                              >
+                                {size}
+                              </span>
+                            ))} */}
                           </div>
                           <div className="tf-product-btns">
                             <a
-                              href="#quick_add"
-                              onClick={() => setQuickAddItem(product.id)}
-                              data-bs-toggle="modal"
+                              href={"/product-detail/" + product.id}
+                              // onClick={() => setQuickAddItem(product.id)}
+                              // data-bs-toggle="modal"
                               className="tf-btn style-3 radius-3 btn-fill animate-hover-btn"
                             >
-                              Quick add
+                              View detail
                             </a>
                           </div>
                         </div>

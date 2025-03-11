@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -16,8 +16,23 @@ import {
   productsPages,
 } from "@/data/menu";
 import { usePathname } from "next/navigation";
+import request from "@/utlis/axios";
 
 export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await request.get("/Category/all?Page=1&PageSize=200");
+      setCategories(data?.data?.results);
+      const { data: productData } = await request.get(
+        "/Product/all?Page=1&PageSize=200"
+      );
+      setProducts(productData?.data?.results);
+    })();
+  }, []);
+
   const pathname = usePathname();
   const isMenuActive = (menuItem) => {
     let active = false;
@@ -230,7 +245,26 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
         <div className="sub-menu mega-menu">
           <div className="container">
             <div className="row">
-              {productDetailPages.map((menuItem, index) => (
+              <div className="col-lg-2">
+                <div className="mega-menu-item">
+                  <div className="menu-heading">Categories</div>
+                  <ul className="menu-list">
+                    {categories.map((item, index) => (
+                      <li key={index}>
+                        <Link
+                          href={item.id}
+                          className={`menu-link-text link position-relative  ${
+                            isMenuActive(item) ? "activeMenu" : ""
+                          }`}
+                        >
+                          {item.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              {/* {productDetailPages.map((menuItem, index) => (
                 <div key={index} className="col-lg-2">
                   <div className="mega-menu-item">
                     <div className="menu-heading">{menuItem.heading}</div>
@@ -251,7 +285,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                     </ul>
                   </div>
                 </div>
-              ))}
+              ))} */}
               <div className="col-lg-4">
                 <div className="menu-heading">Best seller</div>
                 <div className="hover-sw-nav hover-sw-2">
@@ -266,14 +300,11 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                     spaceBetween={30}
                     className="swiper tf-product-header wrap-sw-over"
                   >
-                    {[...products1]
-                      .slice(0, 4)
-
-                      .map((elm, i) => (
-                        <SwiperSlide key={i} className="swiper-slide">
-                          <ProductCard product={elm} />
-                        </SwiperSlide>
-                      ))}
+                    {products?.slice(0, 4).map((elm, i) => (
+                      <SwiperSlide key={i} className="swiper-slide">
+                        <ProductCard product={elm} />
+                      </SwiperSlide>
+                    ))}
                   </Swiper>
                   <div className="nav-sw nav-next-slider nav-next-product-header box-icon w_46 round snmpn1">
                     <span className="icon icon-arrow-left" />

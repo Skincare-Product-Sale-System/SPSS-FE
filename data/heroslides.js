@@ -171,19 +171,25 @@ export const slides4 = [
 
 export const slides5 = [
   {
-    imgSrc: "/images/slider/skincare-slide1.jpg",
+    // imgSrc: "/images/slider/skincare-slide1.jpg",
+    imgSrc:
+      "https://images.pexels.com/photos/6663368/pexels-photo-6663368.jpeg",
     imgAlt: "skincare-slideshow-01",
     heading: "Skincare Reimagined.",
     description: "To deliver peak potency, minus the waste",
   },
   {
-    imgSrc: "/images/slider/skincare-slide2.jpg",
+    // imgSrc: "/images/slider/skincare-slide2.jpg",
+    imgSrc:
+      "https://images.pexels.com/photos/3762879/pexels-photo-3762879.jpeg",
     imgAlt: "skincare-slideshow-02",
     heading: "Beauty in Every Drop",
     description: "Indulge in the luxury of flawless skin",
   },
   {
-    imgSrc: "/images/slider/skincare-slide3.jpg",
+    // imgSrc: "/images/slider/skincare-slide3.jpg",
+    imgSrc:
+      "https://images.pexels.com/photos/3785803/pexels-photo-3785803.jpeg",
     imgAlt: "fashion-slideshow-03",
     heading: "Skin Love, Unleashed",
     description: "Experience the magic of self-care with our premium skincare",

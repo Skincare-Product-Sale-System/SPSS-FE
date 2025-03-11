@@ -6,7 +6,7 @@ import CountdownComponent from "../common/Countdown";
 import {
   colors,
   paymentImages,
-  sizeOptions,
+  // sizeOptions,
 } from "@/data/singleProductOptions";
 import StickyItem from "./StickyItem";
 import Quantity from "./Quantity";
@@ -23,8 +23,14 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const router = usePathname();
   const productId = router.split("/")[2];
 
+  const sizeOptions = [
+    { id: "300ml", value: "300ml", defaultChecked: true },
+    { id: "500ml", value: "500ml", defaultChecked: false },
+    { id: "700ml", value: "700ml", defaultChecked: false },
+  ];
+
   const [currentColor, setCurrentColor] = useState(colors[0]);
-  const [currentSize, setCurrentSize] = useState(sizeOptions[1]);
+  const [currentSize, setCurrentSize] = useState(sizeOptions[0]);
   const [quantity, setQuantity] = useState(1);
 
   const handleColor = (color) => {
@@ -120,8 +126,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       </div>
                     </div>
                   </div> */}
-                  {/* <div className="tf-product-info-variant-picker">
-                    <div className="variant-picker-item">
+                  <div className="tf-product-info-variant-picker">
+                    {/* <div className="variant-picker-item">
                       <div className="variant-picker-label">
                         Color:
                         <span className="fw-6 variant-picker-label-value">
@@ -152,22 +158,17 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                           </React.Fragment>
                         ))}
                       </form>
-                    </div>
+                    </div> */}
                     <div className="variant-picker-item">
                       <div className="d-flex justify-content-between align-items-center">
-                        <div className="variant-picker-label">
-                          Size:
-                          <span className="fw-6 variant-picker-label-value">
-                            {currentSize.value}
-                          </span>
-                        </div>
-                        <a
+                        <div className="variant-picker-label">Sizes:</div>
+                        {/* <a
                           href="#find_size"
                           data-bs-toggle="modal"
                           className="find-size fw-6"
                         >
                           Find your size
-                        </a>
+                        </a> */}
                       </div>
                       <form className="variant-picker-values">
                         {sizeOptions.map((size) => (
@@ -177,10 +178,10 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               name="size1"
                               id={size.id}
                               readOnly
-                              checked={currentSize == size}
+                              checked={currentSize == size.id}
                             />
                             <label
-                              onClick={() => setCurrentSize(size)}
+                              onClick={() => setCurrentSize(size.id)}
                               className="style-text"
                               htmlFor={size.id}
                               data-value={size.value}
@@ -191,7 +192,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         ))}
                       </form>
                     </div>
-                  </div> */}
+                  </div>
                   <div className="tf-product-info-quantity">
                     <div className="quantity-title fw-6">Quantity</div>
                     <Quantity setQuantity={setQuantity} />

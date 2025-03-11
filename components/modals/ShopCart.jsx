@@ -106,7 +106,7 @@ export default function ShopCart() {
                             >
                               ${elm.price?.toLocaleString()}{" "}
                             </span>
-                            <span className="strikethrough ms-2">
+                            <span className="strikethrough ms-1 compare-at-price">
                               ${elm.marketPrice?.toLocaleString()}
                             </span>
                           </div>

@@ -24,16 +24,36 @@ export default function Hero() {
         {slides5.map((slide, index) => (
           <SwiperSlide key={index}>
             <div className="wrap-slider">
-              <Image
-                className="lazyload"
-                data-src={slide.imgSrc}
-                alt={slide.imgAlt}
-                src={slide.imgSrc}
-                width={1800}
-                height={1013}
-                priority
-              />
-              <div className="box-content text-center">
+              <div className="image-container relative">
+                <div
+                  className="overlay"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    zIndex: 1,
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  }}
+                ></div>
+                <Image
+                  className="lazyload"
+                  data-src={slide.imgSrc}
+                  alt={slide.imgAlt}
+                  src={slide.imgSrc}
+                  width={1800}
+                  height={1013}
+                  priority
+                  sizes="100vw"
+                  style={{
+                    objectFit: "cover",
+                    objectPosition: "center",
+                    aspectRatio: "16/7",
+                  }}
+                />
+              </div>
+              <div className="box-content text-center" style={{ zIndex: 2 }}>
                 <div className="container">
                   <h1 className="fade-item fade-item-1 text-white heading">
                     {slide.heading}

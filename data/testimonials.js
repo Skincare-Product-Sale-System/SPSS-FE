@@ -160,7 +160,8 @@ export const testimonials4 = [
     rating: 5,
     text: "Love love love! This product is so easy to use! I absolutely love the Alpha Arbutin product. It has made such a difference with my hyperpigmentation spots! I feel so much more confident without makeup on where as before I would never leave the house",
     authorName: "Robert Smith",
-    authorImgSrc: "/images/slider/te4.jpg",
+    authorImgSrc:
+      "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg",
     purchaseLink: "#",
     purchaseItem: "100% Organic Cold-Pressed Oil",
   },
@@ -180,32 +181,32 @@ export const imageGroups = [
   {
     images: [
       {
-        src: "/images/slider/te8.jpg",
-        alt: "img-slider",
-        width: 450,
-        height: 513,
-      },
-      {
-        src: "/images/slider/te7.jpg",
+        src: "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg",
         alt: "img-slider",
         width: 750,
-        height: 797,
+        height: 497,
       },
+      // {
+      //   src: "/images/item/tets5.jpg",
+      //   alt: "img-slider",
+      //   width: 150,
+      //   height: 513,
+      // },
     ],
   },
   {
     images: [
+      // {
+      //   src: "/images/item/tets5.jpg",
+      //   alt: "img-slider",
+      //   width: 200,
+      //   height: 213,
+      // },
       {
-        src: "/images/slider/te10.jpg",
-        alt: "img-slider",
-        width: 450,
-        height: 513,
-      },
-      {
-        src: "/images/slider/te9.jpg",
+        src: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg",
         alt: "img-slider",
         width: 750,
-        height: 797,
+        height: 497,
       },
     ],
   },

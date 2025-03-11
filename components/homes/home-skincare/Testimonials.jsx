@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Navigation, Pagination, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Image from "next/image";
+
 export default function Testimonials() {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
+
   return (
     <section className="flat-spacing-12">
       <div className="container">
@@ -54,6 +56,10 @@ export default function Testimonials() {
                           src={testimonial.authorImgSrc}
                           width={450}
                           height={513}
+                          style={{
+                            objectFit: "cover",
+                            objectPosition: "center",
+                          }}
                         />
                       </div>
                       <div className="content">
@@ -96,9 +102,7 @@ export default function Testimonials() {
                     {group.images.map((image, i) => (
                       <div
                         key={i}
-                        className={`box-img item-${
-                          i + 1
-                        } hover-img testimonial-hover-skincare`}
+                        className={`box-img hover-img testimonial-hover-skincare`}
                       >
                         <div className="img-style">
                           <Image
@@ -108,6 +112,10 @@ export default function Testimonials() {
                             src={image.src}
                             width={image.width}
                             height={image.height}
+                            style={{
+                              objectFit: "cover",
+                              objectPosition: "center",
+                            }}
                           />
                         </div>
                       </div>

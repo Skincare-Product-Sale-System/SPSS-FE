@@ -4,16 +4,38 @@ import Link from "next/link";
 export default function Banner() {
   return (
     <section className="tf-slideshow slider-video position-relative">
-      <div className="banner-wrapper">
+      <div className="banner-wrapper relative">
+        <div
+          className="banner-overlay"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        ></div>
         <Image
           className="lazyload"
-          src="/images/collections/banner-collection-1.jpg"
-          data-src="/images/collections/banner-collection-1.jpg"
+          src="https://images.pexels.com/photos/2442898/pexels-photo-2442898.jpeg"
+          data-src="https://images.pexels.com/photos/2442898/pexels-photo-2442898.jpeg"
           alt="image-collection"
           width={1800}
           height={893}
+          style={{
+            objectFit: "cover",
+            objectPosition: "center",
+            aspectRatio: "16/8",
+          }}
         />
-        <div className="box-content text-center">
+        <div
+          className="box-content text-center"
+          style={{
+            zIndex: 2,
+          }}
+        >
           <div className="container">
             <p className="subheading text-white fw-7">ULTRA-PREMIUM SILK</p>
             <h1 className="heading text-white">Silk Blouses Shirts</h1>

@@ -52,7 +52,7 @@ export default function Announcement() {
               </SwiperSlide>
               <SwiperSlide className="swiper-slide">
                 <p className="noti-bar-text text-white fw-5">
-                  The best Nextjs Template
+                  Deliver the best skin care products for you
                 </p>
               </SwiperSlide>
             </Swiper>

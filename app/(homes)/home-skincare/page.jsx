@@ -30,11 +30,12 @@ export default function page() {
       <Marquee />
       <Videobox />
       <Features />
-      <Products2 />
+      <Products />
+      {/* <Products2 /> */}
       <Testimonials />
       <SkinChange />
       <Features />
-      <ShopGram />
+      {/* <ShopGram /> */}
       <Footer1 />
     </>
   );
