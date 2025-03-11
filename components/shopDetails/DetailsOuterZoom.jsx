@@ -24,40 +24,39 @@ import request from "@/utlis/axios";
 export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const router = usePathname();
   const productId = router.split("/")[2];
+  const [currentPrice, setCurrentPrice] = useState({
+    price: product.price,
+    marketPrice: product.marketPrice,
+  });
 
-  const capacityOptions = [
-    ...new Set(
-      product.productItems
-        .flatMap((item) =>
-          item.configurations.filter(
-            (config) => config.variationName === "Capacity"
-          )
-        )
-        .map((config) => config.optionName)
-    ),
-  ]
+  const capacityOptions = product.productItems
+    .flatMap((item) =>
+      item.configurations.filter(
+        (config) => config.variationName === "Capacity"
+      )
+    )
     .sort((a, b) => {
-      // Convert "100ml" to 100 by removing "ml" and converting to number
-      const numA = parseInt(a.replace(/ml/i, ""));
-      const numB = parseInt(b.replace(/ml/i, ""));
+      const numA = parseInt(a.optionName?.replace(/ml/i, ""));
+      const numB = parseInt(b.optionName?.replace(/ml/i, ""));
       return numA - numB;
     })
-    .map((optionName) => {
-      const config = product.productItems
-        .flatMap((item) => item.configurations)
-        .find(
-          (c) => c.variationName === "Capacity" && c.optionName === optionName
-        );
-
+    .map((option, index) => {
+      const config = product.productItems.find((c) =>
+        c.configurations.find((config) => config.optionId == option.optionId)
+      );
       return {
-        id: config.optionId,
-        value: optionName,
+        id: option.optionId,
+        // id: config.id,
+        value: option.optionName,
         defaultChecked: false,
+        price: config.price,
       };
     });
 
+  console.log("capacityOptions", capacityOptions);
+
   const [currentColor, setCurrentColor] = useState(colors[0]);
-  const [currentSize, setCurrentSize] = useState(sizeOptions[0]);
+  const [currentCapacity, setCurrentCapacity] = useState(capacityOptions[0].id);
   const [quantity, setQuantity] = useState(1);
 
   const handleColor = (color) => {
@@ -153,17 +152,17 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                   </div>
                   <div className="tf-product-info-price mb-5">
                     <div className="price-on-sale">
-                      ${product.price.toLocaleString()}
+                      ${currentPrice.price?.toLocaleString()}
                     </div>
 
                     <div className="compare-at-price">
-                      ${product.marketPrice.toLocaleString()}
+                      ${currentPrice.marketPrice?.toLocaleString()}
                     </div>
                     <div className="badges-on-sale">
                       <span>
                         {Math.round(
-                          ((product.marketPrice - product.price) /
-                            product.marketPrice) *
+                          ((currentPrice?.marketPrice - currentPrice?.price) /
+                            currentPrice?.marketPrice) *
                             100
                         )}
                       </span>
@@ -207,12 +206,16 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               name="size1"
                               id={capacity.id}
                               readOnly
-                              checked={currentSize == capacity.id}
+                              checked={currentCapacity == capacity.id}
                             />
                             <label
                               onClick={() => {
-                                setCurrentSize(capacity.id);
                                 setCurrentColor(capacity.id);
+                                setCurrentCapacity(capacity.id);
+                                setCurrentPrice({
+                                  price: capacity.price,
+                                  marketPrice: capacity.price * 1.2,
+                                });
                               }}
                               className="style-text"
                               htmlFor={capacity.id}
@@ -235,7 +238,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         onClick={() => {
                           let cartItem = {
                             ...product,
-                            id: productId,
+                            id: currentCapacity,
                             quantity: quantity ? quantity : 1,
                           };
                           openCartModal();
