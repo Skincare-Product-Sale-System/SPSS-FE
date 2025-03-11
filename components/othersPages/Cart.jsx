@@ -1,5 +1,6 @@
 "use client";
 import { useContextElement } from "@/context/Context";
+import { defaultProductImage } from "@/utlis/default";
 import Image from "next/image";
 import Link from "next/link";
 export default function Cart() {
@@ -71,7 +72,7 @@ export default function Cart() {
                         >
                           <Image
                             alt="img-product"
-                            src={elm.imgSrc}
+                            src={defaultProductImage}
                             width={668}
                             height={932}
                           />
@@ -81,9 +82,11 @@ export default function Cart() {
                             href={`/product-detail/${elm.id}`}
                             className="cart-title link"
                           >
-                            {elm.title}
+                            {elm.name}
                           </Link>
-                          <div className="cart-meta-variant">White / M</div>
+                          <div className="cart-meta-variant">
+                            {elm.mainFunction}
+                          </div>
                           <span
                             className="remove-cart link remove"
                             onClick={() => removeItem(elm.id)}
@@ -97,7 +100,7 @@ export default function Cart() {
                         cart-data-title="Price"
                       >
                         <div className="cart-price">
-                          ${elm.price.toFixed(2)}
+                          ${elm.price.toLocaleString()}
                         </div>
                       </td>
                       <td
@@ -158,7 +161,7 @@ export default function Cart() {
                           className="cart-total"
                           style={{ minWidth: "60px" }}
                         >
-                          ${(elm.price * elm.quantity).toFixed(2)}
+                          ${(elm.price * elm.quantity).toLocaleString()}
                         </div>
                       </td>
                     </tr>
@@ -194,7 +197,7 @@ export default function Cart() {
           </div>
           <div className="tf-page-cart-footer">
             <div className="tf-cart-footer-inner">
-              <div className="tf-free-shipping-bar">
+              {/* <div className="tf-free-shipping-bar">
                 <div className="tf-progress-bar">
                   <span style={{ width: "50%" }}>
                     <div className="progress-car">
@@ -218,9 +221,10 @@ export default function Cart() {
                   Buy <span className="price fw-6">$75.00</span> more to enjoy{" "}
                   <span className="fw-6">Free Shipping</span>
                 </div>
-              </div>
+              </div> */}
+
               <div className="tf-page-cart-checkout">
-                <div className="shipping-calculator">
+                {/* <div className="shipping-calculator">
                   <summary
                     className="accordion-shipping-header d-flex justify-content-between align-items-center collapsed"
                     data-bs-target="#shipping"
@@ -385,8 +389,8 @@ export default function Cart() {
                       </button>
                     </div>
                   </div>
-                </div>
-                <div className="cart-checkbox">
+                </div> */}
+                {/* <div className="cart-checkbox">
                   <input
                     type="checkbox"
                     className="tf-check"
@@ -396,18 +400,18 @@ export default function Cart() {
                     <span>Do you want a gift wrap?</span> Only
                     <span className="fw-5">$5.00</span>
                   </label>
-                </div>
+                </div> */}
                 <div className="tf-cart-totals-discounts">
                   <h3>Subtotal</h3>
                   <span className="total-value">
-                    ${totalPrice.toFixed(2)} USD
+                    ${totalPrice.toLocaleString()} USD
                   </span>
                 </div>
-                <p className="tf-cart-tax">
+                {/* <p className="tf-cart-tax">
                   Taxes and
                   <Link href={`/shipping-delivery`}>shipping</Link> calculated
                   at checkout
-                </p>
+                </p> */}
                 <div className="cart-checkbox">
                   <input
                     type="checkbox"
@@ -416,7 +420,9 @@ export default function Cart() {
                   />
                   <label htmlFor="check-agree" className="fw-4">
                     I agree with the
-                    <Link href={`/terms-conditions`}>terms and conditions</Link>
+                    <Link className="ps-1" href={`/terms-conditions`}>
+                      terms and conditions
+                    </Link>
                   </label>
                 </div>
                 <div className="cart-checkout-btn">

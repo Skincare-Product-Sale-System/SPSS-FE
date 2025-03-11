@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import request from "@/utlis/axios";
 export default function Register() {
   return (
     <div
@@ -17,7 +18,20 @@ export default function Register() {
             />
           </div>
           <div className="tf-login-form">
-            <form onSubmit={(e) => e.preventDefault()} className="">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                console.log(e.target[0].value);
+                request.post("/User/sign-up", {
+                  username: e.target[0].value,
+                  fullname: e.target[1].value,
+                  email: e.target[2].value,
+                  age: e.target[3].value,
+                  gender: e.target[4].value,
+                  password: e.target[5].value,
+                });
+              }}
+            >
               <div className="tf-field style-1">
                 <input
                   className="tf-field-input tf-input"
@@ -27,7 +41,7 @@ export default function Register() {
                   name=""
                 />
                 <label className="tf-field-label" htmlFor="">
-                  First name
+                  Username
                 </label>
               </div>
               <div className="tf-field style-1">
@@ -39,7 +53,7 @@ export default function Register() {
                   name=""
                 />
                 <label className="tf-field-label" htmlFor="">
-                  Last name
+                  Full name
                 </label>
               </div>
               <div className="tf-field style-1">
@@ -54,6 +68,36 @@ export default function Register() {
                 <label className="tf-field-label" htmlFor="">
                   Email *
                 </label>
+              </div>
+
+              <div className="tf-field style-1">
+                <input
+                  className="tf-field-input tf-input"
+                  placeholder=" "
+                  type="number"
+                  required
+                  name=""
+                />
+                <label className="tf-field-label" htmlFor="">
+                  Age *
+                </label>
+              </div>
+              <div className="tf-product-bundle-variant position-relative">
+                <select className="tf-select">
+                  <option>Male</option>
+                  <option>Female</option>
+                </select>
+                {/* <input
+                  className="tf-field-input tf-input"
+                  placeholder=" "
+                  type="email"
+                  autoComplete="abc@xyz.com"
+                  required
+                  name=""
+                /> */}
+                {/* <label className="tf-field-label" htmlFor="">
+                  Gender *
+                </label> */}
               </div>
               <div className="tf-field style-1">
                 <input
@@ -70,12 +114,12 @@ export default function Register() {
               </div>
               <div className="bottom">
                 <div className="w-100">
-                  <Link
-                    href={`/register`}
+                  <button
+                    // href={`/register`}
                     className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
                   >
                     <span>Register</span>
-                  </Link>
+                  </button>
                 </div>
                 <div className="w-100">
                   <a

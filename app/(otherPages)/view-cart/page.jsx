@@ -4,6 +4,7 @@ import Header2 from "@/components/headers/Header2";
 import Cart from "@/components/othersPages/Cart";
 import RecentProducts from "@/components/shopDetails/RecentProducts";
 import React from "react";
+import Products from "@/components/shopDetails/Products";
 
 export const metadata = {
   title: "View Cart || Ecomus - Ultimate Nextjs Ecommerce Template",
@@ -21,7 +22,7 @@ export default function page() {
 
       <Cart />
       <Testimonials />
-      <RecentProducts />
+      <Products />
       <Footer1 />
     </>
   );

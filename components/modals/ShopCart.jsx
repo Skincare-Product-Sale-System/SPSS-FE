@@ -1,9 +1,10 @@
 "use client";
 import { useContextElement } from "@/context/Context";
 import { products1 } from "@/data/products";
+import { defaultProductImage } from "@/utlis/default";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 export default function ShopCart() {
@@ -19,6 +20,14 @@ export default function ShopCart() {
       setCartProducts(items);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      //> fetch data from server
+      // setCartProducts(data);
+    })();
+  }, [cartProducts]);
+
   const removeItem = (id) => {
     setCartProducts((pre) => [...pre.filter((elm) => elm.id != id)]);
   };
@@ -39,7 +48,7 @@ export default function ShopCart() {
             />
           </div>
           <div className="wrap">
-            <div className="tf-mini-cart-threshold">
+            {/* <div className="tf-mini-cart-threshold">
               <div className="tf-progress-bar">
                 <span style={{ width: "50%" }}>
                   <div className="progress-car">
@@ -63,7 +72,7 @@ export default function ShopCart() {
                 Buy <span className="price fw-6">$75.00</span> more to enjoy
                 <span className="fw-6">Free Shipping</span>
               </div>
-            </div>
+            </div> */}
             <div className="tf-mini-cart-wrap">
               <div className="tf-mini-cart-main">
                 <div className="tf-mini-cart-sroll">
@@ -74,7 +83,7 @@ export default function ShopCart() {
                           <Link href={`/product-detail/${elm.id}`}>
                             <Image
                               alt="image"
-                              src={elm.imgSrc}
+                              src={elm.imgSrc || defaultProductImage}
                               width={668}
                               height={932}
                               style={{ objectFit: "cover" }}
@@ -86,11 +95,20 @@ export default function ShopCart() {
                             className="title link"
                             href={`/product-detail/${elm.id}`}
                           >
-                            {elm.title}
+                            {elm.name}
                           </Link>
-                          <div className="meta-variant">Light gray</div>
+                          <div className="meta-variant">{elm.mainFunction}</div>
                           <div className="price fw-6">
-                            ${elm.price?.toFixed(2)}
+                            <span
+                              style={{
+                                color: "#ff0000",
+                              }}
+                            >
+                              ${elm.price?.toLocaleString()}{" "}
+                            </span>
+                            <span className="strikethrough ms-2">
+                              ${elm.marketPrice?.toLocaleString()}
+                            </span>
                           </div>
                           <div className="tf-mini-cart-btns">
                             <div className="wg-quantity small">
@@ -151,7 +169,7 @@ export default function ShopCart() {
                       </div>
                     )}
                   </div>
-                  <div className="tf-minicart-recommendations">
+                  {/* <div className="tf-minicart-recommendations">
                     <div className="tf-minicart-recommendations-heading">
                       <div className="tf-minicart-recommendations-title">
                         You may also like
@@ -206,7 +224,7 @@ export default function ShopCart() {
                         </SwiperSlide>
                       ))}
                     </Swiper>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="tf-mini-cart-bottom">
@@ -267,17 +285,17 @@ export default function ShopCart() {
                   <div className="tf-cart-totals-discounts">
                     <div className="tf-cart-total">Subtotal</div>
                     <div className="tf-totals-total-value fw-6">
-                      ${totalPrice.toFixed(2)} USD
+                      ${totalPrice.toLocaleString()} USD
                     </div>
                   </div>
-                  <div className="tf-cart-tax">
+                  {/* <div className="tf-cart-tax">
                     Taxes and <a href="#">shipping</a> calculated at checkout
-                  </div>
+                  </div> */}
                   <div className="tf-mini-cart-line" />
                   <div className="tf-cart-checkbox">
                     <div className="tf-checkbox-wrapp">
                       <input
-                        className=""
+                        className="pe-2"
                         type="checkbox"
                         id="CartDrawer-Form_agree"
                         name="agree_checkbox"
@@ -288,7 +306,7 @@ export default function ShopCart() {
                     </div>
                     <label htmlFor="CartDrawer-Form_agree">
                       I agree with the
-                      <a href="#" title="Terms of Service">
+                      <a href="#" title="Terms of Service" className="ps-1">
                         terms and conditions
                       </a>
                     </label>
