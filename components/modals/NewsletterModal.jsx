@@ -78,11 +78,15 @@ export default function NewsletterModal() {
           <div className="modal-top">
             <Image
               className="lazyload"
-              data-src="/images/item/banner-newleter.jpg"
+              data-src="https://images.pexels.com/photos/2661256/pexels-photo-2661256.jpeg"
               alt="home-01"
               width={938}
-              height={538}
-              src="/images/item/banner-newleter.jpg"
+              height={238}
+              src="https://images.pexels.com/photos/2661256/pexels-photo-2661256.jpeg"
+              style={{
+                aspectRatio: "16/9",
+                objectFit: "cover",
+              }}
             />
             <span
               className="icon icon-close btn-hide-popup"

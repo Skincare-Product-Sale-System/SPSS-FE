@@ -3,9 +3,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { featuredProducts } from "@/data/products";
 import { galleryItems } from "@/data/gallery";
-import { categories } from "@/data/categories";
+// import { categories } from "@/data/categories";
 import { socialLinks } from "@/data/socials";
+import { useQueries } from "@tanstack/react-query";
+import request from "@/utlis/axios";
 export default function Sidebar() {
+  const [categories] = useQueries({
+    queries: [
+      {
+        queryKey: ["categories"],
+        queryFn: async () => {
+          const { data } = await request.get("/product-categories");
+          return data.data?.items;
+        },
+      },
+      // Add other queries here if needed
+    ],
+  });
+
+  console.log("categories", categories); // Log the data here
+
   return (
     <aside className="tf-shop-sidebar wrap-sidebar-mobile">
       <div className="widget-facet wd-categories">
@@ -21,11 +38,11 @@ export default function Sidebar() {
         </div>
         <div id="categories" className="collapse show">
           <ul className="list-categoris current-scrollbar mb_36">
-            {categories.map((category, index) => (
-              <li key={index} className={`cate-item ${category.className}`}>
+            {categories.data?.map((category, index) => (
+              <li key={index} className={`cate-item`}>
                 <a href="#">
-                  <span>{category.name}</span>&nbsp;
-                  <span>({category.count})</span>
+                  <span>{category.categoryName}</span>&nbsp;
+                  {/* <span>({category.count})</span> */}
                 </a>
               </li>
             ))}

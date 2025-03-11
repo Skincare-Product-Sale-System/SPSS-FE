@@ -49,11 +49,11 @@ export default function ShopDetailsTab({ product }) {
                         <ul>
                           <li>
                             <span className="desc-li">Storage:</span>{" "}
-                            {product.storageInstruction}
+                            {product.specifications.storageInstruction}
                           </li>
                           <li>
                             <span className="desc-li">Usage:</span>{" "}
-                            {product.usageInstruction}
+                            {product.specifications.usageInstruction}
                           </li>
                         </ul>
                         <h3 className="fs-16 fw-5">Ingredients</h3>
@@ -62,11 +62,11 @@ export default function ShopDetailsTab({ product }) {
                             <span className="desc-li">
                               Detailed Ingredients:
                             </span>{" "}
-                            {product.detailedIngredients}
+                            {product.specifications.detailedIngredients}
                           </li>
                           <li>
                             <span className="desc-li">Key Ingredients:</span>{" "}
-                            {product.keyActiveIngredients}
+                            {product.specifications.keyActiveIngredients}
                           </li>
                         </ul>
                       </div>
@@ -76,23 +76,25 @@ export default function ShopDetailsTab({ product }) {
                           <ul className="mb-0">
                             <li>
                               <span className="desc-li">Volume Weight:</span>{" "}
-                              {product.volumeWeight}g
+                              {product.specifications.volumeWeight}g
                             </li>
                             <li>
                               <span className="desc-li">Function:</span>{" "}
-                              {product.mainFunction}
+                              {product.specifications.mainFunction}
                             </li>
                             <li>
                               <span className="desc-li">Texture:</span>{" "}
-                              {product.texture}
+                              {product.specifications.texture}
                             </li>
                             <li>
                               <span className="desc-li">For Skin Issues:</span>{" "}
-                              {product.skinIssues}
+                              {product.specifications.skinIssues}
                             </li>
                             <li>
                               <span className="desc-li">Expiry Date:</span>{" "}
-                              {dayjs(product.expiryDate).format("DD/MM/YYYY")}
+                              {dayjs(product.specifications.expiryDate).format(
+                                "DD/MM/YYYY"
+                              )}
                             </li>
                           </ul>
                         </div>

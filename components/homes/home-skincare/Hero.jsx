@@ -62,7 +62,7 @@ export default function Hero() {
                     {slide.description}
                   </p>
                   <Link
-                    href={`/shop-collection-sub`}
+                    href={`/products`}
                     className="fade-item fade-item-3 tf-btn btn-light-icon animate-hover-btn btn-xl radius-3"
                   >
                     <span>Shop collection</span>

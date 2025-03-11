@@ -9,6 +9,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import { useEffect, useState } from "react";
 import { defaultProductImage } from "@/utlis/default";
 import request from "@/utlis/axios";
+import { useQueries } from "@tanstack/react-query";
 
 export default function Products() {
   const {
@@ -25,22 +26,21 @@ export default function Products() {
   ];
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [filtered, setFiltered] = useState([]);
-  const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    (async () => {
-      const { data } = await request.get("/Product/all?Page=1&PageSize=200");
-      // console.log("data?.data?.results", data?.data?.results);
+  const [products] = useQueries({
+    queries: [
+      {
+        queryKey: ["products", activeTab],
+        queryFn: async () => {
+          const { data } = await request.get(
+            "/products?pageNumber=1&pageSize=100"
+          );
 
-      setFiltered(data?.data?.results);
-      // setProducts(data?.data?.results);
-      // setFiltered(
-      //   data?.data?.results.filter((el) =>
-      //     el.filterCategories.includes(activeTab)
-      //   )
-      // );
-    })();
-  }, [activeTab, products]);
+          return data.data?.items || [];
+        },
+      },
+    ],
+  });
 
   return (
     <section className="flat-spacing-9 bg_grey-6 flat-spacing-26">
@@ -85,46 +85,47 @@ export default function Products() {
                   }}
                   pagination={{ clickable: true, el: ".spd265" }}
                 >
-                  {filtered.map((product, index) => (
-                    <SwiperSlide key={index}>
-                      <div className="card-product style-skincare">
-                        <div className="card-product-wrapper">
-                          <a href={product.id} className="product-img">
-                            <Image
-                              className="lazyload img-product"
-                              data-src={defaultProductImage}
-                              alt="image-product"
-                              src={defaultProductImage}
-                              width={360}
-                              height={384}
-                            />
-                            <Image
-                              className="lazyload img-hover"
-                              data-src={defaultProductImage}
-                              alt="image-product"
-                              src={defaultProductImage}
-                              width={360}
-                              height={384}
-                            />
-                          </a>
-                          <div className="list-product-btn">
-                            <a
-                              onClick={() => addToWishlist(product.id)}
-                              className="box-icon bg_white wishlist btn-icon-action"
-                            >
-                              <span
-                                className={`icon icon-heart ${
-                                  isAddedtoWishlist(product.id) ? "added" : ""
-                                }`}
+                  {!products.isLoading &&
+                    products.data.map((product, index) => (
+                      <SwiperSlide key={index}>
+                        <div className="card-product style-skincare">
+                          <div className="card-product-wrapper">
+                            <a href={product.id} className="product-img">
+                              <Image
+                                className="lazyload img-product"
+                                data-src={defaultProductImage}
+                                alt="image-product"
+                                src={defaultProductImage}
+                                width={360}
+                                height={384}
                               />
-                              <span className="tooltip">
-                                {isAddedtoWishlist(product.id)
-                                  ? "Already Wishlisted"
-                                  : "Add to Wishlist"}
-                              </span>
-                              <span className="icon icon-delete" />
+                              <Image
+                                className="lazyload img-hover"
+                                data-src={defaultProductImage}
+                                alt="image-product"
+                                src={defaultProductImage}
+                                width={360}
+                                height={384}
+                              />
                             </a>
-                            {/* <a
+                            <div className="list-product-btn">
+                              <a
+                                onClick={() => addToWishlist(product.id)}
+                                className="box-icon bg_white wishlist btn-icon-action"
+                              >
+                                <span
+                                  className={`icon icon-heart ${
+                                    isAddedtoWishlist(product.id) ? "added" : ""
+                                  }`}
+                                />
+                                <span className="tooltip">
+                                  {isAddedtoWishlist(product.id)
+                                    ? "Already Wishlisted"
+                                    : "Add to Wishlist"}
+                                </span>
+                                <span className="icon icon-delete" />
+                              </a>
+                              {/* <a
                               href="#compare"
                               data-bs-toggle="offcanvas"
                               aria-controls="offcanvasLeft"
@@ -146,44 +147,44 @@ export default function Products() {
                               </span>
                               <span className="icon icon-check" />
                             </a> */}
-                            <a
-                              href="#quick_view"
-                              onClick={() => setQuickViewItem(product)}
-                              data-bs-toggle="modal"
-                              className="box-icon bg_white quickview tf-btn-loading"
-                            >
-                              <span className="icon icon-view" />
-                              <span className="tooltip">Quick View</span>
-                            </a>
-                          </div>
-                        </div>
-                        <div className="card-product-info text-center">
-                          <Link
-                            href={`/product-detail/${product.id}`}
-                            className="title link"
-                          >
-                            {product.name}
-                          </Link>
-                          <span className="price">
-                            {product.marketPrice && (
-                              <span className="fw-4 text-sale">
-                                {product.marketPrice}
-                              </span>
-                            )}{" "}
-                            <span className="text_primary">
-                              ${product.price.toLocaleString()}
-                            </span>
-                          </span>
-                          <div className="tf-size-list">
-                            {["300ml", "500ml", "700ml"].map((size, i) => (
-                              <span
-                                key={i}
-                                className="tf-size-list-item fw-6 radius-3"
+                              <a
+                                href="#quick_view"
+                                onClick={() => setQuickViewItem(product)}
+                                data-bs-toggle="modal"
+                                className="box-icon bg_white quickview tf-btn-loading"
                               >
-                                {size}
+                                <span className="icon icon-view" />
+                                <span className="tooltip">Quick View</span>
+                              </a>
+                            </div>
+                          </div>
+                          <div className="card-product-info text-center">
+                            <Link
+                              href={`/product-detail/${product.id}`}
+                              className="title link"
+                            >
+                              {product.name}
+                            </Link>
+                            <span className="price">
+                              {product.marketPrice && (
+                                <span className="fw-4 text-sale">
+                                  {product.marketPrice}
+                                </span>
+                              )}{" "}
+                              <span className="text_primary">
+                                ${product.price.toLocaleString()}
                               </span>
-                            ))}
-                            {/* {product.sizes.map((size, i) => (
+                            </span>
+                            <div className="tf-size-list">
+                              {["300ml", "500ml", "700ml"].map((size, i) => (
+                                <span
+                                  key={i}
+                                  className="tf-size-list-item fw-6 radius-3"
+                                >
+                                  {size}
+                                </span>
+                              ))}
+                              {/* {product.sizes.map((size, i) => (
                               <span
                                 key={i}
                                 className="tf-size-list-item fw-6 radius-3"
@@ -191,21 +192,21 @@ export default function Products() {
                                 {size}
                               </span>
                             ))} */}
-                          </div>
-                          <div className="tf-product-btns">
-                            <a
-                              href={"/product-detail/" + product.id}
-                              // onClick={() => setQuickAddItem(product.id)}
-                              // data-bs-toggle="modal"
-                              className="tf-btn style-3 radius-3 btn-fill animate-hover-btn"
-                            >
-                              View detail
-                            </a>
+                            </div>
+                            <div className="tf-product-btns">
+                              <a
+                                href={"/product-detail/" + product.id}
+                                // onClick={() => setQuickAddItem(product.id)}
+                                // data-bs-toggle="modal"
+                                className="tf-btn style-3 radius-3 btn-fill animate-hover-btn"
+                              >
+                                View detail
+                              </a>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </SwiperSlide>
-                  ))}
+                      </SwiperSlide>
+                    ))}
                 </Swiper>
                 <div className="nav-sw style-not-line nav-next-slider nav-next-sell-1 box-icon w_46 round snbp265">
                   <span className="icon icon-arrow-left" />

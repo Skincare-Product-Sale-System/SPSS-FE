@@ -1,0 +1,7 @@
+
+GET https://localhost:44358/api/product-categories?pageNumber=1&pageSize=10
+
+
+
+
+

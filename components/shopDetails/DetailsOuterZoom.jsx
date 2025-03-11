@@ -6,7 +6,7 @@ import CountdownComponent from "../common/Countdown";
 import {
   colors,
   paymentImages,
-  // sizeOptions,
+  sizeOptions,
 } from "@/data/singleProductOptions";
 import StickyItem from "./StickyItem";
 import Quantity from "./Quantity";
@@ -24,10 +24,43 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const productId = router.split("/")[2];
 
   const sizeOptions = [
-    { id: "300ml", value: "300ml", defaultChecked: true },
-    { id: "500ml", value: "500ml", defaultChecked: false },
-    { id: "700ml", value: "700ml", defaultChecked: false },
-  ];
+    ...new Set(
+      product.productItems
+        .flatMap((item) =>
+          item.configurations.filter(
+            (config) => config.variationName === "Size"
+          )
+        )
+        .map((config) => config.optionName)
+    ),
+  ].map((optionName) => {
+    const config = product.productItems
+      .flatMap((item) => item.configurations)
+      .find((c) => c.variationName === "Size" && c.optionName === optionName);
+
+    return {
+      id: config.optionId,
+      value: optionName,
+      defaultChecked: false,
+    };
+  });
+
+  const colorOptions = [
+    ...new Set(
+      product.productItems
+        .flatMap((item) =>
+          item.configurations.filter(
+            (config) => config.variationName === "Color"
+          )
+        )
+        .map((config) => config.optionName)
+    ),
+  ].map((config) => ({
+    id: config,
+    value: config,
+    defaultChecked: false,
+    className: `bg-color-${config?.toLowerCase()}`,
+  }));
 
   const [currentColor, setCurrentColor] = useState(colors[0]);
   const [currentSize, setCurrentSize] = useState(sizeOptions[0]);
@@ -127,15 +160,15 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     </div>
                   </div> */}
                   <div className="tf-product-info-variant-picker">
-                    {/* <div className="variant-picker-item">
+                    <div className="variant-picker-item">
                       <div className="variant-picker-label">
                         Color:
-                        <span className="fw-6 variant-picker-label-value">
+                        {/* <span className="fw-6 variant-picker-label-value">
                           {currentColor.value}
-                        </span>
+                        </span> */}
                       </div>
                       <form className="variant-picker-values">
-                        {colors.map((color) => (
+                        {colorOptions.map((color) => (
                           <React.Fragment key={color.id}>
                             <input
                               id={color.id}
@@ -148,7 +181,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               onClick={() => setCurrentColor(color)}
                               className="hover-tooltip radius-60"
                               htmlFor={color.id}
-                              data-value={color.value}
+                              data-value={color.id}
                             >
                               <span
                                 className={`btn-checkbox ${color.className}`}
@@ -158,7 +191,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                           </React.Fragment>
                         ))}
                       </form>
-                    </div> */}
+                    </div>
                     <div className="variant-picker-item">
                       <div className="d-flex justify-content-between align-items-center">
                         <div className="variant-picker-label">Sizes:</div>
@@ -184,7 +217,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               onClick={() => setCurrentSize(size.id)}
                               className="style-text"
                               htmlFor={size.id}
-                              data-value={size.value}
+                              data-value={size.id}
                             >
                               <p>{size.value}</p>
                             </label>

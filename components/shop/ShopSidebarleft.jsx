@@ -6,10 +6,24 @@ import ProductGrid from "./ProductGrid";
 import Pagination from "../common/Pagination";
 import Sorting from "./Sorting";
 import { products1 } from "@/data/products";
+import { useQueries } from "@tanstack/react-query";
 
 export default function ShopSidebarleft() {
   const [gridItems, setGridItems] = useState(3);
   const [finalSorted, setFinalSorted] = useState([]);
+
+  const [products] = useQueries({
+    queries: [
+      {
+        queryKey: ["products"],
+        queryFn: async () => {
+          const { data } = await request.get("/products");
+          return data.data?.items || [];
+        },
+      },
+    ],
+  });
+
   return (
     <>
       <section className="flat-spacing-1">
@@ -40,7 +54,7 @@ export default function ShopSidebarleft() {
           <div className="tf-row-flex">
             <Sidebar />
             <div className="tf-shop-content">
-              <ProductGrid allproducts={finalSorted} gridItems={gridItems} />
+              <ProductGrid allproducts={products.data} gridItems={gridItems} />
               {/* pagination */}{" "}
               {finalSorted.length ? (
                 <ul className="tf-pagination-wrap tf-pagination-list">

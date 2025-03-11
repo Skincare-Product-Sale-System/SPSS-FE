@@ -30,6 +30,8 @@ import NewsletterModal from "@/components/modals/NewsletterModal";
 import ShareModal from "@/components/modals/ShareModal";
 import ScrollTop from "@/components/common/ScrollTop";
 import RtlToggle from "@/components/common/RtlToggle";
+import Providers from "@/context/Providers";
+import NextTopLoader from "nextjs-toploader";
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -161,29 +163,33 @@ export default function RootLayout({ children }) {
             <div className="spinner"></div>
           </div>
         </div>{" "}
-        <Context>
-          <div id="wrapper">{children}</div>
-          <RtlToggle />
-          <HomesModal /> <QuickView />
-          <QuickAdd />
-          <ProductSidebar />
-          <Compare />
-          <ShopCart />
-          <AskQuestion />
-          <BlogSidebar />
-          <ColorCompare />
-          <DeliveryReturn />
-          <FindSize />
-          <Login />
-          <MobileMenu />
-          <Register />
-          <ResetPass />
-          <SearchModal />
-          <ToolbarBottom />
-          <ToolbarShop />
-          <NewsletterModal />
-          <ShareModal />{" "}
-        </Context>
+        <Providers>
+          <Context>
+            <NextTopLoader showSpinner={false} />
+            <div id="wrapper">{children}</div>
+            {/* <div id="wrapper">{children}</div> */}
+            <RtlToggle />
+            <HomesModal /> <QuickView />
+            <QuickAdd />
+            <ProductSidebar />
+            <Compare />
+            <ShopCart />
+            <AskQuestion />
+            <BlogSidebar />
+            <ColorCompare />
+            <DeliveryReturn />
+            <FindSize />
+            <Login />
+            <MobileMenu />
+            <Register />
+            <ResetPass />
+            <SearchModal />
+            <ToolbarBottom />
+            <ToolbarShop />
+            <NewsletterModal />
+            <ShareModal />{" "}
+          </Context>
+        </Providers>
         <ScrollTop />
       </body>
     </html>

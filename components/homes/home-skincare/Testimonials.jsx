@@ -113,6 +113,7 @@ export default function Testimonials() {
                             width={image.width}
                             height={image.height}
                             style={{
+                              aspectRatio: "1/1",
                               objectFit: "cover",
                               objectPosition: "center",
                             }}

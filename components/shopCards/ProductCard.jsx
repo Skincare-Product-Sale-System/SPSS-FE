@@ -26,7 +26,7 @@ export const ProductCard = ({ product }) => {
         <Link href={`/product-detail/${product.id}`} className="product-img">
           <Image
             className="lazyload img-product"
-            data-src={product.imgSrc}
+            data-src={currentImage}
             src={currentImage}
             alt="image-product"
             width={720}
@@ -34,10 +34,8 @@ export const ProductCard = ({ product }) => {
           />
           <Image
             className="lazyload img-hover"
-            data-src={
-              product.imgHoverSrc ? product.imgHoverSrc : product.imgSrc
-            }
-            src={product.imgHoverSrc ? product.imgHoverSrc : product.imgSrc}
+            data-src={currentImage}
+            src={currentImage}
             alt="image-product"
             width={720}
             height={1005}
@@ -124,7 +122,7 @@ export const ProductCard = ({ product }) => {
       </div>
       <div className="card-product-info">
         <Link href={`/product-detail/${product.id}`} className="title link">
-          {product.englishName}
+          {product.name}
         </Link>
         <span className="price" style={{ color: "#ff0000" }}>
           ${product.price.toLocaleString()}

@@ -6,20 +6,25 @@ import { ProductCard } from "../shopCards/ProductCard";
 import { Navigation, Pagination } from "swiper/modules";
 import { useEffect, useState } from "react";
 import request from "@/utlis/axios";
+import { useQueries } from "@tanstack/react-query";
 
 export default function Products() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await request.get("/Product/all?Page=1&PageSize=20");
-      setProducts(data.data?.results);
-      console.log(data);
-    })();
-  }, []);
+  const [products] = useQueries({
+    queries: [
+      {
+        queryKey: ["products"],
+        queryFn: async () => {
+          const { data } = await request.get(
+            "/products?pageNumber=1&pageSize=20"
+          );
+          return data.data?.items;
+        },
+      },
+    ],
+  });
 
   return (
-    <section className="flat-spacing-1 pt_0">
+    <>
       <div className="container">
         <div className="flat-title">
           <span className="title">People Also Bought</span>
@@ -49,7 +54,7 @@ export default function Products() {
             }}
             pagination={{ clickable: true, el: ".spd307" }}
           >
-            {products?.slice(0, 8).map((product, i) => (
+            {products.data?.slice(0, 8).map((product, i) => (
               <SwiperSlide key={i} className="swiper-slide">
                 <ProductCard product={product} />
               </SwiperSlide>
@@ -64,6 +69,6 @@ export default function Products() {
           <div className="sw-dots style-2 sw-pagination-product justify-content-center spd307" />
         </div>
       </div>
-    </section>
+    </>
   );
 }

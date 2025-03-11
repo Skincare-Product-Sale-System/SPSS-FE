@@ -5,7 +5,32 @@ import { collections } from "@/data/categories";
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import { useQueries } from "@tanstack/react-query";
+
 export default function Categories() {
+  const [categories] = useQueries({
+    queries: [
+      {
+        queryKey: ["categories"],
+        queryFn: async () => {
+          const { data } = await request.get(
+            "/product-categories?pageNumber=1&pageSize=100"
+          );
+          return data.data?.items || [];
+        },
+      },
+    ],
+  });
+
+  const categoriesImage = {
+    Sunscreen:
+      "https://images.pexels.com/photos/3999057/pexels-photo-3999057.jpeg",
+    Toner: "https://images.pexels.com/photos/8989961/pexels-photo-8989961.jpeg",
+    Mask: "https://images.pexels.com/photos/15327097/pexels-photo-15327097/free-photo-of-woman-with-beauty-product-on-face-recommending-cosmetics.jpeg",
+    "Face Foaming":
+      "https://images.pexels.com/photos/2587177/pexels-photo-2587177.jpeg",
+  };
+
   return (
     <section className="flat-spacing-4 flat-categorie">
       <div className="container-full">
@@ -38,7 +63,7 @@ export default function Categories() {
               }}
               breakpoints={{
                 1024: {
-                  slidesPerView: 3,
+                  slidesPerView: 4,
                   spaceBetween: 30,
                 },
                 768: {
@@ -50,36 +75,41 @@ export default function Categories() {
                 },
               }}
             >
-              {collections.map((item, index) => (
-                <SwiperSlide className="swiper-slide" key={index}>
-                  <div className="collection-item style-left hover-img">
-                    <div className="collection-inner">
-                      <Link
-                        href={`/shop-default`}
-                        className="collection-image img-style"
-                      >
-                        <Image
-                          className="lazyload"
-                          data-src={item.imgSrc}
-                          alt={item.altText}
-                          src={item.imgSrc}
-                          width="600"
-                          height="721"
-                        />
-                      </Link>
-                      <div className="collection-content">
+              {!categories.isLoading &&
+                categories.data.map((item, index) => (
+                  <SwiperSlide className="swiper-slide" key={index}>
+                    <div className="collection-item style-left hover-img">
+                      <div className="collection-inner">
                         <Link
                           href={`/shop-default`}
-                          className="tf-btn collection-title hover-icon fs-15"
+                          className="collection-image img-style"
                         >
-                          <span>{item.title}</span>
-                          <i className="icon icon-arrow1-top-left" />
+                          <Image
+                            className="lazyload"
+                            data-src={categoriesImage[item.categoryName]}
+                            alt={item.altText}
+                            src={categoriesImage[item.categoryName]}
+                            width="600"
+                            height="721"
+                            style={{
+                              aspectRatio: "1/1",
+                              objectFit: "cover",
+                            }}
+                          />
                         </Link>
+                        <div className="collection-content">
+                          <Link
+                            href={`/shop-default`}
+                            className="tf-btn collection-title hover-icon fs-15"
+                          >
+                            <span>{item.categoryName}</span>
+                            <i className="icon icon-arrow1-top-left" />
+                          </Link>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </SwiperSlide>
-              ))}
+                  </SwiperSlide>
+                ))}
             </Swiper>
           </div>
           <div className="col-xl-3 col-lg-4 col-md-4">

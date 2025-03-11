@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "https://localhost:44398/api/v1";
+const baseURL = "https://localhost:44358/api";
 
 const request =
   process.env.NODE_ENV === "development"

@@ -16,9 +16,7 @@ import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";
 import request from "@/utlis/axios";
 export default async function page({ params }) {
   const { id } = await params;
-  console.log(id);
-
-  let { data } = await request.get(`/Product?productId=${id}`);
+  let { data } = await request.get(`/products/${id}`);
   const product = data.data;
 
   return (

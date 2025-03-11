@@ -13,7 +13,9 @@ export default function ShopDefault() {
   const [finalSorted, setFinalSorted] = useState([]);
   useEffect(() => {
     (async () => {
-      const { data } = await request.get("/Product/all?Page=1&PageSize=20");
+      const { data } = await request.get("/Products/all?Page=1&PageSize=20");
+      console.log(data);
+
       setProducts(data.data);
     })();
   }, []);

@@ -17,21 +17,31 @@ import {
 } from "@/data/menu";
 import { usePathname } from "next/navigation";
 import request from "@/utlis/axios";
+import { useQueries } from "@tanstack/react-query";
 
 export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await request.get("/Category/all?Page=1&PageSize=200");
-      setCategories(data?.data?.results);
-      const { data: productData } = await request.get(
-        "/Product/all?Page=1&PageSize=200"
-      );
-      setProducts(productData?.data?.results);
-    })();
-  }, []);
+  const [categories, products] = useQueries({
+    queries: [
+      {
+        queryKey: ["categories"],
+        queryFn: async () => {
+          const { data } = await request.get(
+            "/product-categories?pageNumber=1&pageSize=100"
+          );
+          return data.data?.items || [];
+        },
+      },
+      {
+        queryKey: ["products"],
+        queryFn: async () => {
+          const { data } = await request.get(
+            "/products?pageNumber=1&pageSize=100"
+          );
+          return data.data?.items || [];
+        },
+      },
+    ],
+  });
 
   const pathname = usePathname();
   const isMenuActive = (menuItem) => {
@@ -138,7 +148,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
           </div>
         </div>
       </li>
-      <li className="menu-item">
+      {/* <li className="menu-item">
         <a
           href="#"
           className={`item-link ${Linkfs} ${textColor} ${
@@ -231,7 +241,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             </div>
           </div>
         </div>
-      </li>
+      </li> */}
       <li className="menu-item">
         <a
           href="#"
@@ -249,18 +259,19 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                 <div className="mega-menu-item">
                   <div className="menu-heading">Categories</div>
                   <ul className="menu-list">
-                    {categories.map((item, index) => (
-                      <li key={index}>
-                        <Link
-                          href={item.id}
-                          className={`menu-link-text link position-relative  ${
-                            isMenuActive(item) ? "activeMenu" : ""
-                          }`}
-                        >
-                          {item.name}
-                        </Link>
-                      </li>
-                    ))}
+                    {!categories.isLoading &&
+                      categories.data.map((item, index) => (
+                        <li key={index}>
+                          <Link
+                            href={item.id}
+                            className={`menu-link-text link position-relative  ${
+                              isMenuActive(item) ? "activeMenu" : ""
+                            }`}
+                          >
+                            {item.categoryName}
+                          </Link>
+                        </li>
+                      ))}
                   </ul>
                 </div>
               </div>
@@ -300,11 +311,12 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                     spaceBetween={30}
                     className="swiper tf-product-header wrap-sw-over"
                   >
-                    {products?.slice(0, 4).map((elm, i) => (
-                      <SwiperSlide key={i} className="swiper-slide">
-                        <ProductCard product={elm} />
-                      </SwiperSlide>
-                    ))}
+                    {!products.isLoading &&
+                      products.data?.slice(0, 4).map((elm, i) => (
+                        <SwiperSlide key={i} className="swiper-slide">
+                          <ProductCard product={elm} />
+                        </SwiperSlide>
+                      ))}
                   </Swiper>
                   <div className="nav-sw nav-next-slider nav-next-product-header box-icon w_46 round snmpn1">
                     <span className="icon icon-arrow-left" />
