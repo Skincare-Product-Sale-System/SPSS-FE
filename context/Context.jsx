@@ -23,18 +23,29 @@ export default function Context({ children }) {
     setTotalPrice(subtotal);
   }, [cartProducts]);
 
-  const addProductToCart = (id, qty) => {
-    if (!cartProducts.filter((elm) => elm.id == id)[0]) {
-      const item = {
-        ...allProducts.filter((elm) => elm.id == id)[0],
-        quantity: qty ? qty : 1,
-      };
-      setCartProducts((pre) => [...pre, item]);
-      openCartModal();
+  const addProductToCart = (cartItem) => {
+    // console.log("id", id);
 
+    console.log(cartProducts);
+    console.log(cartItem);
+    console.log(
+      cartProducts.length == 0 ||
+        !cartProducts?.filter((elm) => elm?.id == cartItem?.id)
+    );
+    if (
+      cartProducts.length == 0 ||
+      !cartProducts.filter((elm) => elm?.id == cartItem?.id)
+    ) {
+      // const item = {
+      //   ...allProducts.filter((elm) => elm.id == id)[0],
+      //   cartItem,
+      // };
+      setCartProducts((pre) => [...pre, cartItem]);
+      openCartModal();
       // openCart();
     }
   };
+
   const isAddedToCartProducts = (id) => {
     if (cartProducts.filter((elm) => elm.id == id)[0]) {
       return true;
@@ -91,6 +102,7 @@ export default function Context({ children }) {
     }
     return false;
   };
+
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem("cartList"));
     if (items?.length) {

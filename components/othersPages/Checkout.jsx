@@ -1,5 +1,6 @@
 "use client";
 import { useContextElement } from "@/context/Context";
+import { defaultProductImage } from "@/utlis/default";
 import Image from "next/image";
 import Link from "next/link";
 export default function Checkout() {
@@ -214,7 +215,7 @@ export default function Checkout() {
                       <figure className="img-product">
                         <Image
                           alt="product"
-                          src={elm.imgSrc}
+                          src={defaultProductImage}
                           width={720}
                           height={1005}
                         />
@@ -222,11 +223,11 @@ export default function Checkout() {
                       </figure>
                       <div className="content">
                         <div className="info">
-                          <p className="name">{elm.title}</p>
-                          <span className="variant">Brown / M</span>
+                          <p className="name">{elm.name}</p>
+                          <span className="variant">{elm.mainFunction}</span>
                         </div>
                         <span className="price">
-                          ${(elm.price * elm.quantity).toFixed(2)}
+                          ${(elm.price * elm.quantity).toLocaleString()}
                         </span>
                       </div>
                     </li>
@@ -261,7 +262,9 @@ export default function Checkout() {
                 </div>
                 <div className="d-flex justify-content-between line pb_20">
                   <h6 className="fw-5">Total</h6>
-                  <h6 className="total fw-5">$122.00</h6>
+                  <h6 className="total fw-5">
+                    ${totalPrice.toLocaleString()} USD
+                  </h6>
                 </div>
                 <div className="wd-check-payment">
                   <div className="fieldset-radio mb_20">
@@ -291,7 +294,7 @@ export default function Checkout() {
                     other purposes described in our
                     <Link
                       href={`/privacy-policy`}
-                      className="text-decoration-underline"
+                      className="text-decoration-underline ps-1"
                     >
                       privacy policy
                     </Link>
@@ -308,7 +311,7 @@ export default function Checkout() {
                       I have read and agree to the website
                       <Link
                         href={`/terms-conditions`}
-                        className="text-decoration-underline"
+                        className="ps-1 text-decoration-underline"
                       >
                         terms and conditions
                       </Link>

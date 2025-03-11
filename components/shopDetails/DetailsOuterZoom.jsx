@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import CountdownComponent from "../common/Countdown";
@@ -17,8 +17,12 @@ import { useContextElement } from "@/context/Context";
 import { openCartModal } from "@/utlis/openCartModal";
 import Rating from "../common/Rating";
 import { defaultProductImage } from "@/utlis/default";
+import { usePathname } from "next/navigation";
 
 export default function DetailsOuterZoom({ product = allProducts[0] }) {
+  const router = usePathname();
+  const productId = router.split("/")[2];
+
   const [currentColor, setCurrentColor] = useState(colors[0]);
   const [currentSize, setCurrentSize] = useState(sizeOptions[1]);
   const [quantity, setQuantity] = useState(1);
@@ -196,8 +200,13 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     <form onSubmit={(e) => e.preventDefault()} className="">
                       <a
                         onClick={() => {
+                          let cartItem = {
+                            ...product,
+                            id: productId,
+                            quantity: quantity ? quantity : 1,
+                          };
                           openCartModal();
-                          addProductToCart(product.id, quantity ? quantity : 1);
+                          addProductToCart(cartItem);
                         }}
                         className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
                       >
@@ -264,7 +273,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     </form>
                   </div>
                   <div className="tf-product-info-extra-link mb-5">
-                    <a
+                    {/* <a
                       href="#compare_color"
                       data-bs-toggle="modal"
                       className="tf-product-extra-icon"
@@ -278,7 +287,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         />
                       </div>
                       <div className="text fw-6">Compare color</div>
-                    </a>
+                    </a> */}
                     <a
                       href="#ask_question"
                       data-bs-toggle="modal"

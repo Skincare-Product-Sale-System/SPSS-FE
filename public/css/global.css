@@ -4,6 +4,7 @@ nextjs-portal {
 
 .strikethrough {
   text-decoration: line-through;
+  color: #ff0000;
 }
 
 .compare-at-price {
