@@ -1,54 +1,95 @@
 "use client";
-import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React from "react";
 
-export default function Pagination() {
-  // State to track the active page
-  const [activePage, setActivePage] = useState(1);
+export default function Pagination({
+  totalPages = 1,
+  currentPage = 1,
+  onPageChange,
+  queryKey = "page",
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Function to handle page click
   const handlePageClick = (pageNumber) => {
-    setActivePage(pageNumber);
+    // Create new URLSearchParams object from current params
+    const params = new URLSearchParams(searchParams);
+
+    // Update or add the page parameter
+    params.set(queryKey, pageNumber.toString());
+
+    // Update URL with new query string
+    router.push(`?${params.toString()}`);
+
+    // Call the callback if provided
+    if (onPageChange) {
+      onPageChange(pageNumber);
+    }
+  };
+
+  // Generate array of page numbers
+  const getPageNumbers = () => {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
+  // Handle next page
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      handlePageClick(currentPage + 1);
+    }
+  };
+
+  // Handle previous page
+  const handlePrev = () => {
+    if (currentPage > 1) {
+      handlePageClick(currentPage - 1);
+    }
   };
 
   return (
-    <>
-      <li className={activePage === 1 ? "active" : ""}>
-        <a className="pagination-link" onClick={() => handlePageClick(1)}>
-          1
-        </a>
-      </li>{" "}
-      <li className={activePage === 2 ? "active" : ""}>
+    <ul className="pagination">
+      {/* Previous button */}
+      <li className={currentPage === 1 ? "disabled" : ""}>
         <a
           className="pagination-link animate-hover-btn"
-          onClick={() => handlePageClick(2)}
+          onClick={handlePrev}
+          style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
         >
-          2
+          <span className="icon icon-arrow-left" />
         </a>
       </li>
-      <li className={activePage === 3 ? "active" : ""}>
-        <a
-          className="pagination-link animate-hover-btn"
-          onClick={() => handlePageClick(3)}
+
+      {/* Page numbers */}
+      {getPageNumbers().map((pageNumber) => (
+        <li
+          key={pageNumber}
+          className={currentPage === pageNumber ? "active" : ""}
         >
-          3
-        </a>
-      </li>
-      <li className={activePage === 4 ? "active" : ""}>
+          <a
+            className="pagination-link animate-hover-btn"
+            onClick={() => handlePageClick(pageNumber)}
+          >
+            {pageNumber}
+          </a>
+        </li>
+      ))}
+
+      {/* Next button */}
+      <li className={currentPage === totalPages ? "disabled" : ""}>
         <a
           className="pagination-link animate-hover-btn"
-          onClick={() => handlePageClick(4)}
-        >
-          4
-        </a>
-      </li>
-      <li>
-        <a
-          onClick={() => setActivePage((pre) => (pre !== 4 ? pre + 1 : pre))}
-          className="pagination-link animate-hover-btn"
+          onClick={handleNext}
+          style={{
+            cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+          }}
         >
           <span className="icon icon-arrow-right" />
         </a>
       </li>
-    </>
+    </ul>
   );
 }

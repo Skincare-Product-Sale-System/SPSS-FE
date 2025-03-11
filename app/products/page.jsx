@@ -4,10 +4,15 @@ import Topbar1 from "@/components/headers/Topbar1";
 import ShopSidebarleft from "@/components/shop/ShopSidebarleft";
 import React from "react";
 
+export const metadata = {
+  title: "Skincare Shop",
+  description: "Skincare Shop",
+};
+
 export default function ProductList() {
   return (
     <>
-      <Topbar1 /> <Header2 />
+      <Header2 />
       <div
         className="tf-page-title"
         style={{

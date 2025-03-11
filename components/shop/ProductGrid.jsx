@@ -4,7 +4,7 @@ import { ProductCard } from "../shopCards/ProductCard";
 import Productcard23 from "../shopCards/Productcard23";
 
 export default function ProductGrid({
-  gridItems = 4,
+  gridItems = 6,
   allproducts = products1,
 }) {
   return (

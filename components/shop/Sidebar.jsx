@@ -38,9 +38,14 @@ export default function Sidebar() {
         </div>
         <div id="categories" className="collapse show">
           <ul className="list-categoris current-scrollbar mb_36">
+            <li className={`cate-item`}>
+              <a href="/products">
+                <span>All</span>
+              </a>
+            </li>
             {categories.data?.map((category, index) => (
               <li key={index} className={`cate-item`}>
-                <a href="#">
+                <a href={`/products?categoryId=${category.id}`}>
                   <span>{category.categoryName}</span>&nbsp;
                   {/* <span>({category.count})</span> */}
                 </a>

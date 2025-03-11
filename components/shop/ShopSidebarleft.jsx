@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import { layouts, sortingOptions } from "@/data/shop";
 import ProductGrid from "./ProductGrid";
@@ -7,22 +7,43 @@ import Pagination from "../common/Pagination";
 import Sorting from "./Sorting";
 import { products1 } from "@/data/products";
 import { useQueries } from "@tanstack/react-query";
+import request from "@/utlis/axios";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export default function ShopSidebarleft() {
-  const [gridItems, setGridItems] = useState(3);
+  const [gridItems, setGridItems] = useState(4);
   const [finalSorted, setFinalSorted] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [products, setProducts] = useState([]);
 
-  const [products] = useQueries({
-    queries: [
-      {
-        queryKey: ["products"],
-        queryFn: async () => {
-          const { data } = await request.get("/products");
-          return data.data?.items || [];
-        },
-      },
-    ],
-  });
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+
+  useEffect(() => {
+    (async () => {
+      const categoryId = params.get("categoryId");
+      const { data } = await request.get(
+        `/products${categoryId ? `/by-category/${categoryId}` : ""}?pageSize=20`
+      );
+      setProducts(data.data);
+    })();
+  }, []);
+
+  const fetchProducts = async (page) => {
+    const categoryId = params.get("categoryId");
+    const { data } = await request.get(
+      `/products${
+        categoryId ? `/by-category/${categoryId}` : ""
+      }?pageSize=20&pageNumber=${page}`
+    );
+    setProducts(data.data);
+  };
+
+  // make it fetch products when categoryId changes
+  useEffect(() => {
+    fetchProducts(currentPage);
+  }, [searchParams]);
 
   return (
     <>
@@ -54,11 +75,24 @@ export default function ShopSidebarleft() {
           <div className="tf-row-flex">
             <Sidebar />
             <div className="tf-shop-content">
-              <ProductGrid allproducts={products.data} gridItems={gridItems} />
+              <ProductGrid
+                allproducts={products.items || []}
+                gridItems={gridItems}
+              />
               {/* pagination */}{" "}
               {finalSorted.length ? (
                 <ul className="tf-pagination-wrap tf-pagination-list">
-                  <Pagination />
+                  <Pagination
+                    currentPage={products.pageNumber}
+                    totalPages={products.totalPages}
+                    // totalPages={products.totalPages}
+                    onPageChange={(newPage) => {
+                      setCurrentPage(newPage);
+                      fetchProducts(newPage);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    queryKey="page"
+                  />
                 </ul>
               ) : (
                 ""

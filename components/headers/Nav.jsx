@@ -193,7 +193,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       </li> */}
       <li className="menu-item">
         <a
-          href="#"
+          href="/products"
           className={`item-link ${Linkfs} ${textColor}  ${
             isMenuActive(productDetailPages) ? "activeMenu" : ""
           }`}
@@ -212,7 +212,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                       categories.data.map((item, index) => (
                         <li key={index}>
                           <Link
-                            href={item.id}
+                            href={`/products?categoryId=${item.id}`}
                             className={`menu-link-text link position-relative  ${
                               isMenuActive(item) ? "activeMenu" : ""
                             }`}
