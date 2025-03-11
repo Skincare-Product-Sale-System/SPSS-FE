@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useContextElement } from "@/context/Context";
 import CountdownComponent from "../common/Countdown";
+import { defaultProductImage } from "@/utlis/default";
 export const ProductCard = ({ product }) => {
   const [currentImage, setCurrentImage] = useState(product.imgSrc);
   const { setQuickViewItem } = useContextElement();
@@ -14,8 +15,9 @@ export const ProductCard = ({ product }) => {
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
+
   useEffect(() => {
-    setCurrentImage(product.imgSrc);
+    setCurrentImage(defaultProductImage);
   }, [product]);
 
   return (
@@ -48,7 +50,7 @@ export const ProductCard = ({ product }) => {
         ) : (
           <>
             <div className="list-product-btn">
-              <a
+              {/* <a
                 href="#quick_add"
                 onClick={() => setQuickAddItem(product.id)}
                 data-bs-toggle="modal"
@@ -56,7 +58,7 @@ export const ProductCard = ({ product }) => {
               >
                 <span className="icon icon-bag" />
                 <span className="tooltip">Quick Add</span>
-              </a>
+              </a> */}
               <a
                 onClick={() => addToWishlist(product.id)}
                 className="box-icon bg_white wishlist btn-icon-action"
@@ -73,7 +75,7 @@ export const ProductCard = ({ product }) => {
                 </span>
                 <span className="icon icon-delete" />
               </a>
-              <a
+              {/* <a
                 href="#compare"
                 data-bs-toggle="offcanvas"
                 aria-controls="offcanvasLeft"
@@ -92,7 +94,7 @@ export const ProductCard = ({ product }) => {
                     : "Add to Compare"}
                 </span>
                 <span className="icon icon-check" />
-              </a>
+              </a> */}
               <a
                 href="#quick_view"
                 onClick={() => setQuickViewItem(product)}
@@ -122,9 +124,22 @@ export const ProductCard = ({ product }) => {
       </div>
       <div className="card-product-info">
         <Link href={`/product-detail/${product.id}`} className="title link">
-          {product.title}
+          {product.name}
         </Link>
-        <span className="price">${product.price.toFixed(2)}</span>
+        <span className="price" style={{ color: "#ff0000" }}>
+          ${product.price.toLocaleString()}
+          <span className="pr-8 compare-at-price strikethrough">
+            ${product.marketPrice?.toLocaleString()}
+          </span>
+        </span>
+
+        <div className="rating">
+          <i className="icon-start" />
+          <i className="icon-start" />
+          <i className="icon-start" />
+          <i className="icon-start" />
+          <i className="icon-start" />
+        </div>
         {product.colors && (
           <ul className="list-color-product">
             {product.colors.map((color, i) => (

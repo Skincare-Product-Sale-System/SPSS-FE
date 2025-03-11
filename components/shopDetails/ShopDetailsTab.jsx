@@ -1,5 +1,6 @@
 "use client";
 
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
 const tabs = [
@@ -9,7 +10,7 @@ const tabs = [
   { title: "Return Polocies", active: false },
 ];
 
-export default function ShopDetailsTab() {
+export default function ShopDetailsTab({ product }) {
   const [currentTab, setCurrentTab] = useState(1);
 
   return (
@@ -41,59 +42,39 @@ export default function ShopDetailsTab() {
                   } `}
                 >
                   <div className="">
-                    <p className="mb_30">
-                      Button-up shirt sleeves and a relaxed silhouette. It’s
-                      tailored with drapey, crinkle-texture fabric that’s made
-                      from LENZING™ ECOVERO™ Viscose — responsibly sourced
-                      wood-based fibres produced through a process that reduces
-                      impact on forests, biodiversity and water supply.
-                    </p>
+                    <p className="mb_30">{product.description}</p>
                     <div className="tf-product-des-demo">
                       <div className="right">
-                        <h3 className="fs-16 fw-5">Features</h3>
+                        <h3 className="fs-16 fw-5">Instruction</h3>
                         <ul>
-                          <li>Front button placket</li>
-                          <li>Adjustable sleeve tabs</li>
-                          <li>Babaton embroidered crest at placket and hem</li>
+                          <li>Storage: {product.storageInstruction}</li>
+                          <li>Usage {product.usageInstruction}</li>
                         </ul>
-                        <h3 className="fs-16 fw-5">Materials Care</h3>
+                        <h3 className="fs-16 fw-5">Ingredients</h3>
                         <ul className="mb-0">
-                          <li>Content: 100% LENZING™ ECOVERO™ Viscose</li>
-                          <li>Care: Hand wash</li>
-                          <li>Imported</li>
+                          <li>{product.detailedIngredients}</li>
+                          <li>
+                            Key Ingredient: {product.keyActiveIngredients}
+                          </li>
                         </ul>
                       </div>
                       <div className="left">
-                        <h3 className="fs-16 fw-5">Materials Care</h3>
+                        <h3 className="fs-16 fw-5">Description</h3>
                         <div className="d-flex gap-10 mb_15 align-items-center">
-                          <div className="icon">
-                            <i className="icon-machine" />
-                          </div>
-                          <span>Machine wash max. 30ºC. Short spin.</span>
-                        </div>
-                        <div className="d-flex gap-10 mb_15 align-items-center">
-                          <div className="icon">
-                            <i className="icon-iron" />
-                          </div>
-                          <span>Iron maximum 110ºC.</span>
-                        </div>
-                        <div className="d-flex gap-10 mb_15 align-items-center">
-                          <div className="icon">
-                            <i className="icon-bleach" />
-                          </div>
-                          <span>Do not bleach/bleach.</span>
-                        </div>
-                        <div className="d-flex gap-10 mb_15 align-items-center">
-                          <div className="icon">
-                            <i className="icon-dry-clean" />
-                          </div>
-                          <span>Do not dry clean.</span>
-                        </div>
-                        <div className="d-flex gap-10 align-items-center">
-                          <div className="icon">
-                            <i className="icon-tumble-dry" />
-                          </div>
-                          <span>Tumble dry, medium hear.</span>
+                          <ul className="mb-0">
+                            <li>Volume Weight: {product.volumeWeight}</li>
+
+                            <li>Function: {product.mainFunction}</li>
+                            <li>Texture: {product.texture}</li>
+                            <li>For Skin Issues: {product.skinIssues}</li>
+                            <li>
+                              Expiry Date:{" "}
+                              {dayjs(product.expiryDate).format("DD/MM/YYYY")}
+                            </li>
+
+                            <li>Care: Hand wash</li>
+                            <li>Imported</li>
+                          </ul>
                         </div>
                       </div>
                     </div>

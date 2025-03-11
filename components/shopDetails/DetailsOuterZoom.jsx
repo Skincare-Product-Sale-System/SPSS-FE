@@ -15,6 +15,8 @@ import Slider1ZoomOuter from "./sliders/Slider1ZoomOuter";
 import { allProducts } from "@/data/products";
 import { useContextElement } from "@/context/Context";
 import { openCartModal } from "@/utlis/openCartModal";
+import Rating from "../common/Rating";
+import { defaultProductImage } from "@/utlis/default";
 
 export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const [currentColor, setCurrentColor] = useState(colors[0]);
@@ -38,6 +40,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
     addToWishlist,
     isAddedtoWishlist,
   } = useContextElement();
+
   return (
     <section
       className="flat-spacing-4 pt_0"
@@ -55,7 +58,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                   <Slider1ZoomOuter
                     handleColor={handleColor}
                     currentColor={currentColor.value}
-                    firstImage={product.imgSrc}
+                    firstImage={defaultProductImage}
                   />
                 </div>
               </div>
@@ -65,37 +68,42 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                 <div className="tf-zoom-main" />
                 <div className="tf-product-info-list other-image-zoom">
                   <div className="tf-product-info-title">
-                    <h5>
-                      {product.title ? product.title : "Cotton jersey top"}
-                    </h5>
+                    <h5>{product.name}</h5>
+                    <Rating number={product.rating} />
                   </div>
                   <div className="tf-product-info-badges">
-                    <div className="badges">Best seller</div>
                     <div className="product-status-content">
                       <i className="icon-lightning" />
                       <p className="fw-6">
-                        Selling fast! 56 people have this in their carts.
+                        Selling fast! {product.soldCount} people have bought
+                        this.
                       </p>
                     </div>
                   </div>
-                  <div className="tf-product-info-price">
+                  <div className="tf-product-info-price mb-5">
                     <div className="price-on-sale">
-                      ${product.price.toFixed(2)}
+                      ${product.price.toLocaleString()}
                     </div>
 
                     <div className="compare-at-price">
-                      ${currentColor.oldPrice.toFixed(2)}
+                      ${product.marketPrice.toLocaleString()}
                     </div>
-
                     <div className="badges-on-sale">
-                      <span>20</span>% OFF
+                      <span>
+                        {Math.round(
+                          ((product.marketPrice - product.price) /
+                            product.marketPrice) *
+                            100
+                        )}
+                      </span>
+                      % OFF
                     </div>
                   </div>
-                  <div className="tf-product-info-liveview">
+                  {/* <div className="tf-product-info-liveview">
                     <div className="liveview-count">20</div>
                     <p className="fw-6">People are viewing this right now</p>
-                  </div>
-                  <div className="tf-product-info-countdown">
+                  </div> */}
+                  {/* <div className="tf-product-info-countdown">
                     <div className="countdown-wrap">
                       <div className="countdown-title">
                         <i className="icon-time tf-ani-tada" />
@@ -107,8 +115,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="tf-product-info-variant-picker">
+                  </div> */}
+                  {/* <div className="tf-product-info-variant-picker">
                     <div className="variant-picker-item">
                       <div className="variant-picker-label">
                         Color:
@@ -179,7 +187,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         ))}
                       </form>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="tf-product-info-quantity">
                     <div className="quantity-title fw-6">Quantity</div>
                     <Quantity setQuantity={setQuantity} />
@@ -200,7 +208,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                           -{" "}
                         </span>
                         <span className="tf-qty-price">
-                          ${(product.price * quantity).toFixed(2)}
+                          ${(product.price * quantity).toLocaleString()}
                         </span>
                       </a>
                       <a
@@ -220,7 +228,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         </span>
                         <span className="icon icon-delete" />
                       </a>
-                      <a
+                      {/* <a
                         href="#compare"
                         data-bs-toggle="offcanvas"
                         onClick={() => addToCompareItem(product.id)}
@@ -238,24 +246,24 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                             : "Add to Compare"}
                         </span>
                         <span className="icon icon-check" />
-                      </a>
+                      </a> */}
                       <div className="w-100">
                         <a href="#" className="btns-full">
-                          Buy with
-                          <Image
+                          Buy with Paypal
+                          {/* <Image
                             alt="image"
                             src="/images/payments/paypal.png"
                             width={64}
                             height={18}
-                          />
+                          /> */}
                         </a>
-                        <a href="#" className="payment-more-option">
+                        {/* <a href="#" className="payment-more-option">
                           More payment options
-                        </a>
+                        </a> */}
                       </div>
                     </form>
                   </div>
-                  <div className="tf-product-info-extra-link">
+                  <div className="tf-product-info-extra-link mb-5">
                     <a
                       href="#compare_color"
                       data-bs-toggle="modal"
@@ -340,7 +348,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       </div>
                     </div>
                   </div>
-                  <div className="tf-product-info-trust-seal">
+                  {/* <div className="tf-product-info-trust-seal">
                     <div className="tf-product-trust-mess">
                       <i className="icon-safe" />
                       <p className="fw-6">
@@ -359,7 +367,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         />
                       ))}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

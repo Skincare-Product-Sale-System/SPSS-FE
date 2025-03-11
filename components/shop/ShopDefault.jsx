@@ -1,15 +1,23 @@
 "use client";
 import { layouts } from "@/data/shop";
 import ProductGrid from "./ProductGrid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "../common/Pagination";
 import ShopFilter from "./ShopFilter";
 import Sorting from "./Sorting";
+import request from "@/utlis/axios";
 
 export default function ShopDefault() {
   const [gridItems, setGridItems] = useState(4);
   const [products, setProducts] = useState([]);
   const [finalSorted, setFinalSorted] = useState([]);
+  useEffect(() => {
+    (async () => {
+      const { data } = await request.get("/Product/all?Page=1&PageSize=20");
+      setProducts(data.data);
+    })();
+  }, []);
+
   return (
     <>
       <section className="flat-spacing-2">
@@ -43,7 +51,10 @@ export default function ShopDefault() {
             </ul>
             <div className="tf-control-sorting d-flex justify-content-end">
               <div className="tf-dropdown-sort" data-bs-toggle="dropdown">
-                <Sorting setFinalSorted={setFinalSorted} products={products} />
+                <Sorting
+                  setFinalSorted={setFinalSorted}
+                  products={products.results}
+                />
               </div>
             </div>
           </div>

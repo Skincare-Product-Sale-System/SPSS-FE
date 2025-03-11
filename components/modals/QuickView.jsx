@@ -9,6 +9,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import Quantity from "../shopDetails/Quantity";
 import { colors, sizeOptions } from "@/data/singleProductOptions";
 import React, { useState } from "react";
+import { defaultProductImage } from "@/utlis/default";
 
 export default function QuickView() {
   const {
@@ -65,16 +66,7 @@ export default function QuickView() {
                   }}
                   className="swiper tf-single-slide"
                 >
-                  {[
-                    quickViewItem.isLookBookProduct
-                      ? "/images/products/orange-1.jpg"
-                      : quickViewItem.imgSrc,
-                    quickViewItem.isLookBookProduct
-                      ? "/images/products/pink-1.jpg"
-                      : quickViewItem.imgHoverSrc
-                      ? quickViewItem.imgHoverSrc
-                      : quickViewItem.imgSrc,
-                  ].map((product, index) => (
+                  {[defaultProductImage].map((product, index) => (
                     <SwiperSlide className="swiper-slide" key={index}>
                       <div className="item">
                         <Image
@@ -101,31 +93,30 @@ export default function QuickView() {
                       className="link"
                       href={`/product-detail/${quickViewItem.id}`}
                     >
-                      {quickViewItem.title}
+                      {quickViewItem.name}
                     </Link>
                   </h5>
                 </div>
                 <div className="tf-product-info-badges">
-                  <div className="badges text-uppercase">Best seller</div>
+                  {/* <div className="badges text-uppercase">Best seller</div> */}
                   <div className="product-status-content">
                     <i className="icon-lightning" />
                     <p className="fw-6">
-                      Selling fast! 48 people have this in their carts.
+                      Selling fast! {quickViewItem.soldCount} people have bought
+                      this.
                     </p>
                   </div>
                 </div>
                 <div className="tf-product-info-price">
-                  <div className="price">${quickViewItem.price.toFixed(2)}</div>
+                  <div className="price">
+                    ${quickViewItem.price.toLocaleString()}
+                  </div>
                 </div>
                 <div className="tf-product-description">
-                  <p>
-                    Nunc arcu faucibus a et lorem eu a mauris adipiscing conubia
-                    ac aptent ligula facilisis a auctor habitant parturient a
-                    a.Interdum fermentum.
-                  </p>
+                  <p>{quickViewItem.description}</p>
                 </div>
                 <div className="tf-product-info-variant-picker">
-                  <div className="variant-picker-item">
+                  {/* <div className="variant-picker-item">
                     <div className="variant-picker-label">
                       Color:
                       <span className="fw-6 variant-picker-label-value">
@@ -156,8 +147,8 @@ export default function QuickView() {
                         </React.Fragment>
                       ))}
                     </form>
-                  </div>
-                  <div className="variant-picker-item">
+                  </div> */}
+                  {/* <div className="variant-picker-item">
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="variant-picker-label">
                         Size:
@@ -193,7 +184,7 @@ export default function QuickView() {
                         </React.Fragment>
                       ))}
                     </form>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="tf-product-info-quantity">
                   <div className="quantity-title fw-6">Quantity</div>
@@ -212,7 +203,7 @@ export default function QuickView() {
                           : "Add to cart - "}
                       </span>
                       <span className="tf-qty-price">
-                        ${quickViewItem.price.toFixed(2)}
+                        ${quickViewItem.price.toLocaleString()}
                       </span>
                     </a>
                     <a
@@ -231,7 +222,7 @@ export default function QuickView() {
                       </span>
                       <span className="icon icon-delete" />
                     </a>
-                    <a
+                    {/* <a
                       href="#compare"
                       data-bs-toggle="offcanvas"
                       aria-controls="offcanvasLeft"
@@ -250,20 +241,20 @@ export default function QuickView() {
                           : "Add to Compare"}
                       </span>
                       <span className="icon icon-check" />
-                    </a>
+                    </a> */}
                     <div className="w-100">
                       <a href="#" className="btns-full">
-                        Buy with
-                        <Image
+                        Buy with Paypal
+                        {/* <Image
                           alt="image"
                           src="/images/payments/paypal.png"
                           width={64}
                           height={18}
-                        />
+                        /> */}
                       </a>
-                      <a href="#" className="payment-more-option">
+                      {/* <a href="#" className="payment-more-option">
                         More payment options
-                      </a>
+                      </a> */}
                     </div>
                   </form>
                 </div>

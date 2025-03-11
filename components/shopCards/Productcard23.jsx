@@ -35,16 +35,11 @@ export default function Productcard23({ product }) {
       </div>
       <div className="card-product-info">
         <a href="#" className="title link">
-          {product.title}
+          {product.name}
         </a>
-        <span className="price">${product.price.toFixed(2)}</span>
-        <p className="description">
-          Button-up shirt sleeves and a relaxed silhouette. It’s tailored with
-          drapey, crinkle-texture fabric that’s made from LENZING™ ECOVERO™
-          Viscose — responsibly sourced wood-based fibres produced through a
-          process that reduces...
-        </p>
-        {product.colors && (
+        <span className="price">${product.price.toLocaleString()}</span>
+        <p className="description">{product.description}</p>
+        {/* {product.colors && (
           <ul className="list-color-product">
             {product.colors.map((color) => (
               <li
@@ -67,7 +62,7 @@ export default function Productcard23({ product }) {
               </li>
             ))}
           </ul>
-        )}
+        )} */}
         {product.sizes && (
           <div className="size-list">
             {product.sizes.map((size) => (

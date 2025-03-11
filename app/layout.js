@@ -155,7 +155,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className="preload-wrapper">
+      <body className="preload-wrapper" suppressHydrationWarning>
         <div className="preload preload-container" id="preloader">
           <div className="preload-logo">
             <div className="spinner"></div>

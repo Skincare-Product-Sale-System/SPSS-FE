@@ -239,7 +239,7 @@ export default function Slider1ZoomOuter({
           },
         }}
       >
-        {updatedImages.map((slide, index) => (
+        {updatedImages.slice(0, 1).map((slide, index) => (
           <SwiperSlide key={index} className="stagger-item">
             <div className="item">
               <Image
@@ -307,8 +307,8 @@ export default function Slider1ZoomOuter({
           ))}
 
           {/* Navigation buttons */}
-          <div className="swiper-button-next button-style-arrow thumbs-next"></div>
-          <div className="swiper-button-prev button-style-arrow thumbs-prev"></div>
+          {/* <div className="swiper-button-next button-style-arrow thumbs-next"></div> */}
+          {/* <div className="swiper-button-prev button-style-arrow thumbs-prev"></div> */}
         </Swiper>{" "}
       </Gallery>
     </>

@@ -1,0 +1,16 @@
+nextjs-portal {
+  display: none;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.compare-at-price {
+  color: #535353;
+  padding-left: 0.5rem;
+}
+
+.icon-star:before {
+  content: "\e95b";
+}

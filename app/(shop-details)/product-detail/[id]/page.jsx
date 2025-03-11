@@ -13,9 +13,14 @@ export const metadata = {
 };
 import { allProducts } from "@/data/products";
 import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";
-export default async function page({ params }) {const { id } = await params
-  const product =
-    allProducts.filter((elm) => elm.id == id)[0] || allProducts[0];
+import request from "@/utlis/axios";
+export default async function page({ params }) {
+  const { id } = await params;
+  console.log(id);
+
+  let { data } = await request.get(`/Product?productId=${id}`);
+  const product = data.data;
+
   return (
     <>
       <Header2 />
@@ -27,19 +32,16 @@ export default async function page({ params }) {const { id } = await params
                 Home
               </Link>
               <i className="icon icon-arrow-right" />
-
-              <span className="text">
-                {product.title ? product.title : "Cotton jersey top"}
-              </span>
+              <span className="text">{product.name}</span>
             </div>
             <ProductSinglePrevNext currentId={product.id} />
           </div>
         </div>
       </div>
       <DetailsOuterZoom product={product} />
-      <ShopDetailsTab />
+      <ShopDetailsTab product={product} />
       <Products />
-      <RecentProducts />
+      {/* <RecentProducts /> */}
       <Footer1 />
     </>
   );

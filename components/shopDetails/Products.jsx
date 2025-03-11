@@ -1,11 +1,23 @@
 "use client";
 
-import { products1 } from "@/data/products";
+// import { products1 } from "@/data/products";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ProductCard } from "../shopCards/ProductCard";
 import { Navigation, Pagination } from "swiper/modules";
+import { useEffect, useState } from "react";
+import request from "@/utlis/axios";
 
 export default function Products() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await request.get("/Product/all?Page=1&PageSize=20");
+      setProducts(data.data?.results);
+      console.log(data);
+    })();
+  }, []);
+
   return (
     <section className="flat-spacing-1 pt_0">
       <div className="container">
@@ -37,7 +49,7 @@ export default function Products() {
             }}
             pagination={{ clickable: true, el: ".spd307" }}
           >
-            {products1.slice(0, 8).map((product, i) => (
+            {products?.slice(0, 8).map((product, i) => (
               <SwiperSlide key={i} className="swiper-slide">
                 <ProductCard product={product} />
               </SwiperSlide>
