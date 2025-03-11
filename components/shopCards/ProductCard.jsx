@@ -26,16 +26,16 @@ export const ProductCard = ({ product }) => {
         <Link href={`/product-detail/${product.id}`} className="product-img">
           <Image
             className="lazyload img-product"
-            data-src={currentImage}
-            src={currentImage}
+            data-src={product.thumbnail}
+            src={product.thumbnail}
             alt="image-product"
             width={720}
             height={1005}
           />
           <Image
             className="lazyload img-hover"
-            data-src={currentImage}
-            src={currentImage}
+            data-src={product.thumbnail}
+            src={product.thumbnail}
             alt="image-product"
             width={720}
             height={1005}

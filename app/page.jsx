@@ -49,7 +49,7 @@ export default function Home() {
       <ShopGram />
       <Features />
       <Footer1 /> */}
-      <Announcement />
+      {/* <Announcement /> */}
       <Header2 />
       <Hero />
       <Products />

@@ -165,7 +165,9 @@ export default function RootLayout({ children }) {
         </div>{" "}
         <Providers>
           <Context>
-            <NextTopLoader showSpinner={false} />
+            <NextTopLoader
+            //  showSpinner={false}
+            />
             <div id="wrapper">{children}</div>
             {/* <div id="wrapper">{children}</div> */}
             <RtlToggle />

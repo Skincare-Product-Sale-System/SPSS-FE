@@ -163,6 +163,15 @@ export default function Slider1ZoomOuter({
       : images
   );
 
+  useEffect(() => {
+    // setfirst(imagesDefault);
+    setfirst(
+      firstImage
+        ? [{ ...images[0], src: firstImage }, ...images.slice(1)]
+        : images
+    );
+  }, [firstImage, images]);
+
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const swiperRef = useRef(null);
   useEffect(() => {
@@ -239,7 +248,7 @@ export default function Slider1ZoomOuter({
           },
         }}
       >
-        {updatedImages.slice(0, 1).map((slide, index) => (
+        {updatedImages.map((slide, index) => (
           <SwiperSlide key={index} className="stagger-item">
             <div className="item">
               <Image
@@ -249,6 +258,11 @@ export default function Slider1ZoomOuter({
                 src={slide.src} // Optional fallback for non-lazy loading
                 width={slide.width}
                 height={slide.height}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                }}
               />
             </div>
           </SwiperSlide>
@@ -282,6 +296,11 @@ export default function Slider1ZoomOuter({
                 thumbnail={slide.src}
                 width={slide.width}
                 height={slide.height}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                }}
               >
                 {({ ref, open }) => (
                   <a
@@ -299,6 +318,9 @@ export default function Slider1ZoomOuter({
                       width={slide.width}
                       height={slide.height}
                       src={slide.src} // Optional fallback for non-lazy loading
+                      style={{
+                        objectFit: "contain",
+                      }}
                     />
                   </a>
                 )}

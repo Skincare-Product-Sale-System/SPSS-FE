@@ -75,10 +75,6 @@ export default function ShopDetailsTab({ product }) {
                         <div className="d-flex gap-10 mb_15 align-items-center">
                           <ul className="mb-0">
                             <li>
-                              <span className="desc-li">Volume Weight:</span>{" "}
-                              {product.specifications.volumeWeight}g
-                            </li>
-                            <li>
                               <span className="desc-li">Function:</span>{" "}
                               {product.specifications.mainFunction}
                             </li>

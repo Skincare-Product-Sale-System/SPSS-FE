@@ -18,49 +18,43 @@ import { openCartModal } from "@/utlis/openCartModal";
 import Rating from "../common/Rating";
 import { defaultProductImage } from "@/utlis/default";
 import { usePathname } from "next/navigation";
+import { useQueries } from "@tanstack/react-query";
+import request from "@/utlis/axios";
 
 export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const router = usePathname();
   const productId = router.split("/")[2];
 
-  const sizeOptions = [
+  const capacityOptions = [
     ...new Set(
       product.productItems
         .flatMap((item) =>
           item.configurations.filter(
-            (config) => config.variationName === "Size"
+            (config) => config.variationName === "Capacity"
           )
         )
         .map((config) => config.optionName)
     ),
-  ].map((optionName) => {
-    const config = product.productItems
-      .flatMap((item) => item.configurations)
-      .find((c) => c.variationName === "Size" && c.optionName === optionName);
+  ]
+    .sort((a, b) => {
+      // Convert "100ml" to 100 by removing "ml" and converting to number
+      const numA = parseInt(a.replace(/ml/i, ""));
+      const numB = parseInt(b.replace(/ml/i, ""));
+      return numA - numB;
+    })
+    .map((optionName) => {
+      const config = product.productItems
+        .flatMap((item) => item.configurations)
+        .find(
+          (c) => c.variationName === "Capacity" && c.optionName === optionName
+        );
 
-    return {
-      id: config.optionId,
-      value: optionName,
-      defaultChecked: false,
-    };
-  });
-
-  const colorOptions = [
-    ...new Set(
-      product.productItems
-        .flatMap((item) =>
-          item.configurations.filter(
-            (config) => config.variationName === "Color"
-          )
-        )
-        .map((config) => config.optionName)
-    ),
-  ].map((config) => ({
-    id: config,
-    value: config,
-    defaultChecked: false,
-    className: `bg-color-${config?.toLowerCase()}`,
-  }));
+      return {
+        id: config.optionId,
+        value: optionName,
+        defaultChecked: false,
+      };
+    });
 
   const [currentColor, setCurrentColor] = useState(colors[0]);
   const [currentSize, setCurrentSize] = useState(sizeOptions[0]);
@@ -84,6 +78,35 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
     isAddedtoWishlist,
   } = useContextElement();
 
+  const [productImages, setProductImages] = useState();
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await request.get(`/product-images/${productId}`);
+      let images = data.data.map((item) => ({
+        id: item.id,
+        src: item.url,
+        alt: "",
+        width: 768,
+        height: 1152,
+        dataValue: item.id,
+      }));
+      product.productItems.forEach((item) => {
+        images.push({
+          id: item.id,
+          src: item.url,
+          alt: "",
+          width: 768,
+          height: 1152,
+          dataValue: item.id,
+        });
+      });
+      setProductImages(images);
+    })();
+  }, [productId]);
+
+  console.log("productImages.data.data", productImages);
+
   return (
     <section
       className="flat-spacing-4 pt_0"
@@ -99,9 +122,14 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
               <div className="tf-product-media-wrap sticky-top">
                 <div className="thumbs-slider">
                   <Slider1ZoomOuter
+                    images={productImages}
                     handleColor={handleColor}
-                    currentColor={currentColor.value}
-                    firstImage={defaultProductImage}
+                    currentColor={productImages?.[0]?.id}
+                    // firstImage={{
+                    //   src: productImages.data?.[0]?.url,
+                    //   width: 768,
+                    //   height: 1152,
+                    // }}
                   />
                 </div>
               </div>
@@ -161,40 +189,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                   </div> */}
                   <div className="tf-product-info-variant-picker">
                     <div className="variant-picker-item">
-                      <div className="variant-picker-label">
-                        Color:
-                        {/* <span className="fw-6 variant-picker-label-value">
-                          {currentColor.value}
-                        </span> */}
-                      </div>
-                      <form className="variant-picker-values">
-                        {colorOptions.map((color) => (
-                          <React.Fragment key={color.id}>
-                            <input
-                              id={color.id}
-                              type="radio"
-                              name="color1"
-                              readOnly
-                              checked={currentColor == color}
-                            />
-                            <label
-                              onClick={() => setCurrentColor(color)}
-                              className="hover-tooltip radius-60"
-                              htmlFor={color.id}
-                              data-value={color.id}
-                            >
-                              <span
-                                className={`btn-checkbox ${color.className}`}
-                              />
-                              <span className="tooltip">{color.value}</span>
-                            </label>
-                          </React.Fragment>
-                        ))}
-                      </form>
-                    </div>
-                    <div className="variant-picker-item">
                       <div className="d-flex justify-content-between align-items-center">
-                        <div className="variant-picker-label">Sizes:</div>
+                        <div className="variant-picker-label">Capacity:</div>
                         {/* <a
                           href="#find_size"
                           data-bs-toggle="modal"
@@ -204,22 +200,25 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         </a> */}
                       </div>
                       <form className="variant-picker-values">
-                        {sizeOptions.map((size) => (
-                          <React.Fragment key={size.id}>
+                        {capacityOptions.map((capacity) => (
+                          <React.Fragment key={capacity.id}>
                             <input
                               type="radio"
                               name="size1"
-                              id={size.id}
+                              id={capacity.id}
                               readOnly
-                              checked={currentSize == size.id}
+                              checked={currentSize == capacity.id}
                             />
                             <label
-                              onClick={() => setCurrentSize(size.id)}
+                              onClick={() => {
+                                setCurrentSize(capacity.id);
+                                setCurrentColor(capacity.id);
+                              }}
                               className="style-text"
-                              htmlFor={size.id}
-                              data-value={size.id}
+                              htmlFor={capacity.id}
+                              data-value={capacity.id}
                             >
-                              <p>{size.value}</p>
+                              <p>{capacity.value}</p>
                             </label>
                           </React.Fragment>
                         ))}
@@ -291,7 +290,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         <span className="icon icon-check" />
                       </a> */}
                       <div className="w-100">
-                        <a href="#" className="btns-full">
+                        <a href="/view-cart" className="btns-full">
                           Buy with Paypal
                           {/* <Image
                             alt="image"
