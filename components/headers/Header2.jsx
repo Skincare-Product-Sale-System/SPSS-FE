@@ -1,9 +1,15 @@
+"use client";
 import React from "react";
 import Nav from "./Nav";
 import Image from "next/image";
 import Link from "next/link";
 import CartLength from "../common/CartLength";
 import WishlistLength from "../common/WishlistLength";
+import { MdLogout } from "react-icons/md";
+import toast from "react-hot-toast";
+import useAuthStore from "@/context/AuthStore";
+import useQueryStore from "@/context/queryStore";
+
 export default function Header2({
   textClass,
   bgColor = "",
@@ -11,6 +17,9 @@ export default function Header2({
   isArrow = true,
   Linkfs = "",
 }) {
+  const { isLoggedIn, setLoggedOut } = useAuthStore();
+  const { switcher, revalidate } = useQueryStore();
+
   return (
     <header
       id="header"
@@ -39,14 +48,34 @@ export default function Header2({
             </a>
           </div>
           <div className="col-xl-3 col-md-4 col-6">
-            <Link href={`/`} className="logo-header">
-              <Image
+            <Link href={`/`} className="d-flex align-items-center gap-2">
+              <img
+                alt="image"
+                src="/images/logo/logo-icon.png"
+                width="40"
+                height="21"
+                style={{
+                  objectFit: "contain",
+                }}
+              />
+              <div
+                className="font-sora"
+                style={{
+                  paddingTop: "10px",
+                  color: "#0077ffb2",
+                  fontSize: "30px",
+                  fontWeight: "600",
+                }}
+              >
+                SPSS
+              </div>
+              {/* <Image
                 alt="logo"
                 className="logo"
-                src="/images/logo/logo.svg"
+                src="/images/logo/logo.png"
                 width="136"
                 height="21"
-              />
+              /> */}
             </Link>
           </div>
           <div className="col-xl-6 tf-md-hidden">
@@ -76,15 +105,7 @@ export default function Header2({
                   <i className="icon icon-search" />
                 </a>
               </li>
-              <li className="nav-account">
-                <a
-                  href="#login"
-                  data-bs-toggle="modal"
-                  className="nav-icon-item"
-                >
-                  <i className="icon icon-account" />
-                </a>
-              </li>
+
               <li className="nav-wishlist">
                 <Link href={`/wishlist`} className="nav-icon-item">
                   <i className="icon icon-heart" />
@@ -98,6 +119,7 @@ export default function Header2({
                   href="#shoppingCart"
                   data-bs-toggle="modal"
                   className="nav-icon-item"
+                  onClick={() => revalidate()}
                 >
                   <i className="icon icon-bag" />
                   <span className={`count-box ${bgColor} ${textClass}`}>
@@ -105,6 +127,29 @@ export default function Header2({
                   </span>
                 </a>
               </li>
+              {isLoggedIn ? (
+                <li className="nav-cart">
+                  <a
+                    className="nav-icon-item"
+                    onClick={() => {
+                      setLoggedOut();
+                      location.reload();
+                    }}
+                  >
+                    <MdLogout size={20} />
+                  </a>
+                </li>
+              ) : (
+                <li className="nav-account">
+                  <div
+                    href="#login"
+                    data-bs-toggle={"modal"}
+                    className="nav-icon-item"
+                  >
+                    <i className="icon icon-account" />
+                  </div>
+                </li>
+              )}
             </ul>
           </div>
         </div>

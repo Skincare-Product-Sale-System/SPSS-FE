@@ -57,7 +57,7 @@ export default function Home() {
       <Marquee />
       <Videobox />
       <Features />
-      <Products />
+      {/* <Products2 /> */}
       <Categories />
       {/* <Products2 /> */}
       <Testimonials />

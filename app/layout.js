@@ -32,6 +32,7 @@ import ScrollTop from "@/components/common/ScrollTop";
 import RtlToggle from "@/components/common/RtlToggle";
 import Providers from "@/context/Providers";
 import NextTopLoader from "nextjs-toploader";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -193,6 +194,7 @@ export default function RootLayout({ children }) {
           </Context>
         </Providers>
         <ScrollTop />
+        <Toaster />
       </body>
     </html>
   );

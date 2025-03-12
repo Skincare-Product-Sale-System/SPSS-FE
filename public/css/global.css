@@ -16,7 +16,12 @@ nextjs-portal {
   content: "\e95b";
 }
 
+.desc li {
+  color: #000000bb !important;
+}
+
 .desc-li {
-  font-weight: 600;
-  color: #000000b2 !important;
+  font-weight: 700;
+  /* color: #000000b2 !important; */
+  color: #000000 !important;
 }

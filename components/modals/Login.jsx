@@ -1,7 +1,13 @@
 "use client";
-import React from "react";
+import useAuthStore from "@/context/AuthStore";
+import request from "@/utlis/axios";
+import React, { useRef } from "react";
+import toast from "react-hot-toast";
 
 export default function Login() {
+  const closeRef = useRef(null);
+  const { setLoggedIn } = useAuthStore();
+
   return (
     <div
       className="modal modalCentered fade form-sign-in modal-part-content"
@@ -12,13 +18,37 @@ export default function Login() {
           <div className="header">
             <div className="demo-title">Log in</div>
             <span
+              ref={closeRef}
               className="icon-close icon-close-popup"
               data-bs-dismiss="modal"
             />
           </div>
           <div className="tf-login-form">
             <form
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={(e) => {
+                e.preventDefault();
+                request
+                  .post("/authentications/login", {
+                    usernameOrEmail: e.target.email.value,
+                    password: e.target.password.value,
+                  })
+                  .then((res) => {
+                    if (res.data.accessToken) {
+                      setLoggedIn(res.data.accessToken);
+                      toast.success("Login successfully");
+                      localStorage.setItem("accessToken", res.data.accessToken);
+                      localStorage.setItem(
+                        "refreshToken",
+                        res.data.refreshToken
+                      );
+                      location.reload();
+                    }
+                  })
+                  .catch((err) => {
+                    toast.error(err.message);
+                    toast.error("Wrong password or account not found");
+                  });
+              }}
               className=""
               acceptCharset="utf-8"
             >
@@ -26,8 +56,8 @@ export default function Login() {
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
-                  type="email"
-                  name=""
+                  type="text"
+                  name="email"
                   required
                   autoComplete="abc@xyz.com"
                 />
@@ -40,7 +70,7 @@ export default function Login() {
                   className="tf-field-input tf-input"
                   placeholder=" "
                   type="password"
-                  name=""
+                  name="password"
                   required
                   autoComplete="current-password"
                 />

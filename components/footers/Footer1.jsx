@@ -7,6 +7,7 @@ import LanguageSelect from "../common/LanguageSelect";
 import CurrencySelect from "../common/CurrencySelect";
 
 import { aboutLinks, footerLinks, paymentImages } from "@/data/footerLinks";
+
 export default function Footer1({ bgColor = "" }) {
   useEffect(() => {
     const headings = document.querySelectorAll(".footer-heading-moblie");
@@ -77,13 +78,30 @@ export default function Footer1({ bgColor = "" }) {
               <div className="col-xl-3 col-md-6 col-12">
                 <div className="footer-infor">
                   <div className="footer-logo">
-                    <Link href={`/`}>
-                      <Image
+                    <Link
+                      href={`/`}
+                      className="d-flex align-items-center gap-2"
+                    >
+                      <img
                         alt="image"
-                        src="/images/logo/logo.svg"
-                        width="136"
+                        src="/images/logo/logo-icon.png"
+                        width="40"
                         height="21"
+                        style={{
+                          objectFit: "contain",
+                        }}
                       />
+                      <div
+                        className="font-sora"
+                        style={{
+                          paddingTop: "10px",
+                          color: "#0077ffb2",
+                          fontSize: "30px",
+                          fontWeight: "600",
+                        }}
+                      >
+                        SPSS
+                      </div>
                     </Link>
                   </div>
                   <ul>
