@@ -59,7 +59,9 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
 
   console.log("capacityOptions", capacityOptions);
 
-  const [currentCapacity, setCurrentCapacity] = useState(capacityOptions[0].id);
+  const [currentCapacity, setCurrentCapacity] = useState(
+    capacityOptions?.[0]?.id
+  );
   const [quantity, setQuantity] = useState(1);
 
   const handleCapacity = (capacity) => {

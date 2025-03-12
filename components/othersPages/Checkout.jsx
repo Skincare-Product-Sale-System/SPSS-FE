@@ -244,7 +244,9 @@ export default function Checkout() {
                       <div className="content">
                         <div className="info">
                           <p className="name">{elm.productName}</p>
-                          <span className="variant">{elm.mainFunction}</span>
+                          <span className="variant">
+                            {elm.variationOptionValues[0]}
+                          </span>
                         </div>
                         <span className="price">
                           ${(elm.price * elm.quantity).toLocaleString()}

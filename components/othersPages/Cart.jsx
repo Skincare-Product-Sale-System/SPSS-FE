@@ -74,7 +74,7 @@ export default function Cart() {
                     <tr key={i} className="tf-cart-item file-delete">
                       <td className="tf-cart-item_product">
                         <Link
-                          href={`/product-detail/${elm.id}`}
+                          href={`/product-detail/${elm.productId}`}
                           className="img-box"
                         >
                           <Image
@@ -86,13 +86,13 @@ export default function Cart() {
                         </Link>
                         <div className="cart-info">
                           <Link
-                            href={`/product-detail/${elm.id}`}
+                            href={`/product-detail/${elm.productId}`}
                             className="cart-title link"
                           >
                             {elm.productName}
                           </Link>
                           <div className="cart-meta-variant">
-                            {elm.mainFunction}
+                            {elm.variationOptionValues[0]}
                           </div>
                           <span
                             className="remove-cart link remove"
