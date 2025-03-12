@@ -7,10 +7,11 @@ import { defaultProductImage } from "@/utlis/default";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 export default function ShopCart() {
-  const { totalPrice, setQuickViewItem } = useContextElement();
+  const { setQuickViewItem } = useContextElement();
   const [cartProducts, setCartProducts] = useState([]);
   const { switcher, revalidate } = useQueryStore();
 
@@ -21,7 +22,7 @@ export default function ShopCart() {
       const itemIndex = items.indexOf(item);
       item.quantity = quantity;
       items[itemIndex] = item;
-      setCartProducts(items);
+      // setCartProducts(items);
     }
   };
 
@@ -30,13 +31,15 @@ export default function ShopCart() {
     request
       .get("/cart-items/user/cart")
       .then((res) => {
-        console.log(res.data.data.items);
+        console.log("cart", res?.data?.data?.items);
         setCartProducts(res?.data?.data?.items);
       })
-      .catch((e) => {
-        setCartProducts([]);
-      });
+      .catch((e) => setCartProducts([]));
   }, [switcher]);
+
+  const totalPrice = cartProducts.reduce((a, b) => {
+    return a + b.price * b.quantity;
+  }, 0);
 
   const addNoteRef = useRef();
   const addGiftRef = useRef();
@@ -120,9 +123,25 @@ export default function ShopCart() {
                             <div className="wg-quantity small">
                               <span
                                 className="btn-quantity minus-btn"
-                                onClick={() =>
-                                  setQuantity(elm.id, elm.quantity - 1)
-                                }
+                                onClick={() => {
+                                  request
+                                    .put(`/cart-items/${elm.id}`, {
+                                      quantity:
+                                        elm.quantity - 1 > 1
+                                          ? elm.quantity - 1
+                                          : 1,
+                                    })
+                                    .then((res) => {
+                                      openCartModal();
+                                      toast.success(
+                                        "Added to cart successfully"
+                                      );
+                                      revalidate();
+                                    })
+                                    .catch((err) => {
+                                      toast.error("Something went wrong");
+                                    });
+                                }}
                               >
                                 -
                               </span>
@@ -131,15 +150,26 @@ export default function ShopCart() {
                                 name="number"
                                 value={elm.quantity}
                                 min={1}
+                                // im too lazy to do this
                                 onChange={(e) =>
                                   setQuantity(elm.id, e.target.value / 1)
                                 }
                               />
                               <span
                                 className="btn-quantity plus-btn"
-                                onClick={() =>
-                                  setQuantity(elm.id, elm.quantity + 1)
-                                }
+                                onClick={() => {
+                                  request
+                                    .put(`/cart-items/${elm.id}`, {
+                                      quantity: elm.quantity + 1,
+                                    })
+                                    .then((res) => {
+                                      revalidate();
+                                    })
+                                    .catch((err) => {
+                                      console.log("err", err);
+                                      toast.error("Something went wrong");
+                                    });
+                                }}
                               >
                                 +
                               </span>

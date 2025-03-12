@@ -1,3 +1,4 @@
+import Overlay from "@/components/common/Overlay";
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
 import Checkout from "@/components/othersPages/Checkout";
@@ -11,9 +12,27 @@ export default function page() {
   return (
     <>
       <Header2 />
-      <div className="tf-page-title">
+      <div
+        className="tf-page-title"
+        style={{
+          position: "relative",
+        }}
+      >
+        <Overlay />
         <div className="container-full">
-          <div className="heading text-center">Check Out</div>
+          <div className="row">
+            <div
+              className="col-12"
+              style={{
+                zIndex: 3,
+                color: "white",
+              }}
+            >
+              <div className="heading text-center" style={{}}>
+                Check Out
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

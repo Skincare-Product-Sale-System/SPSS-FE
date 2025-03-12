@@ -59,18 +59,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
 
   console.log("capacityOptions", capacityOptions);
 
-  const [currentColor, setCurrentColor] = useState(colors[0]);
   const [currentCapacity, setCurrentCapacity] = useState(capacityOptions[0].id);
   const [quantity, setQuantity] = useState(1);
-
-  const handleColor = (color) => {
-    const updatedColor = colors.filter(
-      (elm) => elm.value.toLowerCase() == color.toLowerCase()
-    )[0];
-    if (updatedColor) {
-      setCurrentColor(updatedColor);
-    }
-  };
 
   const handleCapacity = (capacity) => {
     const updatedCapacity = capacityOptions.filter(
@@ -265,7 +255,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               }
                             })
                             .catch((err) => {
-                              toast.error("Something went wrong");
+                              toast.error("Please choose capacity first");
+                              // toast.error("Something went wrong");
                             });
                         }}
                         className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"

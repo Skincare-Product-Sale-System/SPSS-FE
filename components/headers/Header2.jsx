@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Nav from "./Nav";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { MdLogout } from "react-icons/md";
 import toast from "react-hot-toast";
 import useAuthStore from "@/context/AuthStore";
 import useQueryStore from "@/context/queryStore";
+import request from "@/utlis/axios";
 
 export default function Header2({
   textClass,
@@ -19,6 +20,18 @@ export default function Header2({
 }) {
   const { isLoggedIn, setLoggedOut } = useAuthStore();
   const { switcher, revalidate } = useQueryStore();
+  const [cartProducts, setCartProducts] = useState([]);
+
+  useEffect(() => {
+    //> fetch data from server
+    request
+      .get("/cart-items/user/cart")
+      .then((res) => {
+        console.log("cart", res?.data?.data?.items);
+        setCartProducts(res?.data?.data?.items);
+      })
+      .catch((e) => setCartProducts([]));
+  }, [switcher]);
 
   return (
     <header
@@ -123,7 +136,7 @@ export default function Header2({
                 >
                   <i className="icon icon-bag" />
                   <span className={`count-box ${bgColor} ${textClass}`}>
-                    <CartLength />
+                    {cartProducts.length}
                   </span>
                 </a>
               </li>
@@ -134,6 +147,8 @@ export default function Header2({
                     onClick={() => {
                       setLoggedOut();
                       location.reload();
+                      localStorage.removeItem("accessToken");
+                      localStorage.removeItem("refreshToken");
                     }}
                   >
                     <MdLogout size={20} />

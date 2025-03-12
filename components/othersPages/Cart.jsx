@@ -1,23 +1,30 @@
 "use client";
 import { useContextElement } from "@/context/Context";
+import useQueryStore from "@/context/queryStore";
+import request from "@/utlis/axios";
 import { defaultProductImage } from "@/utlis/default";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 export default function Cart() {
-  const { cartProducts, setCartProducts, totalPrice } = useContextElement();
-  const setQuantity = (id, quantity) => {
-    if (quantity >= 1) {
-      const item = cartProducts.filter((elm) => elm.id == id)[0];
-      const items = [...cartProducts];
-      const itemIndex = items.indexOf(item);
-      item.quantity = quantity;
-      items[itemIndex] = item;
-      setCartProducts(items);
-    }
-  };
-  const removeItem = (id) => {
-    setCartProducts((pre) => [...pre.filter((elm) => elm.id != id)]);
-  };
+  const [cartProducts, setCartProducts] = useState([]);
+  const { switcher, revalidate } = useQueryStore();
+
+  useEffect(() => {
+    //> fetch data from server
+    request
+      .get("/cart-items/user/cart")
+      .then((res) => {
+        console.log("cart", res?.data?.data?.items);
+        setCartProducts(res?.data?.data?.items);
+      })
+      .catch((e) => setCartProducts([]));
+  }, [switcher]);
+
+  const totalPrice = cartProducts.reduce((a, b) => {
+    return a + b.quantity * b.price;
+  }, 0);
+
   return (
     <section className="flat-spacing-11">
       <div className="container">
@@ -63,7 +70,7 @@ export default function Cart() {
                   </tr>
                 </thead>
                 <tbody>
-                  {cartProducts.map((elm, i) => (
+                  {cartProducts?.map((elm, i) => (
                     <tr key={i} className="tf-cart-item file-delete">
                       <td className="tf-cart-item_product">
                         <Link
@@ -72,7 +79,7 @@ export default function Cart() {
                         >
                           <Image
                             alt="img-product"
-                            src={elm.productImageUrls[0] || defaultProductImage}
+                            src={elm.productImageUrl || defaultProductImage}
                             width={668}
                             height={932}
                           />
@@ -82,14 +89,18 @@ export default function Cart() {
                             href={`/product-detail/${elm.id}`}
                             className="cart-title link"
                           >
-                            {elm.name}
+                            {elm.productName}
                           </Link>
                           <div className="cart-meta-variant">
                             {elm.mainFunction}
                           </div>
                           <span
                             className="remove-cart link remove"
-                            onClick={() => removeItem(elm.id)}
+                            onClick={() =>
+                              request
+                                .delete(`/cart-items/${elm.id}`)
+                                .then((res) => revalidate())
+                            }
                           >
                             Remove
                           </span>
@@ -111,9 +122,20 @@ export default function Cart() {
                           <div className="wg-quantity">
                             <span
                               className="btn-quantity minus-btn"
-                              onClick={() =>
-                                setQuantity(elm.id, elm.quantity - 1)
-                              }
+                              onClick={() => {
+                                request
+                                  .put(`/cart-items/${elm.id}`, {
+                                    quantity:
+                                      elm.quantity >= 2 ? elm.quantity - 1 : 1,
+                                  })
+                                  .then((res) => {
+                                    revalidate();
+                                  })
+                                  .catch((err) => {
+                                    console.log("err", err);
+                                    toast.error("Something went wrong");
+                                  });
+                              }}
                             >
                               <svg
                                 className="d-inline-block"
@@ -136,9 +158,22 @@ export default function Cart() {
                             />
                             <span
                               className="btn-quantity plus-btn"
-                              onClick={() =>
-                                setQuantity(elm.id, elm.quantity + 1)
-                              }
+                              onClick={() => {
+                                request
+                                  .put(`/cart-items/${elm.id}`, {
+                                    quantity:
+                                      elm.quantity < elm.stockQuantity
+                                        ? elm.quantity + 1
+                                        : elm.quantity,
+                                  })
+                                  .then((res) => {
+                                    revalidate();
+                                  })
+                                  .catch((err) => {
+                                    console.log("err", err);
+                                    toast.error("Something went wrong");
+                                  });
+                              }}
                             >
                               <svg
                                 className="d-inline-block"

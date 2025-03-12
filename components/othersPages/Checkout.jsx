@@ -1,10 +1,30 @@
 "use client";
 import { useContextElement } from "@/context/Context";
+import useQueryStore from "@/context/queryStore";
+import request from "@/utlis/axios";
 import { defaultProductImage } from "@/utlis/default";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 export default function Checkout() {
-  const { cartProducts, setCartProducts, totalPrice } = useContextElement();
+  const [cartProducts, setCartProducts] = useState([]);
+  const { switcher, revalidate } = useQueryStore();
+
+  useEffect(() => {
+    //> fetch data from server
+    request
+      .get("/cart-items/user/cart")
+      .then((res) => {
+        console.log("cart", res?.data?.data?.items);
+        setCartProducts(res?.data?.data?.items);
+      })
+      .catch((e) => setCartProducts([]));
+  }, [switcher]);
+
+  const totalPrice = cartProducts.reduce((a, b) => {
+    return a + b.quantity * b.price;
+  }, 0);
+
   return (
     <section className="flat-spacing-11">
       <div className="container">
@@ -215,7 +235,7 @@ export default function Checkout() {
                       <figure className="img-product">
                         <Image
                           alt="product"
-                          src={elm.productImageUrls[0] || defaultProductImage}
+                          src={elm.productImageUrl || defaultProductImage}
                           width={720}
                           height={1005}
                         />
@@ -223,7 +243,7 @@ export default function Checkout() {
                       </figure>
                       <div className="content">
                         <div className="info">
-                          <p className="name">{elm.name}</p>
+                          <p className="name">{elm.productName}</p>
                           <span className="variant">{elm.mainFunction}</span>
                         </div>
                         <span className="price">
