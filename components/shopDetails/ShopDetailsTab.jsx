@@ -43,7 +43,7 @@ export default function ShopDetailsTab({ product }) {
                 >
                   <div className="">
                     <p className="mb_30">{product.description}</p>
-                    <div className="tf-product-des-demo">
+                    <div className="tf-product-des-demo desc">
                       <div className="right">
                         <h3 className="fs-16 fw-5">Instruction</h3>
                         <ul>

@@ -87,23 +87,26 @@ export default function Products() {
                 >
                   {!products.isLoading &&
                     products.data.map((product, index) => (
-                      <SwiperSlide key={index}>
+                      <SwiperSlide key={product.id}>
                         <div className="card-product style-skincare">
                           <div className="card-product-wrapper">
-                            <a href={product.id} className="product-img">
+                            <a
+                              href={`/product-detail/${product.id}`}
+                              className="product-img"
+                            >
                               <Image
                                 className="lazyload img-product"
-                                data-src={defaultProductImage}
+                                data-src={product.thumbnail}
                                 alt="image-product"
-                                src={defaultProductImage}
+                                src={product.thumbnail}
                                 width={360}
                                 height={384}
                               />
                               <Image
                                 className="lazyload img-hover"
-                                data-src={defaultProductImage}
+                                data-src={product.thumbnail}
                                 alt="image-product"
-                                src={defaultProductImage}
+                                src={product.thumbnail}
                                 width={360}
                                 height={384}
                               />

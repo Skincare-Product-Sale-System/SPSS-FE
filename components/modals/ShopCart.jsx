@@ -1,15 +1,18 @@
 "use client";
 import { useContextElement } from "@/context/Context";
+import useQueryStore from "@/context/queryStore";
 import { products1 } from "@/data/products";
+import request from "@/utlis/axios";
 import { defaultProductImage } from "@/utlis/default";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 export default function ShopCart() {
-  const { cartProducts, totalPrice, setCartProducts, setQuickViewItem } =
-    useContextElement();
+  const { totalPrice, setQuickViewItem } = useContextElement();
+  const [cartProducts, setCartProducts] = useState([]);
+  const { switcher, revalidate } = useQueryStore();
 
   const setQuantity = (id, quantity) => {
     if (quantity >= 1) {
@@ -23,15 +26,17 @@ export default function ShopCart() {
   };
 
   useEffect(() => {
-    (async () => {
-      //> fetch data from server
-      // setCartProducts(data);
-    })();
-  }, [cartProducts]);
-
-  const removeItem = (id) => {
-    setCartProducts((pre) => [...pre.filter((elm) => elm.id != id)]);
-  };
+    //> fetch data from server
+    request
+      .get("/cart-items/user/cart")
+      .then((res) => {
+        console.log(res.data.data.items);
+        setCartProducts(res?.data?.data?.items);
+      })
+      .catch((e) => {
+        setCartProducts([]);
+      });
+  }, [switcher]);
 
   const addNoteRef = useRef();
   const addGiftRef = useRef();
@@ -78,15 +83,13 @@ export default function ShopCart() {
               <div className="tf-mini-cart-main">
                 <div className="tf-mini-cart-sroll">
                   <div className="tf-mini-cart-items">
-                    {cartProducts.map((elm, i) => (
+                    {cartProducts?.map((elm, i) => (
                       <div key={i} className="tf-mini-cart-item">
                         <div className="tf-mini-cart-image">
                           <Link href={`/product-detail/${elm.id}`}>
                             <Image
                               alt="image"
-                              src={
-                                elm.productImageUrls[0] || defaultProductImage
-                              }
+                              src={elm.productImageUrl || defaultProductImage}
                               width={668}
                               height={932}
                               style={{ objectFit: "cover" }}
@@ -98,7 +101,7 @@ export default function ShopCart() {
                             className="title link"
                             href={`/product-detail/${elm.id}`}
                           >
-                            {elm.name}
+                            {elm.productName}
                           </Link>
                           <div className="meta-variant">{elm.mainFunction}</div>
                           <div className="price fw-6">
@@ -107,10 +110,7 @@ export default function ShopCart() {
                                 color: "#ff0000",
                               }}
                             >
-                              $
-                              {elm.productItems
-                                .find((item) => item.price)
-                                ?.price?.toLocaleString()}{" "}
+                              ${elm?.price?.toLocaleString()}{" "}
                             </span>
                             <span className="strikethrough ms-1 compare-at-price">
                               ${elm.marketPrice?.toLocaleString()}
@@ -147,7 +147,11 @@ export default function ShopCart() {
                             <div
                               className="tf-mini-cart-remove"
                               style={{ cursor: "pointer" }}
-                              onClick={() => removeItem(elm.id)}
+                              onClick={() => {
+                                request
+                                  .delete(`/cart-items/${elm.id}`)
+                                  .then((res) => revalidate());
+                              }}
                             >
                               Remove
                             </div>
@@ -156,7 +160,7 @@ export default function ShopCart() {
                       </div>
                     ))}
 
-                    {!cartProducts.length && (
+                    {!cartProducts?.length && (
                       <div className="container">
                         <div className="row align-items-center mt-5 mb-5">
                           <div className="col-12 fs-18">

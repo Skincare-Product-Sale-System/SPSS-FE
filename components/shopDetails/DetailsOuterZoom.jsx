@@ -20,10 +20,13 @@ import { defaultProductImage } from "@/utlis/default";
 import { usePathname } from "next/navigation";
 import { useQueries } from "@tanstack/react-query";
 import request from "@/utlis/axios";
+import toast from "react-hot-toast";
+import useQueryStore from "@/context/queryStore";
 
 export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const router = usePathname();
   const productId = router.split("/")[2];
+  const { switcher, revalidate } = useQueryStore();
   const [currentPrice, setCurrentPrice] = useState({
     price: product.price,
     marketPrice: product.marketPrice,
@@ -50,6 +53,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
         value: option.optionName,
         defaultChecked: false,
         price: config.price,
+        productItemId: config.id,
       };
     });
 
@@ -210,19 +214,19 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       </div>
                       <form className="variant-picker-values">
                         {capacityOptions.map((capacity) => (
-                          <React.Fragment key={capacity.id}>
+                          <React.Fragment key={capacity.productItemId}>
                             <input
                               type="radio"
                               name="size1"
-                              id={capacity.id}
+                              id={capacity.productItemId}
                               readOnly
-                              checked={currentCapacity == capacity.id}
+                              checked={
+                                currentCapacity == capacity.productItemId
+                              }
                             />
                             <label
                               onClick={() => {
-                                console.log("currentCapacity", capacity);
-                                setCurrentColor(capacity.id);
-                                setCurrentCapacity(capacity.id);
+                                setCurrentCapacity(capacity.productItemId);
                                 setCurrentPrice({
                                   price: capacity.price,
                                   marketPrice: capacity.price * 1.2,
@@ -246,14 +250,23 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                   <div className="tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()} className="">
                       <a
-                        onClick={() => {
-                          let cartItem = {
-                            ...product,
-                            id: productId,
-                            quantity: quantity ? quantity : 1,
-                          };
-                          openCartModal();
-                          addProductToCart(cartItem);
+                        onClick={async () => {
+                          // console.log("cartItem", product);
+                          await request
+                            .post("/cart-items", {
+                              productItemId: currentCapacity,
+                              quantity: quantity ? quantity : 1,
+                            })
+                            .then((res) => {
+                              openCartModal();
+                              if (res.data.success) {
+                                toast.success("Added to cart successfully");
+                                revalidate();
+                              }
+                            })
+                            .catch((err) => {
+                              toast.error("Something went wrong");
+                            });
                         }}
                         className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
                       >
@@ -264,7 +277,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                           -{" "}
                         </span>
                         <span className="tf-qty-price">
-                          ${(product.price * quantity).toLocaleString()}
+                          ${(currentPrice.price * quantity).toLocaleString()}
                         </span>
                       </a>
                       <a
