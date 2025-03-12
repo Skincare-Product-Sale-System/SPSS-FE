@@ -215,7 +215,7 @@ export default function Checkout() {
                       <figure className="img-product">
                         <Image
                           alt="product"
-                          src={defaultProductImage}
+                          src={elm.productImageUrls[0] || defaultProductImage}
                           width={720}
                           height={1005}
                         />

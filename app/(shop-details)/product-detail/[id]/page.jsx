@@ -7,13 +7,15 @@ import ShopDetailsTab from "@/components/shopDetails/ShopDetailsTab";
 import React from "react";
 import Link from "next/link";
 import DetailsOuterZoom from "@/components/shopDetails/DetailsOuterZoom";
+import { allProducts } from "@/data/products";
+import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";
+import request from "@/utlis/axios";
+
 export const metadata = {
   title: "Shop Details || Ecomus - Ultimate Nextjs Ecommerce Template",
   description: "Ecomus - Ultimate Nextjs Ecommerce Template",
 };
-import { allProducts } from "@/data/products";
-import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";
-import request from "@/utlis/axios";
+
 export default async function page({ params }) {
   const { id } = await params;
   let { data } = await request.get(`/products/${id}`);

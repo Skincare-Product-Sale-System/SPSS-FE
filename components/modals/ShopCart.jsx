@@ -10,6 +10,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 export default function ShopCart() {
   const { cartProducts, totalPrice, setCartProducts, setQuickViewItem } =
     useContextElement();
+
   const setQuantity = (id, quantity) => {
     if (quantity >= 1) {
       const item = cartProducts.filter((elm) => elm.id == id)[0];
@@ -83,7 +84,9 @@ export default function ShopCart() {
                           <Link href={`/product-detail/${elm.id}`}>
                             <Image
                               alt="image"
-                              src={elm.imgSrc || defaultProductImage}
+                              src={
+                                elm.productImageUrls[0] || defaultProductImage
+                              }
                               width={668}
                               height={932}
                               style={{ objectFit: "cover" }}
@@ -104,7 +107,10 @@ export default function ShopCart() {
                                 color: "#ff0000",
                               }}
                             >
-                              ${elm.price?.toLocaleString()}{" "}
+                              $
+                              {elm.productItems
+                                .find((item) => item.price)
+                                ?.price?.toLocaleString()}{" "}
                             </span>
                             <span className="strikethrough ms-1 compare-at-price">
                               ${elm.marketPrice?.toLocaleString()}
@@ -158,7 +164,7 @@ export default function ShopCart() {
                           </div>
                           <div className="col-12 mt-3">
                             <Link
-                              href={`/shop-default`}
+                              href={`/products`}
                               className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
                               style={{ width: "fit-content" }}
                             >

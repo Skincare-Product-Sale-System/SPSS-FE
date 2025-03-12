@@ -72,7 +72,7 @@ export default function Cart() {
                         >
                           <Image
                             alt="img-product"
-                            src={defaultProductImage}
+                            src={elm.productImageUrls[0] || defaultProductImage}
                             width={668}
                             height={932}
                           />

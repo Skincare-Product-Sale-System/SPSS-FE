@@ -68,6 +68,15 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
     }
   };
 
+  const handleCapacity = (capacity) => {
+    const updatedCapacity = capacityOptions.filter(
+      (elm) => elm.id == capacity
+    )[0];
+    if (updatedCapacity) {
+      setCurrentCapacity(updatedCapacity.id);
+    }
+  };
+
   const {
     addProductToCart,
     isAddedToCartProducts,
@@ -82,29 +91,30 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
   useEffect(() => {
     (async () => {
       const { data } = await request.get(`/product-images/${productId}`);
-      let images = data.data.map((item) => ({
-        id: item.id,
+      let images = data.data.map((item, index) => ({
+        id: index + 1,
         src: item.url,
         alt: "",
         width: 768,
         height: 1152,
         dataValue: item.id,
       }));
-      product.productItems.forEach((item) => {
+      const length = images.length;
+      product.productItems.forEach((item, index) => {
         images.push({
-          id: item.id,
-          src: item.url,
+          id: index + length + 1,
+          src: item.imageUrl,
           alt: "",
           width: 768,
           height: 1152,
-          dataValue: item.id,
+          dataValue: item.configurations.find(
+            (config) => config.variationName === "Capacity"
+          )?.optionId,
         });
       });
       setProductImages(images);
     })();
   }, [productId]);
-
-  console.log("productImages.data.data", productImages);
 
   return (
     <section
@@ -122,8 +132,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                 <div className="thumbs-slider">
                   <Slider1ZoomOuter
                     images={productImages}
-                    handleColor={handleColor}
-                    currentColor={productImages?.[0]?.id}
+                    handleColor={handleCapacity}
+                    currentColor={currentCapacity}
                     // firstImage={{
                     //   src: productImages.data?.[0]?.url,
                     //   width: 768,
@@ -210,6 +220,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                             />
                             <label
                               onClick={() => {
+                                console.log("currentCapacity", capacity);
                                 setCurrentColor(capacity.id);
                                 setCurrentCapacity(capacity.id);
                                 setCurrentPrice({
@@ -238,7 +249,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         onClick={() => {
                           let cartItem = {
                             ...product,
-                            id: currentCapacity,
+                            id: productId,
                             quantity: quantity ? quantity : 1,
                           };
                           openCartModal();

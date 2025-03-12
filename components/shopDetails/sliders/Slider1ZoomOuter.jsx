@@ -164,7 +164,6 @@ export default function Slider1ZoomOuter({
   );
 
   useEffect(() => {
-    // setfirst(imagesDefault);
     setfirst(
       firstImage
         ? [{ ...images[0], src: firstImage }, ...images.slice(1)]
@@ -176,9 +175,7 @@ export default function Slider1ZoomOuter({
   const swiperRef = useRef(null);
   useEffect(() => {
     const slideIndex =
-      updatedImages.filter(
-        (elm) => elm.dataValue?.toLowerCase() == currentColor.toLowerCase()
-      )[0]?.id - 1;
+      updatedImages.filter((elm) => elm.dataValue == currentColor)[0]?.id - 1;
     swiperRef.current.slideTo(slideIndex);
   }, [currentColor]);
   useEffect(() => {
