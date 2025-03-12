@@ -23,8 +23,6 @@ request.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const refreshToken = localStorage.getItem("refreshToken");
     const accessToken = localStorage.getItem("accessToken");
-    console.log("test authen ne");
-
     if (accessToken) {
       const decodedToken = jwtDecode(accessToken);
       // check if jwt token is expired

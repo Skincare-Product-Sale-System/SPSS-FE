@@ -30,9 +30,9 @@ export default function ShopCart() {
     //> fetch data from server
     request
       .get("/cart-items/user/cart")
-      .then((res) => {
-        console.log("cart", res?.data?.data?.items);
-        setCartProducts(res?.data?.data?.items);
+      .then(({ data }) => {
+        console.log("cart", data?.data?.items);
+        setCartProducts(data?.data?.items);
       })
       .catch((e) => setCartProducts([]));
   }, [switcher]);
@@ -134,10 +134,6 @@ export default function ShopCart() {
                                           : 1,
                                     })
                                     .then((res) => {
-                                      openCartModal();
-                                      toast.success(
-                                        "Added to cart successfully"
-                                      );
                                       revalidate();
                                     })
                                     .catch((err) => {

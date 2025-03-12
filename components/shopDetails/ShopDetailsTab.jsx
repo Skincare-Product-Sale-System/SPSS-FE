@@ -1,7 +1,11 @@
 "use client";
 
+import request from "@/utlis/axios";
 import dayjs from "dayjs";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Rating from "../common/Rating";
+import { defaultProductImage, defaultUserImage } from "@/utlis/default";
 
 const tabs = [
   { title: "Description", active: true },
@@ -12,6 +16,30 @@ const tabs = [
 
 export default function ShopDetailsTab({ product }) {
   const [currentTab, setCurrentTab] = useState(1);
+  const [reviews, setReviews] = useState([]);
+  const searchParams = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(1);
+  const params = new URLSearchParams(searchParams);
+
+  useEffect(() => {
+    request
+      .get(`/reviews/product/${product.id}?pageSize=20`)
+      .then(({ data }) => {
+        setReviews(data?.data?.items);
+      });
+  }, []);
+
+  const fetchReviews = async (page) => {
+    request
+      .get(`/reviews/product/${product.id}?pageSize=20&pageNumber=${page}`)
+      .then(({ data }) => {
+        setReviews(data?.data?.items);
+      });
+  };
+
+  useEffect(() => {
+    fetchReviews(currentPage);
+  }, [searchParams]);
 
   return (
     <section
@@ -103,7 +131,46 @@ export default function ShopDetailsTab({ product }) {
                     currentTab == 2 ? "active" : ""
                   } `}
                 >
-                  <table className="tf-pr-attrs">
+                  {reviews.length > 0 &&
+                    reviews?.map((review) => (
+                      <div key={review.id} className="review-card">
+                        <div className="review-header">
+                          <img
+                            src={defaultUserImage || review.avatarUrl}
+                            alt={`${review.userName}'s avatar`}
+                            className="avatar"
+                          />
+                          <div className="user-info">
+                            <div className="user-name">
+                              {review.userName} -{" "}
+                              <span className="text-muted fs-12">
+                                {dayjs(review.createdAt).format("DD/MM/YYYY")}
+                              </span>
+                            </div>
+                            <Rating number={review.ratingValue} />
+                            {/* <div className="rating">
+                            Rating: {review.ratingValue} / 5
+                          </div> */}
+                          </div>
+                        </div>
+                        <div className="review-content">
+                          <p>{review.comment}</p>
+                          {review.reviewImages.length > 0 && (
+                            <div className="review-images">
+                              {review.reviewImages.map((image, index) => (
+                                <img
+                                  key={index}
+                                  src={image}
+                                  alt={`Review image ${index + 1}`}
+                                  className="review-image"
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  {/* <table className="tf-pr-attrs">
                     <tbody>
                       <tr className="tf-attr-pa-color">
                         <th className="tf-attr-label">Color</th>
@@ -118,7 +185,7 @@ export default function ShopDetailsTab({ product }) {
                         </td>
                       </tr>
                     </tbody>
-                  </table>
+                  </table> */}
                 </div>
                 <div
                   className={`widget-content-inner ${
