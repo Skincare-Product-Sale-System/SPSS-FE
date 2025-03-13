@@ -12,7 +12,7 @@ export const useContextElement = () => {
 export default function Context({ children }) {
   const [cartProducts, setCartProducts] = useState([]);
   const [wishList, setWishList] = useState([1, 2, 3]);
-  const [compareItem, setCompareItem] = useState([1, 2, 3]);
+  const [compareItem, setCompareItem] = useState([]);
   const [quickViewItem, setQuickViewItem] = useState(allProducts[0]);
   const [quickAddItem, setQuickAddItem] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -82,12 +82,16 @@ export default function Context({ children }) {
   };
   const addToCompareItem = (id) => {
     if (!compareItem.includes(id)) {
-      setCompareItem((pre) => [...pre, id]);
+      setCompareItem((pre) => {
+        localStorage.setItem("compareItem", JSON.stringify([...pre, id]));
+        return [...pre, id];
+      });
     }
   };
   const removeFromCompareItem = (id) => {
     if (compareItem.includes(id)) {
       setCompareItem((pre) => [...pre.filter((elm) => elm != id)]);
+      localStorage.setItem("compareItem", JSON.stringify(compareItem));
     }
   };
   const isAddedtoWishlist = (id) => {
@@ -107,6 +111,13 @@ export default function Context({ children }) {
     const items = JSON.parse(localStorage.getItem("cartList"));
     if (items?.length) {
       setCartProducts(items);
+    }
+  }, []);
+
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem("compareItem"));
+    if (items?.length) {
+      setCompareItem(items);
     }
   }, []);
 

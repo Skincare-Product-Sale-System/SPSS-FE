@@ -166,12 +166,9 @@ export default function RootLayout({ children }) {
         </div>{" "}
         <Providers>
           <Context>
-            <NextTopLoader
-            //  showSpinner={false}
-            />
+            <NextTopLoader />
             <div id="wrapper">{children}</div>
-            {/* <div id="wrapper">{children}</div> */}
-            <RtlToggle />
+            {/* <RtlToggle /> */}
             <HomesModal /> <QuickView />
             <QuickAdd />
             <ProductSidebar />
@@ -190,7 +187,7 @@ export default function RootLayout({ children }) {
             <ToolbarBottom />
             <ToolbarShop />
             <NewsletterModal />
-            <ShareModal />{" "}
+            <ShareModal />
           </Context>
         </Providers>
         <ScrollTop />

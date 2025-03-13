@@ -1,3 +1,4 @@
+import Overlay from "@/components/common/Overlay";
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
 import Topbar1 from "@/components/headers/Topbar1";
@@ -12,11 +13,29 @@ export const metadata = {
 export default function page() {
   return (
     <>
-      <Topbar1 />
+      {/* <Topbar1 /> */}
       <Header2 />
-      <div className="tf-page-title">
+      <div
+        className="tf-page-title"
+        style={{
+          position: "relative",
+        }}
+      >
+        <Overlay />
         <div className="container-full">
-          <div className="heading text-center">Compare Products</div>
+          <div className="row">
+            <div
+              className="col-12"
+              style={{
+                zIndex: 3,
+                color: "white",
+              }}
+            >
+              <div className="heading text-center" style={{}}>
+                Compare Products
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

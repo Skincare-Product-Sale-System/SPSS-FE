@@ -78,3 +78,10 @@ nextjs-portal {
   object-fit: cover;
   border-radius: 4px;
 }
+
+.tf-compare-col.tf-compare-field {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

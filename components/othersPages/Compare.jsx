@@ -1,9 +1,11 @@
 "use client";
 import { useContextElement } from "@/context/Context";
 import { allProducts, products1 } from "@/data/products";
+import request from "@/utlis/axios";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import Rating from "../common/Rating";
 
 export default function Compare() {
   const { setQuickViewItem } = useContextElement();
@@ -13,8 +15,18 @@ export default function Compare() {
     useContextElement();
   const [items, setItems] = useState([]);
   useEffect(() => {
-    setItems([...allProducts.filter((elm) => compareItem.includes(elm.id))]);
+    Promise.all(
+      // fetch list of item data from api and set to items
+      compareItem.map(async (item) => {
+        const { data } = await request.get(`/products/${item}`);
+        return data.data;
+      })
+    ).then((res) => {
+      console.log("compareItem", res);
+      setItems(res);
+    });
   }, [compareItem]);
+  console.log("compareItemAt Compare Page", items);
 
   return (
     <section className="flat-spacing-12">
@@ -29,32 +41,32 @@ export default function Compare() {
                   <div className="tf-compare-item">
                     <div
                       className="tf-compare-remove link"
-                      onClick={() => removeFromCompareItem(elm.id)}
+                      onClick={() => removeFromCompareItem(elm?.id)}
                     >
                       Remove
                     </div>
                     <Link
                       className="tf-compare-image"
-                      href={`/product-detail/${elm.id}`}
+                      href={`/product-detail/${elm?.id}`}
                     >
                       <Image
-                        className="lazyload"
-                        data-src={elm.imgSrc}
-                        alt="img-compare"
+                        className="lazyload aspect-square w-full"
+                        data-src={elm?.productImageUrls[0]}
+                        alt="product image"
                         width={713}
                         height={1070}
-                        src={elm.imgSrc}
+                        src={elm?.productImageUrls[0]}
                       />
                     </Link>
                     <Link
                       className="tf-compare-title"
-                      href={`/product-detail/${elm.id}`}
+                      href={`/product-detail/${elm?.id}`}
                     >
-                      {elm.title}
+                      {elm?.name}
                     </Link>
                     <div className="price">
                       <span className="price-on-sale">
-                        ${elm.price.toFixed(2)}
+                        ${elm?.price.toLocaleString()}
                       </span>
                     </div>
                     <div className="tf-compare-group-btns d-flex gap-10">
@@ -71,7 +83,7 @@ export default function Compare() {
                         href="#quick_add"
                         data-bs-toggle="modal"
                         className="tf-btn btn-outline-dark radius-3"
-                        onClick={() => setQuickAddItem(elm.id)}
+                        onClick={() => setQuickAddItem(elm?.id)}
                       >
                         <i className="icon icon-bag" />
                         <span>QUICK ADD</span>
@@ -83,7 +95,7 @@ export default function Compare() {
             </div>
             <div className="tf-compare-row tf-compare-grid">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Availability</h6>
+                <h6>Status</h6>
               </div>
               {items.map((elm, i) => (
                 <div
@@ -93,33 +105,94 @@ export default function Compare() {
                   <div className="icon">
                     <i className="icon-check" />
                   </div>
-                  <span className="fw-5">In Stock</span>
+                  <span className="fw-5">{elm?.status}</span>
                 </div>
               ))}
             </div>
             <div className="tf-compare-row">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Vendor</h6>
+                <h6>Price</h6>
+              </div>
+              {items.map((elm, i) => (
+                <div className="tf-compare-col tf-compare-value text-center">
+                  ${elm?.price.toLocaleString()}
+                </div>
+              ))}
+            </div>
+            <div className="tf-compare-row">
+              <div className="tf-compare-col tf-compare-field d-md-block d-none">
+                <h6>Rating</h6>
+              </div>
+              {items.map((elm, i) => (
+                <div className="tf-compare-col tf-compare-value text-center">
+                  {elm?.rating > 1 ? (
+                    <Rating number={elm?.rating} />
+                  ) : (
+                    "No rating"
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="tf-compare-row">
+              <div className="tf-compare-col tf-compare-field d-md-block d-none">
+                <h6>Type</h6>
               </div>
               {items.map((elm, i) => (
                 <div
                   className="tf-compare-col tf-compare-value text-center"
                   style={{ flex: 1 }}
                 >
-                  Ecomus
+                  {elm?.category?.categoryName}
                 </div>
               ))}
             </div>
             <div className="tf-compare-row">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Color</h6>
+                <h6>Function</h6>
               </div>
               {items.map((elm, i) => (
                 <div
                   className="tf-compare-col tf-compare-value text-center"
                   style={{ flex: 1 }}
                 >
-                  Grey, Pink, Light Pink, White
+                  {elm?.specifications?.mainFunction}
+                </div>
+              ))}
+            </div>
+            <div className="tf-compare-row">
+              <div className="tf-compare-col tf-compare-field d-md-block d-none">
+                <h6>For skin type</h6>
+              </div>
+              {items.map((elm, i) => (
+                <div
+                  className="tf-compare-col tf-compare-value text-center"
+                  style={{ flex: 1 }}
+                >
+                  {elm?.specifications?.skinIssues}
+                </div>
+              ))}
+            </div>
+            <div className="tf-compare-row">
+              <div className="tf-compare-col tf-compare-field d-md-block d-none">
+                <h6>Ingredients</h6>
+              </div>
+              {items.map((elm, i) => (
+                <div
+                  className="tf-compare-col tf-compare-value text-center"
+                  style={{ flex: 1 }}
+                >
+                  {elm?.specifications?.keyActiveIngredients}
+                </div>
+              ))}
+            </div>
+
+            <div className="tf-compare-row">
+              <div className="tf-compare-col tf-compare-field d-md-block d-none">
+                <h6>Brand</h6>
+              </div>
+              {items.map((elm, i) => (
+                <div className="tf-compare-col tf-compare-value text-center">
+                  {elm?.brand?.name}
                 </div>
               ))}
             </div>

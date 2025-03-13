@@ -4,12 +4,26 @@ import Link from "next/link";
 import Image from "next/image";
 import { useContextElement } from "@/context/Context";
 import { allProducts } from "@/data/products";
+import request from "@/utlis/axios";
+import { defaultProductImage } from "@/utlis/default";
+
 export default function Compare() {
   const { removeFromCompareItem, compareItem, setCompareItem } =
     useContextElement();
   const [items, setItems] = useState([]);
   useEffect(() => {
-    setItems([...allProducts.filter((elm) => compareItem.includes(elm.id))]);
+    const fetchData = async () => {
+      // fetch list of item data from api and set to items
+      const data = await Promise.all(
+        compareItem.map(async (item) => {
+          const { data } = await request.get(`/products/${item}`);
+          return data.data;
+        })
+      );
+      console.log("compareItem", data);
+      setItems(data);
+    };
+    fetchData();
   }, [compareItem]);
 
   return (
@@ -39,20 +53,35 @@ export default function Compare() {
                           <div
                             className="icon"
                             style={{ cursor: "pointer" }}
-                            onClick={() => removeFromCompareItem(elm.id)}
+                            onClick={() => removeFromCompareItem(elm?.id)}
                           >
                             <i className="icon-close" />
                           </div>
-                          <Link href={`/product-detail/${elm.id}`}>
+                          <Link href={`/product-detail/${elm?.id}`}>
                             <Image
-                              className="radius-3"
+                              className="radius-3 aspect-square h-[120px]"
                               alt="image"
-                              src={elm.imgSrc}
-                              style={{ objectFit: "contain" }}
+                              src={elm?.productImageUrls[0]}
+                              style={{ objectFit: "cover" }}
                               width={720}
                               height={1005}
                             />
                           </Link>
+                          <div className="line-clamp-1 text-sm text-start">
+                            {elm?.name}
+                          </div>
+                          <div className="text-start">
+                            <span className="new-price">
+                              $ {elm?.price.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="text-start tf-compare-item-rating">
+                            <span className="rating-star">
+                              <i className="icon-star" />
+                              <i className="icon-star" />
+                              <i className="icon-star" />
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ))}
