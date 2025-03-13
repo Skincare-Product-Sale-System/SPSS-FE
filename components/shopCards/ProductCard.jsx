@@ -85,7 +85,7 @@ export const ProductCard = ({ product }) => {
                 </span>
                 <span className="icon icon-delete" />
               </a>
-              {/* <a
+              <a
                 href="#compare"
                 data-bs-toggle="offcanvas"
                 aria-controls="offcanvasLeft"
@@ -104,7 +104,7 @@ export const ProductCard = ({ product }) => {
                     : "Add to Compare"}
                 </span>
                 <span className="icon icon-check" />
-              </a> */}
+              </a>
               <a
                 href="#quick_view"
                 onClick={() => setQuickViewItem(product)}
@@ -136,6 +136,9 @@ export const ProductCard = ({ product }) => {
         <Link href={`/product-detail/${product.id}`} className="title link">
           {product.name}
         </Link>
+        <div className="text-sm text-gray-500 line-clamp-1">
+          {product.description}
+        </div>
         <span className="price" style={{ color: "#ff0000" }}>
           ${product.price.toLocaleString()}
           <span className="pr-8 compare-at-price strikethrough">

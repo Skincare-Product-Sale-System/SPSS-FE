@@ -7,7 +7,7 @@ import CartLength from "../common/CartLength";
 import WishlistLength from "../common/WishlistLength";
 import { MdLogout } from "react-icons/md";
 import toast from "react-hot-toast";
-import useAuthStore from "@/context/AuthStore";
+import useAuthStore from "@/context/authStore";
 import useQueryStore from "@/context/queryStore";
 import request from "@/utlis/axios";
 

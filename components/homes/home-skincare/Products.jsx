@@ -128,28 +128,28 @@ export default function Products() {
                                 </span>
                                 <span className="icon icon-delete" />
                               </a>
-                              {/* <a
-                              href="#compare"
-                              data-bs-toggle="offcanvas"
-                              aria-controls="offcanvasLeft"
-                              onClick={() => addToCompareItem(product.id)}
-                              className="box-icon bg_white compare btn-icon-action"
-                            >
-                              <span
-                                className={`icon icon-compare ${
-                                  isAddedtoCompareItem(product.id)
-                                    ? "added"
-                                    : ""
-                                }`}
-                              />
-                              <span className="tooltip">
-                                {" "}
-                                {isAddedtoCompareItem(product.id)
-                                  ? "Already Compared"
-                                  : "Add to Compare"}
-                              </span>
-                              <span className="icon icon-check" />
-                            </a> */}
+                              <a
+                                href="#compare"
+                                data-bs-toggle="offcanvas"
+                                aria-controls="offcanvasLeft"
+                                onClick={() => addToCompareItem(product.id)}
+                                className="box-icon bg_white compare btn-icon-action"
+                              >
+                                <span
+                                  className={`icon icon-compare ${
+                                    isAddedtoCompareItem(product.id)
+                                      ? "added"
+                                      : ""
+                                  }`}
+                                />
+                                <span className="tooltip">
+                                  {" "}
+                                  {isAddedtoCompareItem(product.id)
+                                    ? "Already Compared"
+                                    : "Add to Compare"}
+                                </span>
+                                <span className="icon icon-check" />
+                              </a>
                               <a
                                 href="#quick_view"
                                 onClick={() => setQuickViewItem(product)}
