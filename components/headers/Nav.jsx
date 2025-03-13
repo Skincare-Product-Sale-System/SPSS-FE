@@ -104,7 +104,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             isMenuActive(allHomepages) ? "activeMenu" : ""
           } `}
         >
-          Quiz
+          Quizzes
         </a>
       </li>
       {/* <li className="menu-item">
@@ -361,15 +361,14 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       </li>
       <li className="menu-item position-relative">
         <a
-          href="#"
+          href="/blog"
           className={`item-link ${Linkfs} ${textColor}  ${
             isMenuActive(blogLinks) ? "activeMenu" : ""
           }`}
         >
-          Blog
-          {isArrow ? <i className="icon icon-arrow-down" /> : ""}
+          Blogs
         </a>
-        <div className="sub-menu links-default">
+        {/* <div className="sub-menu links-default">
           <ul className="menu-list">
             {blogLinks.map((linkItem, index) => (
               <li key={index}>
@@ -384,7 +383,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
       </li>
     </>
   );

@@ -4,7 +4,18 @@ import { blogArticles4 } from "@/data/blogs";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Image from "next/image";
 import { Navigation, Pagination } from "swiper/modules";
+import request from "@/utlis/axios";
+import { useEffect, useState } from "react";
+
 export default function RelatedBlogs() {
+  const [blogs, setBlogs] = useState([]);
+
+  useEffect(() => {
+    request.get("/blogs").then(({ data }) => {
+      setBlogs(data.data.items);
+    });
+  }, []);
+
   return (
     <section className="mb_30">
       <div className="container">
@@ -29,27 +40,19 @@ export default function RelatedBlogs() {
             }}
             pagination={{ clickable: true, el: ".spd101" }}
           >
-            {blogArticles4.map((article, index) => (
+            {blogs.map((article, index) => (
               <SwiperSlide key={index}>
                 <div className="blog-article-item">
                   <div className="article-thumb radius-10">
-                    <Link href={`/blog-detail/${article.id}`}>
+                    <Link href={`/blog/${article.id}`}>
                       <Image
-                        src={article.imgSrc}
-                        alt={article.alt}
+                        src={article.image}
+                        alt={"blog image"}
                         width={550}
                         height={354}
                         className="lazyload"
                       />
                     </Link>
-                    <div className="article-label">
-                      <Link
-                        href={`/shop-collection-list`}
-                        className="tf-btn style-2 btn-fill radius-3 animate-hover-btn"
-                      >
-                        Shop collection
-                      </Link>
-                    </div>
                   </div>
                   <div className="article-content">
                     <div className="article-title">

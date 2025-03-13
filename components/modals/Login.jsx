@@ -1,5 +1,5 @@
 "use client";
-import useAuthStore from "@/context/AuthStore";
+import useAuthStore from "@/context/authStore";
 import request from "@/utlis/axios";
 import React, { useRef } from "react";
 import toast from "react-hot-toast";

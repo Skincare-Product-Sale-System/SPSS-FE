@@ -21,7 +21,7 @@ export default function BlogDetails({ blog }) {
                       </a>
                     </li>
                   </ul>
-                  <div className="title">{blog.title}</div>
+                  <div className="title">{blog?.title}</div>
                   <div className="meta">
                     by <span>admin</span> on <span>Oct 02</span>
                   </div>
