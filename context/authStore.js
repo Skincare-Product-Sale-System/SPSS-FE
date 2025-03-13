@@ -10,10 +10,12 @@ const useAuthStore = create()(
       Email: "",
       AvatarUrl: "",
       Role: "",
+      Id: "",
       // accessToken="",
       setLoggedIn: (accessToken) => {
         let data = jwtDecode(accessToken);
         set({
+          Id: data.Id,
           isLoggedIn: true,
           UserName: data.UserName,
           Email: data.Email,

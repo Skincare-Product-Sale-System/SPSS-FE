@@ -9,18 +9,6 @@ export default function BlogDetails({ blog }) {
             <div className="col-12">
               <div className="blog-detail-main">
                 <div className="blog-detail-main-heading">
-                  <ul className="tags-lists justify-content-center">
-                    <li>
-                      <a href="#" className="tags-item">
-                        ACCESSORIES
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="tags-item">
-                        BAGS
-                      </a>
-                    </li>
-                  </ul>
                   <div className="title">{blog?.title}</div>
                   <div className="meta">
                     by <span>admin</span> on <span>Oct 02</span>
@@ -28,9 +16,9 @@ export default function BlogDetails({ blog }) {
                   <div className="image">
                     <Image
                       className="lazyload"
-                      data-src="/images/blog/blog-detail.jpg"
+                      data-src={blog?.image}
                       alt="image"
-                      src="/images/blog/blog-detail.jpg"
+                      src={blog?.image}
                       width={1100}
                       height={707}
                     />

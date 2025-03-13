@@ -118,7 +118,16 @@ export default function Header2({
                   <i className="icon icon-search" />
                 </a>
               </li>
-
+              <li className="nav-account">
+                <a
+                  href={isLoggedIn ? "/profile" : "#login"}
+                  data-bs-toggle={isLoggedIn ? "" : "modal"}
+                  data-bs-target={isLoggedIn ? "" : "#login"}
+                  className="nav-icon-item"
+                >
+                  <i className="icon icon-account" />
+                </a>
+              </li>
               <li className="nav-wishlist">
                 <Link href={`/wishlist`} className="nav-icon-item">
                   <i className="icon icon-heart" />
@@ -140,7 +149,7 @@ export default function Header2({
                   </span>
                 </a>
               </li>
-              {isLoggedIn ? (
+              {isLoggedIn && (
                 <li className="nav-cart">
                   <a
                     className="nav-icon-item"
@@ -153,16 +162,6 @@ export default function Header2({
                   >
                     <MdLogout size={20} />
                   </a>
-                </li>
-              ) : (
-                <li className="nav-account">
-                  <div
-                    href="#login"
-                    data-bs-toggle={"modal"}
-                    className="nav-icon-item"
-                  >
-                    <i className="icon icon-account" />
-                  </div>
                 </li>
               )}
             </ul>

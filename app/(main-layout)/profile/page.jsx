@@ -1,9 +1,13 @@
-import React from "react";
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
-  return (
-    <div>
-      <div>Profile trong page nay</div>
-    </div>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/profile/info");
+  }, []);
+
+  return null;
 }
