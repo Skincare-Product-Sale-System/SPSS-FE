@@ -180,6 +180,9 @@ export default function ProfileInfo() {
           )}
         </div>
         <div className="select-custom">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Skin Type
+          </label>
           <select
             className="tf-select w-100"
             id="country"

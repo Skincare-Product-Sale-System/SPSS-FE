@@ -7,13 +7,17 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useQueryStore from "@/context/queryStore";
+import AddressItem from "@/components/address/AddressItem";
 
 const addressSchema = z.object({
-  addressLine: z.string().min(1, { message: "Address is required" }),
+  countryId: z.coerce.number().min(1, { message: "Country is required" }),
+  streetNumber: z.string().min(1, { message: "Street number is required" }),
+  addressLine1: z.string().min(1, { message: "Address is required" }),
+  addressLine2: z.string().min(1, { message: "Address is required" }),
   city: z.string().min(1, { message: "City is required" }),
-  state: z.string().min(1, { message: "State/Province is required" }),
-  country: z.string().min(1, { message: "Country is required" }),
-  postalCode: z.string().min(1, { message: "Postal code is required" }),
+  ward: z.string().min(1, { message: "Ward is required" }),
+  postCode: z.string().min(1, { message: "Postal code is required" }),
+  province: z.string().min(1, { message: "Province is required" }),
   isDefault: z.boolean().default(false),
 });
 
@@ -23,6 +27,7 @@ export default function AddressesPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [countries, setCountries] = useState([]);
   const { Id } = useAuthStore();
   const { switcher, revalidate } = useQueryStore();
 
@@ -38,21 +43,26 @@ export default function AddressesPage() {
   });
 
   useEffect(() => {
-    request.get(`/address`).then(({ data }) => {
+    request.get(`/address/user/${Id}`).then(({ data }) => {
       setAddresses(data.data.items);
-      console.log("data.data.items", data.data.items);
-
       setLoading(false);
     });
   }, [Id, switcher]);
 
+  useEffect(() => {
+    request.get(`/countries`).then(({ data }) => {
+      console.log("coutrn", data.data);
+      setCountries(data.data);
+    });
+  }, []);
+
   const onSubmit = async (data) => {
     try {
       if (isEditing) {
-        await request.put(`/user-addresses/${editingId}`, data);
+        await request.patch(`/address/${editingId}`, { ...data, userId: Id });
         toast.success("Address updated successfully");
       } else {
-        await request.post("/user-addresses", { ...data, userId: Id });
+        await request.post("/address", { ...data, userId: Id });
         toast.success("Address added successfully");
       }
       revalidate();
@@ -79,7 +89,7 @@ export default function AddressesPage() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this address?")) {
       try {
-        await request.delete(`/user-addresses/${id}`);
+        await request.delete(`/address/${id}`);
         toast.success("Address deleted successfully");
         revalidate();
       } catch (err) {
@@ -125,20 +135,68 @@ export default function AddressesPage() {
 
       {showForm && (
         <div className="bg-white p-6 rounded-lg shadow">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
+              <div className="select-custom">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Country
+                </label>
+                <select {...register("countryId")} className="tf-select w-100">
+                  <option value="" data-provinces="[]">
+                    ---
+                  </option>
+                  {countries?.map((country) => (
+                    <option value={country.id}>{country.countryName}</option>
+                  ))}
+                </select>
+                {errors.countryId && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.countryId.message}
+                  </p>
+                )}
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Address Line
+                  Street Number
                 </label>
                 <input
                   type="text"
-                  {...register("addressLine")}
+                  {...register("streetNumber")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
-                {errors.addressLine && (
+                {errors.streetNumber && (
                   <p className="mt-1 text-sm text-red-600">
-                    {errors.addressLine.message}
+                    {errors.streetNumber.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Address Line 1
+                </label>
+                <input
+                  type="text"
+                  {...register("addressLine1")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+                {errors.addressLine1 && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.addressLine1.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Address Line 2
+                </label>
+                <input
+                  type="text"
+                  {...register("addressLine2")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+                {errors.addressLine2 && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.addressLine2.message}
                   </p>
                 )}
               </div>
@@ -161,50 +219,65 @@ export default function AddressesPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  State/Province
+                  Ward
                 </label>
                 <input
                   type="text"
-                  {...register("state")}
+                  {...register("ward")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
-                {errors.state && (
+                {errors.ward && (
                   <p className="mt-1 text-sm text-red-600">
-                    {errors.state.message}
+                    {errors.ward.message}
                   </p>
                 )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Country
+                  Province
                 </label>
                 <input
                   type="text"
-                  {...register("country")}
+                  {...register("province")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
-                {errors.country && (
+                {errors.province && (
                   <p className="mt-1 text-sm text-red-600">
-                    {errors.country.message}
+                    {errors.province.message}
                   </p>
                 )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Postal Code
+                  Post Code
                 </label>
                 <input
                   type="text"
-                  {...register("postalCode")}
+                  {...register("postCode")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
-                {errors.postalCode && (
+                {errors.postCode && (
                   <p className="mt-1 text-sm text-red-600">
-                    {errors.postalCode.message}
+                    {errors.postCode.message}
                   </p>
                 )}
+              </div>
+              <div className="box-field text-start">
+                <div className="box-checkbox fieldset-radio d-flex align-items-center gap-8">
+                  <input
+                    {...register("isDefault")}
+                    type="checkbox"
+                    className="tf-check"
+                  />
+                  <label
+                    htmlFor="check-new-address"
+                    className="text_black-2 fw-4"
+                  >
+                    Set as default address.
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -221,6 +294,7 @@ export default function AddressesPage() {
               </button>
               <button
                 type="submit"
+                onClick={() => console.log("errors", errors)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               >
                 {isEditing ? "Update" : "Add"} Address
@@ -232,49 +306,14 @@ export default function AddressesPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {addresses.map((address) => (
-          <div
+          <AddressItem
             key={address.id}
-            className="bg-white p-4 rounded-lg shadow border border-gray-200"
-          >
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex-1">
-                <p className="font-medium">{address.addressLine}</p>
-                <p className="text-gray-600">
-                  {address.city}, {address.state}
-                </p>
-                <p className="text-gray-600">
-                  {address.country}, {address.postalCode}
-                </p>
-              </div>
-              {address.isDefault && (
-                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                  Default
-                </span>
-              )}
-            </div>
-            <div className="flex justify-end space-x-2 mt-4">
-              {!address.isDefault && (
-                <button
-                  onClick={() => handleSetDefault(address.id)}
-                  className="text-sm text-blue-600 hover:text-blue-800"
-                >
-                  Set as Default
-                </button>
-              )}
-              <button
-                onClick={() => handleEdit(address)}
-                className="text-sm text-gray-600 hover:text-gray-800"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(address.id)}
-                className="text-sm text-red-600 hover:text-red-800"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+            address={address}
+            showActions={true}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onSetDefault={handleSetDefault}
+          />
         ))}
       </div>
 

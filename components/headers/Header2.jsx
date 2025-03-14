@@ -120,7 +120,7 @@ export default function Header2({
               </li>
               <li className="nav-account">
                 <a
-                  href={isLoggedIn ? "/profile" : "#login"}
+                  href={isLoggedIn ? "/my-profile" : "#login"}
                   data-bs-toggle={isLoggedIn ? "" : "modal"}
                   data-bs-target={isLoggedIn ? "" : "#login"}
                   className="nav-icon-item"
