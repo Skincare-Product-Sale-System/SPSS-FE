@@ -1,0 +1,17 @@
+:root {
+  --primary: #4ECDC4;
+  --primary-light: rgba(78, 205, 196, 0.1);
+  --primary-medium: rgba(78, 205, 196, 0.3);
+  --primary-dark: #3DAFA7;
+  --primary-text: #2A7A73;
+  --gradient: linear-gradient(to bottom, #f8f9fa, #edf7f6);
+  --white: #FFFFFF;
+  --light-grey: #F8F9FA;
+  --grey: #E9ECEF;
+  --dark-grey: #6C757D;
+  --black: #212529;
+  --error: #FF6B6B;
+  --success: #6BCB77;
+  --warning: #FFD93D;
+  --info: #4D96FF;
+} 

@@ -1,19 +1,19 @@
+import Footer1 from "@/components/footers/Footer1";
+import Header2 from "@/components/headers/Header2";
 import React from "react";
 import DashboardNav from "@/components/othersPages/dashboard/AccountSideBar";
-import MyReviews from "@/components/myreviews/MyReviews";
-import ReviewHeader from "@/components/myreviews/ReviewHeader";
+import ChangePassword from "@/components/changePassword/ChangePassword";
 import { Container } from '@mui/material';
 
 export const metadata = {
-  title: "My Reviews",
-  description: "My Reviews",
+    title: "Change Password",
+    description: "Change Password",
 };
 
 export default function Page() {
     return (
       <>
         <Header2 />
-        <ReviewHeader />
         <section className="flat-spacing-11">
           <Container>
             <div className="row">
@@ -21,7 +21,7 @@ export default function Page() {
                 <DashboardNav />
               </div>
               <div className="col-lg-9">
-                <MyReviews />
+                <ChangePassword />
               </div>
             </div>
           </Container>
