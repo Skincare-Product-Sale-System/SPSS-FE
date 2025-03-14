@@ -101,7 +101,13 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
         <a
           href="/quiz"
           className={`item-link ${Linkfs} ${textColor} ${
-            isMenuActive(allHomepages) ? "activeMenu" : ""
+            isMenuActive([
+              {
+                href: "/quiz",
+              },
+            ])
+              ? "activeMenu"
+              : ""
           } `}
         >
           Quizzes

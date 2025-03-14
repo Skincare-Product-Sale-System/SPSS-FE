@@ -25,6 +25,7 @@ export default function ProfileInfo() {
   const [loading, setLoading] = useState(true);
   const { switcher, revalidate } = useQueryStore();
   const { Id, isLoggedIn } = useAuthStore();
+  const [skinTypes, setSkinTypes] = useState([]);
 
   const {
     register,
@@ -35,6 +36,12 @@ export default function ProfileInfo() {
     resolver: zodResolver(schema),
     mode: "onChange",
   });
+
+  useEffect(() => {
+    request.get(`/skin-types`).then(({ data }) => {
+      setSkinTypes(data.data.items);
+    });
+  }, []);
 
   useEffect(() => {
     request
@@ -172,21 +179,17 @@ export default function ProfileInfo() {
             </p>
           )}
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Avatar URL
-          </label>
-          <input
-            type="url"
-            {...register("avatarUrl")}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-          />
-          {errors.avatarUrl && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.avatarUrl.message}
-            </p>
-          )}
+        <div className="select-custom">
+          <select
+            className="tf-select w-100"
+            id="country"
+            name="address[country]"
+            data-default=""
+          >
+            <option value="---" data-provinces="[]">
+              ---
+            </option>
+          </select>
         </div>
       </div>
 

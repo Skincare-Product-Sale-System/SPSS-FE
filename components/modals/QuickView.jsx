@@ -44,6 +44,8 @@ export default function QuickView() {
     }
   };
 
+  console.log("quickViewItem", quickViewItem);
+
   return (
     <div className="modal fade modalDemo" id="quick_view">
       <div className="modal-dialog modal-dialog-centered">
@@ -66,7 +68,7 @@ export default function QuickView() {
                   }}
                   className="swiper tf-single-slide"
                 >
-                  {[defaultProductImage].map((product, index) => (
+                  {[quickViewItem.thumbnail].map((product, index) => (
                     <SwiperSlide className="swiper-slide" key={index}>
                       <div className="item">
                         <Image
@@ -186,13 +188,13 @@ export default function QuickView() {
                     </form>
                   </div> */}
                 </div>
-                <div className="tf-product-info-quantity">
+                {/* <div className="tf-product-info-quantity">
                   <div className="quantity-title fw-6">Quantity</div>
                   <Quantity />
-                </div>
+                </div> */}
                 <div className="tf-product-info-buy-button">
                   <form onSubmit={(e) => e.preventDefault()} className="">
-                    <a
+                    {/* <a
                       href="#"
                       className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
                       onClick={() => addProductToCart(quickViewItem.id)}
@@ -205,8 +207,14 @@ export default function QuickView() {
                       <span className="tf-qty-price">
                         ${quickViewItem.price.toLocaleString()}
                       </span>
-                    </a>
+                    </a> */}
                     <a
+                      href={`/product-detail/${quickViewItem.id}`}
+                      className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
+                    >
+                      <span>View detail</span>
+                    </a>
+                    {/* <a
                       onClick={() => addToWishlist(quickViewItem.id)}
                       className="tf-product-btn-wishlist hover-tooltip box-icon bg_white wishlist btn-icon-action"
                     >
@@ -221,7 +229,7 @@ export default function QuickView() {
                           : "Add to Wishlist"}
                       </span>
                       <span className="icon icon-delete" />
-                    </a>
+                    </a> */}
                     {/* <a
                       href="#compare"
                       data-bs-toggle="offcanvas"
