@@ -191,7 +191,7 @@ export default function ShopDetailsTab({ product }) {
                                   <li className="flex items-start">
                                     <span className="desc-li font-medium text-neutral-800 mr-2">Expiry Date:</span>{" "}
                                     <span className="text-neutral-600">
-                                      {dayjs(specs.expiryDate).format("DD/MM/YYYY")}
+                                      {specs.expiryDate}
                                     </span>
                                   </li>
                                 )}

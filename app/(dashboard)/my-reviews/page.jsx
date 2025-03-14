@@ -12,21 +12,13 @@ export const metadata = {
 export default function Page() {
     return (
       <>
-        <Header2 />
-        <ReviewHeader />
-        <section className="flat-spacing-11">
+        <section>
           <Container>
-            <div className="row">
-              <div className="col-lg-3">
-                <DashboardNav />
-              </div>
-              <div className="col-lg-9">
-                <MyReviews />
-              </div>
-            </div>
+          <div>
+            <MyReviews />
+          </div>
           </Container>
         </section>
-        <Footer1 />
       </>
     );
 }

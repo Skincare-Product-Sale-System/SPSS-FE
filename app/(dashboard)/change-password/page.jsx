@@ -13,20 +13,13 @@ export const metadata = {
 export default function Page() {
     return (
       <>
-        <Header2 />
-        <section className="flat-spacing-11">
-          <Container>
-            <div className="row">
-              <div className="col-lg-3">
-                <DashboardNav />
-              </div>
-              <div className="col-lg-9">
-                <ChangePassword />
-              </div>
+      <section className="flat-spacing-2">
+        <div className="container">
+            <div>
+              <ChangePassword />
             </div>
-          </Container>
-        </section>
-        <Footer1 />
+        </div>
+      </section>
       </>
     );
 }

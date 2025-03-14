@@ -24,6 +24,7 @@ import toast from "react-hot-toast";
 import useQueryStore from "@/context/queryStore";
 import { useTheme } from "@mui/material/styles";
 import { ShoppingCart } from "@mui/icons-material";
+import { Typography } from "@mui/material";
 
 export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const theme = useTheme();
@@ -150,7 +151,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
   } = useContextElement();
 
   const [productImages, setProductImages] = useState([]);
-
+  
   useEffect(() => {
     if (!productId) return;
     
@@ -166,10 +167,16 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
           dataValue: item.id,
         }));
         
+        // Track unique image URLs to avoid duplicates
+        const uniqueUrls = new Set(images.map(img => img.src));
+        
         const length = images.length;
         if (product?.productItems) {
           product.productItems.forEach((item, index) => {
-            if (item.imageUrl) {
+            if (item.imageUrl && !uniqueUrls.has(item.imageUrl)) {
+              // Only add if this URL hasn't been seen before
+              uniqueUrls.add(item.imageUrl);
+              
               // Find the variation option ID to associate with this image
               const optionId = item.configurations?.find(
                 config => config.variationName === variations[0]?.name
@@ -343,7 +350,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       >
                         <ShoppingCart className="mr-2" fontSize="small" />
                         <span>
-                          Add to cart
+                          Add to cart 
                         </span>
                       </a>
                       

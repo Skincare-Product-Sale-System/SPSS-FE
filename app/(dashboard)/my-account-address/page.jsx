@@ -11,25 +11,18 @@ export const metadata = {
 export default function page() {
   return (
     <>
-      <Header2 />
       <div className="tf-page-title">
         <div className="container-full">
           <div className="heading text-center">My Account Address</div>
         </div>
       </div>
-      <section className="flat-spacing-11">
+      <section className="flat-spacing-2">
         <div className="container">
-          <div className="row">
-            <div className="col-lg-3">
-              <AccountSideBar />
-            </div>
-            <div className="col-lg-9">
+            <div>
               <AccountAddress />
             </div>
-          </div>
         </div>
       </section>
-      <Footer1 />
     </>
   );
 }
