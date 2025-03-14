@@ -1,6 +1,5 @@
 "use client";
 import { useContextElement } from "@/context/Context";
-import { allProducts, products1 } from "@/data/products";
 import request from "@/utlis/axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,18 +32,29 @@ export default function Compare() {
       <div className="container">
         <div>
           <div className="tf-compare-table">
-            <div className="tf-compare-row tf-compare-grid">
+          <div className="tf-compare-row tf-compare-grid grid grid-cols-5 gap-4 items-stretch">
               <div className="tf-compare-col d-md-block d-none" />
 
               {items.map((elm, i) => (
-                <div key={i} className="tf-compare-col">
+                <div key={i} className="tf-compare-col h-full flex flex-col justify-between">
                   <div className="tf-compare-item">
-                    <div
-                      className="tf-compare-remove link"
-                      onClick={() => removeFromCompareItem(elm?.id)}
-                    >
-                      Remove
-                    </div>
+                  <div
+                    className="
+                      tf-compare-remove link 
+                      flex items-center justify-center
+                      gap-2 px-4 py-2
+                      text-sm font-semibold text-red-500
+                      border border-red-500 rounded-lg
+                      cursor-pointer
+                      bg-white
+                      hover:bg-red-500 hover:text-white
+                      transition duration-200
+                    "
+                    onClick={() => removeFromCompareItem(elm?.id)}
+                  >
+                    <i className="icon icon-trash"></i>
+                    Remove from list
+                  </div>
                     <Link
                       className="tf-compare-image"
                       href={`/product-detail/${elm?.id}`}
@@ -66,7 +76,7 @@ export default function Compare() {
                     </Link>
                     <div className="price">
                       <span className="price-on-sale">
-                        ${elm?.price.toLocaleString()}
+                        ₫{elm?.price.toLocaleString()}
                       </span>
                     </div>
                     <div className="tf-compare-group-btns d-flex gap-10">
@@ -93,7 +103,7 @@ export default function Compare() {
                 </div>
               ))}
             </div>
-            <div className="tf-compare-row tf-compare-grid">
+            <div className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
                 <h6>Status</h6>
               </div>
@@ -109,33 +119,23 @@ export default function Compare() {
                 </div>
               ))}
             </div>
-            <div className="tf-compare-row">
+            <div className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Price</h6>
+                <h6>Brand</h6>
               </div>
               {items.map((elm, i) => (
-                <div className="tf-compare-col tf-compare-value text-center">
-                  ${elm?.price.toLocaleString()}
+                <div
+                  className="tf-compare-col tf-compare-value text-center"
+                  style={{ flex: 1 }}
+                >
+                  {elm?.brand?.name}
                 </div>
               ))}
             </div>
-            <div className="tf-compare-row">
+            
+            <div className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Rating</h6>
-              </div>
-              {items.map((elm, i) => (
-                <div className="tf-compare-col tf-compare-value text-center">
-                  {elm?.rating > 1 ? (
-                    <Rating number={elm?.rating} />
-                  ) : (
-                    "No rating"
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="tf-compare-row">
-              <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Type</h6>
+                <h6>Category</h6>
               </div>
               {items.map((elm, i) => (
                 <div
@@ -146,20 +146,24 @@ export default function Compare() {
                 </div>
               ))}
             </div>
-            <div className="tf-compare-row">
+            <div className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Function</h6>
+                <h6>Rating</h6>
               </div>
               {items.map((elm, i) => (
                 <div
                   className="tf-compare-col tf-compare-value text-center"
                   style={{ flex: 1 }}
                 >
-                  {elm?.specifications?.mainFunction}
-                </div>
+                  {elm?.rating !== undefined && elm?.rating !== null ? (
+                    <Rating number={elm?.rating} />
+                  ) : (
+                    "No rating"
+                  )}
+                </div>              
               ))}
             </div>
-            <div className="tf-compare-row">
+            <div className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
                 <h6>For skin type</h6>
               </div>
@@ -172,30 +176,25 @@ export default function Compare() {
                 </div>
               ))}
             </div>
-            <div className="tf-compare-row">
+            {Object.keys(items[0]?.specifications || {}).map((key) => (
+            <div
+              key={key}
+              className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4"
+            >
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Ingredients</h6>
+                <h6>{key.replace(/([A-Z])/g, " $1")}</h6>
               </div>
               {items.map((elm, i) => (
                 <div
-                  className="tf-compare-col tf-compare-value text-center"
+                  key={i}
+                  className="tf-compare-col tf-compare-value text-center flex items-center justify-center"
                   style={{ flex: 1 }}
                 >
-                  {elm?.specifications?.keyActiveIngredients}
+                  {elm?.specifications?.[key] || "N/A"}
                 </div>
               ))}
             </div>
-
-            <div className="tf-compare-row">
-              <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Brand</h6>
-              </div>
-              {items.map((elm, i) => (
-                <div className="tf-compare-col tf-compare-value text-center">
-                  {elm?.brand?.name}
-                </div>
-              ))}
-            </div>
+          ))}
           </div>
         </div>
       </div>

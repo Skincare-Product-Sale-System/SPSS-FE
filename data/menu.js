@@ -583,7 +583,7 @@ export const productDetailPages = [
 ];
 
 export const pages = [
-  {
+  /* {
     href: "/about-us",
     text: "About us",
     className: "menu-link-text link text_black-2",
@@ -690,7 +690,7 @@ export const pages = [
         className: "menu-link-text link text_black-2",
       },
     ],
-  },
+  }, */
   {
     href: "#",
     text: "My account",
@@ -706,29 +706,34 @@ export const pages = [
         text: "My order",
         className: "menu-link-text link text_black-2",
       },
-      {
+      /* {
         href: "/my-account-orders-details",
         text: "My order details",
         className: "menu-link-text link text_black-2",
-      },
+      }, */
       {
         href: "/my-account-address",
         text: "My address",
         className: "menu-link-text link text_black-2",
       },
       {
+        href: "/my-reviews",
+        text: "My reviews",
+        className: "menu-link-text link text_black-2",
+      },
+      /* {
         href: "/my-account-edit",
         text: "My account details",
         className: "menu-link-text link text_black-2",
-      },
-      {
+      }, */
+      /* {
         href: "/my-account-wishlist",
         text: "My wishlist",
         className: "menu-link-text link text_black-2",
-      },
+      }, */
     ],
   },
-  {
+  /* {
     href: "/invoice",
     text: "Invoice",
     className: "menu-link-text link text_black-2 position-relative",
@@ -737,7 +742,7 @@ export const pages = [
     href: "/page-not-found",
     text: "404",
     className: "menu-link-text link text_black-2 position-relative",
-  },
+  }, */
 ];
 
 export const blogLinks = [

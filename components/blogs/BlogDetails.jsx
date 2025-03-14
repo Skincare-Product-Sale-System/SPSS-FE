@@ -16,9 +16,9 @@ export default function BlogDetails({ blog }) {
                   <div className="image">
                     <Image
                       className="lazyload"
-                      data-src={blog?.image}
+                      data-src={blog?.thumbnail}
                       alt="image"
-                      src={blog?.image}
+                      src={blog?.thumbnail}
                       width={1100}
                       height={707}
                     />
@@ -44,27 +44,19 @@ export default function BlogDetails({ blog }) {
                   </div>
                 </blockquote>
                 <div className="grid-image">
-                  <div>
-                    <Image
-                      className="lazyload"
-                      data-src="/images/blog/blog-detail-1.jpg"
-                      alt="image"
-                      src="/images/blog/blog-detail-1.jpg"
-                      width={705}
-                      height={538}
-                    />
-                  </div>
-                  <div>
-                    <Image
-                      className="lazyload"
-                      data-src="/images/blog/blog-detail-2.jpg"
-                      alt="image"
-                      src="/images/blog/blog-detail-2.jpg"
-                      width={705}
-                      height={538}
-                    />
-                  </div>
-                </div>
+  {blog.blogImages && blog.blogImages.map((imageUrl, index) => (
+    <div key={index}>
+      <Image
+        className="lazyload"
+        data-src={imageUrl}
+        alt={`Blog image ${index + 1}`}
+        src={imageUrl}
+        width={705}
+        height={538}
+      />
+    </div>
+  ))}
+</div>
                 <div className="desc">
                   Pellentesque dapibus hendrerit tortor. Nam ipsum risus, rutrum
                   vitae, vestibulum eu, molestie vel, lacus. Sed libero.

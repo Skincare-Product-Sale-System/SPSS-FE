@@ -28,6 +28,7 @@ import ShopGram from "@/components/homes/home-skincare/ShopGram";
 import Features from "@/components/homes/home-6/Features";
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
+import '@fontsource/roboto';
 
 export const metadata = {
   title: "Skincare Shop",

@@ -2,14 +2,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 const accountLinks = [
-  { href: "/my-account", label: "Dashboard" },
   { href: "/my-account-orders", label: "Orders" },
   { href: "/my-account-address", label: "Addresses" },
-  { href: "/my-account-edit", label: "Account Details" },
-  { href: "/my-account-wishlist", label: "Wishlist" },
+  { href: "/my-reviews", label: "My Reviews" },
 ];
 
-export default function DashboardNav() {
+export default function AccountSideBar() {
   const pathname = usePathname();
   return (
     <ul className="my-account-nav">

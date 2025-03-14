@@ -1,7 +1,7 @@
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
 import AccountAddress from "@/components/othersPages/dashboard/AccountAddress";
-import DashboardNav from "@/components/othersPages/dashboard/DashboardNav";
+import AccountSideBar from "@/components/othersPages/dashboard/AccountSideBar";
 import React from "react";
 
 export const metadata = {
@@ -21,7 +21,7 @@ export default function page() {
         <div className="container">
           <div className="row">
             <div className="col-lg-3">
-              <DashboardNav />
+              <AccountSideBar />
             </div>
             <div className="col-lg-9">
               <AccountAddress />
