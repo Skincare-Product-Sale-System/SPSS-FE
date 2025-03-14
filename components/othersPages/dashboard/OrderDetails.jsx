@@ -61,7 +61,7 @@ export default function OrderDetails() {
 
   const handleCancelOrder = async () => {
     try {
-      await request.put(`/orders/${order.id}/status?newStatus=Cancelled`);
+      await request.patch(`/orders/${order.id}/status?newStatus=Cancelled`);
       setOpenCancelDialog(false);
       fetchOrderDetails(); // Refresh order details
     } catch (error) {

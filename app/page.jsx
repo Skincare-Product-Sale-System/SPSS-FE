@@ -54,15 +54,15 @@ export default function Home() {
       <Header2 />
       <Hero />
       <Products />
-      <Banner />
-      <Marquee />
-      <Videobox />
-      <Features />
+      {/* <Banner /> */}
+      {/* <Marquee /> */}
+      {/* <Videobox />
+      <Features /> */}
       {/* <Products2 /> */}
       <Categories />
       {/* <Products2 /> */}
       <Testimonials />
-      <SkinChange />
+      {/* <SkinChange /> */}
       <Features />
       {/* <ShopGram /> */}
       <Footer1 />

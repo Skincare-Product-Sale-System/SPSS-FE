@@ -24,25 +24,13 @@ export default function Products() {
     isAddedtoCompareItem,
   } = useContextElement();
   
-  const tabs = [
-    "Essentials",
-    "Gift Sets",
-    "Bestsellers"
-  ];
-  const [activeTab, setActiveTab] = useState(0);
-  const [filtered, setFiltered] = useState([]);
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
-
   const [products] = useQueries({
     queries: [
       {
-        queryKey: ["products", tabs[activeTab]],
+        queryKey: ["products", "bestsellers"],
         queryFn: async () => {
           const { data } = await request.get(
-            "/products?pageNumber=1&pageSize=100"
+            "/products/best-sellers?pageNumber=1&pageSize=100"
           );
 
           return data.data?.items || [];
@@ -65,7 +53,7 @@ export default function Products() {
             fontSize: { xs: '1.75rem', md: '2.25rem' }
           }}
         >
-          Our Products
+          Bestsellers
         </Typography>
         
         <Typography
@@ -78,45 +66,9 @@ export default function Products() {
             mb: 5
           }}
         >
-          Discover our premium skincare collection designed to nourish and revitalize your skin
+          Discover our most popular skincare products loved by customers
         </Typography>
         
-        <Box sx={{ 
-          width: '100%', 
-          display: 'flex', 
-          justifyContent: 'center',
-          mb: 5
-        }}>
-          <Tabs 
-            value={activeTab} 
-            onChange={handleTabChange}
-            variant="scrollable"
-            scrollButtons="auto"
-            TabIndicatorProps={{
-              style: {
-                backgroundColor: theme.palette.primary.main,
-              }
-            }}
-            sx={{
-              '& .MuiTab-root': {
-                textTransform: 'none',
-                fontSize: '1rem',
-                fontWeight: 500,
-                minWidth: 100,
-                color: theme.palette.text.secondary,
-                '&.Mui-selected': {
-                  color: theme.palette.primary.main,
-                  fontWeight: 600,
-                },
-              },
-            }}
-          >
-            {tabs.map((tab, index) => (
-              <Tab key={index} label={tab} />
-            ))}
-          </Tabs>
-        </Box>
-
         <div className="relative">
           <Swiper
             dir="ltr"
@@ -321,7 +273,7 @@ export default function Products() {
                               fontSize: '0.875rem'
                             }}
                           >
-                            ${product.marketPrice}
+                            {product.marketPrice.toLocaleString()}₫
                           </Typography>
                         )}
                         <Typography
@@ -332,7 +284,7 @@ export default function Products() {
                             fontSize: '1.125rem'
                           }}
                         >
-                          ${product.price.toLocaleString()}
+                          {product.price.toLocaleString()}₫
                         </Typography>
                       </Box>
                       

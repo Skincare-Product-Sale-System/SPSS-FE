@@ -61,6 +61,8 @@ export default function Orders() {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(amount);
   };
 
@@ -141,68 +143,74 @@ export default function Orders() {
           </FormControl>
         </Box>
 
-        <table className="w-full">
-          <thead>
-            <tr>
-              <th className="fw-6">Order</th>
-              <th className="fw-6">Date</th>
-              <th className="fw-6">Status</th>
-              <th className="fw-6">Total</th>
-              <th className="fw-6">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="text-center py-4">
-                  No orders found
-                </td>
-              </tr>
-            ) : (
-              orders.map((order) => (
-                <tr key={order.id} className="tf-order-item">
-                  <td>#{order.id.substring(0, 8)}</td>
-                  <td>{dayjs(order.createdTime).format("MMM DD, YYYY")}</td>
-                  <td>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td>
-                    {formatCurrency(order.orderTotal)} for {order.orderDetails.length} items
-                  </td>
-                  <td className="flex gap-2">
-                    {order.status === "Awaiting Payment" && (
-                      <button
-                        onClick={async () => {
-                          try {
-                            const vnpayRes = await request.get(
-                              `/VNPAY/get-transaction-status-vnpay?orderId=${order.id}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fmy-orders`
-                            );
-                            if (vnpayRes.status === 200) {
-                              location.href = vnpayRes.data.data;
-                            }
-                          } catch (error) {
-                            console.error("Payment error:", error);
-                          }
-                        }}
-                        className="tf-btn btn-outline animate-hover-btn rounded-0 justify-content-center"
-                      >
-                        <span>Pay Now</span>
-                      </button>
-                    )}
-                    <Link
-                      href={`/my-account-orders-details?id=${order.id}`}
-                      className="tf-btn btn-fill animate-hover-btn rounded-0 justify-content-center"
-                    >
-                      <span>View</span>
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+        {orders.length === 0 ? (
+          <div className="text-center py-4">
+            No orders found
+          </div>
+        ) : (
+          orders.map((order) => (
+            <div key={order.id} className="mb-6 border rounded-lg overflow-hidden shadow-sm">
+              <div className="bg-gray-50 p-4 flex justify-between items-center border-b">
+                <div className="flex items-center">
+                  <span className="font-medium mr-2">Order #{order.id.substring(0, 8)}</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                    {order.status}
+                  </span>
+                </div>
+                <span className="text-gray-500">{dayjs(order.createdTime).format("MMM DD, YYYY")}</span>
+              </div>
+              
+              <div className="p-4">
+                {order.orderDetails.map((item, index) => (
+                  <div key={index} className="flex items-center py-3 border-b last:border-b-0">
+                    <div className="w-16 h-16 mr-4">
+                      {item.productImage && (
+                        <img 
+                          src={item.productImage} 
+                          alt={item.productName} 
+                          className="w-full h-full object-cover rounded"
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-sm">{item.productName}</h4>
+                      {item.variationOptionValues && item.variationOptionValues.length > 0 && (
+                        <p className="text-sm text-gray-500">
+                          {item.variationOptionValues.join(', ')}
+                        </p>
+                      )}
+                      <p className="text-sm">x{item.quantity}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium">{formatCurrency(item.price)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="bg-gray-50 p-4 border-t">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="font-medium">Tổng số tiền ({order.orderDetails.length} sản phẩm):</span>
+                  <span className="font-bold text-lg">{formatCurrency(order.orderTotal)}</span>
+                </div>
+                
+                <div className="flex justify-end gap-3">
+                  <Link
+                    href={`/my-account-orders-details?id=${order.id}`}
+                    className="px-4 py-2 bg-white border rounded-md hover:opacity-80 transition-colors"
+                    style={{ 
+                      color: mainColor, 
+                      borderColor: mainColor,
+                      backgroundColor: `${mainColor}10`
+                    }}
+                  >
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
         
         {totalPages > 1 && (
           <Box className="flex justify-center mt-6">

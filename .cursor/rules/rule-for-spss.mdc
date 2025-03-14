@@ -1,0 +1,5 @@
+---
+description: Rule-for-UI-SPSS
+globs: .jsx
+---
+always style with tailwindcss and MUI(grid, table, icon,...), user color to style from ThemeContext MuiThemeProvider, this project about skincare store website, đối với các price luôn dùng đơn vị tiền tệ VietNam ₫ và có dấu . phải hàng ngàn, chỉ show những chỗ key fix cần sửa, không cần generate dài dòng, use english in code

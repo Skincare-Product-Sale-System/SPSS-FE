@@ -8,10 +8,11 @@ import Link from "next/link";
 import DetailsOuterZoom from "@/components/shopDetails/DetailsOuterZoom";
 import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";
 import request from "@/utlis/axios";
+import { formatPrice } from "@/utlis/priceFormatter";
 
 export const metadata = {
-  title: "Chi tiết sản phẩm | Skincare Store",
-  description: "Khám phá các sản phẩm chăm sóc da chất lượng cao",
+  title: "Product Details | Skincare Store",
+  description: "Discover high-quality skincare products",
 };
 
 export default async function page({ params }) {
@@ -32,8 +33,8 @@ export default async function page({ params }) {
     const formattedProduct = {
       ...product,
       title: product.name,
-      price: product.price,
-      oldPrice: product.marketPrice !== product.price ? product.marketPrice : null,
+      price: formatPrice(product.price),
+      oldPrice: product.marketPrice !== product.price ? formatPrice(product.marketPrice) : null,
       imgSrc: product.productImageUrls[0],
       images: product.productImageUrls.map(url => ({
         src: url,
@@ -82,11 +83,11 @@ export default async function page({ params }) {
       <>
         <Header2 />
         <div className="container my-12 py-8 text-center">
-          <h2 className="text-2xl font-medium mb-4">Không thể tải thông tin sản phẩm</h2>
-          <p className="mb-6">Đã xảy ra lỗi khi tải thông tin sản phẩm. Vui lòng thử lại sau.</p>
-          <p className="text-sm text-gray-600 mb-6">Chi tiết lỗi: {error.message}</p>
+          <h2 className="text-2xl font-medium mb-4">Unable to load product information</h2>
+          <p className="mb-6">An error occurred while loading product information. Please try again later.</p>
+          <p className="text-sm text-gray-600 mb-6">Error details: {error.message}</p>
           <Link href="/shop" className="tf-btn btn-primary">
-            Quay lại cửa hàng
+            Back to shop
           </Link>
         </div>
         <Footer1 />
