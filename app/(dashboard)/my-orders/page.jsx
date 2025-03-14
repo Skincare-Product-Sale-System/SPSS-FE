@@ -3,9 +3,11 @@ import React, { useState, useEffect } from "react";
 import request from "@/utlis/axios";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
-import OrderDetail from "./OrderDetail";
+import OrderDetail from "./_partial/OrderDetail";
+import useAuthStore from "@/context/authStore";
 
 export default function Orders() {
+  const { Id } = useAuthStore();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -117,7 +119,22 @@ export default function Orders() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <OrderStatus status={order.status} />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex gap-20">
+                    {order.status == "Awaiting Payment" && (
+                      <button
+                        onClick={async () => {
+                          const vnpayRes = await request.get(
+                            `/VNPAY/get-transaction-status-vnpay?orderId=${order.id}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fmy-orders`
+                          );
+                          if (vnpayRes.status === 200) {
+                            location.href = vnpayRes.data.data;
+                          }
+                        }}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        Checkout
+                      </button>
+                    )}
                     <button
                       onClick={() => handleViewOrder(order.id)}
                       className="text-blue-600 hover:text-blue-800"

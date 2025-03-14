@@ -214,7 +214,7 @@ export default function Checkout() {
                         if (res.status == 201) {
                           const orderId = res.data.data.id;
                           const vnpayRes = await request.get(
-                            `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fprofile%2Forders`
+                            `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fmy-orders`
                           );
                           console.log("vnpayRes", vnpayRes);
                           if (vnpayRes.status === 200) {

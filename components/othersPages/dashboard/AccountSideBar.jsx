@@ -2,8 +2,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 const accountLinks = [
-  { href: "/my-account-orders", label: "Orders" },
-  { href: "/my-account-address", label: "Addresses" },
+  { href: "/my-profile", label: "Profile" },
+  { href: "/my-orders", label: "Orders" },
+  { href: "/my-address", label: "Addresses" },
   { href: "/my-reviews", label: "My Reviews" },
 ];
 
@@ -23,11 +24,11 @@ export default function AccountSideBar() {
           </Link>
         </li>
       ))}
-      <li>
+      {/* <li>
         <Link href={`/login`} className="my-account-nav-item">
           Logout
         </Link>
-      </li>
+      </li> */}
     </ul>
   );
 }
