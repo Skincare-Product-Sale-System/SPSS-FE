@@ -12,26 +12,16 @@ export const metadata = {
 export default function page() {
   return (
     <>
-      <Header2 />
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">My Orders</div>
+          <div className="heading text-center">Order Details</div>
         </div>
       </div>
-      <section className="flat-spacing-11">
+      <section>
         <div className="container">
-          <div className="row">
-            <div className="col-lg-3">
-              <AccountSideBar />
-            </div>
-            <div className="col-lg-9">
-              <OrderDetails />
-            </div>
-          </div>
+            <OrderDetails />
         </div>
       </section>
-
-      <Footer1 />
     </>
   );
 }

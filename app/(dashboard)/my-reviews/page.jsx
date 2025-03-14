@@ -12,6 +12,11 @@ export const metadata = {
 export default function Page() {
     return (
       <>
+        <div className="tf-page-title">
+        <div className="container-full">
+            <div className="heading text-center">My Reviews</div>
+        </div>
+      </div>
         <section>
           <Container>
           <div>

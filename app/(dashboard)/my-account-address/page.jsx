@@ -13,7 +13,7 @@ export default function page() {
     <>
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">My Account Address</div>
+          <div className="heading text-center">My Address</div>
         </div>
       </div>
       <section className="flat-spacing-2">
