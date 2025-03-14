@@ -44,8 +44,6 @@ export default function QuickView() {
     }
   };
 
-  console.log("quickViewItem", quickViewItem);
-
   return (
     <div className="modal fade modalDemo" id="quick_view">
       <div className="modal-dialog modal-dialog-centered">
@@ -250,20 +248,6 @@ export default function QuickView() {
                       </span>
                       <span className="icon icon-check" />
                     </a> */}
-                    <div className="w-100">
-                      <a href="#" className="btns-full">
-                        Buy with Paypal
-                        {/* <Image
-                          alt="image"
-                          src="/images/payments/paypal.png"
-                          width={64}
-                          height={18}
-                        /> */}
-                      </a>
-                      {/* <a href="#" className="payment-more-option">
-                        More payment options
-                      </a> */}
-                    </div>
                   </form>
                 </div>
                 <div>
