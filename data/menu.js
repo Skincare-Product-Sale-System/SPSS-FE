@@ -697,22 +697,32 @@ export const pages = [
     className: "menu-link-text link text_black-2",
     links: [
       {
-        href: "/my-account",
-        text: "My account",
+        href: "/my-profile",
+        text: "My profile",
         className: "menu-link-text link text_black-2",
       },
       {
-        href: "/my-account-orders",
+        href: "/my-orders",
         text: "My order",
         className: "menu-link-text link text_black-2",
       },
+      // {
+      //   href: "/my-account",
+      //   text: "My account",
+      //   className: "menu-link-text link text_black-2",
+      // },
+      // {
+      //   href: "/my-account-orders",
+      //   text: "My order",
+      //   className: "menu-link-text link text_black-2",
+      // },
       /* {
         href: "/my-account-orders-details",
         text: "My order details",
         className: "menu-link-text link text_black-2",
       }, */
       {
-        href: "/my-account-address",
+        href: "/my-address",
         text: "My address",
         className: "menu-link-text link text_black-2",
       },

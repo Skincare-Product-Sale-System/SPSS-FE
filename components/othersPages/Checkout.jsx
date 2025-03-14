@@ -212,18 +212,11 @@ export default function Checkout() {
                       .post("/orders", orderData)
                       .then(async (res) => {
                         if (res.status == 201) {
-                          const orderId = res.data.data.id;
-                          const vnpayRes = await request.get(
-                            `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fmy-orders`
-                          );
-                          console.log("vnpayRes", vnpayRes);
-                          if (vnpayRes.status === 200) {
-                            location.href = vnpayRes.data.data;
-                          }
+                          location.href = `/payment-success?id=${res.data.data.id}`;
                         }
                       })
                       .catch((err) => {
-                        toast.error("Order failed");
+                        location.href = "/payment-failure";
                       });
                   }}
                 >
