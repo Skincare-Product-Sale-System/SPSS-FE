@@ -145,13 +145,9 @@ export default function Products() {
                   </Link>
                   <span className="price">
                     {product.oldPrice > 0 && (
-                      <span className="old-price text_primary">{`$${product.oldPrice.toFixed(
-                        2
-                      )}`}</span>
+                      <span className="old-price text_primary">{`${product.oldPrice.toLocaleString()}₫`}</span>
                     )}
-                    <span className="new-price">{`$${product.price.toFixed(
-                      2
-                    )}`}</span>
+                    <span className="new-price">{`${product.price.toLocaleString()}₫`}</span>
                   </span>
                   <div className="pr-stock">
                     <div className="pr-stock-status d-flex justify-content-between align-items-center">

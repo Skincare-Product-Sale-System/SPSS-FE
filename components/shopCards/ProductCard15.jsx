@@ -146,7 +146,7 @@ export default function ProductCard15({ product }) {
             </li>
           ))}
         </ul>
-        <div className="price">${slide.price.toFixed(2)}</div>
+        <div className="price">{slide.price.toLocaleString()}₫</div>
       </div>
       <div className="tf-price-table-contents">
         <ul>

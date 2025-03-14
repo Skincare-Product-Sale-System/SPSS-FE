@@ -153,11 +153,11 @@ export default function Products() {
                     <span className="price">
                       {product.oldPrice && (
                         <span className="old-price">
-                          ${product.oldPrice.toFixed(2)}
+                          {product.oldPrice.toLocaleString()}₫
                         </span>
                       )}
                       <span className="new-price price-primary">
-                        ${product.price.toFixed(2)}
+                        {product.price.toLocaleString()}₫
                       </span>
                     </span>
                     <div className="pr-stock">

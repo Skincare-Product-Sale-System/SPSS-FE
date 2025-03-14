@@ -120,7 +120,7 @@ export default function Header2({
               </li>
               <li className="nav-account">
                 <a
-                  href={isLoggedIn ? "/my-profile" : "#login"}
+                  href={isLoggedIn ? "/my-account" : "#login"}
                   data-bs-toggle={isLoggedIn ? "" : "modal"}
                   data-bs-target={isLoggedIn ? "" : "#login"}
                   className="nav-icon-item"
@@ -128,14 +128,14 @@ export default function Header2({
                   <i className="icon icon-account" />
                 </a>
               </li>
-              <li className="nav-wishlist">
+              {/* <li className="nav-wishlist">
                 <Link href={`/wishlist`} className="nav-icon-item">
                   <i className="icon icon-heart" />
                   <span className={`count-box ${bgColor} ${textClass}`}>
                     <WishlistLength />
                   </span>
                 </Link>
-              </li>
+              </li> */}
               <li className="nav-cart">
                 <a
                   href="#shoppingCart"

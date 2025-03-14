@@ -140,9 +140,9 @@ export const ProductCard = ({ product }) => {
           {product.description}
         </div>
         <span className="price" style={{ color: "#ff0000" }}>
-          ${product.price.toLocaleString()}
+          {product.price.toLocaleString()}₫
           <span className="pr-8 compare-at-price strikethrough">
-            ${product.marketPrice?.toLocaleString()}
+            {product.marketPrice?.toLocaleString()}₫
           </span>
         </span>
 
