@@ -14,9 +14,8 @@ export default function Checkout() {
     //> fetch data from server
     request
       .get("/cart-items/user/cart")
-      .then((res) => {
-        console.log("cart", res?.data?.data?.items);
-        setCartProducts(res?.data?.data?.items);
+      .then(({ data }) => {
+        setCartProducts(data?.data?.items);
       })
       .catch((e) => setCartProducts([]));
   }, [switcher]);

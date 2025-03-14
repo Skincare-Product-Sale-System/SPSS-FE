@@ -15,7 +15,6 @@ export default function Cart() {
     request
       .get("/cart-items/user/cart")
       .then((res) => {
-        console.log("cart", res?.data?.data?.items);
         setCartProducts(res?.data?.data?.items);
       })
       .catch((e) => setCartProducts([]));
@@ -124,7 +123,7 @@ export default function Cart() {
                               className="btn-quantity minus-btn"
                               onClick={() => {
                                 request
-                                  .put(`/cart-items/${elm.id}`, {
+                                  .patch(`/cart-items/${elm.id}`, {
                                     quantity:
                                       elm.quantity >= 2 ? elm.quantity - 1 : 1,
                                   })
@@ -160,7 +159,7 @@ export default function Cart() {
                               className="btn-quantity plus-btn"
                               onClick={() => {
                                 request
-                                  .put(`/cart-items/${elm.id}`, {
+                                  .patch(`/cart-items/${elm.id}`, {
                                     quantity:
                                       elm.quantity < elm.stockQuantity
                                         ? elm.quantity + 1

@@ -8,9 +8,10 @@ import Products from "@/components/shopDetails/Products";
 import Overlay from "@/components/common/Overlay";
 
 export const metadata = {
-  title: "View Cart || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "View Cart",
+  description: "View Cart",
 };
+
 export default function page() {
   return (
     <>

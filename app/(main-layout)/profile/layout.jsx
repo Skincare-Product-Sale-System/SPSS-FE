@@ -13,6 +13,10 @@ export default function ProfileLayout({ children }) {
       name: "My Orders",
       href: "/profile/orders",
     },
+    {
+      name: "Addresses",
+      href: "/profile/addresses",
+    },
   ];
 
   return (

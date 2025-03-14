@@ -34,17 +34,17 @@ export default function Sidebar() {
           aria-controls="categories"
         >
           <span>Product categories</span>
-          <span className="icon icon-arrow-up" />
+          {/* <span className="icon icon-arrow-up" /> */}
         </div>
-        <div id="categories" className="collapse show">
-          <ul className="list-categoris current-scrollbar mb_36">
+        <div className="mb-6">
+          <ul className="space-y-2">
             <li className={`cate-item`}>
               <a href="/products">
                 <span>All</span>
               </a>
             </li>
-            {categories.data?.map((category, index) => (
-              <li key={index} className={`cate-item`}>
+            {categories?.data?.map((category, index) => (
+              <li key={index} className={`!text-black`}>
                 <a href={`/products?categoryId=${category.id}`}>
                   <span>{category.categoryName}</span>&nbsp;
                   {/* <span>({category.count})</span> */}

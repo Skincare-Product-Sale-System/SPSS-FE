@@ -29,7 +29,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const { switcher, revalidate } = useQueryStore();
   const [currentPrice, setCurrentPrice] = useState({
     price: product.price,
-    marketPrice: product.marketPrice,
+    marketPrice: product.price * 1.2,
+    // marketPrice: product.marketPrice,
   });
 
   const capacityOptions = product.productItems
@@ -221,7 +222,9 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                                 setCurrentCapacity(capacity.productItemId);
                                 setCurrentPrice({
                                   price: capacity.price,
-                                  marketPrice: capacity.price * 1.2,
+                                  marketPrice:
+                                    capacity.marketPrice ||
+                                    capacity.price * 1.2,
                                 });
                               }}
                               className="style-text"

@@ -127,7 +127,7 @@ export default function ShopCart() {
                                 className="btn-quantity minus-btn"
                                 onClick={() => {
                                   request
-                                    .put(`/cart-items/${elm.id}`, {
+                                    .patch(`/cart-items/${elm.id}`, {
                                       quantity:
                                         elm.quantity - 1 > 1
                                           ? elm.quantity - 1
@@ -157,7 +157,7 @@ export default function ShopCart() {
                                 className="btn-quantity plus-btn"
                                 onClick={() => {
                                   request
-                                    .put(`/cart-items/${elm.id}`, {
+                                    .patch(`/cart-items/${elm.id}`, {
                                       quantity: elm.quantity + 1,
                                     })
                                     .then((res) => {

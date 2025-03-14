@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { blogPosts } from "@/data/blogs";
+
 export default function BlogGrid() {
   return (
     <div className="blog-grid-main">
