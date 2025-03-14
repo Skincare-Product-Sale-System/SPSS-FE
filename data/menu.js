@@ -1019,6 +1019,7 @@ export const navItems = [
       { href: "/timeline", label: "Timeline", demoLabel: true },
       { href: "/view-cart", label: "View cart" },
       { href: "/my-account", label: "My account" },
+      { href: "/my-reviews", label: "My reviews" },
       { href: "/wishlist", label: "Wishlist" },
       { href: "/terms", label: "Terms and conditions" },
       { href: "/page-not-found", label: "404 page" },

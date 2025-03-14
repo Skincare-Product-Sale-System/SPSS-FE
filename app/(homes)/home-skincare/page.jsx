@@ -22,7 +22,7 @@ export const metadata = {
 export default function page() {
   return (
     <>
-      <Announcement />
+      {/* <Announcement /> */} {/* Too Annoying */} 
       <Header8 />
       <Hero />
       <Products />
