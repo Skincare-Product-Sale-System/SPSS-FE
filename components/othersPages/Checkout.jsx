@@ -206,7 +206,9 @@ export default function Checkout() {
                       document.querySelector("input#voucherId").value;
                     const orderData = {
                       addressId: selectedAddress?.id,
-                      paymentMethodId: "2bbc0050-bfae-4764-8bd7-8c73579ee3e1", // vẫn giữ nguyên payment method
+                      paymentMethodId: paymentMethod === 'bank' 
+                        ? "2BBC0050-BFAE-4764-8BD7-8C73579EE3E1"  // Direct bank transfer
+                        : "F351955F-F25A-4CFB-8542-1F58043DE654",  // Cash on delivery
                       voucherId: voucherId || null,
                       orderDetail: cartProducts.map((elm) => ({
                         productItemId: elm.productItemId,

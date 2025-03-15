@@ -20,7 +20,7 @@ export default function PaymentConfirmation() {
                 Thanks for your purchase!
               </div>
               <div className="text-lg">
-                Your order number is processing
+                Your order is processing
               </div>
               {/* <div className="d-flex align-items-center justify-content-between mb_15">
                 <div className="fs-18">Date</div>
@@ -52,7 +52,7 @@ export default function PaymentConfirmation() {
               </div> */}
 
               <a
-                href="/my-account-orders"
+                href={`/my-account-orders-details?id=${orderId}`}
                 className="mt-2 tf-btn w-100 btn-fill animate-hover-btn radius-3 justify-content-center"
               >
                 <span>Track your order</span>
