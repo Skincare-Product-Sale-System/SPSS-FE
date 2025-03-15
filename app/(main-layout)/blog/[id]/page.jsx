@@ -105,75 +105,105 @@ export default function Page() {
       
       {sortedSections.map((section, index) => (
         <Box key={index} sx={{ mb: 6 }}>
-          {section.subtitle && (
-            <Typography 
-              variant="h4" 
-              component="h2" 
-              sx={{ 
-                mb: 3, 
-                color: theme.palette.primary.main,
-                fontWeight: 600
-              }}
-            >
-              {section.subtitle}
-            </Typography>
-          )}
-          
           {section.contentType === 'text' && (
-            <Typography 
-              variant="body1" 
-              sx={{ 
-                whiteSpace: 'pre-line',
-                lineHeight: 1.8,
-                fontSize: '1.05rem'
-              }}
-            >
-              {section.content}
-            </Typography>
-          )}
-          
-          {section.contentType === 'image' && (
-            <Box 
-              sx={{ 
-                position: 'relative', 
-                height: '400px', 
-                my: 4,
-                borderRadius: '8px',
-                overflow: 'hidden'
-              }}
-            >
-              <Image
-                src={section.content}
-                alt={section.subtitle || "Blog image"}
-                fill
-                style={{ objectFit: 'cover' }}
-              />
-            </Box>
-          )}
-          
-          {section.contentType === 'quote' && (
-            <Paper 
-              elevation={0} 
-              sx={{ 
-                p: 4, 
-                my: 4, 
-                borderLeft: `4px solid ${theme.palette.primary.main}`,
-                backgroundColor: theme.palette.background.default,
-                borderRadius: '4px'
-              }}
-            >
+            <>
+              {section.subtitle && (
+                <Typography 
+                  variant="h4" 
+                  component="h2" 
+                  sx={{ 
+                    mb: 3, 
+                    color: theme.palette.primary.main,
+                    fontWeight: 600
+                  }}
+                >
+                  {section.subtitle}
+                </Typography>
+              )}
               <Typography 
-                variant="h6" 
-                component="blockquote" 
+                variant="body1" 
                 sx={{ 
-                  fontStyle: 'italic',
-                  fontWeight: 500,
-                  color: theme.palette.text.primary
+                  whiteSpace: 'pre-line',
+                  lineHeight: 1.8,
+                  fontSize: '1.05rem'
                 }}
               >
                 {section.content}
               </Typography>
-            </Paper>
+            </>
+          )}
+          
+          {section.contentType === 'image' && (
+            <Box sx={{ mb: 5 }}>
+              <Box 
+                sx={{ 
+                  position: 'relative', 
+                  height: '400px',
+                  borderRadius: '8px',
+                  overflow: 'hidden'
+                }}
+              >
+                <Image
+                  src={section.content}
+                  alt="Blog image"
+                  fill
+                  style={{ objectFit: 'cover' }}
+                />
+              </Box>
+              {section.subtitle && (
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    mt: 1.5,
+                    fontStyle: 'italic',
+                    color: theme.palette.text.secondary,
+                    textAlign: 'center'
+                  }}
+                >
+                  {section.subtitle}
+                </Typography>
+              )}
+            </Box>
+          )}
+          
+          {section.contentType === 'quote' && (
+            <>
+              {section.subtitle && (
+                <Typography 
+                  variant="h4" 
+                  component="h2" 
+                  sx={{ 
+                    mb: 3, 
+                    color: theme.palette.primary.main,
+                    fontWeight: 600
+                  }}
+                >
+                  {section.subtitle}
+                </Typography>
+              )}
+              <Paper 
+                elevation={0} 
+                sx={{ 
+                  p: 4, 
+                  my: 4, 
+                  borderLeft: `4px solid ${theme.palette.primary.main}`,
+                  backgroundColor: theme.palette.background.default,
+                  borderRadius: '4px'
+                }}
+              >
+                <Typography 
+                  variant="h6" 
+                  component="blockquote" 
+                  sx={{ 
+                    fontStyle: 'italic',
+                    fontWeight: 500,
+                    color: theme.palette.text.primary
+                  }}
+                >
+                  {section.content}
+                </Typography>
+              </Paper>
+            </>
           )}
         </Box>
       ))}
