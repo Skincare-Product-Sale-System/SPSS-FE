@@ -20,11 +20,7 @@ export default function PaymentConfirmation() {
                 Thanks for your purchase!
               </div>
               <div className="text-lg">
-                Your order number is #{" "}
-                <span className="font-bold">{orderId}</span>
-              </div>
-              <div className="mb-4 text-xl">
-                You’ll receive an email confirming your order details
+                Your order number is processing
               </div>
               {/* <div className="d-flex align-items-center justify-content-between mb_15">
                 <div className="fs-18">Date</div>
@@ -56,7 +52,7 @@ export default function PaymentConfirmation() {
               </div> */}
 
               <a
-                href="/my-orders"
+                href="/my-account-orders"
                 className="mt-2 tf-btn w-100 btn-fill animate-hover-btn radius-3 justify-content-center"
               >
                 <span>Track your order</span>

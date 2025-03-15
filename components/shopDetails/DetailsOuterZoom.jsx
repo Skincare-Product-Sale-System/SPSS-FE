@@ -323,7 +323,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               quantity: quantity,
                             })
                             .then((res) => {
-                              if (res.status === 201) {
+                              if (res.status === 200) {
                                 toast.success("Added to cart");
                                 addProductToCart(
                                   product?.id,
