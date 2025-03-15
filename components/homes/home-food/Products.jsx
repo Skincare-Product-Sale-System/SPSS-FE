@@ -107,7 +107,7 @@ export default function Products() {
               </div>
               <div className="card-product-info">
                 <Link
-                  href={`/product-detail/${product.id}`}
+                  href={`/product-detail-alt/${product.id}`}
                   className="title link text-lg"
                 >
                   {product.title}
