@@ -438,7 +438,7 @@ export default function Cart() {
                 <div className="tf-cart-totals-discounts">
                   <h3>Subtotal</h3>
                   <span className="total-value">
-                    ${totalPrice.toLocaleString()} USD
+                    {totalPrice.toLocaleString()} VNĐ
                   </span>
                 </div>
                 {/* <p className="tf-cart-tax">
