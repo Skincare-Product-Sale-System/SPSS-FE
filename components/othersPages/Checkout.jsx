@@ -16,7 +16,6 @@ export default function Checkout() {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const { switcher, revalidate } = useQueryStore();
   const { Id } = useAuthStore();
-  const [paymentMethod, setPaymentMethod] = useState('bank');
 
   useEffect(() => {
     //> fetch data from server
@@ -147,8 +146,6 @@ export default function Checkout() {
                       id="bank"
                       className="tf-check"
                       defaultChecked
-                      value="bank"
-                      onChange={(e) => setPaymentMethod(e.target.value)}
                     />
                     <label htmlFor="bank">Direct bank transfer</label>
                   </div>
@@ -159,8 +156,6 @@ export default function Checkout() {
                       name="payment"
                       id="delivery"
                       className="tf-check"
-                      value="cod"
-                      onChange={(e) => setPaymentMethod(e.target.value)}
                     />
                     <label htmlFor="delivery">Cash on delivery</label>
                   </div>
@@ -206,39 +201,23 @@ export default function Checkout() {
                       document.querySelector("input#voucherId").value;
                     const orderData = {
                       addressId: selectedAddress?.id,
-                      paymentMethodId: paymentMethod === 'bank' 
-                        ? "2BBC0050-BFAE-4764-8BD7-8C73579EE3E1"  // Direct bank transfer
-                        : "F351955F-F25A-4CFB-8542-1F58043DE654",  // Cash on delivery
+                      paymentMethodId: "2bbc0050-bfae-4764-8bd7-8c73579ee3e1",  // Luôn dùng VNPay ID
                       voucherId: voucherId || null,
                       orderDetail: cartProducts.map((elm) => ({
                         productItemId: elm.productItemId,
                         quantity: elm.quantity,
                       })),
                     };
-
-                    try {
-                      const res = await request.post("/orders", orderData);
-                      
-                      if (res.status === 201) {
-                        const orderId = res.data.data.id;
-                        
-                        if (paymentMethod === 'bank') {
-                          // Nếu chọn bank transfer -> gọi API VNPay và điều hướng
-                          const vnpayRes = await request.get(
-                            `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fpayment-success%3Fid%3D${orderId}`
-                          );
-                          if (vnpayRes.status === 200) {
-                            location.href = vnpayRes.data.data; // Chuyển đến trang thanh toán VNPay
-                          }
-                        } else {
-                          // Nếu chọn COD -> điều hướng thẳng đến trang success
-                          location.href = `/payment-success?id=${orderId}`;
-                        }
+                    request
+                    .post("/orders", orderData)
+                    .then(async (res) => {
+                      if (res.status == 201) {
+                        location.href = `/payment-success?id=${res.data.data.id}`;
                       }
-                    } catch (err) {
-                      console.error(err);
+                    })
+                    .catch((err) => {
                       location.href = "/payment-failure";
-                    }
+                    });
                   }}
                 >
                   Place order
