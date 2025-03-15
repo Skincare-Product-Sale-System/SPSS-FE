@@ -23,7 +23,7 @@ export default function AccountAddress() {
 
   const fetchAddresses = async () => {
     try {
-      const { data } = await request.get(`/address/user/${Id}?pageNumber=${currentPage}&pageSize=${pageSize}`);
+      const { data } = await request.get(`/address/user?pageNumber=${currentPage}&pageSize=${pageSize}`);
       setAddresses(data.data.items);
       setTotalPages(data.data.totalPages);
       setLoading(false);

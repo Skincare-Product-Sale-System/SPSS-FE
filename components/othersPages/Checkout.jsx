@@ -33,7 +33,7 @@ export default function Checkout() {
   }, 0);
 
   useEffect(() => {
-    request.get("/address").then(({ data }) => {
+    request.get("/address/user").then(({ data }) => {
       setAddresses(data?.data?.items);
     });
   }, []);
