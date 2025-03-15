@@ -1,36 +1,39 @@
 "use client";
 import Link from "next/link";
-import { blogArticles4 } from "@/data/blogs";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Image from "next/image";
 import { Navigation, Pagination } from "swiper/modules";
 import request from "@/utlis/axios";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function RelatedBlogs() {
   const [blogs, setBlogs] = useState([]);
+  const currentBlogId = usePathname().split("/")[2];
 
   useEffect(() => {
     request.get("/blogs").then(({ data }) => {
-      setBlogs(data.data.items);
+      // Filter out the current blog post
+      const filteredBlogs = data.data.items.filter(blog => blog.id !== currentBlogId);
+      setBlogs(filteredBlogs);
     });
-  }, []);
+  }, [currentBlogId]);
 
   return (
     <section className="mb_30">
       <div className="container">
-        <div className="flat-title">
-          <h5 className="">Related Articles</h5>
+        <div className="flat-title mb-5">
+          <h4 className="text-2xl font-semibold text-center">Related Articles</h4>
         </div>
         <div className="hover-sw-nav view-default hover-sw-5">
           <Swiper
             dir="ltr"
-            spaceBetween={30} // Corresponds to data-space
-            slidesPerView={3} // Corresponds to data-preview
+            spaceBetween={30}
+            slidesPerView={3}
             breakpoints={{
-              768: { slidesPerView: 3 }, // Corresponds to data-tablet
-              640: { slidesPerView: 2 }, // Corresponds to data-mobile
-              0: { slidesPerView: 1 }, // Corresponds to data-mobile
+              768: { slidesPerView: 3 },
+              640: { slidesPerView: 2 },
+              0: { slidesPerView: 1 },
             }}
             className="swiper tf-sw-recent"
             modules={[Navigation, Pagination]}
@@ -40,33 +43,52 @@ export default function RelatedBlogs() {
             }}
             pagination={{ clickable: true, el: ".spd101" }}
           >
-            {blogs.map((article, index) => (
-              <SwiperSlide key={index}>
-                <div className="blog-article-item">
-                  <div className="article-thumb radius-10">
-                    <Link href={`/blog/${article.id}`}>
+            {blogs.map((blog, index) => (
+              <SwiperSlide key={blog.id || index}>
+                <div className="blog-article-item shadow-sm hover:shadow-md transition-shadow rounded-lg overflow-hidden">
+                  <div className="article-thumb">
+                    <Link href={`/blog/${blog?.id}`}>
                       <Image
-                        src={article.image}
-                        alt={"blog image"}
+                        className="w-full h-auto object-cover"
+                        src={blog?.thumbnail}
+                        alt={blog?.title}
                         width={550}
                         height={354}
-                        className="lazyload"
                       />
                     </Link>
                   </div>
-                  <div className="article-content">
-                    <div className="article-title">
-                      <Link href={`/blog-detail/${article.id}`}>
-                        {article.title}
+                  <div className="article-content p-4">
+                    <div className="article-title mb-3">
+                      <Link href={`/blog/${blog?.id}`} className="text-xl font-medium hover:text-primary transition-colors">
+                        {blog?.title}
                       </Link>
+                    </div>
+                    {blog?.blogContent && (
+                      <div className="article-excerpt text-gray-600 mb-4 line-clamp-2">
+                        {blog?.blogContent}
+                      </div>
+                    )}
+                    <div className="article-meta flex items-center justify-between text-sm text-gray-500 mb-3">
+                      <span className="flex items-center">
+                        <span className="material-icons text-primary mr-1" style={{ fontSize: '16px' }}>person</span>
+                        {blog?.author || "Admin"}
+                      </span>
+                      <span className="flex items-center">
+                        <span className="material-icons text-primary mr-1" style={{ fontSize: '16px' }}>calendar_today</span>
+                        {blog?.lastUpdatedTime ? new Date(blog.lastUpdatedTime).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        }) : ""}
+                      </span>
                     </div>
                     <div className="article-btn">
                       <Link
-                        href={`/blog-detail/${article.id}`}
-                        className="tf-btn btn-line fw-6"
+                        href={`/blog/${blog?.id}`}
+                        className="tf-btn btn-line fw-6 hover:text-primary transition-colors"
                       >
                         Read more
-                        <i className="icon icon-arrow1-top-left" />
+                        <i className="icon icon-arrow1-top-left ml-2" />
                       </Link>
                     </div>
                   </div>
