@@ -1,11 +1,17 @@
 "use client";
 import { layouts } from "@/data/shop";
 import ProductGrid from "./ProductGrid";
+
 import { useEffect, useState } from "react";
 import Pagination from "../common/Pagination";
 import ShopFilter from "./ShopFilter";
 import Sorting from "./Sorting";
 import request from "@/utlis/axios";
+import { useState, useEffect } from "react";
+import Pagination from "../common/Pagination";
+import ShopFilter from "./ShopFilter";
+import Sorting from "./Sorting";
+import axios from "axios";
 
 export default function ShopDefault() {
   const [gridItems, setGridItems] = useState(4);
@@ -19,6 +25,48 @@ export default function ShopDefault() {
       setProducts(data.data);
     })();
   }, []);
+
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1,
+    totalItems: 0
+  });
+
+  const fetchProducts = async (page = 1) => {
+    try {
+      const response = await axios.get(`https://localhost:44398/api/v1/Product/all?Page=${page}&PageSize=${pagination.pageSize}`);
+      const { data } = response.data;
+      
+      // Transform API data to match your product structure
+      const transformedProducts = data.results.map(item => ({
+        id: item.id,
+        title: item.name,
+        price: item.price,
+        imgSrc: item.productImages?.[0]?.imageUrl || '/placeholder.jpg',
+        soldOut: item.productStatus === 'SoldOut'
+      }));
+
+      setProducts(transformedProducts);
+      setFinalSorted(transformedProducts);
+      setPagination({
+        currentPage: data.currentPage,
+        pageSize: data.pageSize,
+        totalPages: data.pageCount,
+        totalItems: data.rowCount
+      });
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handlePageChange = (page) => {
+    fetchProducts(page);
+  };
 
   return (
     <>
@@ -63,13 +111,14 @@ export default function ShopDefault() {
           <div className="wrapper-control-shop">
             <div className="meta-filter-shop" />
             <ProductGrid allproducts={finalSorted} gridItems={gridItems} />
-            {/* pagination */}
-            {finalSorted.length ? (
+            {finalSorted.length > 0 && (
               <ul className="tf-pagination-wrap tf-pagination-list tf-pagination-btn">
-                <Pagination />
+                <Pagination 
+                  currentPage={pagination.currentPage}
+                  totalPages={pagination.totalPages}
+                  onPageChange={handlePageChange}
+                />
               </ul>
-            ) : (
-              ""
             )}
           </div>
         </div>
