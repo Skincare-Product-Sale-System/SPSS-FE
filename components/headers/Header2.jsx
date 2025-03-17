@@ -118,7 +118,7 @@ export default function Header2({
                   <i className="icon icon-search" />
                 </a>
               </li> */}
-              <li className="nav-account">
+              <li className="nav-account" id="nav-account">
                 <a
                   href={isLoggedIn ? "/my-account" : "#login"}
                   data-bs-toggle={isLoggedIn ? "" : "modal"}
