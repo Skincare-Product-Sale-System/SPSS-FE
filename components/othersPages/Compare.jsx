@@ -61,11 +61,11 @@ export default function Compare() {
                     >
                       <Image
                         className="lazyload aspect-square w-full"
-                        data-src={elm?.productImageUrls[0]}
+                        data-src={elm?.thumbnail}
                         alt="product image"
                         width={713}
                         height={1070}
-                        src={elm?.productImageUrls[0]}
+                        src={elm?.thumbnail}
                       />
                     </Link>
                     <Link

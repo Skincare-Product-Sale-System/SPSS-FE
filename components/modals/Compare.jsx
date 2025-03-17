@@ -61,7 +61,7 @@ export default function Compare() {
                             <Image
                               className="radius-3 aspect-square h-[120px]"
                               alt="image"
-                              src={elm?.productImageUrls[0]}
+                              src={elm?.thumbnail || defaultProductImage}
                               style={{ objectFit: "cover" }}
                               width={720}
                               height={1005}

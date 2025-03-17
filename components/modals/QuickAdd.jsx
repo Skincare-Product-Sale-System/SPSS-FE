@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Quantity from "../shopDetails/Quantity";
 import { useContextElement } from "@/context/Context";
+import { formatPrice } from "@/utils/priceFormatter";
 
 import { allProducts } from "@/data/products";
 import { colors, sizeOptions } from "@/data/singleProductOptions";
@@ -49,7 +50,7 @@ export default function QuickAdd() {
               <div className="content">
                 <Link href={`/product-detail/${item.id}`}>{item.title}</Link>
                 <div className="tf-product-info-price">
-                  <div className="price">${item.price.toFixed(2)}</div>
+                  <div className="price">{formatPrice(item.price)}</div>
                 </div>
               </div>
             </div>

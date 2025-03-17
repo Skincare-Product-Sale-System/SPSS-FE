@@ -12,6 +12,7 @@ import request from "@/utlis/axios";
 import { useQueries } from "@tanstack/react-query";
 import { useTheme } from "@mui/material/styles";
 import { Box, Tab, Tabs, Typography, Button } from "@mui/material";
+import { formatPrice } from "@/utils/priceFormatter";
 
 export default function Products() {
   const theme = useTheme();
@@ -273,7 +274,7 @@ export default function Products() {
                               fontSize: '0.875rem'
                             }}
                           >
-                            {product.marketPrice.toLocaleString()}₫
+                            {formatPrice(product.marketPrice)}
                           </Typography>
                         )}
                         <Typography
@@ -284,7 +285,7 @@ export default function Products() {
                             fontSize: '1.125rem'
                           }}
                         >
-                          {product.price.toLocaleString()}₫
+                          {formatPrice(product.price)}
                         </Typography>
                       </Box>
                     </Box>

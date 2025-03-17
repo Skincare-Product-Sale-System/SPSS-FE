@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useContextElement } from "@/context/Context";
 import CountdownComponent from "../common/Countdown";
 import { defaultProductImage } from "@/utlis/default";
+import { formatPrice } from "@/utils/priceFormatter";
+
 export const ProductCard = ({ product }) => {
   const [currentImage, setCurrentImage] = useState(product.imgSrc);
   const { setQuickViewItem } = useContextElement();
@@ -122,9 +124,9 @@ export const ProductCard = ({ product }) => {
           {product.description}
         </div>
         <span className="price" style={{ color: "#ff0000" }}>
-          {product.price.toLocaleString()}₫
+          {formatPrice(product.price)}
           <span className="pr-8 compare-at-price strikethrough">
-            {product.marketPrice?.toLocaleString()}₫
+            {product.marketPrice && formatPrice(product.marketPrice)}
           </span>
         </span>
 

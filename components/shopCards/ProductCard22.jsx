@@ -4,6 +4,8 @@ import React from "react";
 import { useContextElement } from "@/context/Context";
 import Image from "next/image";
 import Link from "next/link";
+import { formatPrice } from "@/utils/priceFormatter";
+
 export default function ProductCard22({ product }) {
   const [currentImage, setCurrentImage] = useState(product.imgSrc);
   const { setQuickViewItem } = useContextElement();
@@ -103,9 +105,9 @@ export default function ProductCard22({ product }) {
         </Link>
         <span className="price">
           {product.oldPrice && (
-            <span className="old-price">{product.oldPrice.toLocaleString()}₫</span>
+            <span className="old-price">{formatPrice(product.oldPrice)}</span>
           )}
-          <span className="new-price">{product.price.toLocaleString()}₫</span>
+          <span className="new-price">{formatPrice(product.price)}</span>
         </span>
         {product.colors && (
           <ul className="list-color-product">

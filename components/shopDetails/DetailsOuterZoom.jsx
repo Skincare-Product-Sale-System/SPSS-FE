@@ -25,6 +25,7 @@ import useQueryStore from "@/context/queryStore";
 import { useTheme } from "@mui/material/styles";
 import { ShoppingCart } from "@mui/icons-material";
 import { Typography, Divider, Chip, Link } from "@mui/material";
+import { formatPrice, calculateDiscount } from "@/utils/priceFormatter";
 
 export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const theme = useTheme();
@@ -251,18 +252,14 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                   <div className="tf-product-info-price mb-3 p-3 bg-rose-50 rounded">
                     <div className="d-flex align-items-center">
                       <div className="price-on-sale text-rose-600 font-medium fs-24 mr-2">
-                        {(currentPrice?.price || 0).toLocaleString()}₫
+                        {formatPrice(currentPrice?.price)}
                       </div>
                       <div className="compare-at-price text-neutral-500 text-decoration-line-through fs-16">
-                        {(currentPrice?.marketPrice || 0).toLocaleString()}₫
+                        {formatPrice(currentPrice?.marketPrice)}
                       </div>
                       <div className="badges-on-sale bg-rose-100 text-rose-700 ml-2 px-2 py-1 rounded">
                         <span>
-                          {Math.round(
-                            ((currentPrice?.marketPrice || 0) - (currentPrice?.price || 0)) /
-                              (currentPrice?.marketPrice || 1) *
-                              100
-                          ) || 0}
+                          {calculateDiscount(currentPrice?.marketPrice, currentPrice?.price)}
                         </span>
                         % OFF
                       </div>

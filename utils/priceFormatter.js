@@ -4,14 +4,8 @@
  * @param {boolean} includeSymbol - Whether to include the ₫ symbol
  * @returns {string} - Formatted price string
  */
-export const formatPrice = (price, includeSymbol = true) => {
-  if (!price && price !== 0) return '';
-  
-  // Format with thousand separators
-  const formattedPrice = price.toLocaleString('vi-VN');
-  
-  // Return with or without currency symbol
-  return includeSymbol ? `${formattedPrice}₫` : formattedPrice;
+export const formatPrice = (price) => {
+  return `${(price || 0).toLocaleString()}₫`;
 };
 
 /**
@@ -20,7 +14,7 @@ export const formatPrice = (price, includeSymbol = true) => {
  * @param {number} salePrice - The sale price
  * @returns {number} - Discount percentage
  */
-export const calculateDiscount = (originalPrice, salePrice) => {
-  if (!originalPrice || !salePrice) return 0;
-  return Math.round(((originalPrice - salePrice) / originalPrice) * 100);
+export const calculateDiscount = (oldPrice, newPrice) => {
+  if (!oldPrice || !newPrice) return 0;
+  return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
 }; 

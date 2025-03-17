@@ -36,19 +36,16 @@ export default async function page({ params }) {
       title: product.name,
       price: formatPrice(product.price),
       oldPrice: product.marketPrice !== product.price ? formatPrice(product.marketPrice) : null,
-      imgSrc: product.productImageUrls[0],
-      images: product.productImageUrls.map(url => ({
-        src: url,
-        alt: product.name
-      })),
-      imgHoverSrc: product.productImageUrls[1] || product.productImageUrls[0],
+      imgSrc: product.thumbnail,
+      images: product.thumbnail,
+      imgHoverSrc: product.thumbnail,
       colors: product.productItems?.filter(item => 
         item.configurations?.some(config => config.variationName === "Color")
       ).map(item => {
         const colorConfig = item.configurations.find(config => config.variationName === "Color");
         const imageUrl = (item.imageUrl && item.imageUrl !== "string") 
           ? item.imageUrl 
-          : product.productImageUrls[0];
+          : product.thumbnail;
         
         return {
           name: colorConfig?.optionName || "",
