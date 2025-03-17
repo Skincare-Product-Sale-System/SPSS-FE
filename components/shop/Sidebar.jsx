@@ -63,7 +63,7 @@ export default function Sidebar({
                 fontSize: '0.9rem',
                 color: activeFilters.categoryId === category.id 
                   ? mainColor.primary 
-                  : mainColor.text
+                  : mainColor.black
               }
             }}
           />
@@ -76,7 +76,7 @@ export default function Sidebar({
               sx={{ 
                 display: 'flex',
                 alignItems: 'center',
-                color: mainColor.primary
+                color: mainColor.black
               }}
             >
               {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -101,10 +101,10 @@ export default function Sidebar({
       <Typography 
         variant="h6" 
         sx={{ 
-          color: mainColor.primary,
+          color: mainColor.text,
           mb: 2,
           fontWeight: 600,
-          fontSize: '1rem',
+          fontSize: '1.5rem',
           textTransform: 'uppercase'
         }}
       >
@@ -155,7 +155,7 @@ export default function Sidebar({
                         fontSize: '0.9rem',
                         color: activeFilters[type] === getValue(item) 
                           ? mainColor.primary 
-                          : mainColor.text
+                          : mainColor.black
                       }
                     }}
                   />
