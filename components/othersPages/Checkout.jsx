@@ -206,8 +206,8 @@ export default function Checkout() {
                     const orderData = {
                       addressId: selectedAddress?.id,
                       paymentMethodId: paymentMethod === 'bank' 
-                        ? "2BBC0050-BFAE-4764-8BD7-8C73579EE3E1"  // VNPay
-                        : "F351955F-F25A-4CFB-8542-1F58043DE654",  // COD
+                        ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A"  // VNPay
+                        : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E",  // COD
                       voucherId: voucherId || null,
                       orderDetail: cartProducts.map((elm) => ({
                         productItemId: elm.productItemId,

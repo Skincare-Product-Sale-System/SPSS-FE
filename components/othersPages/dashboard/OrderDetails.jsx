@@ -222,7 +222,7 @@ export default function OrderDetails() {
               <div>
                 <p className="text-xs font-semibold text-gray-700 mb-1">PAYMENT:</p>
                 <p className="font-medium">
-                  {order.paymentMethodId === "2bbc0050-bfae-4764-8bd7-8c73579ee3e1".toLowerCase() 
+                  {order.paymentMethodId === "354EDA95-5BE5-41BE-ACC3-CFD70188118A".toLowerCase() 
                     ? "VNPay" 
                     : "Cash on delivery"}
                 </p>

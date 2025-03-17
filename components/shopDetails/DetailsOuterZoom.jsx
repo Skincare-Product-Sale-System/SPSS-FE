@@ -33,7 +33,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const { switcher, revalidate } = useQueryStore();
   const [currentPrice, setCurrentPrice] = useState({
     price: product?.price || 0,
-    marketPrice: product?.marketPrice || (product?.price || 0) * 1.2,
+    marketPrice: product?.marketPrice || 0,
   });
 
   // Group all variations and options
@@ -94,7 +94,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
       setCurrentProductItem(matchingItem);
       setCurrentPrice({
         price: matchingItem.price || 0,
-        marketPrice: matchingItem.marketPrice || matchingItem.price * 1.2,
+        marketPrice: matchingItem.marketPrice || 0,
       });
     }
   }, [product]);
@@ -134,7 +134,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
       setCurrentProductItem(matchingItem);
       setCurrentPrice({
         price: matchingItem.price || 0,
-        marketPrice: matchingItem.marketPrice || matchingItem.price * 1.2,
+        marketPrice: matchingItem.marketPrice || 0,
       });
     }
   };
@@ -338,30 +338,93 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                           <div className="variant-picker-label text-neutral-700 font-medium fs-14">{variation.name}:</div>
                         </div>
                         <div className="variant-picker-options mt-1">
-                          {variation.options.map((option) => (
-                            <button
-                              key={option.optionId}
-                              type="button"
-                              onClick={() => handleOptionSelect(variation.name, option.optionId)}
-                              className="variant-picker-option mr-2 mb-2 px-3 py-1 border rounded-md transition-all fs-14"
-                              style={{ 
-                                borderColor: selectedOptions[variation.name] === option.optionId 
-                                  ? theme.palette.primary.main 
-                                  : theme.palette.grey[300],
-                                backgroundColor: selectedOptions[variation.name] === option.optionId 
-                                  ? theme.palette.primary.main 
-                                  : '#fff',
-                                color: selectedOptions[variation.name] === option.optionId 
-                                  ? '#fff' 
-                                  : theme.palette.text.primary
-                              }}
-                            >
-                              {option.optionName}
-                            </button>
-                          ))}
+                          {variation.options.map((option) => {
+                            // Tìm product item có option này
+                            const productItemWithOption = product.productItems.find(item => 
+                              item.configurations?.some(
+                                config => config.optionId === option.optionId
+                              )
+                            );
+                            
+                            // Kiểm tra số lượng tồn kho
+                            const isOutOfStock = productItemWithOption?.quantityInStock === 0;
+
+                            return (
+                              <button
+                                key={option.optionId}
+                                type="button"
+                                onClick={() => !isOutOfStock && handleOptionSelect(variation.name, option.optionId)}
+                                disabled={isOutOfStock}
+                                className="variant-picker-option mr-2 mb-2 px-3 py-1 border rounded-md transition-all fs-14"
+                                style={{ 
+                                  borderColor: selectedOptions[variation.name] === option.optionId 
+                                    ? theme.palette.primary.main 
+                                    : theme.palette.grey[300],
+                                  backgroundColor: isOutOfStock 
+                                    ? theme.palette.grey[100]
+                                    : selectedOptions[variation.name] === option.optionId 
+                                      ? theme.palette.primary.main 
+                                      : '#fff',
+                                  color: isOutOfStock
+                                    ? theme.palette.grey[400]
+                                    : selectedOptions[variation.name] === option.optionId 
+                                      ? '#fff' 
+                                      : theme.palette.text.primary,
+                                  cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+                                  position: 'relative'
+                                }}
+                              >
+                                {option.optionName}
+                                {isOutOfStock && (
+                                  <div 
+                                    className="position-absolute" 
+                                    style={{
+                                      top: '50%',
+                                      left: 0,
+                                      right: 0,
+                                      height: '1px',
+                                      backgroundColor: theme.palette.grey[400],
+                                      transform: 'rotate(-10deg)'
+                                    }}
+                                  />
+                                )}
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                     ))}
+
+                    {/* Hiển thị quantityInStock */}
+                    {currentProductItem && (
+                      <div className="variant-picker-item mb-3">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div className="variant-picker-label text-neutral-700 font-medium fs-14">Stock:</div>
+                        </div>
+                        <div className="mt-1">
+                          <div className="px-3 py-1 border rounded-md fs-14" style={{
+                            borderColor: currentProductItem.quantityInStock > 0 
+                              ? theme.palette.success.light 
+                              : theme.palette.error.light,
+                            backgroundColor: currentProductItem.quantityInStock > 0
+                              ? `${theme.palette.success.main}15`
+                              : `${theme.palette.error.main}15`,
+                            color: currentProductItem.quantityInStock > 0
+                              ? theme.palette.success.dark
+                              : theme.palette.error.dark,
+                            display: 'inline-block'
+                          }}>
+                            {currentProductItem.quantityInStock > 0 ? (
+                              <>
+                                <span className="font-medium">{currentProductItem.quantityInStock}</span> products available
+                              </>
+                            ) : (
+                              <span className="font-medium">Out of stock</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="tf-product-info-quantity mb-3">
