@@ -2,33 +2,55 @@
 
 import { useEffect, useState } from "react";
 
-export default function Quantity({ setQuantity = (value) => {} }) {
+export default function Quantity({ setQuantity, maxQuantity = 999 }) {
   const [count, setCount] = useState(1);
-  useEffect(() => {
-    setQuantity(count);
-  }, [count]);
+
+  const increment = () => {
+    if (count < maxQuantity) {
+      setCount(count + 1);
+      setQuantity(count + 1);
+    }
+  };
+
+  const decrement = () => {
+    if (count > 1) {
+      setCount(count - 1);
+      setQuantity(count - 1);
+    }
+  };
+
+  const handleChange = (e) => {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value >= 1 && value <= maxQuantity) {
+      setCount(value);
+      setQuantity(value);
+    }
+  };
 
   return (
-    <div className="wg-quantity">
-      <span
-        className="btn-quantity minus-btn"
-        onClick={() => setCount((pre) => (pre == 1 ? 1 : pre - 1))}
+    <div className="quantity-input">
+      <button
+        type="button"
+        className="quantity-input__modifier quantity-input__modifier--left"
+        onClick={decrement}
       >
-        -
-      </span>
+        &mdash;
+      </button>
       <input
-        min={1}
+        className="quantity-input__screen"
         type="text"
-        onChange={(e) => setCount(e.target.value / 1)}
-        name="number"
         value={count}
+        onChange={handleChange}
+        max={maxQuantity}
+        min="1"
       />
-      <span
-        className="btn-quantity plus-btn"
-        onClick={() => setCount((pre) => pre + 1)}
+      <button
+        type="button"
+        className="quantity-input__modifier quantity-input__modifier--right"
+        onClick={increment}
       >
-        +
-      </span>
+        &#xff0b;
+      </button>
     </div>
   );
 }
