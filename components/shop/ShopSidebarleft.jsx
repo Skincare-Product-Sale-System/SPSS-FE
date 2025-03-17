@@ -7,7 +7,7 @@ import Pagination from "../common/Pagination";
 import { useQueries } from "@tanstack/react-query";
 import request from "@/utlis/axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Box, Chip, Typography } from "@mui/material";
+import { Box, Chip, Typography, Button } from "@mui/material";
 import { useThemeColors } from "@/context/ThemeContext";
 
 export default function ShopSidebarleft() {
@@ -17,11 +17,20 @@ export default function ShopSidebarleft() {
   const [gridItems, setGridItems] = useState(4);
   const [products, setProducts] = useState({ items: [], totalPages: 0, pageNumber: 1 });
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOption, setSortOption] = useState(searchParams.get("sort") || "newest");
   const [filters, setFilters] = useState({
     brandId: searchParams.get("brandId") || null,
     categoryId: searchParams.get("categoryId") || null,
     skinTypeId: searchParams.get("skinTypeId") || null
   });
+
+  // Định nghĩa các tùy chọn sắp xếp
+  const sortOptions = [
+    { value: "newest", label: "Mới nhất" },
+    { value: "bestselling", label: "Bán chạy" },
+    { value: "price_asc", label: "Giá thấp đến cao" },
+    { value: "price_desc", label: "Giá cao đến thấp" }
+  ];
 
   // Fetch filters data
   const [brands, categories, skinTypes] = useQueries({
@@ -50,7 +59,7 @@ export default function ShopSidebarleft() {
     ],
   });
 
-  const fetchProducts = async (page = 1, newFilters = filters) => {
+  const fetchProducts = async (page = 1, newFilters = filters, sort = sortOption) => {
     const queryParams = new URLSearchParams();
     queryParams.append("pageNumber", page);
     queryParams.append("pageSize", "20");
@@ -58,6 +67,9 @@ export default function ShopSidebarleft() {
     if (newFilters.brandId) queryParams.append("brandId", newFilters.brandId);
     if (newFilters.categoryId) queryParams.append("categoryId", newFilters.categoryId);
     if (newFilters.skinTypeId) queryParams.append("skinTypeId", newFilters.skinTypeId);
+    
+    // Thêm tham số sortBy thay vì sort
+    if (sort) queryParams.append("sortBy", sort);
 
     try {
       const { data } = await request.get(`/products?${queryParams.toString()}`);
@@ -82,7 +94,19 @@ export default function ShopSidebarleft() {
     }
     router.push(`/products?${params.toString()}`);
     
-    fetchProducts(1, newFilters);
+    fetchProducts(1, newFilters, sortOption);
+  };
+
+  // Handle sort change
+  const handleSortChange = (sort) => {
+    setSortOption(sort);
+    
+    // Update URL
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sort", sort);
+    router.push(`/products?${params.toString()}`);
+    
+    fetchProducts(currentPage, filters, sort);
   };
 
   // Remove filter chip
@@ -91,7 +115,9 @@ export default function ShopSidebarleft() {
   };
 
   useEffect(() => {
-    fetchProducts(currentPage);
+    const sort = searchParams.get("sort") || "newest";
+    setSortOption(sort);
+    fetchProducts(currentPage, filters, sort);
   }, [searchParams]);
 
   // Get filter names for display
@@ -154,7 +180,10 @@ export default function ShopSidebarleft() {
             flexWrap: 'wrap',
             alignItems: 'center' 
           }}>
-            <Typography variant="subtitle1" sx={{ color: mainColor.text }}>
+            <Typography variant="subtitle1" sx={{ 
+              color: mainColor.text, 
+              fontWeight: 600 
+            }}>
               Sản phẩm lọc theo:
             </Typography>
             {Object.entries(filters).map(([key, value]) => {
@@ -165,15 +194,58 @@ export default function ShopSidebarleft() {
                   label={`${getFilterTypeName(key)}: ${getFilterName(key, value)}`}
                   onDelete={() => handleRemoveFilter(key)}
                   sx={{
-                    backgroundColor: `${mainColor.primary}20`,
-                    color: mainColor.primary,
+                    backgroundColor: `${mainColor.medium}`,
+                    color: mainColor.text,
+                    fontWeight: 500,
                     '& .MuiChip-deleteIcon': {
-                      color: mainColor.primary
+                      color: mainColor.text
                     }
                   }}
                 />
               );
             })}
+          </Box>
+
+          {/* Sort Options */}
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 1, 
+            mb: 3, 
+            flexWrap: 'wrap',
+            alignItems: 'center',
+          }}>
+            <Typography variant="subtitle1" sx={{ 
+              color: mainColor.text, 
+              mr: 1,
+              fontWeight: 600 
+            }}>
+              Sắp xếp:
+            </Typography>
+            
+            {sortOptions.map((option) => (
+              <Button
+                key={option.value}
+                onClick={() => handleSortChange(option.value)}
+                variant={sortOption === option.value ? "contained" : "outlined"}
+                sx={{
+                  minWidth: 'auto',
+                  px: 2,
+                  py: 0.5,
+                  textTransform: 'none',
+                  borderRadius: '4px',
+                  backgroundColor: sortOption === option.value ? mainColor.dark : 'transparent',
+                  color: sortOption === option.value ? '#fff' : mainColor.text,
+                  borderColor: sortOption === option.value ? mainColor.dark : mainColor.grey,
+                  fontWeight: 500,
+                  '&:hover': {
+                    backgroundColor: sortOption === option.value ? mainColor.dark : mainColor.light,
+                    borderColor: mainColor.dark
+                  }
+                }}
+              >
+                {option.label}
+              </Button>
+            ))}
           </Box>
 
           <div className="tf-shop-control grid-3 align-items-center">
@@ -186,6 +258,13 @@ export default function ShopSidebarleft() {
                     gridItems == layout.dataValueGrid ? "active" : ""
                   }`}
                   onClick={() => setGridItems(layout.dataValueGrid)}
+                  style={{
+                    transition: 'all 0.3s ease',
+                    transform: gridItems == layout.dataValueGrid ? 'translateY(-3px)' : 'translateY(0)',
+                    boxShadow: gridItems == layout.dataValueGrid 
+                      ? '0 4px 8px rgba(0, 0, 0, 0.1)' 
+                      : 'none',
+                  }}
                 >
                   <div className="item">
                     <span className={`icon ${layout.iconClass}`} />
