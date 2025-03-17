@@ -428,9 +428,134 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                   </div>
                   
                   <div className="tf-product-info-quantity mb-3">
+                    {currentProductItem && (
+                      <div className="d-flex align-items-center mb-2">
+                        <Typography variant="subtitle2" className="text-gray-600 mr-1 fs-14">
+                          Available:
+                        </Typography>
+                        <Chip 
+                          label={`${currentProductItem.quantityInStock || 0} items`}
+                          color={currentProductItem.quantityInStock > 10 ? "success" : currentProductItem.quantityInStock > 0 ? "warning" : "error"}
+                          size="small"
+                          sx={{ 
+                            height: '20px', 
+                            fontSize: '12px',
+                            backgroundColor: currentProductItem.quantityInStock > 10 
+                              ? `${theme.palette.success.main}15` 
+                              : currentProductItem.quantityInStock > 0 
+                                ? `${theme.palette.warning.main}15`
+                                : `${theme.palette.error.main}15`,
+                            color: currentProductItem.quantityInStock > 10 
+                              ? theme.palette.success.main 
+                              : currentProductItem.quantityInStock > 0 
+                                ? theme.palette.warning.main
+                                : theme.palette.error.main,
+                          }}
+                        />
+                        {currentProductItem.quantityInStock < 10 && currentProductItem.quantityInStock > 0 && (
+                          <Typography 
+                            variant="caption" 
+                            sx={{ 
+                              color: theme.palette.warning.main,
+                              ml: 1,
+                              fontWeight: 500
+                            }}
+                          >
+                            Only {currentProductItem.quantityInStock} left!
+                          </Typography>
+                        )}
+                        {currentProductItem.quantityInStock <= 0 && (
+                          <Typography 
+                            variant="caption" 
+                            sx={{ 
+                              color: theme.palette.error.main,
+                              ml: 1,
+                              fontWeight: 500
+                            }}
+                          >
+                            Out of stock!
+                          </Typography>
+                        )}
+                      </div>
+                    )}
+                    
                     <div className="d-flex align-items-center">
                       <div className="quantity-title fw-6 fs-14 mr-3">Quantity</div>
-                      <Quantity setQuantity={setQuantity} />
+                      <div className="quantity-input-container" style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        border: `1px solid ${theme.palette.grey[300]}`,
+                        borderRadius: '4px',
+                        overflow: 'hidden'
+                      }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (quantity > 1) {
+                              setQuantity(quantity - 1);
+                            }
+                          }}
+                          style={{
+                            width: '36px',
+                            height: '36px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: theme.palette.grey[100],
+                            border: 'none',
+                            cursor: quantity > 1 ? 'pointer' : 'not-allowed',
+                            color: quantity > 1 ? theme.palette.text.primary : theme.palette.grey[400],
+                            transition: 'all 0.2s ease'
+                          }}
+                          disabled={quantity <= 1}
+                        >
+                          <span style={{ fontSize: '18px', fontWeight: 'bold' }}>−</span>
+                        </button>
+                        
+                        <input
+                          type="text"
+                          value={quantity}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val) && val >= 1 && val <= (currentProductItem?.quantityInStock || 999)) {
+                              setQuantity(val);
+                            }
+                          }}
+                          style={{
+                            width: '60px',
+                            height: '36px',
+                            textAlign: 'center',
+                            border: 'none',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            color: theme.palette.text.primary
+                          }}
+                        />
+                        
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (quantity < (currentProductItem?.quantityInStock || 999)) {
+                              setQuantity(quantity + 1);
+                            }
+                          }}
+                          style={{
+                            width: '36px',
+                            height: '36px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: theme.palette.grey[100],
+                            border: 'none',
+                            cursor: quantity < (currentProductItem?.quantityInStock || 999) ? 'pointer' : 'not-allowed',
+                            color: quantity < (currentProductItem?.quantityInStock || 999) ? theme.palette.text.primary : theme.palette.grey[400],
+                            transition: 'all 0.2s ease'
+                          }}
+                          disabled={quantity >= (currentProductItem?.quantityInStock || 999)}
+                        >
+                          <span style={{ fontSize: '18px', fontWeight: 'bold' }}>+</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                   
@@ -438,11 +563,15 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     <form onSubmit={(e) => e.preventDefault()} className="d-flex gap-2">
                       <a
                         onClick={() => {
-                          openCartModal();
                           if (!currentProductItem) {
                             toast.error("Please select all options first");
                             return;
                           }
+                          if (currentProductItem.quantityInStock <= 0) {
+                            toast.error("This product is out of stock");
+                            return;
+                          }
+                          openCartModal();
                           request
                             .post("/cart-items", {
                               productItemId: currentProductItem.id,
@@ -462,36 +591,52 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               toast.error("Failed to add to cart");
                             });
                         }}
-                        className="tf-btn btn-fill justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
+                        className={`tf-btn ${currentProductItem?.quantityInStock <= 0 ? 'btn-disabled' : 'btn-fill'} justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn`}
                         style={{ 
-                          backgroundColor: theme.palette.primary.main,
+                          backgroundColor: currentProductItem?.quantityInStock <= 0 ? theme.palette.grey[400] : theme.palette.primary.main,
                           color: '#fff',
-                          padding: '10px 15px'
+                          padding: '10px 15px',
+                          cursor: currentProductItem?.quantityInStock <= 0 ? 'not-allowed' : 'pointer'
                         }}
                         onMouseOver={(e) => {
-                          e.currentTarget.style.backgroundColor = theme.palette.primary.dark;
+                          if (currentProductItem?.quantityInStock > 0) {
+                            e.currentTarget.style.backgroundColor = theme.palette.primary.dark;
+                          }
                         }}
                         onMouseOut={(e) => {
-                          e.currentTarget.style.backgroundColor = theme.palette.primary.main;
+                          if (currentProductItem?.quantityInStock > 0) {
+                            e.currentTarget.style.backgroundColor = theme.palette.primary.main;
+                          }
                         }}
                       >
                         <ShoppingCart className="mr-2" fontSize="small" />
-                        <span>Add to cart</span>
+                        <span>{currentProductItem?.quantityInStock <= 0 ? 'Out of Stock' : 'Add to cart'}</span>
                       </a>
                       
                       <a 
-                        href="/view-cart" 
-                        className="btns-full fs-14"
+                        href={currentProductItem?.quantityInStock > 0 ? "/view-cart" : "#"}
+                        className={`btns-full fs-14 ${currentProductItem?.quantityInStock <= 0 ? 'disabled' : ''}`}
                         style={{ 
-                          backgroundColor: theme.palette.error.main,
+                          backgroundColor: currentProductItem?.quantityInStock <= 0 ? theme.palette.grey[400] : theme.palette.error.main,
                           color: '#fff',
-                          padding: '10px 15px'
+                          padding: '10px 15px',
+                          cursor: currentProductItem?.quantityInStock <= 0 ? 'not-allowed' : 'pointer'
+                        }}
+                        onClick={(e) => {
+                          if (currentProductItem?.quantityInStock <= 0) {
+                            e.preventDefault();
+                            toast.error("This product is out of stock");
+                          }
                         }}
                         onMouseOver={(e) => {
-                          e.currentTarget.style.backgroundColor = theme.palette.error.dark;
+                          if (currentProductItem?.quantityInStock > 0) {
+                            e.currentTarget.style.backgroundColor = theme.palette.error.dark;
+                          }
                         }}
                         onMouseOut={(e) => {
-                          e.currentTarget.style.backgroundColor = theme.palette.error.main;
+                          if (currentProductItem?.quantityInStock > 0) {
+                            e.currentTarget.style.backgroundColor = theme.palette.error.main;
+                          }
                         }}
                       >
                         Buy Now
