@@ -10,8 +10,6 @@ export const ProductCard = ({ product }) => {
   const { setQuickViewItem } = useContextElement();
   const {
     setQuickAddItem,
-    addToWishlist,
-    isAddedtoWishlist,
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
@@ -69,22 +67,6 @@ export const ProductCard = ({ product }) => {
                 <span className="icon icon-bag" />
                 <span className="tooltip">Quick Add</span>
               </a> */}
-              <a
-                onClick={() => addToWishlist(product.id)}
-                className="box-icon bg_white wishlist btn-icon-action"
-              >
-                <span
-                  className={`icon icon-heart ${
-                    isAddedtoWishlist(product.id) ? "added" : ""
-                  }`}
-                />
-                <span className="tooltip">
-                  {isAddedtoWishlist(product.id)
-                    ? "Already Wishlisted"
-                    : "Add to Wishlist"}
-                </span>
-                <span className="icon icon-delete" />
-              </a>
               <a
                 href="#compare"
                 data-bs-toggle="offcanvas"
