@@ -67,7 +67,7 @@ export default function ProfileInfo() {
 
   const onSubmit = async (data) => {
     try {
-      request.put(`/user`, data).then((res) => {
+      request.patch(`/user`, data).then((res) => {
         toast.success("Profile updated successfully");
         revalidate();
       });

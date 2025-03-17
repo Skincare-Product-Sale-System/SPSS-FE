@@ -7,7 +7,7 @@ import { defaultProductImage } from "@/utlis/default";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import AddressItem from "../address/AddressItem";
+import AddressItem from "../addresses/AddressItem";
 import toast from "react-hot-toast";
 
 export default function Checkout() {
@@ -33,7 +33,7 @@ export default function Checkout() {
   }, 0);
 
   useEffect(() => {
-    request.get("/address/user").then(({ data }) => {
+    request.get("/addresses/user").then(({ data }) => {
       setAddresses(data?.data?.items);
     });
   }, []);

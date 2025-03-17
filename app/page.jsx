@@ -59,7 +59,7 @@ export default function Home() {
       {/* <Videobox />
       <Features /> */}
       {/* <Products2 /> */}
-      <Categories />
+      {/* <Categories /> */}
       {/* <Products2 /> */}
       <Testimonials />
       {/* <SkinChange /> */}

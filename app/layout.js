@@ -190,7 +190,7 @@ export default function RootLayout({ children }) {
                 <SearchModal />
                 <ToolbarBottom />
                 <ToolbarShop />
-                <NewsletterModal />
+                {/* <NewsletterModal /> */}
                 <ShareModal />
               </Context>
             </Providers>

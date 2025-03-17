@@ -166,7 +166,7 @@ export default function MyReviews() {
       };
       
       // Implement API call to update the review
-      await request.put(`/reviews/${updatedReview.id}`, updatedReview);
+      await request.patch(`/reviews/${updatedReview.id}`, updatedReview);
       
       // Update local state
       const updatedAllReviews = allReviews.map(review => 

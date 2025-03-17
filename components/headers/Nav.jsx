@@ -35,7 +35,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
         queryKey: ["products"],
         queryFn: async () => {
           const { data } = await request.get(
-            "/products?pageNumber=1&pageSize=100"
+            "/products?pageNumber=1&pageSize=100&sortBy=bestselling"
           );
           return data.data?.items || [];
         },
