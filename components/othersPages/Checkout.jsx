@@ -12,8 +12,6 @@ import toast from "react-hot-toast";
 import { formatPrice } from "@/utils/priceFormatter";
 import { useTheme } from "@mui/material/styles";
 // import AddressItem from "../addresses/AddressItem";
-import toast from "react-hot-toast";
-import AddressItem from "../address/AddressItem";
 
 export default function Checkout() {
   const theme = useTheme();
