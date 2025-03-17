@@ -7,8 +7,9 @@ import { defaultProductImage } from "@/utlis/default";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import AddressItem from "../addresses/AddressItem";
+// import AddressItem from "../addresses/AddressItem";
 import toast from "react-hot-toast";
+import AddressItem from "../address/AddressItem";
 
 export default function Checkout() {
   const [cartProducts, setCartProducts] = useState([]);
@@ -16,7 +17,7 @@ export default function Checkout() {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const { switcher, revalidate } = useQueryStore();
   const { Id } = useAuthStore();
-  const [paymentMethod, setPaymentMethod] = useState('bank');
+  const [paymentMethod, setPaymentMethod] = useState("bank");
 
   useEffect(() => {
     //> fetch data from server
@@ -33,7 +34,7 @@ export default function Checkout() {
   }, 0);
 
   useEffect(() => {
-    request.get("/addresses/user").then(({ data }) => {
+    request.get("/address/user").then(({ data }) => {
       setAddresses(data?.data?.items);
     });
   }, []);
@@ -202,12 +203,14 @@ export default function Checkout() {
                       toast.error("Please select an address");
                       return;
                     }
-                    const voucherId = document.querySelector("input#voucherId").value;
+                    const voucherId =
+                      document.querySelector("input#voucherId").value;
                     const orderData = {
                       addressId: selectedAddress?.id,
-                      paymentMethodId: paymentMethod === 'bank' 
-                        ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A"  // VNPay
-                        : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E",  // COD
+                      paymentMethodId:
+                        paymentMethod === "bank"
+                          ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
+                          : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
                       voucherId: voucherId || null,
                       orderDetail: cartProducts.map((elm) => ({
                         productItemId: elm.productItemId,
@@ -217,12 +220,15 @@ export default function Checkout() {
 
                     try {
                       const res = await request.post("/orders", orderData);
-                      
+
                       if (res.status === 201) {
                         const orderId = res.data.data.id;
-                        
-                        if (paymentMethod === 'bank') {
+
+                        if (paymentMethod === "bank") {
                           // Nếu là bank transfer -> gọi API VNPay và điều hướng
+                          // const vnpayRes = await request.get(
+                          //   `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A44358`
+                          // );
                           const vnpayRes = await request.get(
                             `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fpayment-success%3Fid%3D${orderId}`
                           );
