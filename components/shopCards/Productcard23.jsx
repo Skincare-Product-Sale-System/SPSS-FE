@@ -3,6 +3,7 @@ import { useState } from "react";
 import React from "react";
 import Image from "next/image";
 import { useContextElement } from "@/context/Context";
+import { useThemeColors } from "@/context/ThemeContext";
 export default function Productcard23({ product }) {
   const [currentImage, setCurrentImage] = useState(product.imgSrc);
   const { setQuickViewItem } = useContextElement();
@@ -13,21 +14,31 @@ export default function Productcard23({ product }) {
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
+  const mainColor = useThemeColors();
   return (
-    <div className="card-product list-layout">
+    <div
+      className="card-product list-layout"
+      style={{
+        transition: "all 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-3px)",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+        }
+      }}
+    >
       <div className="card-product-wrapper">
         <a href="#" className="product-img">
           <Image
             className="lazyload img-product"
             alt="image-product"
-            src={currentImage}
+            src={product.thumbnail}
             width={720}
             height={1005}
           />
           <Image
             className="lazyload img-hover"
             alt="image-product"
-            src={product.imgHoverSrc}
+            src={product.thumbnail}
             width={720}
             height={1005}
           />
