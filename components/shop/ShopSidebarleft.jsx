@@ -21,7 +21,8 @@ export default function ShopSidebarleft() {
   const [filters, setFilters] = useState({
     brandId: searchParams.get("brandId") || null,
     categoryId: searchParams.get("categoryId") || null,
-    skinTypeId: searchParams.get("skinTypeId") || null
+    skinTypeId: searchParams.get("skinTypeId") || null,
+    name: searchParams.get("name") || ""
   });
 
   // Định nghĩa các tùy chọn sắp xếp
@@ -67,8 +68,8 @@ export default function ShopSidebarleft() {
     if (newFilters.brandId) queryParams.append("brandId", newFilters.brandId);
     if (newFilters.categoryId) queryParams.append("categoryId", newFilters.categoryId);
     if (newFilters.skinTypeId) queryParams.append("skinTypeId", newFilters.skinTypeId);
+    if (newFilters.name) queryParams.append("name", newFilters.name);
     
-    // Thêm tham số sortBy thay vì sort
     if (sort) queryParams.append("sortBy", sort);
 
     try {
@@ -172,80 +173,108 @@ export default function ShopSidebarleft() {
     <>
       <section className="flat-spacing-1">
         <div className="container">
-          {/* Active Filters */}
           <Box sx={{ 
             display: 'flex', 
-            gap: 1, 
-            mb: 2, 
-            flexWrap: 'wrap',
-            alignItems: 'center' 
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: 2,
+            mb: 3 
           }}>
-            <Typography variant="subtitle1" sx={{ 
-              color: mainColor.text, 
-              fontWeight: 600 
-            }}>
-              Sản phẩm lọc theo:
-            </Typography>
-            {Object.entries(filters).map(([key, value]) => {
-              if (!value) return null;
-              return (
-                <Chip
-                  key={key}
-                  label={`${getFilterTypeName(key)}: ${getFilterName(key, value)}`}
-                  onDelete={() => handleRemoveFilter(key)}
-                  sx={{
-                    backgroundColor: `${mainColor.medium}`,
-                    color: mainColor.text,
-                    fontWeight: 500,
-                    '& .MuiChip-deleteIcon': {
-                      color: mainColor.text
-                    }
-                  }}
-                />
-              );
-            })}
-          </Box>
+            {/* Left Column - Filters & Sort */}
+            <Box sx={{ flex: 1 }}>
+              {/* Active Filters */}
+              <Box sx={{ 
+                display: 'flex', 
+                gap: 1, 
+                mb: 2, 
+                flexWrap: 'wrap',
+                alignItems: 'center' 
+              }}>
+                <Typography variant="subtitle1" sx={{ 
+                  color: mainColor.text, 
+                  fontWeight: 600 
+                }}>
+                  Sản phẩm lọc theo:
+                </Typography>
+                {Object.entries(filters).map(([key, value]) => {
+                  if (!value || key === 'name') return null;
+                  return (
+                    <Chip
+                      key={key}
+                      label={`${getFilterTypeName(key)}: ${getFilterName(key, value)}`}
+                      onDelete={() => handleRemoveFilter(key)}
+                      sx={{
+                        backgroundColor: `${mainColor.medium}`,
+                        color: mainColor.text,
+                        fontWeight: 500,
+                        '& .MuiChip-deleteIcon': {
+                          color: mainColor.text
+                        }
+                      }}
+                    />
+                  );
+                })}
+              </Box>
 
-          {/* Sort Options */}
-          <Box sx={{ 
-            display: 'flex', 
-            gap: 1, 
-            mb: 3, 
-            flexWrap: 'wrap',
-            alignItems: 'center',
-          }}>
-            <Typography variant="subtitle1" sx={{ 
-              color: mainColor.text, 
-              mr: 1,
-              fontWeight: 600 
+              {/* Sort Options */}
+              <Box sx={{ 
+                display: 'flex', 
+                gap: 1, 
+                flexWrap: 'wrap',
+                alignItems: 'center',
+              }}>
+                <Typography variant="subtitle1" sx={{ 
+                  color: mainColor.text, 
+                  mr: 1,
+                  fontWeight: 600 
+                }}>
+                  Sắp xếp:
+                </Typography>
+                {sortOptions.map((option) => (
+                  <Button
+                    key={option.value}
+                    onClick={() => handleSortChange(option.value)}
+                    variant={sortOption === option.value ? "contained" : "outlined"}
+                    sx={{
+                      minWidth: 'auto',
+                      px: 2,
+                      py: 0.5,
+                      textTransform: 'none',
+                      borderRadius: '4px',
+                      backgroundColor: sortOption === option.value ? mainColor.dark : 'transparent',
+                      color: sortOption === option.value ? '#fff' : mainColor.text,
+                      borderColor: sortOption === option.value ? mainColor.dark : mainColor.grey,
+                      fontWeight: 500,
+                      '&:hover': {
+                        backgroundColor: sortOption === option.value ? mainColor.dark : mainColor.light,
+                        borderColor: mainColor.dark
+                      }
+                    }}
+                  >
+                    {option.label}
+                  </Button>
+                ))}
+              </Box>
+            </Box>
+
+            {/* Right Column - Search */}
+            <Box sx={{ 
+              flex: 1,
+              maxWidth: '400px'
             }}>
-              Sắp xếp:
-            </Typography>
-            
-            {sortOptions.map((option) => (
-              <Button
-                key={option.value}
-                onClick={() => handleSortChange(option.value)}
-                variant={sortOption === option.value ? "contained" : "outlined"}
-                sx={{
-                  minWidth: 'auto',
-                  px: 2,
-                  py: 0.5,
-                  textTransform: 'none',
-                  borderRadius: '4px',
-                  backgroundColor: sortOption === option.value ? mainColor.dark : 'transparent',
-                  color: sortOption === option.value ? '#fff' : mainColor.text,
-                  borderColor: sortOption === option.value ? mainColor.dark : mainColor.grey,
-                  fontWeight: 500,
-                  '&:hover': {
-                    backgroundColor: sortOption === option.value ? mainColor.dark : mainColor.light,
-                    borderColor: mainColor.dark
-                  }
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={filters.name || ""}
+                onChange={(e) => handleFilterChange("name", e.target.value)}
+                className="w-full px-4 py-2 rounded-md border"
+                style={{
+                  borderColor: mainColor.grey,
+                  color: mainColor.text,
+                  outline: 'none'
                 }}
-              >
-                {option.label}
-              </Button>
-            ))}
+              />
+            </Box>
           </Box>
 
           <div className="tf-shop-control grid-3 align-items-center">
