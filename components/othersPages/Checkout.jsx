@@ -608,13 +608,19 @@ export default function Checkout() {
                     onClick={() => {
                       const voucherElem = document.getElementById("voucherId");
                       request
-                        .get(`/voucher/${voucherElem.value}`)
+                        .get(`/voucher/code/${voucherElem.value}`)
                         .then(({ data }) => {
-                          setVoucher({
-                            id: data.data.id,
-                            code: data.data.code,
-                            discountRate: data?.data?.discountRate,
-                          });
+                          if (data.data.minimumOrderValue > totalPrice) {
+                            toast.error(`Đơn hàng phải có giá trị tối thiểu ${formatPrice(data.data.minimumOrderValue)}`);
+                          } else if (data.data.usageLimit <= 0) {
+                            toast.error("Voucher đã hết lượt sử dụng");
+                          } else {
+                            setVoucher({
+                              id: data.data.id,
+                              code: data.data.code,
+                              discountRate: data?.data?.discountRate,
+                            });
+                          }
                         })
                         .catch((err) => {
                           setVoucher({
@@ -639,7 +645,7 @@ export default function Checkout() {
                   >
                     {voucher.code != "invalid" && voucher.code
                       ? `Applied voucher: ${voucher.code} with discount ${
-                          voucher.discountRate * 100
+                          voucher.discountRate
                         }%`
                       : "Invalid voucher"}
                   </div>
@@ -648,7 +654,7 @@ export default function Checkout() {
                 <div className="d-flex justify-content-between line pb_20">
                   <h6 className="fw-5">Total</h6>
                   <h6 className="total fw-5">
-                    {formatPrice(totalPrice * (1 - voucher.discountRate))}
+                    {formatPrice(totalPrice * (1 - voucher.discountRate/100))}
                     {voucher.code != "invalid" && voucher.code && (
                       <span className="strikethrough ml-2">
                         {formatPrice(totalPrice)}
