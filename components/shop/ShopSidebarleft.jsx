@@ -262,18 +262,35 @@ export default function ShopSidebarleft() {
               flex: 1,
               maxWidth: '400px'
             }}>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={filters.name || ""}
-                onChange={(e) => handleFilterChange("name", e.target.value)}
-                className="w-full px-4 py-2 rounded-md border"
-                style={{
-                  borderColor: mainColor.grey,
-                  color: mainColor.text,
-                  outline: 'none'
-                }}
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={filters.name || ""}
+                  onChange={(e) => handleFilterChange("name", e.target.value)}
+                  className="w-full px-4 py-2 pl-10 rounded-md border"
+                  style={{
+                    borderColor: mainColor.grey,
+                    color: mainColor.text,
+                    outline: 'none'
+                  }}
+                />
+                <div 
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  style={{ color: mainColor.grey }}
+                >
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="16" 
+                    height="16" 
+                    fill="currentColor" 
+                    className="bi bi-search" 
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                  </svg>
+                </div>
+              </div>
             </Box>
           </Box>
 
