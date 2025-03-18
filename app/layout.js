@@ -33,8 +33,9 @@ import RtlToggle from "@/components/common/RtlToggle";
 import Providers from "@/context/Providers";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "react-hot-toast";
-import { ThemeProvider } from '@/context/ThemeContext';
-import { MuiThemeProvider } from '@/context/MuiThemeProvider';
+import { ThemeProvider } from "@/context/ThemeContext";
+import { MuiThemeProvider } from "@/context/MuiThemeProvider";
+import ChatAssistant from "@/components/othersPages/ChatAssistant";
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -190,6 +191,7 @@ export default function RootLayout({ children }) {
                 <SearchModal />
                 <ToolbarBottom />
                 <ToolbarShop />
+                <ChatAssistant />
                 {/* <NewsletterModal /> */}
                 <ShareModal />
               </Context>
