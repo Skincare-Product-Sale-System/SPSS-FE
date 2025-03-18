@@ -654,15 +654,13 @@ export default function Checkout() {
                           const orderId = res.data.data.id;
 
                           if (paymentMethod === "bank") {
-                            // Nếu là bank transfer -> gọi API VNPay và điều hướng
                             const vnpayRes = await request.get(
-                              `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fpayment-success%3Fid%3D${orderId}`
+                              `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=https%3A%2F%2Flocalhost%3A44358`
                             );
                             if (vnpayRes.status === 200) {
-                              location.href = vnpayRes.data.data; // Chuyển đến trang thanh toán VNPay
+                              location.href = vnpayRes.data.data;
                             }
                           } else {
-                            // Nếu là COD -> chuyển thẳng đến trang success
                             location.href = `/payment-success?id=${orderId}`;
                           }
                         }
@@ -671,23 +669,10 @@ export default function Checkout() {
                         location.href = "/payment-failure";
                       }
                     }}
-                    style={{ backgroundColor: '#000000', color: '#ffffff' }}
                   >
                     Place order
                   </button>
-                ) : (
-                  <div
-                    className="tf-btn radius-3 justify-content-center"
-                    style={{ 
-                      backgroundColor: '#757575', 
-                      color: '#e0e0e0', 
-                      cursor: 'not-allowed', 
-                      pointerEvents: 'none' 
-                    }}
-                  >
-                    Place order
-                  </div>
-                )}
+                ) : null}
               </form>
             </div>
           </div>
