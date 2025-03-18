@@ -315,6 +315,9 @@ export default function OrderDetails() {
                   <th className="py-2 px-3 text-right text-xs font-medium text-gray-500 uppercase">
                     TOTAL
                   </th>
+                  <th className="py-2 px-3 text-center text-xs font-medium text-gray-500 uppercase">
+                    ACTION
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -359,6 +362,30 @@ export default function OrderDetails() {
                     <td className="py-2 px-3 text-center">x{item.quantity}</td>
                     <td className="py-2 px-3 text-right font-medium">
                       {formatCurrency(item.price * item.quantity)}
+                    </td>
+                    <td className="py-2 px-3 text-center">
+                      <button
+                        className={`px-3 py-1.5 text-xs rounded-md transition-all ${
+                          order.status?.toLowerCase() === "delivered" && item.isReviewable
+                            ? "hover:opacity-90 shadow-sm" 
+                            : "cursor-not-allowed opacity-60"
+                        }`}
+                        style={{ 
+                          backgroundColor: order.status?.toLowerCase() === "delivered" && item.isReviewable ? mainColor.primary || mainColor : "#E0E0E0",
+                          color: order.status?.toLowerCase() === "delivered" && item.isReviewable ? "#FFFFFF" : "#757575",
+                          border: "none",
+                          fontWeight: "medium"
+                        }}
+                        disabled={order.status?.toLowerCase() !== "delivered" || !item.isReviewable}
+                        onClick={() => {
+                          if (order.status?.toLowerCase() === "delivered" && item.isReviewable) {
+                            // Navigate to review page or open review modal
+                            window.location.href = `/product-review?productId=${item.productId}&orderId=${order.id}`;
+                          }
+                        }}
+                      >
+                        Review
+                      </button>
                     </td>
                   </tr>
                 ))}

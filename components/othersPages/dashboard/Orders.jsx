@@ -68,13 +68,13 @@ export default function Orders() {
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case "completed":
+      case "delivered":
         return "bg-green-100 text-green-800";
-      case "pending":
+      case "awaiting payment":
         return "bg-yellow-100 text-yellow-800";
       case "cancelled":
         return "bg-red-100 text-red-800";
-      case "awaiting payment":
+      case "processing":
         return "bg-blue-100 text-blue-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -181,8 +181,30 @@ export default function Orders() {
                       )}
                       <p className="text-sm">x{item.quantity}</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex flex-col items-end gap-2">
                       <p className="font-medium">{formatCurrency(item.price)}</p>
+                      <button
+                        className={`px-3 py-1.5 text-xs rounded-md transition-all ${
+                          order.status?.toLowerCase() === "delivered" && item.isReviewable
+                            ? "hover:opacity-90 shadow-sm" 
+                            : "cursor-not-allowed opacity-60"
+                        }`}
+                        style={{ 
+                          backgroundColor: order.status?.toLowerCase() === "delivered" && item.isReviewable ? mainColor.primary || mainColor : "#E0E0E0",
+                          color: order.status?.toLowerCase() === "delivered" && item.isReviewable ? "#FFFFFF" : "#757575",
+                          border: "none",
+                          fontWeight: "medium"
+                        }}
+                        disabled={order.status?.toLowerCase() !== "delivered" || !item.isReviewable}
+                        onClick={() => {
+                          if (order.status?.toLowerCase() === "delivered" && item.isReviewable) {
+                            // Navigate to review page or open review modal
+                            window.location.href = `/product-review?productId=${item.productId}&orderId=${order.id}`;
+                          }
+                        }}
+                      >
+                        Review
+                      </button>
                     </div>
                   </div>
                 ))}
