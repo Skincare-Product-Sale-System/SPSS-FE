@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 export default function ChatAssistant() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       sender: "model",
