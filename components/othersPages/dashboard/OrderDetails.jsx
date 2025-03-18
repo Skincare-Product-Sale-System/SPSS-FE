@@ -35,7 +35,6 @@ export default function OrderDetails() {
   const orderId = searchParams.get("id");
   const mainColor = useThemeColors();
   const [reasons, setReasons] = useState([]);
-  const [reason, setReason] = useState();
   const [selectedReason, setCancelReason] = useState("");
   const router = useRouter();
   const { Id } = useAuthStore();
@@ -47,12 +46,6 @@ export default function OrderDetails() {
       fetchOrderDetails();
     }
   }, [orderId]);
-
-  useEffect(() => {
-    request.get(`/cancel-reasons/${order?.cancelReasonId}`).then(({ data }) => {
-      setReason(data.data.description);
-    });
-  }, [order]);
 
   useEffect(() => {
     request.get("/cancel-reasons").then(({ data }) => {
@@ -87,7 +80,7 @@ export default function OrderDetails() {
 
   const handleCancelOrder = async () => {
     try {
-      await request.patch(`/orders/${order.id}/status?newStatus=Cancelled&cancelReasonId=${selectedReason}`);
+      await request.patch(`/orders/${order.id}/status?newStatus=Cancelled`);
       setOpenCancelDialog(false);
       fetchOrderDetails(); // Refresh order details
     } catch (error) {
@@ -567,7 +560,7 @@ export default function OrderDetails() {
                               Status:{" "}
                               <span className="font-medium text-gray-900">
                                 {statusChange.status}
-                              </span> {statusChange.status === "Cancelled" && <div>({reason})</div>}
+                              </span>
                             </p>
                           </div>
                           <div className="whitespace-nowrap text-right text-xs text-gray-500">

@@ -42,6 +42,29 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       },
     ],
   });
+  
+  // Thêm state và fetch cho skin types
+  const [skinTypes, setSkinTypes] = useState([]);
+  
+  useEffect(() => {
+    const fetchSkinTypes = async () => {
+      try {
+        const { data } = await request.get("/skin-types");
+        // Kiểm tra cấu trúc dữ liệu theo response API thực tế
+        if (data && data.data && Array.isArray(data.data.items)) {
+          setSkinTypes(data.data.items);
+        } else {
+          console.error("Skin types data is not in expected format:", data);
+          setSkinTypes([]);
+        }
+      } catch (error) {
+        console.error("Error fetching skin types:", error);
+        setSkinTypes([]);
+      }
+    };
+    
+    fetchSkinTypes();
+  }, []);
 
   const pathname = usePathname();
   const isMenuActive = (menuItem) => {
@@ -261,6 +284,27 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                 <div className="mega-menu-item">
                   <div className="menu-heading">Categories</div>
                   {!categories.isLoading && renderCategories(categories.data)}
+                  
+                  {/* Thêm phần Skin Types với kiểm tra mảng và cập nhật tên trường */}
+                  <div className="menu-heading mt-4">Skin Types</div>
+                  <ul className="menu-list">
+                    {Array.isArray(skinTypes) && skinTypes.length > 0 ? (
+                      skinTypes.map((skinType, index) => (
+                        <li key={`skin-${index}`}>
+                          <Link
+                            href={`/products?skinTypeId=${skinType.id}`}
+                            className={`menu-link-text link position-relative ${
+                              isMenuActive({ href: `/products?skinTypeId=${skinType.id}` }) ? "activeMenu" : ""
+                            }`}
+                          >
+                            {skinType.name}
+                          </Link>
+                        </li>
+                      ))
+                    ) : (
+                      <li><span className="menu-link-text">Loading skin types...</span></li>
+                    )}
+                  </ul>
                 </div>
               </div>
               {/* {productDetailPages.map((menuItem, index) => (
