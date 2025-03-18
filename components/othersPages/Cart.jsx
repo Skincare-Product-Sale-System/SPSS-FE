@@ -462,12 +462,22 @@ export default function Cart() {
                   </label>
                 </div>
                 <div className="cart-checkout-btn">
-                  <Link
-                    href={`/checkout`}
-                    className="tf-btn w-100 btn-fill animate-hover-btn radius-3 justify-content-center"
-                  >
-                    <span>Check out</span>
-                  </Link>
+                  {cartProducts.length ? (
+                    <Link
+                      href="/checkout"
+                      className="tf-btn w-100 radius-3 justify-content-center"
+                      style={{ backgroundColor: '#000000', color: '#ffffff' }}
+                    >
+                      <span>Check out</span>
+                    </Link>
+                  ) : (
+                    <div
+                      className="tf-btn w-100 radius-3 justify-content-center"
+                      style={{ backgroundColor: '#757575', color: '#e0e0e0', cursor: 'not-allowed', pointerEvents: 'none' }}
+                    >
+                      <span>Check out</span>
+                    </div>
+                  )}
                 </div>
                 <div className="tf-page-cart_imgtrust">
                   <p className="text-center fw-6">Guarantee Safe Checkout</p>

@@ -45,9 +45,19 @@ export default function Checkout() {
     request
       .get("/cart-items/user/cart")
       .then(({ data }) => {
-        setCartProducts(data?.data?.items);
+        const items = data?.data?.items || [];
+        setCartProducts(items);
+        
+        // Redirect to cart page if cart is empty
+        if (items.length === 0) {
+          window.location.href = '/view-cart';
+        }
       })
-      .catch((e) => setCartProducts([]));
+      .catch((e) => {
+        setCartProducts([]);
+        // Redirect to cart page if there's an error fetching cart
+        window.location.href = '/view-cart';
+      });
   }, [switcher]);
 
   const totalPrice = cartProducts.reduce((a, b) => {
@@ -614,33 +624,34 @@ export default function Checkout() {
                     </label>
                   </div>
                 </div>
-                <button
-                  className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
-                  onClick={async () => {
-                    if (!selectedAddress?.id) {
-                      toast.error("Please select an address");
-                      return;
-                    }
-                    const voucherId =
-                      document.querySelector("input#voucherId").value;
-                    const orderData = {
-                      addressId: selectedAddress?.id,
-                      paymentMethodId:
-                        paymentMethod === "bank"
-                          ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
-                          : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
-                      voucherId: voucherId || null,
-                      orderDetail: cartProducts.map((elm) => ({
-                        productItemId: elm.productItemId,
-                        quantity: elm.quantity,
-                      })),
-                    };
+                {cartProducts.length ? (
+                  <button
+                    className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
+                    onClick={async () => {
+                      if (!selectedAddress?.id) {
+                        toast.error("Please select an address");
+                        return;
+                      }
+                      const voucherId =
+                        document.querySelector("input#voucherId").value;
+                      const orderData = {
+                        addressId: selectedAddress?.id,
+                        paymentMethodId:
+                          paymentMethod === "bank"
+                            ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
+                            : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
+                        voucherId: voucherId || null,
+                        orderDetail: cartProducts.map((elm) => ({
+                          productItemId: elm.productItemId,
+                          quantity: elm.quantity,
+                        })),
+                      };
 
-                    try {
-                      const res = await request.post("/orders", orderData);
+                      try {
+                        const res = await request.post("/orders", orderData);
 
-                      if (res.status === 201) {
-                        const orderId = res.data.data.id;
+                        if (res.status === 201) {
+                          const orderId = res.data.data.id;
 
                         if (paymentMethod === "bank") {
                           // Nếu là bank transfer -> gọi API VNPay và điều hướng
@@ -667,6 +678,41 @@ export default function Checkout() {
                 >
                   Place order
                 </button>
+                          if (paymentMethod === "bank") {
+                            // Nếu là bank transfer -> gọi API VNPay và điều hướng
+                            const vnpayRes = await request.get(
+                              `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fpayment-success%3Fid%3D${orderId}`
+                            );
+                            if (vnpayRes.status === 200) {
+                              location.href = vnpayRes.data.data; // Chuyển đến trang thanh toán VNPay
+                            }
+                          } else {
+                            // Nếu là COD -> chuyển thẳng đến trang success
+                            location.href = `/payment-success?id=${orderId}`;
+                          }
+                        }
+                      } catch (err) {
+                        console.error(err);
+                        location.href = "/payment-failure";
+                      }
+                    }}
+                    style={{ backgroundColor: '#000000', color: '#ffffff' }}
+                  >
+                    Place order
+                  </button>
+                ) : (
+                  <div
+                    className="tf-btn radius-3 justify-content-center"
+                    style={{ 
+                      backgroundColor: '#757575', 
+                      color: '#e0e0e0', 
+                      cursor: 'not-allowed', 
+                      pointerEvents: 'none' 
+                    }}
+                  >
+                    Place order
+                  </div>
+                )}
               </form>
             </div>
           </div>
