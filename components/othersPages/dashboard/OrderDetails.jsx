@@ -59,7 +59,7 @@ export default function OrderDetails() {
   const handlePayNow = async () => {
     try {
       const vnpayRes = await request.get(
-        `/VNPAY/get-transaction-status-vnpay?orderId=${order.id}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fmy-account-orders-details?id=${order.id}`
+        `/VNPAY/get-transaction-status-vnpay?orderId=${order.id}&userId=${Id}&urlReturn=https%3A%2F%2Flocalhost%3A44358`
       );
       if (vnpayRes.status === 200) {
         location.href = vnpayRes.data.data;
@@ -432,7 +432,7 @@ export default function OrderDetails() {
         )}
 
         {/* Action Buttons - Only show for appropriate statuses */}
-        {(order.status === "Pending" ||
+        {(order.status === "Processing" ||
           order.status === "Awaiting Payment") && (
           <div className="mt-4 flex justify-end gap-3">
             {order.status === "Awaiting Payment" && (

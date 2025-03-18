@@ -648,7 +648,8 @@ export default function Checkout() {
                           //   `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A44358`
                           // );
                           const vnpayRes = await request.get(
-                            `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A3000%2Fpayment-success%3Fid%3D${orderId}`
+                            //`/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=http%3A%2F%2Flocalhost%3A44358%2Fpayment-success%3Fid%3D${orderId}`
+                            `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=https%3A%2F%2Flocalhost%3A44358`
                           );
                           if (vnpayRes.status === 200) {
                             location.href = vnpayRes.data.data; // Chuyển đến trang thanh toán VNPay
