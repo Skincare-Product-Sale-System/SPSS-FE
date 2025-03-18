@@ -391,6 +391,12 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         </div>
                       </div>
                     ))}
+                  </div>
+                  
+                  <div className="tf-product-info-quantity mb-3">
+                    {currentProductItem && (
+                      <div className="d-flex align-items-center mb-2">
+                        
 
                     {/* Hiển thị quantityInStock */}
                     {currentProductItem && (
@@ -422,33 +428,6 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         </div>
                       </div>
                     )}
-                  </div>
-                  
-                  <div className="tf-product-info-quantity mb-3">
-                    {currentProductItem && (
-                      <div className="d-flex align-items-center mb-2">
-                        <Typography variant="subtitle2" className="text-gray-600 mr-1 fs-14">
-                          Available:
-                        </Typography>
-                        <Chip 
-                          label={`${currentProductItem.quantityInStock || 0} items`}
-                          color={currentProductItem.quantityInStock > 10 ? "success" : currentProductItem.quantityInStock > 0 ? "warning" : "error"}
-                          size="small"
-                          sx={{ 
-                            height: '20px', 
-                            fontSize: '12px',
-                            backgroundColor: currentProductItem.quantityInStock > 10 
-                              ? `${theme.palette.success.main}15` 
-                              : currentProductItem.quantityInStock > 0 
-                                ? `${theme.palette.warning.main}15`
-                                : `${theme.palette.error.main}15`,
-                            color: currentProductItem.quantityInStock > 10 
-                              ? theme.palette.success.main 
-                              : currentProductItem.quantityInStock > 0 
-                                ? theme.palette.warning.main
-                                : theme.palette.error.main,
-                          }}
-                        />
                         {currentProductItem.quantityInStock < 10 && currentProductItem.quantityInStock > 0 && (
                           <Typography 
                             variant="caption" 
