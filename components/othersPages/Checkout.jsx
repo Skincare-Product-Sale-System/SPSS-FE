@@ -610,7 +610,15 @@ export default function Checkout() {
                       request
                         .get(`/voucher/code/${voucherElem.value}`)
                         .then(({ data }) => {
-                          if (data.data.minimumOrderValue > totalPrice) {
+                          const currentDate = new Date();
+                          const startDate = new Date(data.data.startDate);
+                          const endDate = new Date(data.data.endDate);
+
+                          if (currentDate < startDate) {
+                            toast.error("Voucher chưa đến thời gian sử dụng");
+                          } else if (currentDate > endDate) {
+                            toast.error("Voucher đã hết hạn sử dụng");
+                          } else if (data.data.minimumOrderValue > totalPrice) {
                             toast.error(`Đơn hàng phải có giá trị tối thiểu ${formatPrice(data.data.minimumOrderValue)}`);
                           } else if (data.data.usageLimit <= 0) {
                             toast.error("Voucher đã hết lượt sử dụng");
@@ -733,7 +741,7 @@ export default function Checkout() {
                           paymentMethod === "bank"
                             ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
                             : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
-                        voucherId: voucher.code && voucher.code !== "invalid" ? voucher.id : null,
+                        voucherId: voucher.id || null,
                         orderDetail: cartProducts.map((elm) => ({
                           productItemId: elm.productItemId,
                           quantity: elm.quantity,
