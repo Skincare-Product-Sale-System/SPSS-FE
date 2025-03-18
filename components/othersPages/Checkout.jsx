@@ -727,10 +727,7 @@ export default function Checkout() {
                           paymentMethod === "bank"
                             ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
                             : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
-                        voucherId:
-                          voucher.code != "invalid" || voucher.code != ""
-                            ? voucher.id
-                            : null,
+                        voucherId: voucher.code && voucher.code !== "invalid" ? voucher.id : null,
                         orderDetail: cartProducts.map((elm) => ({
                           productItemId: elm.productItemId,
                           quantity: elm.quantity,
