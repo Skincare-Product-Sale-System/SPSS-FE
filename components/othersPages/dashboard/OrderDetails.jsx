@@ -19,6 +19,13 @@ import {
 import Link from "next/link";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useAuthStore from "@/context/authStore";
+import ProductReviewModal from "../ProductReviewModal";
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import PendingIcon from '@mui/icons-material/Pending';
+import PaymentsIcon from '@mui/icons-material/Payments';
 
 export default function OrderDetails() {
   const [order, setOrder] = useState(null);
@@ -31,6 +38,8 @@ export default function OrderDetails() {
   const [selectedReason, setCancelReason] = useState("");
   const router = useRouter();
   const { Id } = useAuthStore();
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
     if (orderId) {
@@ -106,22 +115,106 @@ export default function OrderDetails() {
     }
   };
 
-  const getStatusStep = (status) => {
+  const getStatusInfo = (status) => {
     switch (status?.toLowerCase()) {
       case "pending":
-        return 1;
+      case "awaiting payment":
+        return { currentStep: 1, lastValidStep: 1 };
       case "processing":
-        return 2;
-      case "on the way":
-        return 3;
+        return { currentStep: 2, lastValidStep: 2 };
+      case "delivering":
+        return { currentStep: 3, lastValidStep: 3 };
       case "delivered":
-        return 4;
       case "completed":
-        return 4;
+        return { currentStep: 4, lastValidStep: 4 };
+      case "cancelled":
+        // Xác định bước cuối cùng trước khi hủy
+        const lastStatus = order.statusChanges?.[order.statusChanges.length - 2]?.status.toLowerCase();
+        let lastValidStep = 1;
+        if (lastStatus === "processing") lastValidStep = 2;
+        else if (lastStatus === "delivered") lastValidStep = 4;
+        else if (lastStatus === "delivering") lastValidStep = 3;
+        return { currentStep: -1, lastValidStep };
       default:
-        return 1;
+        return { currentStep: 1, lastValidStep: 1 };
     }
   };
+
+  const getStatusIcon = (status) => {
+    switch (status?.toLowerCase()) {
+      case "pending":
+        return <PendingIcon sx={{ fontSize: 20 }} />;
+      case "processing":
+        return <InventoryIcon sx={{ fontSize: 20 }} />;
+      case "delivering":
+        return <LocalShippingIcon sx={{ fontSize: 20 }} />;
+      case "delivered":
+        return <CheckCircleIcon sx={{ fontSize: 20 }} />;
+      case "cancelled":
+        return <CancelIcon sx={{ fontSize: 20 }} />;
+      case "awaiting payment":
+        return <PaymentsIcon sx={{ fontSize: 20 }} />;
+      default:
+        return <PendingIcon sx={{ fontSize: 20 }} />;
+    }
+  };
+
+  const getStatusCircleColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "completed":
+      case "delivered":
+        return "bg-green-500";
+      case "pending":
+        return "bg-yellow-500";
+      case "processing":
+        return "bg-blue-500";
+      case "delivering":
+        return "bg-blue-500";
+      case "cancelled":
+        return "bg-red-500";
+      case "awaiting payment":
+        return "bg-blue-500";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
+  const getStatusBorderColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "completed":
+      case "delivered":
+        return "border-green-500";
+      case "pending":
+        return "border-yellow-500";
+      case "processing":
+        return "border-blue-500";
+      case "delivering":
+        return "border-blue-500";
+      case "cancelled":
+        return "border-red-500";
+      case "awaiting payment":
+        return "border-blue-500";
+      default:
+        return "border-gray-500";
+    }
+  };
+
+  function isStatusBefore(checkStatus, currentStatus) {
+    const orderFlow = [
+      "pending",
+      "awaiting payment",
+      "processing",
+      "delivering",
+      "delivered",
+      "completed",
+      "cancelled"
+    ];
+    
+    const checkIndex = orderFlow.findIndex(s => s === checkStatus.toLowerCase());
+    const currentIndex = orderFlow.findIndex(s => s === currentStatus.toLowerCase());
+    
+    return checkIndex < currentIndex && checkIndex !== -1 && currentIndex !== -1;
+  }
 
   if (loading) {
     return (
@@ -135,7 +228,7 @@ export default function OrderDetails() {
     return <div className="text-center py-8">Order not found</div>;
   }
 
-  const currentStep = getStatusStep(order.status);
+  const { currentStep, lastValidStep } = getStatusInfo(order.status);
 
   return (
     <div className="my-account-content account-order-details">
@@ -178,56 +271,66 @@ export default function OrderDetails() {
           </span>
         </div>
 
-        {/* Order Progress Tracker - More compact */}
+        {/* Order Progress Tracker */}
         <div className="mb-4">
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
-              <div className="flex flex-col items-center">
-                <div
-                  className={`w-8 h-8 flex items-center justify-center rounded-full ${
-                    currentStep >= 1 ? "bg-teal-500 text-white" : "bg-gray-200"
-                  }`}
-                >
-                  <span className="text-xs">01</span>
-                </div>
-                <span className="text-xs mt-1">Order</span>
+              {/* Progress Line Background */}
+              <div 
+                className="absolute top-4 left-12 right-12 h-1 rounded-full -z-5"
+                style={{
+                  background: currentStep === -1 
+                    ? `linear-gradient(to right, 
+                        #14b8a6 ${((lastValidStep - 1) / 2) * 100}%, 
+                        #ef4444 ${((lastValidStep - 1) / 2) * 100}%, 
+                        #ef4444 100%
+                      )`
+                    : `linear-gradient(to right, 
+                        #14b8a6 ${((currentStep - 1) / 3) * 100}%, 
+                        #e5e7eb ${((currentStep - 1) / 3) * 100}%
+                      )`
+                }}
+              />
+
+              {/* Step Circles */}
+              <div className="flex items-center justify-between w-full relative z-10">
+                {currentStep === -1 ? (
+                  // Hiển thị 3 bước khi cancelled
+                  ['Order', 'Processing', 'Cancelled'].map((label, index) => (
+                    <div key={index} className="flex flex-col items-center">
+                      <div
+                        className={`w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ${
+                          index === 2 
+                            ? "bg-red-500 text-white shadow-lg shadow-red-200" // Circle Cancelled luôn đỏ
+                            : index + 1 <= lastValidStep
+                              ? "bg-teal-500 text-white shadow-lg shadow-teal-200" // Circle hoàn thành
+                              : "bg-gray-200" // Circle chưa hoàn thành
+                        }`}
+                      >
+                        <span className="text-xs">{(index + 1).toString().padStart(2, '0')}</span>
+                      </div>
+                      <span className="text-xs mt-1">{label}</span>
+                    </div>
+                  ))
+                ) : (
+                  // Hiển thị 4 bước bình thường
+                  // Hiển thị 4 bước bình thường: Order > Processing > Delivering > Delivered
+                  ['Order', 'Processing', 'Delivering', 'Delivered'].map((label, index) => (
+                    <div key={index} className="flex flex-col items-center">
+                      <div
+                        className={`w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ${
+                          index + 1 <= currentStep
+                            ? "bg-teal-500 text-white shadow-lg shadow-teal-200"
+                            : "bg-gray-200"
+                        }`}
+                      >
+                        <span className="text-xs">{(index + 1).toString().padStart(2, '0')}</span>
+                      </div>
+                      <span className="text-xs mt-1">{label}</span>
+                    </div>
+                  ))
+                )}
               </div>
-              <div className="flex flex-col items-center">
-                <div
-                  className={`w-8 h-8 flex items-center justify-center rounded-full ${
-                    currentStep >= 2 ? "bg-teal-500 text-white" : "bg-gray-200"
-                  }`}
-                >
-                  <span className="text-xs">02</span>
-                </div>
-                <span className="text-xs mt-1">Process</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div
-                  className={`w-8 h-8 flex items-center justify-center rounded-full ${
-                    currentStep >= 3 ? "bg-teal-500 text-white" : "bg-gray-200"
-                  }`}
-                >
-                  <span className="text-xs">03</span>
-                </div>
-                <span className="text-xs mt-1">Shipping</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div
-                  className={`w-8 h-8 flex items-center justify-center rounded-full ${
-                    currentStep >= 4 ? "bg-teal-500 text-white" : "bg-gray-200"
-                  }`}
-                >
-                  <span className="text-xs">04</span>
-                </div>
-                <span className="text-xs mt-1">Delivered</span>
-              </div>
-            </div>
-            <div className="absolute top-4 left-0 right-0 h-1 bg-gray-200 -z-10">
-              <div
-                className="h-full bg-teal-500"
-                style={{ width: `${(currentStep - 1) * 33.33}%` }}
-              ></div>
             </div>
           </div>
         </div>
@@ -371,20 +474,27 @@ export default function OrderDetails() {
                             : "cursor-not-allowed opacity-60"
                         }`}
                         style={{ 
-                          backgroundColor: order.status?.toLowerCase() === "delivered" && item.isReviewable ? mainColor.primary || mainColor : "#E0E0E0",
-                          color: order.status?.toLowerCase() === "delivered" && item.isReviewable ? "#FFFFFF" : "#757575",
+                          backgroundColor: order.status?.toLowerCase() === "delivered" && item.isReviewable 
+                            ? mainColor.primary || mainColor 
+                            : "#E0E0E0",
+                          color: order.status?.toLowerCase() === "delivered" && item.isReviewable 
+                            ? "#FFFFFF" 
+                            : "#757575",
                           border: "none",
                           fontWeight: "medium"
                         }}
                         disabled={order.status?.toLowerCase() !== "delivered" || !item.isReviewable}
                         onClick={() => {
                           if (order.status?.toLowerCase() === "delivered" && item.isReviewable) {
-                            // Navigate to review page or open review modal
-                            window.location.href = `/product-review?productId=${item.productId}&orderId=${order.id}`;
+                            // Open review modal instead of navigation
+                            setSelectedProduct(item);
+                            setReviewModalOpen(true);
                           }
                         }}
                       >
-                        Review
+                        {order.status?.toLowerCase() === "delivered" && !item.isReviewable
+                          ? "Reviewed"
+                          : "Review"}
                       </button>
                     </td>
                   </tr>
@@ -394,7 +504,7 @@ export default function OrderDetails() {
           </div>
         </div>
 
-        {/* Status Timeline - More compact */}
+        {/* Status Timeline */}
         {order.statusChanges && order.statusChanges.length > 0 && (
           <div className="mt-4 border-t pt-3">
             <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2">
@@ -414,31 +524,39 @@ export default function OrderDetails() {
                       <div className="relative flex space-x-3">
                         <div>
                           <span
-                            className={`h-6 w-6 rounded-full ${getStatusColor(
-                              statusChange.status
-                            )
-                              .replace("text-", "bg-")
-                              .replace(
-                                "100",
-                                "500"
-                              )} flex items-center justify-center ring-4 ring-white`}
+                            className={`h-8 w-8 rounded-full flex items-center justify-center ring-4 ring-white
+                              ${
+                                // Kiểm tra nếu là status cuối
+                                ["Delivered", "Completed", "Cancelled"].includes(statusChange.status) || 
+                                // HOẶC nếu là status đã qua
+                                isStatusBefore(statusChange.status, order.status)
+                                  ? `${getStatusCircleColor(statusChange.status)} text-white`
+                                  
+                                  // Nếu là status hiện tại nhưng không phải cuối
+                                  : statusChange.status === order.status
+                                    ? `bg-white border-2 border-dashed ${getStatusBorderColor(statusChange.status)}`
+                                    
+                                    // Còn lại là các status sắp tới
+                                    : "bg-gray-200"
+                              }
+                            `}
                           >
-                            <svg
-                              className="h-3 w-3 text-white"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11.414l4.707-4.707-1.414-1.414L11 10.586V5H9v5.586L5.707 7.293 4.293 8.707 9 13.414z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
+                            {/* Đảm bảo icon trắng khi status là cuối cùng hoặc đã qua */}
+                            <div className={
+                              ["Delivered", "Completed", "Cancelled"].includes(statusChange.status) || 
+                              isStatusBefore(statusChange.status, order.status)
+                                ? "text-white" 
+                                : statusChange.status === order.status
+                                  ? getStatusBorderColor(statusChange.status).replace("border-", "text-")
+                                  : "text-gray-500"
+                            }>
+                              {getStatusIcon(statusChange.status)}
+                            </div>
                           </span>
                         </div>
                         <div className="flex min-w-0 flex-1 justify-between items-center space-x-2">
                           <div>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-sm text-gray-600">
                               Status:{" "}
                               <span className="font-medium text-gray-900">
                                 {statusChange.status}
@@ -562,6 +680,23 @@ export default function OrderDetails() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Add review modal */}
+      {selectedProduct && (
+        <ProductReviewModal
+          open={reviewModalOpen}
+          onClose={() => {
+            setReviewModalOpen(false);
+            setSelectedProduct(null);
+          }}
+          productInfo={selectedProduct}
+          orderId={order.id}
+          onSubmitSuccess={() => {
+            // Refetch order details after successful review submission
+            fetchOrderDetails();
+          }}
+        />
+      )}
     </div>
   );
 }

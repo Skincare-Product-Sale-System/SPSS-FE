@@ -1,13 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Paper, Typography, Box, Button, Grid, Pagination } from "@mui/material";
+import { Paper, Typography, Box, Button, Grid, Pagination, Dialog, IconButton } from "@mui/material";
 import Rating from "../common/Rating";
 import { defaultUserImage } from "@/utlis/default";
 import dayjs from "dayjs";
 import request from "@/utlis/axios";
 import StarIcon from '@mui/icons-material/Star';
 import { useThemeColors } from "@/context/ThemeContext";
+import CloseIcon from '@mui/icons-material/Close';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 export default function ProductReviews({ productId }) {
   const mainColor = useThemeColors();
@@ -19,6 +22,12 @@ export default function ProductReviews({ productId }) {
   const [activeFilter, setActiveFilter] = useState("all");
   const [activeStarFilter, setActiveStarFilter] = useState(0);
   const [hasImages, setHasImages] = useState(false);
+  const [imagePreview, setImagePreview] = useState({
+    open: false,
+    currentImage: "",
+    images: [],
+    currentIndex: 0
+  });
   const [stats, setStats] = useState({
     average: 0,
     distribution: {
@@ -152,6 +161,42 @@ export default function ProductReviews({ productId }) {
     setHasImages(!hasImages);
     setCurrentPage(1);
     setActiveFilter(hasImages ? "all" : "images");
+  };
+
+  const handleOpenPreview = (image, allImages, index) => {
+    setImagePreview({
+      open: true,
+      currentImage: image,
+      images: allImages,
+      currentIndex: index
+    });
+  };
+
+  const handleClosePreview = () => {
+    setImagePreview({
+      ...imagePreview,
+      open: false
+    });
+  };
+
+  const handleNextImage = () => {
+    const { images, currentIndex } = imagePreview;
+    const nextIndex = (currentIndex + 1) % images.length;
+    setImagePreview({
+      ...imagePreview,
+      currentImage: images[nextIndex],
+      currentIndex: nextIndex
+    });
+  };
+
+  const handlePrevImage = () => {
+    const { images, currentIndex } = imagePreview;
+    const prevIndex = (currentIndex - 1 + images.length) % images.length;
+    setImagePreview({
+      ...imagePreview,
+      currentImage: images[prevIndex],
+      currentIndex: prevIndex
+    });
   };
 
   return (
@@ -326,7 +371,12 @@ export default function ProductReviews({ productId }) {
                     {review.reviewImages && review.reviewImages.length > 0 && (
                       <div className="review-images d-flex flex-wrap gap-2 mb-3">
                         {review.reviewImages.map((image, index) => (
-                          <div key={index} className="review-image-container" style={{ width: '80px', height: '80px' }}>
+                          <div 
+                            key={index} 
+                            className="review-image-container cursor-pointer hover:opacity-90 transition-opacity" 
+                            style={{ width: '80px', height: '80px' }}
+                            onClick={() => handleOpenPreview(image, review.reviewImages, index)}
+                          >
                             <img
                               src={image}
                               alt={`Review image ${index + 1}`}
@@ -383,6 +433,100 @@ export default function ProductReviews({ productId }) {
             )}
           </div>
         </Paper>
+        
+        {/* Thêm modal preview ảnh */}
+        <Dialog
+          open={imagePreview.open}
+          onClose={handleClosePreview}
+          maxWidth="md"
+          PaperProps={{
+            sx: {
+              bgcolor: 'rgba(0, 0, 0, 0.8)',
+              boxShadow: 'none',
+              position: 'relative',
+              m: 0,
+              minHeight: '100vh',
+              width: '100%',
+              borderRadius: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }
+          }}
+        >
+          <IconButton
+            onClick={handleClosePreview}
+            sx={{
+              position: 'absolute',
+              right: 16,
+              top: 16,
+              color: 'white',
+              zIndex: 10
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          
+          <div className="image-preview-container" style={{ maxWidth: '90vw', maxHeight: '80vh', position: 'relative' }}>
+            <img
+              src={imagePreview.currentImage}
+              alt="Review preview"
+              className="max-w-full max-h-full object-contain"
+            />
+            
+            {imagePreview.images.length > 1 && (
+              <>
+                <IconButton
+                  onClick={handlePrevImage}
+                  sx={{
+                    position: 'absolute',
+                    left: -56,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: 'white',
+                    bgcolor: 'rgba(0, 0, 0, 0.3)',
+                    '&:hover': {
+                      bgcolor: 'rgba(0, 0, 0, 0.5)',
+                    }
+                  }}
+                >
+                  <NavigateBeforeIcon fontSize="large" />
+                </IconButton>
+                
+                <IconButton
+                  onClick={handleNextImage}
+                  sx={{
+                    position: 'absolute',
+                    right: -56,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: 'white',
+                    bgcolor: 'rgba(0, 0, 0, 0.3)',
+                    '&:hover': {
+                      bgcolor: 'rgba(0, 0, 0, 0.5)',
+                    }
+                  }}
+                >
+                  <NavigateNextIcon fontSize="large" />
+                </IconButton>
+                
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    position: 'absolute', 
+                    bottom: -30, 
+                    left: '50%', 
+                    transform: 'translateX(-50%)', 
+                    color: 'white',
+                    fontSize: '14px'
+                  }}
+                >
+                  {imagePreview.currentIndex + 1} / {imagePreview.images.length}
+                </Typography>
+              </>
+            )}
+          </div>
+        </Dialog>
       </div>
     </section>
   );

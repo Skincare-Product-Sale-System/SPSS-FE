@@ -36,7 +36,7 @@ export default function ChangePassword() {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      await request.post("/user/change-password", {
+      await request.post("/authentications/change-password", {
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });
