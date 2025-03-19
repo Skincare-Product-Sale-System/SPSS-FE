@@ -4,6 +4,8 @@ import React from "react";
 import Image from "next/image";
 import { useContextElement } from "@/context/Context";
 import Link from "next/link";
+import { formatPrice, calculateDiscount } from "@/utils/priceFormatter";
+
 export default function ProductCard30({ product }) {
   const [currentImage, setCurrentImage] = useState(product.imgSrc);
   const { setQuickViewItem } = useContextElement();
@@ -94,11 +96,7 @@ export default function ProductCard30({ product }) {
         {product.oldPrice ? (
           <div className="on-sale-wrap text-end">
             <div className="on-sale-item">
-              -
-              {Math.round(
-                ((product.oldPrice - product.price) / product.oldPrice) * 100
-              )}
-              %
+              -{calculateDiscount(product.oldPrice, product.price)}%
             </div>
           </div>
         ) : (
@@ -109,16 +107,16 @@ export default function ProductCard30({ product }) {
         <Link href={`/product-detail/${product.id}`} className="title link">
           {product.title}
         </Link>
-        {product.oldPrice ? (
-          <span className="price">
-            <span className="fw-4 text-sale">
-              {product.oldPrice.toLocaleString()}₫
-            </span>{" "}
-            <span className="text_primary">{product.price.toLocaleString()}₫</span>
-          </span>
-        ) : (
-          <span className="price">{product.price.toLocaleString()}₫</span>
-        )}
+        <span className="price">
+          {product.oldPrice ? (
+            <>
+              <span className="fw-4 text-sale">{formatPrice(product.oldPrice)}</span>{" "}
+              <span className="text_primary">{formatPrice(product.price)}</span>
+            </>
+          ) : (
+            <span className="price">{formatPrice(product.price)}</span>
+          )}
+        </span>
 
         {product.colors?.length > 0 && (
           <ul className="list-color-product justify-content-center">

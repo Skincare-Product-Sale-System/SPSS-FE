@@ -15,6 +15,7 @@ import {
   CircularProgress,
   Pagination
 } from '@mui/material';
+import ProductReviewModal from "../ProductReviewModal";
 
 export default function Orders() {
   const { Id } = useAuthStore();
@@ -26,6 +27,9 @@ export default function Orders() {
   // const [sortOrder, setSortOrder] = useState("desc");
   const [statusFilter, setStatusFilter] = useState("all");
   const pageSize = 5;
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   useEffect(() => {
     fetchOrders();
@@ -68,13 +72,13 @@ export default function Orders() {
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case "completed":
+      case "delivered":
         return "bg-green-100 text-green-800";
-      case "pending":
+      case "awaiting payment":
         return "bg-yellow-100 text-yellow-800";
       case "cancelled":
         return "bg-red-100 text-red-800";
-      case "awaiting payment":
+      case "processing":
         return "bg-blue-100 text-blue-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -163,26 +167,61 @@ export default function Orders() {
               <div className="p-4">
                 {order.orderDetails.map((item, index) => (
                   <div key={index} className="flex items-center py-3 border-b last:border-b-0">
-                    <div className="w-16 h-16 mr-4">
-                      {item.productImage && (
-                        <img 
-                          src={item.productImage} 
-                          alt={item.productName} 
-                          className="w-full h-full object-cover rounded"
-                        />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-sm">{item.productName}</h4>
-                      {item.variationOptionValues && item.variationOptionValues.length > 0 && (
-                        <p className="text-sm text-gray-500">
-                          {item.variationOptionValues.join(', ')}
-                        </p>
-                      )}
-                      <p className="text-sm">x{item.quantity}</p>
-                    </div>
-                    <div className="text-right">
+                    <Link 
+                      href={`/product-detail/${item.productId}`}
+                      className="flex flex-1 items-center hover:bg-gray-50 p-2 rounded-lg transition-all"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      <div className="w-16 h-16 mr-4">
+                        {item.productImage && (
+                          <img 
+                            src={item.productImage} 
+                            alt={item.productName} 
+                            className="w-full h-full object-cover rounded"
+                          />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm">{item.productName}</h4>
+                        {item.variationOptionValues && item.variationOptionValues.length > 0 && (
+                          <p className="text-sm text-gray-500">
+                            {item.variationOptionValues.join(', ')}
+                          </p>
+                        )}
+                        <p className="text-sm">x{item.quantity}</p>
+                      </div>
+                    </Link>
+                    <div className="text-right flex flex-row items-end gap-2">
                       <p className="font-medium">{formatCurrency(item.price)}</p>
+                      <button
+                        className={`px-3 py-1.5 text-xs rounded-md transition-all ${
+                          order.status?.toLowerCase() === "delivered" && item.isReviewable
+                            ? "hover:opacity-90 shadow-sm" 
+                            : "cursor-not-allowed opacity-60"
+                        }`}
+                        style={{ 
+                          backgroundColor: order.status?.toLowerCase() === "delivered" && item.isReviewable 
+                            ? mainColor.primary || mainColor 
+                            : "#E0E0E0",
+                          color: order.status?.toLowerCase() === "delivered" && item.isReviewable 
+                            ? "#FFFFFF" 
+                            : "#757575",
+                          border: "none",
+                          fontWeight: "medium"
+                        }}
+                        disabled={order.status?.toLowerCase() !== "delivered" || !item.isReviewable}
+                        onClick={() => {
+                          if (order.status?.toLowerCase() === "delivered" && item.isReviewable) {
+                            setSelectedProduct(item);
+                            setSelectedOrderId(order.id);
+                            setReviewModalOpen(true);
+                          }
+                        }}
+                      >
+                        {order.status?.toLowerCase() === "delivered" && !item.isReviewable
+                          ? "Reviewed"
+                          : "Review"}
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -231,6 +270,23 @@ export default function Orders() {
           </Box>
         )}
       </div>
+      
+      {/* Add review modal */}
+      {selectedProduct && (
+        <ProductReviewModal
+          open={reviewModalOpen}
+          onClose={() => {
+            setReviewModalOpen(false);
+            setSelectedProduct(null);
+          }}
+          productInfo={selectedProduct}
+          orderId={selectedOrderId}
+          onSubmitSuccess={() => {
+            // Refetch orders after successful review submission
+            fetchOrders();
+          }}
+        />
+      )}
     </div>
   );
 }

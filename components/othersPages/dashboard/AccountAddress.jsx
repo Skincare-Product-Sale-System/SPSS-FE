@@ -15,27 +15,184 @@ export default function AccountAddress() {
   const [activeEdit, setActiveEdit] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [countries, setCountries] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [saving, setSaving] = useState(false);
   const pageSize = 5;
+
+  // Form state
+  const [formData, setFormData] = useState({
+    customerName: "",
+    phoneNumber: "",
+    streetNumber: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    ward: "",
+    province: "",
+    postCode: "",
+    countryId: "",
+    isDefault: false
+  });
 
   useEffect(() => {
     fetchAddresses();
+    fetchCountries();
   }, [Id, currentPage]);
 
   const fetchAddresses = async () => {
     try {
-      const { data } = await request.get(`/address/user?pageNumber=${currentPage}&pageSize=${pageSize}`);
+      const { data } = await request.get(`/addresses/user?pageNumber=${currentPage}&pageSize=${pageSize}`);
       setAddresses(data.data.items);
       setTotalPages(data.data.totalPages);
       setLoading(false);
     } catch (error) {
+      console.error("Error fetching addresses:", error);
       toast.error("Failed to load addresses");
       setLoading(false);
     }
   };
 
+  const fetchCountries = async () => {
+    try {
+      const { data } = await request.get(`/countries`);
+      setCountries(data.data || []);
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+      toast.error("Failed to load countries");
+    }
+  };
+
+  // Handle input change
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value
+    });
+  };
+
+  // Handle form submission for adding a new address
+  const handleAddAddress = async (e) => {
+    e.preventDefault();
+    
+    // Validate form
+    if (!formData.customerName) {
+      toast.error("Customer name is required");
+      return;
+    }
+    if (!formData.phoneNumber) {
+      toast.error("Phone number is required");
+      return;
+    }
+    if (!formData.streetNumber) {
+      toast.error("Street number is required");
+      return;
+    }
+    if (!formData.addressLine1) {
+      toast.error("Address Line 1 is required");
+      return;
+    }
+    if (!formData.city) {
+      toast.error("City is required");
+      return;
+    }
+    if (!formData.ward) {
+      toast.error("Ward is required");
+      return;
+    }
+    if (!formData.province) {
+      toast.error("Province is required");
+      return;
+    }
+    if (!formData.postCode) {
+      toast.error("Postal code is required");
+      return;
+    }
+    if (!formData.countryId) {
+      toast.error("Country is required");
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      const payload = {
+        ...formData,
+        userId: Id
+      };
+      
+      console.log("Saving address with data:", payload);
+      
+      if (isEditing) {
+        console.log(`Updating address with ID: ${editingId}`);
+        await request.patch(`/addresses/${editingId}`, payload);
+        toast.success("Address updated successfully");
+      } else {
+        console.log("Creating new address");
+        await request.post("/addresses", payload);
+        toast.success("Address added successfully");
+      }
+      
+      // Refresh the address list
+      fetchAddresses();
+      
+      // Reset form and UI state
+      setActiveEdit(false);
+      setIsEditing(false);
+      setEditingId(null);
+      resetForm();
+    } catch (err) {
+      console.error("Error saving address:", err);
+      toast.error(
+        isEditing ? "Failed to update address" : "Failed to add address"
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEdit = (address) => {
+    console.log("Editing address:", address);
+    setIsEditing(true);
+    setEditingId(address.id);
+    setActiveEdit(true);
+    
+    // Set form data from address
+    setFormData({
+      customerName: address.customerName || "",
+      phoneNumber: address.phoneNumber || "",
+      countryId: address.countryId || "",
+      streetNumber: address.streetNumber || "",
+      addressLine1: address.addressLine1 || "",
+      addressLine2: address.addressLine2 || "",
+      city: address.city || "",
+      ward: address.ward || "",
+      province: address.province || "",
+      postCode: address.postCode || "",
+      isDefault: address.isDefault || false
+    });
+  };
+
+  const resetForm = () => {
+    setFormData({
+      customerName: "",
+      phoneNumber: "",
+      streetNumber: "",
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      ward: "",
+      province: "",
+      postCode: "",
+      countryId: "",
+      isDefault: false
+    });
+  };
+
   const handleSetDefault = async (id) => {
     try {
-      await request.put(`/address/${id}/set-default`);
+      await request.patch(`/addresses/${id}/set-default`);
       toast.success("Default address updated");
       fetchAddresses();
     } catch (error) {
@@ -46,7 +203,7 @@ export default function AccountAddress() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this address?")) {
       try {
-        await request.delete(`/address/${id}`);
+        await request.delete(`/addresses/${id}`);
         toast.success("Address deleted successfully");
         fetchAddresses();
       } catch (error) {
@@ -75,19 +232,29 @@ export default function AccountAddress() {
         <button
           className="px-4 py-2 rounded-md text-white transition-all hover:opacity-90"
           style={{ backgroundColor: theme.palette.primary.main }}
-          onClick={() => setActiveEdit(true)}
+          onClick={() => {
+            setActiveEdit(true);
+            setIsEditing(false);
+            setEditingId(null);
+            resetForm();
+          }}
         >
           Add a new address
         </button>
       </div>
 
-      {/* Add Address Form */}
+      {/* Add/Edit Address Form */}
       {activeEdit && (
         <div className="bg-white p-6 rounded-lg shadow-md mb-8 border" style={{ borderColor: theme.palette.divider }}>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-medium" style={{ color: theme.palette.text.primary }}>Add a new address</h3>
+            <h3 className="text-xl font-medium" style={{ color: theme.palette.text.primary }}>
+              {isEditing ? "Edit address" : "Add a new address"}
+            </h3>
             <button 
-              onClick={() => setActiveEdit(false)}
+              onClick={() => {
+                setActiveEdit(false);
+                resetForm();
+              }}
               className="text-gray-500 hover:text-gray-700"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -96,7 +263,7 @@ export default function AccountAddress() {
             </button>
           </div>
           
-          <form onSubmit={(e) => e.preventDefault()} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleAddAddress} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="tf-field">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
                 Customer Name
@@ -110,6 +277,8 @@ export default function AccountAddress() {
                 type="text"
                 id="customerName"
                 name="customerName"
+                value={formData.customerName}
+                onChange={handleInputChange}
               />
             </div>
             
@@ -126,6 +295,8 @@ export default function AccountAddress() {
                 type="text"
                 id="phoneNumber"
                 name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleInputChange}
               />
             </div>
             
@@ -142,6 +313,8 @@ export default function AccountAddress() {
                 type="text"
                 id="streetNumber"
                 name="streetNumber"
+                value={formData.streetNumber}
+                onChange={handleInputChange}
               />
             </div>
             
@@ -158,6 +331,8 @@ export default function AccountAddress() {
                 type="text"
                 id="addressLine1"
                 name="addressLine1"
+                value={formData.addressLine1}
+                onChange={handleInputChange}
               />
             </div>
             
@@ -174,6 +349,8 @@ export default function AccountAddress() {
                 type="text"
                 id="addressLine2"
                 name="addressLine2"
+                value={formData.addressLine2}
+                onChange={handleInputChange}
               />
             </div>
             
@@ -190,6 +367,8 @@ export default function AccountAddress() {
                 type="text"
                 id="city"
                 name="city"
+                value={formData.city}
+                onChange={handleInputChange}
               />
             </div>
             
@@ -206,6 +385,8 @@ export default function AccountAddress() {
                 type="text"
                 id="ward"
                 name="ward"
+                value={formData.ward}
+                onChange={handleInputChange}
               />
             </div>
             
@@ -222,6 +403,8 @@ export default function AccountAddress() {
                 type="text"
                 id="province"
                 name="province"
+                value={formData.province}
+                onChange={handleInputChange}
               />
             </div>
             
@@ -236,8 +419,10 @@ export default function AccountAddress() {
                   focusRing: theme.palette.primary.light
                 }}
                 type="text"
-                id="postcode"
-                name="postcode"
+                id="postCode"
+                name="postCode"
+                value={formData.postCode}
+                onChange={handleInputChange}
               />
             </div>
             
@@ -251,13 +436,21 @@ export default function AccountAddress() {
                   borderColor: theme.palette.divider,
                   focusRing: theme.palette.primary.light
                 }}
-                id="country"
-                name="country"
+                id="countryId"
+                name="countryId"
+                value={formData.countryId}
+                onChange={handleInputChange}
               >
-                <option value="Vietnam">Vietnam</option>
-                <option value="United States">United States</option>
-                <option value="Japan">Japan</option>
-                <option value="South Korea">South Korea</option>
+                <option value="">Select a country</option>
+                {countries && countries.length > 0 ? (
+                  countries.map((country) => (
+                    <option key={country.id} value={country.id}>
+                      {country.countryName}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>No countries available</option>
+                )}
               </select>
             </div>
             
@@ -266,6 +459,8 @@ export default function AccountAddress() {
                 type="checkbox"
                 id="isDefault"
                 name="isDefault"
+                checked={formData.isDefault}
+                onChange={handleInputChange}
                 className="mr-2"
               />
               <label htmlFor="isDefault" style={{ color: theme.palette.text.secondary }}>
@@ -281,7 +476,10 @@ export default function AccountAddress() {
                   borderColor: theme.palette.divider,
                   color: theme.palette.text.primary
                 }}
-                onClick={() => setActiveEdit(false)}
+                onClick={() => {
+                  setActiveEdit(false);
+                  resetForm();
+                }}
               >
                 Cancel
               </button>
@@ -289,8 +487,9 @@ export default function AccountAddress() {
                 type="submit"
                 className="px-4 py-2 rounded-md text-white"
                 style={{ backgroundColor: theme.palette.primary.main }}
+                disabled={saving}
               >
-                Add Address
+                {saving ? 'Saving...' : isEditing ? 'Update Address' : 'Add Address'}
               </button>
             </div>
           </form>
@@ -347,7 +546,7 @@ export default function AccountAddress() {
                       {address.ward}, {address.city}, {address.province}
                     </p>
                     <p style={{ color: theme.palette.text.primary }}>
-                      {address.countryName} {address.postcode}
+                      {address.countryName} {address.postCode}
                     </p>
                   </div>
                 </div>
@@ -357,6 +556,7 @@ export default function AccountAddress() {
                 <button
                   className="px-3 py-1.5 rounded text-white text-sm"
                   style={{ backgroundColor: theme.palette.primary.main }}
+                  onClick={() => handleEdit(address)}
                 >
                   Edit
                 </button>
@@ -412,7 +612,7 @@ export default function AccountAddress() {
                       {address.ward}, {address.city}, {address.province}
                     </p>
                     <p style={{ color: theme.palette.text.primary }}>
-                      {address.countryName} {address.postcode}
+                      {address.countryName} {address.postCode}
                     </p>
                   </div>
                 </div>
@@ -422,6 +622,7 @@ export default function AccountAddress() {
                 <button
                   className="px-3 py-1.5 rounded text-white text-sm"
                   style={{ backgroundColor: theme.palette.primary.main }}
+                  onClick={() => handleEdit(address)}
                 >
                   Edit
                 </button>

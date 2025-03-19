@@ -35,7 +35,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
         queryKey: ["products"],
         queryFn: async () => {
           const { data } = await request.get(
-            "/products?pageNumber=1&pageSize=100"
+            "/products?pageNumber=1&pageSize=100&sortBy=bestselling"
           );
           return data.data?.items || [];
         },
@@ -84,6 +84,44 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
 
     return active;
   };
+  
+  // Hàm đệ quy để hiển thị danh mục và danh mục con
+  const renderCategories = (categoryList, level = 0) => {
+    if (!categoryList || categoryList.length === 0) return null;
+    
+    return (
+      <ul className={level === 0 ? "menu-list" : "submenu-list"}>
+        {categoryList.map((category, index) => (
+          <li key={index} className={category.children?.length > 0 ? "menu-item-2" : ""}>
+            <Link
+              href={`/products?categoryId=${category.id}`}
+              className={`menu-link-text link position-relative ${
+                isMenuActive({ href: `/products?categoryId=${category.id}` }) ? "activeMenu" : ""
+              }`}
+            >
+              {category.categoryName}
+            </Link>
+            
+            {category.children?.length > 0 && (
+              <div className="sub-menu submenu-default">
+                {renderCategories(category.children, level + 1)}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  // Thêm component con để hiển thị mũi tên
+  const MenuArrow = () => (
+    <i className="icon icon-arrow-down" style={{ 
+      marginLeft: '4px', 
+      display: 'inline-block',
+      verticalAlign: 'middle'
+    }} />
+  );
+
   return (
     <>
       {" "}
@@ -210,34 +248,19 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       <li className="menu-item">
         <a
           href="/products"
-          className={`item-link ${Linkfs} ${textColor}  ${
+          className={`item-link ${Linkfs} ${textColor} ${
             isMenuActive(productDetailPages) ? "activeMenu" : ""
           }`}
         >
-          Products
-          {isArrow ? <i className="icon icon-arrow-down" /> : ""}
+          Products<i className="icon icon-arrow-down" style={{ display: 'inline-block', width: '12px', marginLeft: '1px' }}></i>
         </a>
         <div className="sub-menu mega-menu">
           <div className="container">
             <div className="row">
-              <div className="col-lg-2">
+              <div className="col-lg-4">
                 <div className="mega-menu-item">
                   <div className="menu-heading">Categories</div>
-                  <ul className="menu-list">
-                    {!categories.isLoading &&
-                      categories.data.map((item, index) => (
-                        <li key={index}>
-                          <Link
-                            href={`/products?categoryId=${item.id}`}
-                            className={`menu-link-text link position-relative  ${
-                              isMenuActive(item) ? "activeMenu" : ""
-                            }`}
-                          >
-                            {item.categoryName}
-                          </Link>
-                        </li>
-                      ))}
-                  </ul>
+                  {!categories.isLoading && renderCategories(categories.data)}
                 </div>
               </div>
               {/* {productDetailPages.map((menuItem, index) => (
@@ -262,7 +285,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                   </div>
                 </div>
               ))} */}
-              <div className="col-lg-4">
+              <div className="col-lg-8">
                 <div className="menu-heading">Best seller</div>
                 <div className="hover-sw-nav hover-sw-2">
                   <Swiper
@@ -272,12 +295,12 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                       prevEl: ".snmpn1",
                       nextEl: ".snmnn1",
                     }}
-                    slidesPerView={2}
+                    slidesPerView={3}
                     spaceBetween={30}
                     className="swiper tf-product-header wrap-sw-over"
                   >
                     {!products.isLoading &&
-                      products.data?.slice(0, 4).map((elm, i) => (
+                      products.data?.slice(0, 6).map((elm, i) => (
                         <SwiperSlide key={i} className="swiper-slide">
                           <ProductCard product={elm} />
                         </SwiperSlide>
@@ -295,15 +318,15 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
           </div>
         </div>
       </li>
-      <li className="menu-item position-relative">
+      {/* <li className="menu-item position-relative">
         <a
           href="#"
-          className={`item-link ${Linkfs} ${textColor}  ${
+          className={`item-link ${Linkfs} ${textColor} ${
             isMenuActive(pages) ? "activeMenu" : ""
           }`}
         >
           Pages
-          <i className="icon icon-arrow-down" />
+          <i className="icon icon-arrow-down" style={{ marginLeft: '2px', position: 'relative', top: '1px' }} />
         </a>
         <div className="sub-menu submenu-default">
           <ul className="menu-list">
@@ -364,7 +387,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             ))}
           </ul>
         </div>
-      </li>
+      </li> */}
       <li className="menu-item position-relative">
         <a
           href="/blog"
@@ -373,23 +396,23 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
           }`}
         >
           Blogs
+          {/* <div className="sub-menu links-default">
+            <ul className="menu-list">
+              {blogLinks.map((linkItem, index) => (
+                <li key={index}>
+                  <Link
+                    href={linkItem.href}
+                    className={`menu-link-text link text_black-2  ${
+                      isMenuActive(linkItem) ? "activeMenu" : ""
+                    }`}
+                  >
+                    {linkItem.text}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div> */}
         </a>
-        {/* <div className="sub-menu links-default">
-          <ul className="menu-list">
-            {blogLinks.map((linkItem, index) => (
-              <li key={index}>
-                <Link
-                  href={linkItem.href}
-                  className={`menu-link-text link text_black-2  ${
-                    isMenuActive(linkItem) ? "activeMenu" : ""
-                  }`}
-                >
-                  {linkItem.text}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div> */}
       </li>
     </>
   );

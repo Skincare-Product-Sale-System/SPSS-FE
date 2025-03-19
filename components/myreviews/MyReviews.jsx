@@ -41,6 +41,10 @@ import {
   ArrowDownward as ArrowDownwardIcon
 } from '@mui/icons-material';
 import { useThemeColors } from "@/context/ThemeContext";
+import toast from "react-hot-toast";
+import Link from "next/link";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 export default function MyReviews() {
   const mainColor = useThemeColors();
@@ -58,6 +62,10 @@ export default function MyReviews() {
   const fileInputRef = useRef(null);
   const searchParams = useSearchParams();
   const pageSize = 5; // Number of reviews per page
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [currentImageSet, setCurrentImageSet] = useState([]);
 
   // Fetch all reviews once
   useEffect(() => {
@@ -125,7 +133,23 @@ export default function MyReviews() {
     setShowEditModal(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = async () => {
+    // Clean up any newly uploaded images if user cancels
+    const oldImages = currentReview?.reviewImages || [];
+    const newImages = editImages.filter(img => !oldImages.includes(img));
+    
+    if (newImages.length > 0) {
+      try {
+        const deletePromises = newImages.map(image => 
+          request.delete(`/images?imageUrl=${encodeURIComponent(image)}`)
+        );
+        await Promise.all(deletePromises);
+        console.log("Cleaned up new images after cancel");
+      } catch (error) {
+        console.error("Error cleaning up images:", error);
+      }
+    }
+    
     setShowEditModal(false);
     setCurrentReview(null);
   };
@@ -134,53 +158,125 @@ export default function MyReviews() {
     setEditRating(newValue);
   };
 
-  const handleRemoveImage = (indexToRemove) => {
-    setEditImages(editImages.filter((_, index) => index !== indexToRemove));
+  const handleRemoveImage = async (indexToRemove) => {
+    // Get the image URL that needs to be removed
+    const imageToRemove = editImages[indexToRemove];
+    
+    try {
+      // Only attempt to delete from Firebase if it's a URL (not a local file)
+      if (imageToRemove && imageToRemove.startsWith('http')) {
+        // Delete from Firebase
+        await request.delete(`/images?imageUrl=${encodeURIComponent(imageToRemove)}`);
+      }
+      
+      // Remove from state
+      const newImages = [...editImages];
+      newImages.splice(indexToRemove, 1);
+      setEditImages(newImages);
+    } catch (error) {
+      console.error("Error removing image:", error);
+      toast.error("Error removing image");
+    }
   };
 
   const handleAddImage = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const newImages = Array.from(files).map(file => {
-      return URL.createObjectURL(file);
-    });
+    setUploadingImages(true);
 
-    setEditImages([...editImages, ...newImages]);
-    // Reset file input
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    try {
+      const formData = new FormData();
+      
+      // Add all selected files to FormData
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+      }
+
+      const response = await request.post('/images', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      if (response.data.success && response.data.data) {
+        // Add the new image URLs to the existing ones
+        setEditImages([...editImages, ...response.data.data]);
+      } else {
+        toast.error("Failed to upload images");
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      toast.error("Error uploading images");
+    } finally {
+      setUploadingImages(false);
+      // Reset file input
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleUpdateReview = async () => {
     try {
+      // Validate input
+      if (!editComment.trim()) {
+        toast.error("Please enter a review comment");
+        return;
+      }
+      
+      if (editRating === 0) {
+        toast.error("Please select a rating");
+        return;
+      }
+      
       // Create updated review object with new rating, comment and images
       const updatedReview = {
-        ...currentReview,
+        id: currentReview.id,
         ratingValue: editRating,
         comment: editComment,
         reviewImages: editImages
       };
       
       // Implement API call to update the review
-      await request.put(`/reviews/${updatedReview.id}`, updatedReview);
+      const response = await request.patch(`/reviews/${updatedReview.id}`, updatedReview);
       
-      // Update local state
-      const updatedAllReviews = allReviews.map(review => 
-        review.id === updatedReview.id ? updatedReview : review
-      );
-      setAllReviews(updatedAllReviews);
-      
-      // Re-apply filters and pagination
-      applyFiltersAndPagination();
-      
-      setShowEditModal(false);
+      if (response.data.success) {
+        toast.success("Review updated successfully");
+        
+        // Update local state
+        const updatedAllReviews = allReviews.map(review => 
+          review.id === updatedReview.id ? {
+            ...review,
+            ratingValue: updatedReview.ratingValue,
+            comment: updatedReview.comment,
+            reviewImages: updatedReview.reviewImages,
+            lastUpdatedTime: new Date().toISOString()
+          } : review
+        );
+        
+        setAllReviews(updatedAllReviews);
+        
+        // Re-apply filters and pagination
+        applyFiltersAndPagination();
+        
+        setShowEditModal(false);
+        setCurrentReview(null);
+      } else {
+        toast.error(response.data.message || "Failed to update review");
+      }
     } catch (error) {
       console.error("Error updating review:", error);
+      toast.error("Error updating review");
     }
+  };
+
+  const handleImagePreview = (images, index) => {
+    setCurrentImageSet(images.map(img => ({ src: img })));
+    setLightboxIndex(index);
+    setLightboxOpen(true);
   };
 
   if (loading) {
@@ -326,50 +422,69 @@ export default function MyReviews() {
                     </Grid>
                     
                     <Grid item xs={12} md={6}>
-                      <Box display="flex" alignItems="center">
+                      <Link
+                        href={`/product-detail/${review.productId}`}
+                        style={{ textDecoration: 'none' }}
+                      >
                         <Box 
-                          sx={{ 
-                            width: 70, 
-                            height: 70, 
-                            borderRadius: 2, 
-                            overflow: 'hidden',
-                            position: 'relative',
-                            mr: 2,
-                            flexShrink: 0,
-                            border: `1px solid rgba(78, 205, 196, 0.1)`,
+                          display="flex" 
+                          alignItems="center"
+                          sx={{
+                            borderRadius: 2,
+                            p: 1,
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              backgroundColor: mainColor.light,
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 4px 12px rgba(78, 205, 196, 0.1)'
+                            },
+                            cursor: 'pointer'
                           }}
                         >
-                          <img
-                            src={review.productImage}
-                            alt={review.productName}
-                            style={{ 
-                              width: '100%', 
-                              height: '100%', 
-                              objectFit: 'cover' 
-                            }}
-                          />
-                        </Box>
-                        <Box>
-                          <Typography 
-                            variant="subtitle1" 
+                          <Box 
                             sx={{ 
-                              fontWeight: 500,
-                              color: mainColor.text
+                              width: 70, 
+                              height: 70, 
+                              borderRadius: 2, 
+                              overflow: 'hidden',
+                              position: 'relative',
+                              mr: 2,
+                              flexShrink: 0,
+                              border: `1px solid rgba(78, 205, 196, 0.1)`,
                             }}
                           >
-                            {review.productName}
-                          </Typography>
-                          <Typography 
-                            variant="body2" 
-                            sx={{ 
-                              color: 'text.secondary',
-                              fontSize: '0.85rem'
-                            }}
-                          >
-                            {review.variationOptionValues.join(" / ")}
-                          </Typography>
+                            <img
+                              src={review.productImage}
+                              alt={review.productName}
+                              style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'cover' 
+                              }}
+                            />
+                          </Box>
+                          <Box>
+                            <Typography 
+                              variant="subtitle1" 
+                              sx={{ 
+                                fontWeight: 500,
+                                color: mainColor.text,
+                              }}
+                            >
+                              {review.productName}
+                            </Typography>
+                            <Typography 
+                              variant="body2" 
+                              sx={{ 
+                                color: 'text.secondary',
+                                fontSize: '0.85rem'
+                              }}
+                            >
+                              {review.variationOptionValues.join(" / ")}
+                            </Typography>
+                          </Box>
                         </Box>
-                      </Box>
+                      </Link>
                     </Grid>
                   </Grid>
 
@@ -385,24 +500,38 @@ export default function MyReviews() {
                           }
                         }}
                       />
-                      <Button 
-                        variant="outlined" 
-                        size="small" 
-                        startIcon={<EditIcon />}
-                        onClick={() => handleEditClick(review)}
-                        sx={{
-                          borderColor: mainColor.primary,
-                          color: mainColor.text,
-                          borderRadius: 6,
-                          px: 2,
-                          '&:hover': {
+                      {review.isEditble !== false ? (
+                        <Button 
+                          variant="outlined" 
+                          size="small" 
+                          startIcon={<EditIcon />}
+                          onClick={() => handleEditClick(review)}
+                          sx={{
                             borderColor: mainColor.primary,
-                            backgroundColor: mainColor.light,
-                          }
-                        }}
-                      >
-                        Edit
-                      </Button>
+                            color: mainColor.text,
+                            borderRadius: 6,
+                            px: 2,
+                            '&:hover': {
+                              borderColor: mainColor.primary,
+                              backgroundColor: mainColor.light,
+                            }
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      ) : (
+                        <Chip
+                          label="Already Edited"
+                          size="small"
+                          sx={{
+                            backgroundColor: 'rgba(158, 158, 158, 0.2)',
+                            color: '#757575',
+                            borderRadius: 6,
+                            fontSize: '0.75rem',
+                            height: 28
+                          }}
+                        />
+                      )}
                     </Box>
                     
                     <Typography 
@@ -423,6 +552,7 @@ export default function MyReviews() {
                         {review.reviewImages.map((image, index) => (
                           <Box 
                             key={index} 
+                            onClick={() => handleImagePreview(review.reviewImages, index)}
                             sx={{ 
                               width: 90, 
                               height: 90, 
@@ -431,6 +561,7 @@ export default function MyReviews() {
                               position: 'relative',
                               border: `1px solid rgba(78, 205, 196, 0.1)`,
                               transition: 'all 0.3s ease',
+                              cursor: 'pointer',
                               '&:hover': {
                                 transform: 'scale(1.03)',
                                 boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
@@ -807,7 +938,8 @@ export default function MyReviews() {
                     </Box>
                   ))}
                   <Box 
-                    onClick={handleAddImage}
+                    component="label"
+                    htmlFor="upload-images"
                     sx={{ 
                       width: 90, 
                       height: 90, 
@@ -825,16 +957,22 @@ export default function MyReviews() {
                       }
                     }}
                   >
-                    <AddIcon sx={{ color: mainColor.primary }} />
+                    {uploadingImages ? (
+                      <CircularProgress size={24} sx={{ color: mainColor.primary }} />
+                    ) : (
+                      <AddIcon sx={{ color: mainColor.primary }} />
+                    )}
+                    <input 
+                      id="upload-images"
+                      type="file" 
+                      ref={fileInputRef}
+                      style={{ display: 'none' }} 
+                      accept="image/*" 
+                      multiple
+                      onChange={handleFileChange}
+                      disabled={uploadingImages}
+                    />
                   </Box>
-                  <input 
-                    type="file" 
-                    ref={fileInputRef}
-                    style={{ display: 'none' }} 
-                    accept="image/*" 
-                    multiple
-                    onChange={handleFileChange}
-                  />
                 </Box>
               </Box>
             </Stack>
@@ -876,6 +1014,14 @@ export default function MyReviews() {
             </Button>
           </DialogActions>
         </Dialog>
+
+        {/* Add the image lightbox component */}
+        <Lightbox
+          open={lightboxOpen}
+          close={() => setLightboxOpen(false)}
+          slides={currentImageSet}
+          index={lightboxIndex}
+        />
       </Container>
     </Box>
   );

@@ -62,7 +62,7 @@ export default function Testimonials() {
                           }}
                         />
                       </div>
-                      <div className="content">
+                      {/* <div className="content">
                         <div className="name">{testimonial.authorName}</div>
                         <a
                           href={testimonial.purchaseLink}
@@ -71,7 +71,7 @@ export default function Testimonials() {
                           Purchase item :{" "}
                           <span>{testimonial.purchaseItem}</span>
                         </a>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </SwiperSlide>

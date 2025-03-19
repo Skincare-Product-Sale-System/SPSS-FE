@@ -41,7 +41,7 @@ export default function page() {
       </div>
 
       <Cart />
-      <Testimonials />
+      {/* <Testimonials /> */}
       <Products />
       <Footer1 />
     </>

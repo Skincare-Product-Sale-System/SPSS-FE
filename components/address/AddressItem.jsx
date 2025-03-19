@@ -22,79 +22,59 @@ export default function AddressItem({
     addressLine2 = "",
     city = "",
     ward = "",
-    postcode = "",
+    postCode = "",
     province = "",
     isDefault = false,
   } = address || {};
 
-  // Format the full address for display
-  const formattedAddress = [
-    addressLine1,
-    addressLine2,
-    ward && `Ward: ${ward}`,
-    city,
-    province,
-    countryName,
-    postcode && `Postal Code: ${postcode}`,
-  ]
-    .filter(Boolean)
-    .join(", ");
+  // Kiểm tra xem có phải là địa chỉ rỗng không
+  const isEmpty = !customerName && !phoneNumber && !addressLine1;
+  
+  if (isEmpty) {
+    return (
+      <div className="text-center py-4">
+        <p className="text-gray-500">Invalid address information</p>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div className="flex justify-between items-start mb-2">
+    <div className="flex flex-col">
+      <div className="flex justify-between items-start">
         <div className="flex-1">
-          {/* Customer name and phone if available */}
-          {(customerName || phoneNumber) && (
-            <div className="mb-2 flex items-center gap-2">
-              {customerName && (
-                <p className="font-semibold text-gray-800">{customerName}</p>
-              )}
-              {phoneNumber && (
-                <p className="text-gray-600 text-sm">- {phoneNumber}</p>
-              )}
-            </div>
-          )}
-
-          {/* Street number and address lines */}
-          <div className="mb-1">
-            <p className="font-medium text-gray-800">
-              {streetNumber && `${streetNumber} `}
-              {addressLine1}
-              {addressLine2 && `, ${addressLine2}`}
-            </p>
+          {/* Tên và số điện thoại */}
+          <div className="mb-2">
+            <p className="font-semibold text-gray-800 text-lg">{customerName}</p>
+            <p className="text-gray-600">{phoneNumber}</p>
           </div>
 
-          {/* City, ward, province, country */}
-          <p className="text-gray-600 text-sm">
-            {city}
-            {ward && `, ${ward}`}
-            {province && `, ${province}`}
-            {countryName && `, ${countryName}`}
-          </p>
-
-          {/* Postal code */}
-          {postcode && (
-            <p className="text-gray-600 text-sm">Postal Code: {postcode}</p>
-          )}
+          {/* Địa chỉ chi tiết */}
+          <div className="text-gray-700">
+            <p>
+              {streetNumber} {addressLine1}
+              {addressLine2 && addressLine2 !== "string" && `, ${addressLine2}`}
+            </p>
+            <p>
+              {ward && ward !== "string" && `${ward}, `}
+              {city && city !== "string" && `${city}, `}
+              {province && province !== "string" && `${province}`}
+            </p>
+            <p>
+              {countryName}
+              {postCode && postCode !== "string" && ` - ${postCode}`}
+            </p>
+          </div>
         </div>
 
-        {/* Default badge */}
+        {/* Badge hiển thị trạng thái mặc định */}
         {isDefault && (
           <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
             Default
           </span>
         )}
-
-        {/* Selected indicator for checkout/selection contexts */}
-        {isSelected && !isDefault && (
-          <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-            Selected
-          </span>
-        )}
       </div>
 
-      {/* Action buttons */}
+      {/* Action buttons nếu cần */}
       {showActions && (
         <div className="flex justify-end space-x-3 mt-4">
           {!isDefault && onSetDefault && (
@@ -132,6 +112,6 @@ export default function AddressItem({
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }

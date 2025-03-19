@@ -12,6 +12,7 @@ import request from "@/utlis/axios";
 import { useQueries } from "@tanstack/react-query";
 import { useTheme } from "@mui/material/styles";
 import { Box, Tab, Tabs, Typography, Button } from "@mui/material";
+import { formatPrice } from "@/utils/priceFormatter";
 
 export default function Products() {
   const theme = useTheme();
@@ -273,7 +274,7 @@ export default function Products() {
                               fontSize: '0.875rem'
                             }}
                           >
-                            {product.marketPrice.toLocaleString()}₫
+                            {formatPrice(product.marketPrice)}
                           </Typography>
                         )}
                         <Typography
@@ -284,85 +285,9 @@ export default function Products() {
                             fontSize: '1.125rem'
                           }}
                         >
-                          {product.price.toLocaleString()}₫
+                          {formatPrice(product.price)}
                         </Typography>
                       </Box>
-                      
-                      <Box 
-                        sx={{ 
-                          display: 'flex', 
-                          flexWrap: 'wrap', 
-                          gap: 1, 
-                          justifyContent: 'center',
-                          mt: 'auto',
-                          mb: 2
-                        }}
-                      >
-                        {product.sizes ? (
-                          product.sizes.map((size, i) => (
-                            <Box
-                              key={i}
-                              component="span"
-                              sx={{
-                                px: 1.5,
-                                py: 0.5,
-                                fontSize: '0.75rem',
-                                border: `1px solid ${theme.palette.divider}`,
-                                borderRadius: 1,
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                  borderColor: theme.palette.primary.main,
-                                  color: theme.palette.primary.main
-                                }
-                              }}
-                            >
-                              {size}
-                            </Box>
-                          ))
-                        ) : (
-                          ["300ml", "500ml", "700ml"].map((size, i) => (
-                            <Box
-                              key={i}
-                              component="span"
-                              sx={{
-                                px: 1.5,
-                                py: 0.5,
-                                fontSize: '0.75rem',
-                                border: `1px solid ${theme.palette.divider}`,
-                                borderRadius: 1,
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                  borderColor: theme.palette.primary.main,
-                                  color: theme.palette.primary.main
-                                }
-                              }}
-                            >
-                              {size}
-                            </Box>
-                          ))
-                        )}
-                      </Box>
-                      
-                      <Button
-                        component={Link}
-                        href={`/product-detail/${product.id}`}
-                        variant="contained"
-                        sx={{
-                          backgroundColor: theme.palette.primary.main,
-                          color: '#fff',
-                          textTransform: 'none',
-                          borderRadius: '24px',
-                          padding: '8px 16px',
-                          fontWeight: 500,
-                          '&:hover': {
-                            backgroundColor: theme.palette.primary.dark
-                          }
-                        }}
-                      >
-                        View details
-                      </Button>
                     </Box>
                   </Box>
                 </SwiperSlide>

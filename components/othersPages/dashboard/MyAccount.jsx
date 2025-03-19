@@ -85,35 +85,74 @@ export default function MyAccount() {
     const file = event.target.files[0];
     if (file) {
       try {
-        // Create a FormData object to send the file
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          toast.error('Please select an image file');
+          return;
+        }
+
+        // Validate file size (e.g., max 5MB)
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+          toast.error('File size should not exceed 5MB');
+          return;
+        }
+
+        // Create FormData and append file with correct field name
         const formDataFile = new FormData();
-        formDataFile.append('file', file);
+        formDataFile.append('avatarFiles', file); // Changed to match controller parameter name
         
-        // Show loading state
-        toast.loading('Uploading image...');
+        toast.loading('Uploading avatar...');
         
-        // Call API to upload to Firebase
-        const response = await request.post('/upload/image', formDataFile, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
+        const response = await request.post('/accounts/upload-avatar', formDataFile);
         
-        // Get the URL from the response
-        const imageUrl = response.data.url;
-        
-        // Update form data with the new URL
-        setFormData({
-          ...formData,
-          avatarUrl: imageUrl
-        });
-        
-        toast.dismiss();
-        toast.success('Image uploaded successfully');
+        if (response.data && response.data.success) {
+          // Fetch updated user data to get new avatar URL
+          await fetchUserData();
+          
+          toast.dismiss();
+          toast.success('Avatar uploaded successfully');
+        } else {
+          throw new Error(response.data?.message || 'Failed to upload avatar');
+        }
       } catch (error) {
-        console.error('Error uploading image:', error);
+        console.error('Error uploading avatar:', error);
         toast.dismiss();
-        toast.error('Failed to upload image');
+        toast.error(error.response?.data?.message || 'Failed to upload avatar');
+      }
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    if (!formData.avatarUrl) {
+      toast.error('No avatar to delete');
+      return;
+    }
+
+    if (window.confirm('Are you sure you want to delete your avatar?')) {
+      try {
+        toast.loading('Deleting avatar...');
+        
+        // Send the current avatar URL as a query parameter
+        await request.delete(`/accounts/delete-avatar?imageUrl=${encodeURIComponent(formData.avatarUrl)}`);
+        
+        // Update form data and userData to remove avatar
+        setFormData(prev => ({
+          ...prev,
+          avatarUrl: ""
+        }));
+        
+        setUserData(prev => ({
+          ...prev,
+          avatarUrl: ""
+        }));
+        
+        toast.dismiss();
+        toast.success('Avatar deleted successfully');
+      } catch (error) {
+        console.error('Error deleting avatar:', error);
+        toast.dismiss();
+        toast.error(error.response?.data?.message || 'Failed to delete avatar');
       }
     }
   };
@@ -134,15 +173,17 @@ export default function MyAccount() {
       <div className="p-6 mb-8 rounded-lg" style={{ backgroundColor: theme.palette.primary.light + '20' }}>
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           {!isEditing ? (
-            <Avatar 
-              src={userData?.avatarUrl || "/images/default-avatar.png"} 
-              alt={userData?.userName}
-              sx={{ 
-                width: 120, 
-                height: 120,
-                border: `3px solid ${theme.palette.primary.main}`
-              }}
-            />
+            <div className="relative">
+              <Avatar 
+                src={userData?.avatarUrl || "/images/default-avatar.png"} 
+                alt={userData?.userName}
+                sx={{ 
+                  width: 120, 
+                  height: 120,
+                  border: `3px solid ${theme.palette.primary.main}`
+                }}
+              />
+            </div>
           ) : (
             <div className="relative">
               <Avatar 
@@ -178,6 +219,20 @@ export default function MyAccount() {
                   </IconButton>
                 </label>
               </div>
+              {formData.avatarUrl && (
+                <button
+                  onClick={handleDeleteAvatar}
+                  className="absolute -bottom-2 -right-2 p-1.5 rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
+                  style={{
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }}
+                  title="Delete avatar"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              )}
             </div>
           )}
           

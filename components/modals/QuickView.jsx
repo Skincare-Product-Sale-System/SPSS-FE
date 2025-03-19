@@ -317,15 +317,87 @@ export default function QuickView() {
                     >
                       Quantity:
                     </Typography>
-                    <Quantity 
-                      quantity={quantity} 
-                      setQuantity={setQuantity} 
-                      customStyle={{
-                        border: `1px solid ${theme.palette.divider}`,
-                        borderRadius: '4px',
-                        overflow: 'hidden'
-                      }}
-                    />
+                    <div className="d-flex align-items-center">
+                      <div className="quantity-input-container" style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        backgroundColor: '#fff',
+                        border: `1px solid ${theme.palette.grey[200]}`,
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        width: 'fit-content',
+                        padding: '4px'
+                      }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (quantity > 1) {
+                              setQuantity(quantity - 1);
+                            }
+                          }}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: theme.palette.grey[100],
+                            border: 'none',
+                            borderRadius: '6px',
+                            cursor: quantity > 1 ? 'pointer' : 'not-allowed',
+                            color: theme.palette.primary.main,
+                            transition: 'all 0.2s ease',
+                            fontSize: '20px'
+                          }}
+                          disabled={quantity <= 1}
+                        >
+                          −
+                        </button>
+                        
+                        <input
+                          type="text"
+                          value={quantity}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val) && val >= 1) {
+                              setQuantity(val);
+                            }
+                          }}
+                          style={{
+                            width: '60px',
+                            height: '32px',
+                            textAlign: 'center',
+                            border: 'none',
+                            backgroundColor: 'transparent',
+                            fontSize: '16px',
+                            fontWeight: '500',
+                            color: theme.palette.text.primary,
+                            margin: '0 8px'
+                          }}
+                        />
+                        
+                        <button
+                          type="button"
+                          onClick={() => setQuantity(quantity + 1)}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: theme.palette.grey[100],
+                            border: 'none',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            color: theme.palette.primary.main,
+                            transition: 'all 0.2s ease',
+                            fontSize: '20px'
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
                   </Box>
                   
                   <Box sx={{ display: 'flex', gap: 2, mt: 'auto' }}>
@@ -347,7 +419,7 @@ export default function QuickView() {
                     >
                       {isAddedToCartProducts(quickViewItem.id) ? "Added to Cart" : "Add to Cart"}
                     </Button>
-                    
+{/*                     
                     <Button
                       variant="outlined"
                       onClick={() => addToWishlist(quickViewItem.id)}
@@ -365,7 +437,7 @@ export default function QuickView() {
                     >
                       <span className={`icon icon-heart ${isAddedtoWishlist(quickViewItem.id) ? "added" : ""}`} />
                     </Button>
-                    
+                     */}
                     <Button
                       variant="outlined"
                       onClick={() => addToCompareItem(quickViewItem.id)}

@@ -1,8 +1,14 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import request from "@/utlis/axios";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+
 export default function Register() {
+  // useEffect(() => {}, []);
+
   return (
     <div
       className="modal modalCentered fade form-sign-in modal-part-content"
@@ -21,15 +27,33 @@ export default function Register() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                console.log(e.target[0].value);
-                request.post("/User/sign-up", {
+                if (e.target[5].value !== e.target[6].value) {
+                  toast.error("Passwords do not match");
+                  return;
+                }
+                const formData = {
                   username: e.target[0].value,
-                  fullname: e.target[1].value,
-                  email: e.target[2].value,
-                  age: e.target[3].value,
-                  gender: e.target[4].value,
+                  surName: e.target[1].value,
+                  lastName: e.target[2].value,
+                  emailAddress: e.target[3].value,
+                  phoneNumber: e.target[4].value,
                   password: e.target[5].value,
-                });
+                };
+
+                // Open Login Modal
+                // loginModal.show();
+
+                request
+                  .post("/authentications/register", formData)
+                  .then((res) => {
+                    if (res.status == 200) {
+                      toast.success("Registration successful");
+                      location.reload();
+                    }
+                  })
+                  .catch((e) => {
+                    toast.error(e.response?.data?.message);
+                  });
               }}
             >
               <div className="tf-field style-1">
@@ -53,7 +77,19 @@ export default function Register() {
                   name=""
                 />
                 <label className="tf-field-label" htmlFor="">
-                  Full name
+                  Sur name
+                </label>
+              </div>
+              <div className="tf-field style-1">
+                <input
+                  className="tf-field-input tf-input"
+                  placeholder=" "
+                  type="text"
+                  required
+                  name=""
+                />
+                <label className="tf-field-label" htmlFor="">
+                  Last name
                 </label>
               </div>
               <div className="tf-field style-1">
@@ -79,25 +115,8 @@ export default function Register() {
                   name=""
                 />
                 <label className="tf-field-label" htmlFor="">
-                  Age *
+                  Phone *
                 </label>
-              </div>
-              <div className="tf-product-bundle-variant position-relative">
-                <select className="tf-select">
-                  <option>Male</option>
-                  <option>Female</option>
-                </select>
-                {/* <input
-                  className="tf-field-input tf-input"
-                  placeholder=" "
-                  type="email"
-                  autoComplete="abc@xyz.com"
-                  required
-                  name=""
-                /> */}
-                {/* <label className="tf-field-label" htmlFor="">
-                  Gender *
-                </label> */}
               </div>
               <div className="tf-field style-1">
                 <input
@@ -112,6 +131,19 @@ export default function Register() {
                   Password *
                 </label>
               </div>
+              <div className="tf-field style-1">
+                <input
+                  className="tf-field-input tf-input"
+                  placeholder=" "
+                  type="password"
+                  required
+                  name=""
+                  autoComplete="current-password"
+                />
+                <label className="tf-field-label" htmlFor="">
+                  Confirm Password *
+                </label>
+              </div>
               <div className="bottom">
                 <div className="w-100">
                   <button
@@ -123,6 +155,7 @@ export default function Register() {
                 </div>
                 <div className="w-100">
                   <a
+                    id="login"
                     href="#login"
                     data-bs-toggle="modal"
                     className="btn-link fw-6 w-100 link"
