@@ -2,7 +2,7 @@ import Overlay from "@/components/common/Overlay";
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
 import Topbar1 from "@/components/headers/Topbar1";
-import ShopSidebarleft from "@/components/shop/ShopSidebarleft";
+import ProductsList from "@/components/shop/ProductList";
 import React from "react";
 
 export const metadata = {
@@ -10,7 +10,7 @@ export const metadata = {
   description: "Skincare Shop",
 };
 
-export default function ProductList() {
+export default function ProductPage() {
   return (
     <>
       <Header2 />
@@ -40,7 +40,7 @@ export default function ProductList() {
           </div>
         </div>
       </div>
-      <ShopSidebarleft />
+      <ProductsList />
       <Footer1 />
     </>
   );
