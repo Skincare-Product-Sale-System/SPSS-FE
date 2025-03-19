@@ -44,11 +44,6 @@ export default function Products() {
       id: product.id,
       productId: product.id
     });
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   return (
@@ -359,19 +354,6 @@ export default function Products() {
           />
         </div>
       </div>
-
-      {/* MUI Dialog for Quick View */}
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-        <DialogTitle>Quick View</DialogTitle>
-        <DialogContent>
-          {/* Render product details here */}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
     </section>
   );
 }
