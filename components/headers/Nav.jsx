@@ -155,7 +155,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             isMenuActive(allHomepages) ? "activeMenu" : ""
           } `}
         >
-          Home
+          Trang chủ
         </a>
       </li>
       <li className="menu-item">
@@ -171,7 +171,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
               : ""
           } `}
         >
-          Quizzes
+          Khảo sát da
         </a>
       </li>
       {/* <li className="menu-item">
@@ -275,7 +275,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             isMenuActive(productDetailPages) ? "activeMenu" : ""
           }`}
         >
-          Products<i className="icon icon-arrow-down" style={{ display: 'inline-block', width: '12px', marginLeft: '1px' }}></i>
+          Sản phẩm<i className="icon icon-arrow-down" style={{ display: 'inline-block', width: '12px', marginLeft: '1px' }}></i>
         </a>
         <div className="sub-menu mega-menu">
           <div className="container">

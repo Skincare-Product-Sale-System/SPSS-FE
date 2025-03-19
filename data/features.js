@@ -4,16 +4,19 @@ export const iconBoxes = [
     iconClass: "icon-shipping-1",
     title: "Miễn Phí Vận Chuyển",
     description: "Miễn phí vận chuyển cho đơn hàng trên 2.800.000₫",
+    fontFamily: '"Playfair Display", serif'
   },
   {
     iconClass: "icon-payment-1",
     title: "Thanh Toán Linh Hoạt",
     description: "Thanh toán với nhiều loại thẻ tín dụng",
+    fontFamily: '"Playfair Display", serif'
   },
   {
     iconClass: "icon-return-1",
     title: "Đổi Trả Trong 14 Ngày",
     description: "Trong vòng 30 ngày để đổi sản phẩm",
+    fontFamily: '"Playfair Display", serif'
   },
 ];
 
@@ -175,27 +178,32 @@ export const iconBoxes3 = [
     iconClass: "icon-shipping",
     title: "Miễn Phí Vận Chuyển",
     description: "Miễn phí vận chuyển cho đơn hàng trên 2.800.000₫",
+    fontFamily: '"Playfair Display", serif'
   },
   {
     iconClass: "icon-payment fs-22",
     title: "Thanh Toán Linh Hoạt",
     description: "Thanh toán với nhiều loại thẻ tín dụng",
+    fontFamily: '"Playfair Display", serif'
   },
   {
     iconClass: "icon-return fs-20",
     title: "Đổi Trả Trong 14 Ngày",
     description: "Trong vòng 30 ngày để đổi sản phẩm",
+    fontFamily: '"Playfair Display", serif'
   },
   {
     iconClass: "icon-suport",
     title: "Hỗ Trợ Cao Cấp",
     description: "Dịch vụ hỗ trợ khách hàng xuất sắc",
+    fontFamily: '"Playfair Display", serif'
   },
 
   {
     iconClass: "icon-return fs-20",
     title: "Đổi Trả Trong 14 Ngày",
     description: "Trong vòng 30 ngày để đổi sản phẩm",
+    fontFamily: '"Playfair Display", serif'
   },
 ];
 

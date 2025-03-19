@@ -100,7 +100,7 @@ export default function Footer1({ bgColor = "" }) {
                           fontWeight: "600",
                         }}
                       >
-                        SPSS
+                        Skincede
                       </div>
                     </Link>
                   </div>
@@ -113,7 +113,7 @@ export default function Footer1({ bgColor = "" }) {
                     </li>
                     <li>
                       <p>
-                        Email: <a href="#">info@spss.com</a>
+                        Email: <a href="#">info@Skincede.com</a>
                       </p>
                     </li>
                     <li>
@@ -284,7 +284,7 @@ export default function Footer1({ bgColor = "" }) {
               <div className="col-12">
                 <div className="footer-bottom-wrap d-flex gap-20 flex-wrap justify-content-between align-items-center">
                   <div className="footer-menu_item">
-                    © {new Date().getFullYear()} SPSS Store. Đã đăng ký Bản quyền
+                    © {new Date().getFullYear()} Skincede Store. Đã đăng ký Bản quyền
                   </div>
                   <div className="tf-payment">
                     {paymentImages.map((image, index) => (

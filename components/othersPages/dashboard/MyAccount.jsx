@@ -337,7 +337,7 @@ export default function MyAccount() {
                   
                   <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                     <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
-                      Member Since
+                      Thành viên từ
                     </p>
                     <p className="font-medium" style={{ color: theme.palette.text.primary }}>
                       {userData?.createdTime ? new Date(userData.createdTime).toLocaleDateString() : "N/A"}
@@ -420,7 +420,7 @@ export default function MyAccount() {
                   disabled={saving}
                   className="inline-block px-4 py-2 rounded-md text-white text-sm font-medium"
                   style={{ backgroundColor: theme.palette.primary.main }}>
-                  {saving ? 'Saving...' : 'Save Changes'}
+                  {saving ? 'Saving...' : 'Lưu thay đổi'}
                 </button>
                 
                 <button 
@@ -430,7 +430,7 @@ export default function MyAccount() {
                     color: theme.palette.text.primary,
                     borderColor: theme.palette.divider
                   }}>
-                  Cancel
+                  Hủy
                 </button>
               </div>
             )}
@@ -442,7 +442,7 @@ export default function MyAccount() {
       {userData?.skinType ? (
         <div className="p-5 rounded-lg mb-6 border" style={{ borderColor: theme.palette.primary.main }}>
           <h5 className="text-lg font-medium mb-3" style={{ color: theme.palette.primary.main }}>
-            Your Skin Type
+            Loại da của bạn
           </h5>
           <div className="flex items-center">
             <span 
@@ -462,10 +462,10 @@ export default function MyAccount() {
       ) : (
         <div className="p-5 rounded-lg mb-6 border border-dashed" style={{ borderColor: theme.palette.primary.main }}>
           <h5 className="text-lg font-medium mb-2" style={{ color: theme.palette.primary.main }}>
-            Discover Your Skin Type
+            Khám phá loại da của bạn
           </h5>
           <p className="mb-3" style={{ color: theme.palette.text.primary }}>
-            Take our quick skin quiz to get personalized product recommendations for your skin type.
+            Làm khảo sát nhanh để nhận được đề xuất sản phẩm phù hợp với loại da của bạn.
           </p>
           <Link href="/quiz" 
                 className="inline-block px-4 py-2 rounded-md text-white text-sm"
@@ -478,7 +478,7 @@ export default function MyAccount() {
       {/* Account Navigation Section */}
       <div className="p-5 rounded-lg mb-6" style={{ backgroundColor: theme.palette.background.paper }}>
         <h5 className="text-lg font-medium mb-3" style={{ color: theme.palette.text.primary }}>
-          Account Management
+          Quản lý tài khoản
         </h5>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Link href="/my-account-orders" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
@@ -486,7 +486,7 @@ export default function MyAccount() {
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <ShoppingBagOutlinedIcon fontSize="inherit" />
             </span>
-            <span className="font-medium" style={{ color: theme.palette.text.primary }}>My Orders</span>
+            <span className="font-medium" style={{ color: theme.palette.text.primary }}>Đơn hàng của tôi</span>
           </Link>
           
           <Link href="/my-account-address" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
@@ -494,7 +494,7 @@ export default function MyAccount() {
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <HomeOutlinedIcon fontSize="inherit" />
             </span>
-            <span className="font-medium" style={{ color: theme.palette.text.primary }}>My Addresses</span>
+            <span className="font-medium" style={{ color: theme.palette.text.primary }}>Địa chỉ của tôi</span>
           </Link>
           
           <Link href="/my-reviews" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
@@ -502,7 +502,7 @@ export default function MyAccount() {
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <StarOutlinedIcon fontSize="inherit" />
             </span>
-            <span className="font-medium" style={{ color: theme.palette.text.primary }}>My Reviews</span>
+            <span className="font-medium" style={{ color: theme.palette.text.primary }}>Đánh giá của tôi</span>
           </Link>
           
           <Link href="/change-password" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
@@ -510,7 +510,7 @@ export default function MyAccount() {
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <LockOutlinedIcon fontSize="inherit" />
             </span>
-            <span className="font-medium" style={{ color: theme.palette.text.primary }}>Change Password</span>
+            <span className="font-medium" style={{ color: theme.palette.text.primary }}>Đổi mật khẩu</span>
           </Link>
         </div>
       </div>

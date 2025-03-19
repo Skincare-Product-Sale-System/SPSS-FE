@@ -152,11 +152,17 @@ export default function Orders() {
               onChange={handleSortChange}
               sx={{ 
                 '& .MuiSelect-select': { py: 1.8, px: 2, mt: 1 },
-                '& .MuiOutlinedInput-notchedOutline': { borderRadius: 1 }
+                '& .MuiOutlinedInput-notchedOutline': { borderRadius: 1 },
+                '& .MuiInputLabel-root': {
+                  fontFamily: '"Roboto", sans-serif'
+                },
+                '& .MuiInputBase-input': {
+                  fontFamily: '"Roboto", sans-serif'
+                }
               }}
             >
-              <MenuItem value="desc">Newest First</MenuItem>
-              <MenuItem value="asc">Oldest First</MenuItem>
+              <MenuItem value="desc">Mới nhất</MenuItem>
+              <MenuItem value="asc">Cũ nhất</MenuItem>
             </Select>
           </FormControl>
           
@@ -168,14 +174,20 @@ export default function Orders() {
               onChange={handleStatusChange}
               sx={{ 
                 '& .MuiSelect-select': { py: 1.8, px: 2, mt: 1 },
-                '& .MuiOutlinedInput-notchedOutline': { borderRadius: 1 }
+                '& .MuiOutlinedInput-notchedOutline': { borderRadius: 1 },
+                '& .MuiInputLabel-root': {
+                  fontFamily: '"Roboto", sans-serif'
+                },
+                '& .MuiInputBase-input': {
+                  fontFamily: '"Roboto", sans-serif'
+                }
               }}
             >
-              <MenuItem value="all">All Status</MenuItem>
-              <MenuItem value="Processing">Processing</MenuItem>
-              <MenuItem value="Delivered">Delivered</MenuItem>
-              <MenuItem value="Cancelled">Cancelled</MenuItem>
-              <MenuItem value="Awaiting Payment">Awaiting Payment</MenuItem>
+              <MenuItem value="all">Tất cả trạng thái</MenuItem>
+              <MenuItem value="Processing">Đang xử lý</MenuItem>
+              <MenuItem value="Delivered">Đã giao</MenuItem>
+              <MenuItem value="Cancelled">Đã hủy</MenuItem>
+              <MenuItem value="Awaiting Payment">Chờ thanh toán</MenuItem>
             </Select>
           </FormControl>
           
@@ -192,14 +204,14 @@ export default function Orders() {
 
         {displayedOrders.length === 0 ? (
           <div className="text-center py-4 border rounded-lg p-8">
-            <p className="text-gray-500">No orders found matching your filters</p>
+            <p className="text-gray-500">Không tìm thấy đơn hàng phù hợp với bộ lọc của bạn</p>
           </div>
         ) : (
           displayedOrders.map((order) => (
             <div key={order.id} className="mb-6 border rounded-lg overflow-hidden shadow-sm">
               <div className="bg-gray-50 p-4 flex justify-between items-center border-b">
                 <div className="flex items-center">
-                  <span className="font-medium mr-2">Order #{order.id.substring(0, 8)}</span>
+                  <span className="font-medium mr-2">Đơn hàng #{order.id.substring(0, 8)}</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                     {order.status}
                   </span>
@@ -250,7 +262,8 @@ export default function Orders() {
                             ? "#FFFFFF" 
                             : "#757575",
                           border: "none",
-                          fontWeight: "medium"
+                          fontWeight: "medium",
+                          fontFamily: '"Roboto", sans-serif'
                         }}
                         disabled={order.status?.toLowerCase() !== "delivered" || !item.isReviewable}
                         onClick={() => {
@@ -262,8 +275,8 @@ export default function Orders() {
                         }}
                       >
                         {order.status?.toLowerCase() === "delivered" && !item.isReviewable
-                          ? "Reviewed"
-                          : "Review"}
+                          ? "Đã đánh giá"
+                          : "Đánh giá"}
                       </button>
                     </div>
                   </div>
@@ -283,10 +296,11 @@ export default function Orders() {
                     style={{ 
                       color: mainColor, 
                       borderColor: mainColor,
-                      backgroundColor: `${mainColor}10`
+                      backgroundColor: `${mainColor}10`,
+                      fontFamily: '"Roboto", sans-serif'
                     }}
                   >
-                    View Details
+                    Xem chi tiết
                   </Link>
                 </div>
               </div>
@@ -308,6 +322,12 @@ export default function Orders() {
                 '& .Mui-selected': {
                   backgroundColor: `${mainColor}20`,
                 },
+                '& .MuiInputLabel-root': {
+                  fontFamily: '"Roboto", sans-serif'
+                },
+                '& .MuiInputBase-input': {
+                  fontFamily: '"Roboto", sans-serif'
+                }
               }}
             />
           </Box>

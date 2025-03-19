@@ -607,7 +607,7 @@ export default function StaffChat() {
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4, minHeight: 'calc(100vh - 100px)' }}>
       <Typography variant="h4" gutterBottom color="primary" fontWeight="bold" sx={{ mb: 3 }}>
-        Hệ thống chat hỗ trợ SPSS
+        Hệ thống chat hỗ trợ Skincede
       </Typography>
       
       <Paper sx={{ 

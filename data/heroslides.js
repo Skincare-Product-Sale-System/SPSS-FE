@@ -171,31 +171,28 @@ export const slides4 = [
 
 export const slides5 = [
   {
-    // imgSrc: "/images/slider/skincare-slide1.jpg",
     imgSrc:
       "https://images.pexels.com/photos/6663368/pexels-photo-6663368.jpeg",
     imgAlt: "skincare-slideshow-01",
     heading: "Chăm Sóc Da Được Tái Định Nghĩa.",
     description: "Để mang lại hiệu quả tối đa, giảm thiểu lãng phí",
-    fontFamily: "Roboto, sans-serif"
+    fontFamily: '"Playfair Display", serif'
   },
   {
-    // imgSrc: "/images/slider/skincare-slide2.jpg",
     imgSrc:
       "https://images.pexels.com/photos/3762879/pexels-photo-3762879.jpeg",
     imgAlt: "skincare-slideshow-02",
     heading: "Vẻ Đẹp Trong Từng Giọt",
     description: "Đắm mình trong sự xa xỉ của làn da hoàn hảo",
-    fontFamily: "Roboto, sans-serif"
+    fontFamily: '"Playfair Display", serif'
   },
   {
-    // imgSrc: "/images/slider/skincare-slide3.jpg",
     imgSrc:
       "https://images.pexels.com/photos/3785803/pexels-photo-3785803.jpeg",
     imgAlt: "fashion-slideshow-03",
     heading: "Tình Yêu Làn Da, Được Giải Phóng",
     description: "Trải nghiệm điều kỳ diệu của việc tự chăm sóc bản thân với các sản phẩm skincare cao cấp",
-    fontFamily: "Roboto, sans-serif"
+    fontFamily: '"Playfair Display", serif'
   },
 ];
 

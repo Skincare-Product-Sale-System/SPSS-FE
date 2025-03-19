@@ -18,7 +18,7 @@ export default function RealTimeChat() {
   const [messages, setMessages] = useState([
     {
       sender: "system",
-      content: "Kết nối với nhân viên hỗ trợ của SPSS...",
+      content: "Kết nối với nhân viên hỗ trợ của Skincede...",
     }
   ]);
   const [newMessage, setNewMessage] = useState("");
@@ -260,7 +260,7 @@ export default function RealTimeChat() {
                style={{ backgroundColor: mainColor.secondary || '#85715e', color: 'white', borderRadius: '8px 8px 0 0' }}>
             <div className="flex items-center gap-2">
               <ForumIcon />
-              <span className="font-medium">Chat với nhân viên SPSS</span>
+              <span className="font-medium">Chat với nhân viên Skincede</span>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-white hover:text-gray-200">
               ✖
@@ -327,7 +327,7 @@ export default function RealTimeChat() {
             </div>
             <p className="text-xs text-gray-500 mt-1">
               {isConnected 
-                ? "Bạn đang kết nối với nhân viên SPSS" 
+                ? "Bạn đang kết nối với nhân viên Skincede" 
                 : "Đang kết nối..."}
             </p>
           </div>

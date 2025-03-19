@@ -80,7 +80,7 @@ export default function Header2({
                   fontWeight: "600",
                 }}
               >
-                SPSS
+                Skincede
               </div>
               {/* <Image
                 alt="logo"

@@ -21,7 +21,7 @@ export default function ChatAssistant() {
   return isOpen ? (
     <div className="fixed bottom-20 right-5 w-[500px] bg-white border rounded-lg shadow-lg p-4 z-50">
       <div className="flex justify-between items-center border-b pb-2">
-        <span className="font-bold">Trợ lý ảo SPSS</span>
+        <span className="font-bold">Trợ lý ảo Skincede</span>
         <button onClick={() => setIsOpen(false)} className="text-red-500">
           ✖
         </button>
@@ -124,7 +124,7 @@ const getAnswer = async (messages) => {
   const body = {
     system_instruction: {
       parts: {
-        text: `Bạn là nhân viên hỗ trợ bán hàng cho cửa hàng kinh doanh chuỗi sản phẩm chăm sóc da SPSS`,
+        text: `Bạn là nhân viên hỗ trợ bán hàng cho cửa hàng kinh doanh chuỗi sản phẩm chăm sóc da Skincede`,
       },
     },
     contents: messages.map((item) => ({

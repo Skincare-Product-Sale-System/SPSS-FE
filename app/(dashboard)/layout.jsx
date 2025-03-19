@@ -5,8 +5,8 @@ import DashboardNav from "@/components/othersPages/dashboard/AccountSideBar";
 import Overlay from "@/components/common/Overlay";
 
 export const metadata = {
-  title: "SPSS",
-  description: "SPSS",
+  title: "Skincede",
+  description: "Skincede",
 };
 
 export default function Layout({ children }) {

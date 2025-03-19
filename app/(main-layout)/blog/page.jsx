@@ -25,7 +25,7 @@ export default function page() {
                 Blog
               </div>
               <p className="text-center text-2 mt_5">
-                Get the tips and tricks for your skin care routine
+                Nhận các mẹo và thủ thuật cho thói quen chăm sóc da của bạn
               </p>
             </div>
           </div>

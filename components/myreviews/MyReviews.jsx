@@ -336,13 +336,13 @@ export default function MyReviews() {
               id="sort-order-label"
               sx={{ color: mainColor.text }}
             >
-              Sort by Date
+              Sắp xếp theo ngày
             </InputLabel>
             <Select
               labelId="sort-order-label"
               value={sortOrder}
               onChange={handleSortChange}
-              label="Sort by Date"
+              label="Sắp xếp theo ngày"
               sx={{ 
                 color: mainColor.text,
                 '& .MuiSvgIcon-root': {
@@ -353,13 +353,13 @@ export default function MyReviews() {
               <MenuItem value="desc">
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <ArrowDownwardIcon fontSize="small" sx={{ mr: 1 }} />
-                  Newest First
+                  Mới nhất trước
                 </Box>
               </MenuItem>
               <MenuItem value="asc">
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <ArrowUpwardIcon fontSize="small" sx={{ mr: 1 }} />
-                  Oldest First
+                  Cũ nhất trước
                 </Box>
               </MenuItem>
             </Select>
@@ -517,11 +517,11 @@ export default function MyReviews() {
                             }
                           }}
                         >
-                          Edit
+                          Chỉnh sửa đánh giá
                         </Button>
                       ) : (
                         <Chip
-                          label="Already Edited"
+                          label="Đã chỉnh sửa"
                           size="small"
                           sx={{
                             backgroundColor: 'rgba(158, 158, 158, 0.2)',
@@ -660,7 +660,7 @@ export default function MyReviews() {
                   mb: 2
                 }}
               >
-                No reviews found
+                Không tìm thấy đánh giá
               </Typography>
               <Typography 
                 variant="body1" 
@@ -668,7 +668,7 @@ export default function MyReviews() {
                   color: 'text.secondary'
                 }}
               >
-                You haven't written any reviews yet.
+                Bạn chưa viết đánh giá nào.
               </Typography>
             </Box>
           )}
@@ -736,10 +736,10 @@ export default function MyReviews() {
               sx={{ 
                 color: mainColor.text,
                 fontWeight: 500,
-                fontFamily: '"Playfair Display", serif',
+                fontFamily: '"Roboto", sans-serif',
               }}
             >
-              Edit Review
+              Chỉnh sửa đánh giá
             </Typography>
             <IconButton 
               onClick={handleCloseModal} 
@@ -767,7 +767,7 @@ export default function MyReviews() {
                     mb: 1.5
                   }}
                 >
-                  Product
+                  Sản phẩm
                 </Typography>
                 {currentReview && (
                   <Box 
@@ -833,7 +833,7 @@ export default function MyReviews() {
                     mb: 1
                   }}
                 >
-                  Rating
+                  Đánh giá
                 </Typography>
                 <MuiRating 
                   value={editRating} 
@@ -894,7 +894,7 @@ export default function MyReviews() {
                     mb: 1.5
                   }}
                 >
-                  Images
+                  Hình ảnh
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
                   {editImages.map((image, index) => (
@@ -993,7 +993,7 @@ export default function MyReviews() {
                 }
               }}
             >
-              Cancel
+              Hủy
             </Button>
             <Button 
               onClick={handleUpdateReview} 
@@ -1010,7 +1010,7 @@ export default function MyReviews() {
                 }
               }}
             >
-              Save Changes
+              Lưu thay đổi
             </Button>
           </DialogActions>
         </Dialog>

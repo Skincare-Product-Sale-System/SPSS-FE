@@ -18,7 +18,7 @@ export default function ReviewHeader() {
             sx={{
               fontWeight: 500,
               color: '#212529',
-              fontFamily: '"Playfair Display", serif',
+              fontFamily: '"Roboto", sans-serif',
               position: 'relative',
               display: 'inline-block',
               pb: 2,
@@ -35,7 +35,7 @@ export default function ReviewHeader() {
               }
             }}
           >
-            My Reviews
+            Đánh Giá Của Tôi
           </Typography>
         </Box>
       </div>
