@@ -1,12 +1,17 @@
 "use client";
+import { useEffect, useState, useRef } from "react";
+import { ThemeProvider } from '@/context/ThemeContext';
+import { MuiThemeProvider } from '@/context/MuiThemeProvider';
+import Providers from './providers';
+import ChatAssistant from '@/components/othersPages/ChatAssistant';
+import RealTimeChat from '@/components/chat/RealTimeChat';
+import Context from '@/context/Context';
+import NextTopLoader from 'nextjs-toploader';
+import ScrollTop from "@/components/common/ScrollTop";
+import { Toaster } from "react-hot-toast";
 
-import { useEffect, useState } from "react";
-
-import "../public/scss/main.scss";
-import "photoswipe/dist/photoswipe.css";
-import "rc-slider/assets/index.css";
+// Modal imports
 import HomesModal from "@/components/modals/HomesModal";
-import Context from "@/context/Context";
 import QuickView from "@/components/modals/QuickView";
 import ProductSidebar from "@/components/modals/ProductSidebar";
 import QuickAdd from "@/components/modals/QuickAdd";
@@ -24,51 +29,53 @@ import ResetPass from "@/components/modals/ResetPass";
 import SearchModal from "@/components/modals/SearchModal";
 import ToolbarBottom from "@/components/modals/ToolbarBottom";
 import ToolbarShop from "@/components/modals/ToolbarShop";
+import ShareModal from "@/components/modals/ShareModal";
+
+// Import styles
+import "../public/scss/main.scss";
+import "photoswipe/dist/photoswipe.css";
+import "rc-slider/assets/index.css";
 
 import { usePathname } from "next/navigation";
-import NewsletterModal from "@/components/modals/NewsletterModal";
-import ShareModal from "@/components/modals/ShareModal";
-import ScrollTop from "@/components/common/ScrollTop";
-import RtlToggle from "@/components/common/RtlToggle";
-import Providers from "@/context/Providers";
-import NextTopLoader from "nextjs-toploader";
-import { Toaster } from "react-hot-toast";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { MuiThemeProvider } from "@/context/MuiThemeProvider";
-import ChatAssistant from "@/components/othersPages/ChatAssistant";
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
+  const [scrollDirection, setScrollDirection] = useState("down");
+  
+  // Bootstrap initialization
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Import the script only on the client side
       import("bootstrap/dist/js/bootstrap.esm").then(() => {
-        // Module is imported, you can access any exported functionality if
+        // Bootstrap initialized
       });
     }
   }, []);
+  
+  // Header background effect
   useEffect(() => {
     const handleScroll = () => {
       const header = document.querySelector("header");
-      if (window.scrollY > 100) {
-        header.classList.add("header-bg");
-      } else {
-        header.classList.remove("header-bg");
+      if (header) {
+        if (window.scrollY > 100) {
+          header.classList.add("header-bg");
+        } else {
+          header.classList.remove("header-bg");
+        }
       }
     };
 
     window.addEventListener("scroll", handleScroll);
 
-    // Cleanup function to remove event listener on component unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
+  }, []);
 
-  const [scrollDirection, setScrollDirection] = useState("down");
-
+  // Scroll direction detection
   useEffect(() => {
     setScrollDirection("up");
+    const lastScrollY = { current: window.scrollY };
+    
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
@@ -88,64 +95,80 @@ export default function RootLayout({ children }) {
       lastScrollY.current = currentScrollY;
     };
 
-    const lastScrollY = { current: window.scrollY };
-
-    // Add scroll event listener
     window.addEventListener("scroll", handleScroll);
 
-    // Cleanup: remove event listener when component unmounts
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [pathname]);
+  
+  // Close modals on navigation
   useEffect(() => {
-    // Close any open modal
-    const bootstrap = require("bootstrap"); // dynamically import bootstrap
-    const modalElements = document.querySelectorAll(".modal.show");
-    modalElements.forEach((modal) => {
-      const modalInstance = bootstrap.Modal.getInstance(modal);
-      if (modalInstance) {
-        modalInstance.hide();
-      }
-    });
+    if (typeof window !== "undefined") {
+      try {
+        const bootstrap = require("bootstrap");
+        
+        const modalElements = document.querySelectorAll(".modal.show");
+        modalElements.forEach((modal) => {
+          const modalInstance = bootstrap.Modal.getInstance(modal);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        });
 
-    // Close any open offcanvas
-    const offcanvasElements = document.querySelectorAll(".offcanvas.show");
-    offcanvasElements.forEach((offcanvas) => {
-      const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
-      if (offcanvasInstance) {
-        offcanvasInstance.hide();
+        const offcanvasElements = document.querySelectorAll(".offcanvas.show");
+        offcanvasElements.forEach((offcanvas) => {
+          const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
+          if (offcanvasInstance) {
+            offcanvasInstance.hide();
+          }
+        });
+      } catch (error) {
+        console.error("Error closing modals/offcanvas:", error);
       }
-    });
-  }, [pathname]); // Runs every time the route changes
-
+    }
+  }, [pathname]);
+  
+  // Header scroll behavior
   useEffect(() => {
     const header = document.querySelector("header");
     if (header) {
-      if (scrollDirection == "up") {
+      if (scrollDirection === "up") {
         header.style.top = "0px";
       } else {
         header.style.top = "-185px";
       }
     }
   }, [scrollDirection]);
+  
+  // Initialize WOW.js
   useEffect(() => {
-    const WOW = require("@/utlis/wow");
-    const wow = new WOW.default({
-      mobile: false,
-      live: false,
-    });
-    wow.init();
+    try {
+      const WOW = require("@/utlis/wow");
+      const wow = new WOW.default({
+        mobile: false,
+        live: false,
+      });
+      wow.init();
+    } catch (error) {
+      console.error("Error initializing WOW:", error);
+    }
   }, [pathname]);
-
+  
+  // RTL direction setup
   useEffect(() => {
     const initializeDirection = () => {
       const direction = localStorage.getItem("direction");
 
       if (direction) {
-        const parsedDirection = JSON.parse(direction);
-        document.documentElement.dir = parsedDirection.dir;
-        document.body.classList.add(parsedDirection.dir);
+        try {
+          const parsedDirection = JSON.parse(direction);
+          document.documentElement.dir = parsedDirection.dir;
+          document.body.classList.add(parsedDirection.dir);
+        } catch (error) {
+          console.error("Error parsing direction:", error);
+          document.documentElement.dir = "ltr";
+        }
       } else {
         document.documentElement.dir = "ltr";
       }
@@ -157,7 +180,7 @@ export default function RootLayout({ children }) {
     };
 
     initializeDirection();
-  }, []); // Only runs once on component mount
+  }, []);
 
   return (
     <html lang="en">
@@ -166,15 +189,17 @@ export default function RootLayout({ children }) {
           <div className="preload-logo">
             <div className="spinner"></div>
           </div>
-        </div>{" "}
+        </div>
         <ThemeProvider>
           <MuiThemeProvider>
             <Providers>
               <Context>
                 <NextTopLoader />
                 <div id="wrapper">{children}</div>
-                {/* <RtlToggle /> */}
-                <HomesModal /> <QuickView />
+                
+                {/* Modals */}
+                <HomesModal />
+                <QuickView />
                 <QuickAdd />
                 <ProductSidebar />
                 <Compare />
@@ -191,9 +216,11 @@ export default function RootLayout({ children }) {
                 <SearchModal />
                 <ToolbarBottom />
                 <ToolbarShop />
-                <ChatAssistant />
-                {/* <NewsletterModal /> */}
                 <ShareModal />
+                
+                {/* Chat components */}
+                <ChatAssistant />
+                <RealTimeChat />
               </Context>
             </Providers>
           </MuiThemeProvider>
@@ -203,4 +230,4 @@ export default function RootLayout({ children }) {
       </body>
     </html>
   );
-}
+} 
