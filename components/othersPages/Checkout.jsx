@@ -731,21 +731,39 @@ export default function Checkout() {
                     className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
                     onClick={async () => {
                       if (!selectedAddress?.id) {
-                        toast.error("Please select an address");
+                        toast.error("Vui lòng chọn địa chỉ giao hàng");
                         return;
                       }
+
+                      if (!cartProducts || cartProducts.length === 0) {
+                        toast.error("Giỏ hàng trống");
+                        return;
+                      }
+
+                      // Validate cart products
+                      const invalidProducts = cartProducts.filter(elm => !elm.productItemId);
+                      if (invalidProducts.length > 0) {
+                        toast.error("Có sản phẩm không hợp lệ trong giỏ hàng");
+                        return;
+                      }
+
+                      const voucherId = document.querySelector("input#voucherId").value;
                       const orderData = {
-                        addressId: selectedAddress?.id,
-                        paymentMethodId:
-                          paymentMethod === "bank"
-                            ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
-                            : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
-                        voucherId: voucher.id || null,
+                        addressId: selectedAddress.id,
+                        paymentMethodId: paymentMethod === "bank"
+                          ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
+                          : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
+                        voucherId: voucher?.id || null,
                         orderDetail: cartProducts.map((elm) => ({
                           productItemId: elm.productItemId,
                           quantity: elm.quantity,
                         })),
                       };
+
+                      console.log("Order Data:", orderData);
+                      console.log("Cart Products:", cartProducts);
+                      console.log("Selected Address:", selectedAddress);
+                      console.log("Voucher:", voucher);
 
                       try {
                         const res = await request.post("/orders", orderData);
@@ -759,13 +777,16 @@ export default function Checkout() {
                             );
                             if (vnpayRes.status === 200) {
                               location.href = vnpayRes.data.data;
+                            } else {
+                              toast.error("Không thể khởi tạo thanh toán VNPay");
                             }
                           } else {
                             location.href = `/payment-success?id=${orderId}`;
                           }
                         }
                       } catch (err) {
-                        console.error(err);
+                        console.error("Lỗi tạo đơn hàng:", err);
+                        toast.error(err.response?.data?.message || "Có lỗi xảy ra khi tạo đơn hàng");
                         location.href = "/payment-failure";
                       }
                     }}
