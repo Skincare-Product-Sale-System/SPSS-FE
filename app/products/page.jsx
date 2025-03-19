@@ -30,11 +30,24 @@ export default function ProductList() {
                 color: "white",
               }}
             >
-              <div className="heading text-center" style={{}}>
-                New Arrival
+              <div 
+                className="heading text-center" 
+                style={{
+                  fontFamily: '"Playfair Display", serif',
+                  fontSize: '2.5rem',
+                  fontWeight: 600
+                }}
+              >
+                Sản Phẩm Mới
               </div>
-              <p className="text-center text-2 mt_5">
-                Shop through our latest selection of Fashion
+              <p 
+                className="text-center text-2 mt_5"
+                style={{
+                  fontFamily: '"Playfair Display", serif',
+                  fontSize: '1.125rem'
+                }}
+              >
+                Khám phá bộ sưu tập mới nhất của chúng tôi
               </p>
             </div>
           </div>

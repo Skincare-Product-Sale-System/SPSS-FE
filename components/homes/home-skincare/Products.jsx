@@ -54,7 +54,7 @@ export default function Products() {
             fontSize: { xs: '1.75rem', md: '2.25rem' }
           }}
         >
-          Bestsellers
+          Sản Phẩm Bán Chạy
         </Typography>
         
         <Typography
@@ -67,7 +67,7 @@ export default function Products() {
             mb: 5
           }}
         >
-          Discover our most popular skincare products loved by customers
+          Khám phá các sản phẩm chăm sóc da phổ biến nhất được yêu thích bởi khách hàng
         </Typography>
         
         <div className="relative">
@@ -188,7 +188,7 @@ export default function Products() {
                               transition: 'all 0.3s ease'
                             }}
                           >
-                            {isAddedtoCompareItem(product.id) ? "Remove from Compare" : "Add to Compare"}
+                            {isAddedtoCompareItem(product.id) ? "Xóa khỏi So Sánh" : "Thêm vào So Sánh"}
                           </Box>
                         </Box>
                         
@@ -238,7 +238,7 @@ export default function Products() {
                               transition: 'all 0.3s ease'
                             }}
                           >
-                            Quick View
+                            Xem Nhanh
                           </Box>
                         </Box>
                       </Box>

@@ -175,24 +175,27 @@ export const slides5 = [
     imgSrc:
       "https://images.pexels.com/photos/6663368/pexels-photo-6663368.jpeg",
     imgAlt: "skincare-slideshow-01",
-    heading: "Skincare Reimagined.",
-    description: "To deliver peak potency, minus the waste",
+    heading: "Chăm Sóc Da Được Tái Định Nghĩa.",
+    description: "Để mang lại hiệu quả tối đa, giảm thiểu lãng phí",
+    fontFamily: "Roboto, sans-serif"
   },
   {
     // imgSrc: "/images/slider/skincare-slide2.jpg",
     imgSrc:
       "https://images.pexels.com/photos/3762879/pexels-photo-3762879.jpeg",
     imgAlt: "skincare-slideshow-02",
-    heading: "Beauty in Every Drop",
-    description: "Indulge in the luxury of flawless skin",
+    heading: "Vẻ Đẹp Trong Từng Giọt",
+    description: "Đắm mình trong sự xa xỉ của làn da hoàn hảo",
+    fontFamily: "Roboto, sans-serif"
   },
   {
     // imgSrc: "/images/slider/skincare-slide3.jpg",
     imgSrc:
       "https://images.pexels.com/photos/3785803/pexels-photo-3785803.jpeg",
     imgAlt: "fashion-slideshow-03",
-    heading: "Skin Love, Unleashed",
-    description: "Experience the magic of self-care with our premium skincare",
+    heading: "Tình Yêu Làn Da, Được Giải Phóng",
+    description: "Trải nghiệm điều kỳ diệu của việc tự chăm sóc bản thân với các sản phẩm skincare cao cấp",
+    fontFamily: "Roboto, sans-serif"
   },
 ];
 
@@ -765,7 +768,7 @@ export const slides19 = [
     imgAlt: "hp-slideshow-01",
     imgWidth: 1600,
     imgHeight: 762,
-    heading: "Don’t miss amazing\n grocery deals",
+    heading: "Don't miss amazing\n grocery deals",
     description: "Save up to 30% off on your first order",
     linkText: "Shop collection",
   },
