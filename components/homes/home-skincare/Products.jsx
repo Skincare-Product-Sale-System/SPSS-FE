@@ -11,16 +11,13 @@ import { defaultProductImage } from "@/utlis/default";
 import request from "@/utlis/axios";
 import { useQueries } from "@tanstack/react-query";
 import { useTheme } from "@mui/material/styles";
-import { Box, Tab, Tabs, Typography, Button } from "@mui/material";
+import { Box, Tab, Tabs, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { formatPrice } from "@/utils/priceFormatter";
 
 export default function Products() {
   const theme = useTheme();
   const {
     setQuickViewItem,
-    setQuickAddItem,
-    addToWishlist,
-    isAddedtoWishlist,
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
@@ -39,6 +36,20 @@ export default function Products() {
       },
     ],
   });
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = (product) => {
+    setQuickViewItem({
+      id: product.id,
+      productId: product.id
+    });
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <section className="py-16" style={{ backgroundColor: theme.palette.background.default }}>
@@ -194,9 +205,7 @@ export default function Products() {
                         
                         <Box
                           component="a"
-                          href="#quick_view"
-                          onClick={() => setQuickViewItem(product)}
-                          data-bs-toggle="modal"
+                          onClick={() => handleOpen(product)}
                           sx={{
                             width: 40,
                             height: 40,
@@ -350,6 +359,19 @@ export default function Products() {
           />
         </div>
       </div>
+
+      {/* MUI Dialog for Quick View */}
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+        <DialogTitle>Quick View</DialogTitle>
+        <DialogContent>
+          {/* Render product details here */}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </section>
   );
 }

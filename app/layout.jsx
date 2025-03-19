@@ -200,7 +200,7 @@ export default function RootLayout({ children }) {
                 {/* Modals */}
                 <HomesModal />
                 <QuickView />
-                <QuickAdd />
+                {/* <QuickAdd /> */}
                 <ProductSidebar />
                 <Compare />
                 <ShopCart />
