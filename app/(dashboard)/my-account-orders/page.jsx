@@ -13,7 +13,12 @@ export default function page() {
     <>
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">Order History</div>
+        <div 
+            className="heading text-center"
+            style={{
+              fontFamily: '"Roboto", sans-serif'
+            }}
+          >Lịch sử đơn hàng</div>
         </div>
       </div>
       <section className="flat-spacing-2">

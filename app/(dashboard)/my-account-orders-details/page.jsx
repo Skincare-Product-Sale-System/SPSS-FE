@@ -6,20 +6,29 @@ import Orders from "@/components/othersPages/dashboard/Orders";
 import React from "react";
 
 export const metadata = {
-  title: "My Account Orders || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Chi Tiết Đơn Hàng | SPSS - Website Chăm Sóc Da",
+  description: "Xem chi tiết đơn hàng của bạn tại SPSS",
 };
+
 export default function page() {
   return (
     <>
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">Order Details</div>
+          <div 
+            className="heading text-center"
+            style={{
+              fontFamily: '"Roboto", sans-serif'
+            }}
+          >
+            Chi Tiết Đơn Hàng
+          </div>
         </div>
       </div>
+
       <section>
         <div className="container">
-            <OrderDetails />
+          <OrderDetails />
         </div>
       </section>
     </>

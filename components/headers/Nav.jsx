@@ -438,7 +438,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
           className={`item-link ${Linkfs} ${textColor}  ${
             isMenuActive(blogLinks) ? "activeMenu" : ""
           }`}
-        >
+        > 
           Blogs
           {/* <div className="sub-menu links-default">
             <ul className="menu-list">
