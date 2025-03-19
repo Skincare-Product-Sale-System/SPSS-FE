@@ -554,12 +554,44 @@ export default function Checkout() {
                     type="text"
                     placeholder="Discount code"
                   />
-                  <a
-                    href="#"
+                  <div
+                    onClick={() => {
+                      const voucherElem = document.getElementById("voucherId");
+                      request
+                        .get(`/voucher/code/${voucherElem.value}`)
+                        .then(({ data }) => {
+                          const currentDate = new Date();
+                          const startDate = new Date(data.data.startDate);
+                          const endDate = new Date(data.data.endDate);
+
+                          if (currentDate < startDate) {
+                            toast.error("Voucher chưa đến thời gian sử dụng");
+                          } else if (currentDate > endDate) {
+                            toast.error("Voucher đã hết hạn sử dụng");
+                          } else if (data.data.minimumOrderValue > totalPrice) {
+                            toast.error(`Đơn hàng phải có giá trị tối thiểu ${formatPrice(data.data.minimumOrderValue)}`);
+                          } else if (data.data.usageLimit <= 0) {
+                            toast.error("Voucher đã hết lượt sử dụng");
+                          } else {
+                            setVoucher({
+                              id: data.data.id,
+                              code: data.data.code,
+                              discountRate: data?.data?.discountRate,
+                            });
+                          }
+                        })
+                        .catch((err) => {
+                          setVoucher({
+                            id: "",
+                            code: "invalid",
+                            discountRate: 0,
+                          });
+                        });
+                    }}
                     className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
                   >
                     Apply
-                  </a>
+                  </div>
                 </div>
                 <div className="d-flex justify-content-between line pb_20">
                   <h6 className="fw-5">Total</h6>
@@ -640,7 +672,7 @@ export default function Checkout() {
                           paymentMethod === "bank"
                             ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
                             : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
-                        voucherId: voucherId || null,
+                        voucherId: voucher.id || null,
                         orderDetail: cartProducts.map((elm) => ({
                           productItemId: elm.productItemId,
                           quantity: elm.quantity,
