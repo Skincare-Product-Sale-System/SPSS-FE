@@ -6,6 +6,7 @@ import { useContextElement } from "@/context/Context";
 import { allProducts } from "@/data/products";
 import request from "@/utlis/axios";
 import { defaultProductImage } from "@/utlis/default";
+import { formatPrice } from "@/utils/priceFormatter";
 
 export default function Compare() {
   const { removeFromCompareItem, compareItem, setCompareItem } =
@@ -34,7 +35,7 @@ export default function Compare() {
             <span
               className="icon-close icon-close-popup"
               data-bs-dismiss="offcanvas"
-              aria-label="Close"
+              aria-label="Đóng"
             />
           </div>
         </header>
@@ -44,7 +45,7 @@ export default function Compare() {
               <div className="col-12">
                 <div className="tf-compare-list">
                   <div className="tf-compare-head">
-                    <div className="title">Compare Products</div>
+                    <div className="title">So Sánh Sản Phẩm</div>
                   </div>
                   <div className="tf-compare-offcanvas">
                     {items.map((elm, i) => (
@@ -72,7 +73,7 @@ export default function Compare() {
                           </div>
                           <div className="text-start">
                             <span className="new-price">
-                              $ {elm?.price.toLocaleString()}
+                              {formatPrice(elm?.price)}
                             </span>
                           </div>
                           <div className="text-start tf-compare-item-rating">
@@ -92,13 +93,13 @@ export default function Compare() {
                         href={`/compare`}
                         className="tf-btn radius-3 btn-fill justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
                       >
-                        Compare
+                        So Sánh
                       </Link>
                       <div
                         className="tf-compapre-button-clear-all link"
                         onClick={() => setCompareItem([])}
                       >
-                        Clear All
+                        Xóa Tất Cả
                       </div>
                     </div>
                   </div>

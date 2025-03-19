@@ -33,7 +33,7 @@ export default function page() {
               }}
             >
               <div className="heading text-center" style={{}}>
-                Shopping Cart
+                Giỏ hàng
               </div>
             </div>
           </div>

@@ -241,14 +241,22 @@ export default function RealTimeChat() {
       {/* Chat button */}
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-5 left-5 bg-white text-primary p-3 rounded-full shadow-lg z-40 flex items-center justify-center"
+        className="fixed bottom-5 left-5 bg-white p-3 rounded-full shadow-lg z-40 flex items-center justify-center hover:opacity-90 transition-opacity"
         style={{ 
           backgroundColor: mainColor.secondary || '#85715e',
-          width: '60px',
-          height: '60px'
+          width: '56px',
+          height: '56px',
+          border: 'none',
+          cursor: 'pointer'
         }}
       >
-        <ForumIcon sx={{ color: 'white', fontSize: 28 }} />
+        <ForumIcon 
+          sx={{ 
+            color: 'white', 
+            fontSize: 24,
+            filter: 'drop-shadow(0px 2px 2px rgba(0,0,0,0.1))'
+          }} 
+        />
       </button>
       
       {/* Chat window */}
@@ -257,12 +265,29 @@ export default function RealTimeChat() {
              style={{ maxHeight: 'calc(100vh - 160px)' }}>
           {/* Header */}
           <div className="flex justify-between items-center p-3 border-b" 
-               style={{ backgroundColor: mainColor.secondary || '#85715e', color: 'white', borderRadius: '8px 8px 0 0' }}>
+               style={{ 
+                 backgroundColor: mainColor.secondary || '#85715e', 
+                 color: 'white', 
+                 borderRadius: '8px 8px 0 0' 
+               }}
+          >
             <div className="flex items-center gap-2">
-              <ForumIcon />
+              <ForumIcon sx={{ 
+                fontSize: 22,
+                filter: 'drop-shadow(0px 1px 1px rgba(0,0,0,0.1))'
+              }} />
               <span className="font-medium">Chat với nhân viên Skincede</span>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-white hover:text-gray-200">
+            <button 
+              onClick={() => setIsOpen(false)} 
+              className="text-white hover:text-gray-200 transition-colors"
+              style={{
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer',
+                padding: '4px'
+              }}
+            >
               ✖
             </button>
           </div>

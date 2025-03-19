@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { useContextElement } from "@/context/Context";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,11 +7,15 @@ import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Quantity from "../shopDetails/Quantity";
 import { colors, sizeOptions } from "@/data/singleProductOptions";
-import React, { useState } from "react";
+import React from "react";
 import { defaultProductImage } from "@/utlis/default";
 import { useTheme } from "@mui/material/styles";
 import { Box, Typography, Button, Divider, Chip } from "@mui/material";
 import { formatPrice, calculateDiscount } from "@/utils/priceFormatter";
+import request from "@/utlis/axios";
+import toast from "react-hot-toast";
+import useQueryStore from "@/context/queryStore";
+import { Modal as BootstrapModal } from 'bootstrap';
 
 export default function QuickView() {
   const theme = useTheme();
@@ -23,34 +28,170 @@ export default function QuickView() {
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
-  const [currentColor, setCurrentColor] = useState(colors[0]);
-  const [currentSize, setCurrentSize] = useState(sizeOptions[0]);
+  const { revalidate } = useQueryStore();
+
+  // State for product details
+  const [productDetail, setProductDetail] = useState(null);
+  const [variations, setVariations] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState({});
+  const [currentProductItem, setCurrentProductItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
-  const openModalSizeChoice = () => {
-    const bootstrap = require("bootstrap");
-    var myModal = new bootstrap.Modal(document.getElementById("find_size"), {
-      keyboard: false,
-    });
+  // Thêm useEffect để khởi tạo modal
+  useEffect(() => {
+    // Đảm bảo code chỉ chạy ở client side
+    if (typeof window !== 'undefined') {
+      // Khởi tạo tất cả các modal
+      const modalElement = document.getElementById('quick_view');
+      if (modalElement) {
+        const modal = new BootstrapModal(modalElement, {
+          backdrop: true,
+          keyboard: true,
+          focus: true
+        });
+      }
+    }
+  }, []); // Empty dependency array means this runs once on mount
 
-    myModal.show();
-    document
-      .getElementById("find_size")
-      .addEventListener("hidden.bs.modal", () => {
-        myModal.hide();
+  // Fetch product details when quickViewItem changes
+  useEffect(() => {
+    if (!quickViewItem?.id) return;
+
+    const fetchProductDetail = async () => {
+      try {
+        const { data } = await request.get(`/products/${quickViewItem.id}`);
+        const productData = data.data;
+        
+        // Log để debug
+        console.log("API Response:", productData);
+
+        // Set product detail
+        setProductDetail(productData);
+
+        // Extract variations và xử lý tiếp
+        const allVariations = {};
+        if (productData.productItems) {
+          productData.productItems.forEach(item => {
+            if (!item.configurations) return;
+            
+            item.configurations.forEach(config => {
+              if (!allVariations[config.variationName]) {
+                allVariations[config.variationName] = [];
+              }
+              
+              const existingOption = allVariations[config.variationName].find(
+                opt => opt.optionId === config.optionId
+              );
+              
+              if (!existingOption) {
+                allVariations[config.variationName].push({
+                  variationName: config.variationName,
+                  optionName: config.optionName,
+                  optionId: config.optionId
+                });
+              }
+            });
+          });
+        }
+
+        // Convert to array format
+        const variationsArray = Object.keys(allVariations).map(variationName => ({
+          name: variationName,
+          options: allVariations[variationName]
+        }));
+        
+        setVariations(variationsArray);
+
+        // Set initial options
+        const initialSelectedOptions = {};
+        variationsArray.forEach(variation => {
+          if (variation.options.length > 0) {
+            initialSelectedOptions[variation.name] = variation.options[0].optionId;
+          }
+        });
+        
+        setSelectedOptions(initialSelectedOptions);
+
+        // Find initial matching product item
+        const matchingItem = findMatchingProductItem(initialSelectedOptions, productData.productItems);
+        if (matchingItem) {
+          setCurrentProductItem(matchingItem);
+        }
+
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+        toast.error("Không thể tải thông tin sản phẩm");
+      }
+    };
+
+    fetchProductDetail();
+  }, [quickViewItem]);
+
+  // Find matching product item helper function
+  const findMatchingProductItem = (options, productItems) => {
+    if (!productItems) return null;
+    
+    return productItems.find(item => {
+      if (!item.configurations) return false;
+      
+      return Object.keys(options).every(variationName => {
+        const selectedOptionId = options[variationName];
+        return item.configurations.some(
+          config => config.variationName === variationName && config.optionId === selectedOptionId
+        );
       });
-    const backdrops = document.querySelectorAll(".modal-backdrop");
-    if (backdrops.length > 1) {
-      const lastBackdrop = backdrops[backdrops.length - 1];
-      lastBackdrop.style.zIndex = "1057";
+    });
+  };
+
+  // Handle option selection
+  const handleOptionSelect = (variationName, optionId) => {
+    const newSelectedOptions = {
+      ...selectedOptions,
+      [variationName]: optionId
+    };
+    
+    setSelectedOptions(newSelectedOptions);
+    const matchingItem = findMatchingProductItem(newSelectedOptions, productDetail?.productItems);
+    
+    if (matchingItem) {
+      setCurrentProductItem(matchingItem);
     }
   };
 
-  if (!quickViewItem) return null;
+  // Handle add to cart
+  const handleAddToCart = async () => {
+    if (!currentProductItem) {
+      toast.error("Please select all options first");
+      return;
+    }
 
-  // Calculate discount if both prices exist
-  const discountPercent = quickViewItem.marketPrice && quickViewItem.price 
-    ? calculateDiscount(quickViewItem.marketPrice, quickViewItem.price)
+    if (currentProductItem.quantityInStock <= 0) {
+      toast.error("This product is out of stock");
+      return;
+    }
+
+    try {
+      const response = await request.post("/cart-items", {
+        productItemId: currentProductItem.id,
+        quantity: quantity
+      });
+
+      if (response.status === 200) {
+        toast.success("Added to cart");
+        addProductToCart(productDetail.id, quantity);
+        revalidate();
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add to cart");
+    }
+  };
+
+  if (!productDetail) return null;
+
+  // Calculate discount
+  const discountPercent = currentProductItem?.marketPrice && currentProductItem?.price 
+    ? calculateDiscount(currentProductItem.marketPrice, currentProductItem.price)
     : 0;
 
   return (
@@ -124,39 +265,28 @@ export default function QuickView() {
                     p: 4
                   }}
                 >
-                  {quickViewItem.thumbnail && (
-                    <Image
-                      src={quickViewItem.thumbnail || defaultProductImage}
-                      alt={quickViewItem.title || quickViewItem.name || "Product Image"}
-                      width={500}
-                      height={500}
-                      style={{ 
-                        objectFit: 'contain',
-                        maxWidth: '100%',
-                        maxHeight: '500px'
-                      }}
-                    />
-                  )}
+                  <Image
+                    src={productDetail?.thumbnail || defaultProductImage}
+                    alt={productDetail?.name || "Product Image"}
+                    width={500}
+                    height={500}
+                    style={{ 
+                      objectFit: 'contain',
+                      maxWidth: '100%',
+                      maxHeight: '500px'
+                    }}
+                  />
                   
                   {discountPercent > 0 && (
-                    <Box
+                    <Chip
+                      label={`-${discountPercent}%`}
+                      color="error"
                       sx={{
                         position: 'absolute',
                         top: 20,
                         right: 20,
-                        backgroundColor: theme.palette.error.main,
-                        color: '#fff',
-                        borderRadius: '50%',
-                        width: 50,
-                        height: 50,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 600
                       }}
-                    >
-                      -{discountPercent}%
-                    </Box>
+                    />
                   )}
                 </Box>
               </div>
@@ -179,7 +309,7 @@ export default function QuickView() {
                       fontWeight: 500
                     }}
                   >
-                    {quickViewItem.title || quickViewItem.name}
+                    {productDetail.name}
                   </Typography>
                   
                   <Box sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
@@ -192,10 +322,10 @@ export default function QuickView() {
                         mr: 2
                       }}
                     >
-                      {formatPrice(quickViewItem.price)}
+                      {formatPrice(currentProductItem?.price)}
                     </Typography>
                     
-                    {quickViewItem.marketPrice && (
+                    {currentProductItem?.marketPrice && (
                       <Typography
                         variant="body1"
                         component="span"
@@ -205,7 +335,7 @@ export default function QuickView() {
                           mr: 2
                         }}
                       >
-                        {formatPrice(quickViewItem.marketPrice)}
+                        {formatPrice(currentProductItem.marketPrice)}
                       </Typography>
                     )}
                     
@@ -222,7 +352,7 @@ export default function QuickView() {
                     )}
                   </Box>
                   
-                  {quickViewItem.description && (
+                  {productDetail.description && (
                     <Typography
                       variant="body2"
                       sx={{
@@ -230,12 +360,12 @@ export default function QuickView() {
                         mb: 3
                       }}
                     >
-                      {quickViewItem.description}
+                      {productDetail.description}
                     </Typography>
                   )}
                   
-                  {quickViewItem.colors && quickViewItem.colors.length > 0 && (
-                    <Box sx={{ mb: 3 }}>
+                  {variations.map((variation) => (
+                    <Box key={variation.name} sx={{ mb: 3 }}>
                       <Typography
                         variant="subtitle2"
                         sx={{
@@ -244,67 +374,22 @@ export default function QuickView() {
                           color: theme.palette.text.primary
                         }}
                       >
-                        Color:
+                        {variation.name}:
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 1 }}>
-                        {quickViewItem.colors.map((color, index) => (
-                          <Box
-                            key={index}
-                            onClick={() => setCurrentColor(color)}
-                            sx={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: '50%',
-                              backgroundColor: color.colorCode || color.colorClass,
-                              border: currentColor === color ? `2px solid ${theme.palette.primary.main}` : '2px solid transparent',
-                              cursor: 'pointer',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                transform: 'scale(1.1)'
-                              }
-                            }}
-                          />
-                        ))}
-                      </Box>
-                    </Box>
-                  )}
-                  
-                  {quickViewItem.sizes && quickViewItem.sizes.length > 0 && (
-                    <Box sx={{ mb: 3 }}>
-                      <Typography
-                        variant="subtitle2"
-                        sx={{
-                          fontWeight: 600,
-                          mb: 1,
-                          color: theme.palette.text.primary
-                        }}
-                      >
-                        Size:
-                      </Typography>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        {quickViewItem.sizes.map((size, index) => (
-                          <Box
-                            key={index}
-                            onClick={() => setCurrentSize(size)}
-                            sx={{
-                              padding: '6px 12px',
-                              borderRadius: '4px',
-                              border: `1px solid ${currentSize === size ? theme.palette.primary.main : theme.palette.divider}`,
-                              backgroundColor: currentSize === size ? `${theme.palette.primary.main}10` : 'transparent',
-                              color: currentSize === size ? theme.palette.primary.main : theme.palette.text.primary,
-                              cursor: 'pointer',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                borderColor: theme.palette.primary.main
-                              }
-                            }}
+                        {variation.options.map((option) => (
+                          <Button
+                            key={option.optionId}
+                            variant={selectedOptions[variation.name] === option.optionId ? "contained" : "outlined"}
+                            onClick={() => handleOptionSelect(variation.name, option.optionId)}
+                            size="small"
                           >
-                            {size}
-                          </Box>
+                            {option.optionName}
+                          </Button>
                         ))}
                       </Box>
                     </Box>
-                  )}
+                  ))}
                   
                   <Box sx={{ mb: 3 }}>
                     <Typography
@@ -403,44 +488,15 @@ export default function QuickView() {
                   <Box sx={{ display: 'flex', gap: 2, mt: 'auto' }}>
                     <Button
                       variant="contained"
-                      onClick={() => addProductToCart(quickViewItem.id)}
-                      sx={{
-                        backgroundColor: theme.palette.primary.main,
-                        color: '#fff',
-                        borderRadius: '24px',
-                        padding: '10px 24px',
-                        flex: 1,
-                        textTransform: 'none',
-                        fontWeight: 500,
-                        '&:hover': {
-                          backgroundColor: theme.palette.primary.dark
-                        }
-                      }}
+                      fullWidth
+                      onClick={handleAddToCart}
+                      disabled={!currentProductItem || currentProductItem.quantityInStock <= 0}
                     >
-                      {isAddedToCartProducts(quickViewItem.id) ? "Added to Cart" : "Add to Cart"}
+                      {currentProductItem?.quantityInStock <= 0 ? 'Hết hàng' : 'Thêm vào giỏ hàng'}
                     </Button>
-{/*                     
                     <Button
                       variant="outlined"
-                      onClick={() => addToWishlist(quickViewItem.id)}
-                      sx={{
-                        borderColor: theme.palette.primary.main,
-                        color: theme.palette.primary.main,
-                        borderRadius: '24px',
-                        padding: '10px 0',
-                        minWidth: '44px',
-                        '&:hover': {
-                          borderColor: theme.palette.primary.dark,
-                          backgroundColor: 'rgba(0,0,0,0.04)'
-                        }
-                      }}
-                    >
-                      <span className={`icon icon-heart ${isAddedtoWishlist(quickViewItem.id) ? "added" : ""}`} />
-                    </Button>
-                     */}
-                    <Button
-                      variant="outlined"
-                      onClick={() => addToCompareItem(quickViewItem.id)}
+                      onClick={() => addToCompareItem(productDetail.id)}
                       href="#compare"
                       data-bs-toggle="offcanvas"
                       aria-controls="offcanvasLeft"
@@ -456,13 +512,13 @@ export default function QuickView() {
                         }
                       }}
                     >
-                      <span className={`icon icon-compare ${isAddedtoCompareItem(quickViewItem.id) ? "added" : ""}`} />
+                      <span className={`icon icon-compare ${isAddedtoCompareItem(productDetail.id) ? "added" : ""}`} />
                     </Button>
                   </Box>
                   
                   <Box sx={{ mt: 3 }}>
                     <Link 
-                      href={`/product-detail/${quickViewItem.id}`}
+                      href={`/product-detail/${productDetail.id}`}
                       style={{
                         color: theme.palette.primary.main,
                         textDecoration: 'none',
@@ -471,7 +527,7 @@ export default function QuickView() {
                         alignItems: 'center'
                       }}
                     >
-                      View Full Details
+                      Xem chi tiết
                       <span className="icon-arrow-right" style={{ marginLeft: '8px', fontSize: '14px' }}></span>
                     </Link>
                   </Box>

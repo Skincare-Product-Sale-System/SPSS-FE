@@ -29,7 +29,7 @@ export default function page() {
               }}
             >
               <div className="heading text-center" style={{}}>
-                Check Out
+                Thanh toán
               </div>
             </div>
           </div>

@@ -5,10 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Rating from "../common/Rating";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 export default function Compare() {
   const { setQuickViewItem } = useContextElement();
-  const { setQuickAddItem } = useContextElement();
 
   const { removeFromCompareItem, compareItem, setCompareItem } =
     useContextElement();
@@ -38,23 +38,6 @@ export default function Compare() {
               {items.map((elm, i) => (
                 <div key={i} className="tf-compare-col h-full flex flex-col justify-between">
                   <div className="tf-compare-item">
-                  <div
-                    className="
-                      tf-compare-remove link 
-                      flex items-center justify-center
-                      gap-2 px-4 py-2
-                      text-sm font-semibold text-red-500
-                      border border-red-500 rounded-lg
-                      cursor-pointer
-                      bg-white
-                      hover:bg-red-500 hover:text-white
-                      transition duration-200
-                    "
-                    onClick={() => removeFromCompareItem(elm?.id)}
-                  >
-                    <i className="icon icon-trash"></i>
-                    Remove from list
-                  </div>
                     <Link
                       className="tf-compare-image"
                       href={`/product-detail/${elm?.id}`}
@@ -79,25 +62,37 @@ export default function Compare() {
                         ₫{elm?.price.toLocaleString()}
                       </span>
                     </div>
-                    <div className="tf-compare-group-btns d-flex gap-10">
+                    <div className="tf-compare-group-btns d-flex gap-2 justify-center">
                       <a
                         href="#quick_view"
                         data-bs-toggle="modal"
-                        className="tf-btn btn-outline-dark radius-3"
+                        className="tf-btn btn-outline-dark radius-3 flex items-center gap-2 px-4 py-2"
                         onClick={() => setQuickViewItem(elm)}
                       >
                         <i className="icon icon-view" />
-                        <span>QUICK VIEW</span>
+                        <span>XEM NHANH</span>
                       </a>
-                      <a
-                        href="#quick_add"
-                        data-bs-toggle="modal"
-                        className="tf-btn btn-outline-dark radius-3"
-                        onClick={() => setQuickAddItem(elm?.id)}
+                      <button
+                        onClick={() => removeFromCompareItem(elm?.id)}
+                        className="tf-btn btn-outline-danger radius-3 w-12 flex items-center justify-center"
+                        style={{
+                          border: '1px solid #dc3545',
+                          color: '#dc3545',
+                          borderRadius: '8px',
+                          transition: 'all 0.2s',
+                          height: '40px'
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.backgroundColor = '#dc3545';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = '#dc3545';
+                        }}
                       >
-                        <i className="icon icon-bag" />
-                        <span>QUICK ADD</span>
-                      </a>
+                        <DeleteOutlineIcon />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -105,7 +100,7 @@ export default function Compare() {
             </div>
             <div className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Status</h6>
+                <h6>Trạng thái</h6>
               </div>
               {items.map((elm, i) => (
                 <div
@@ -121,7 +116,7 @@ export default function Compare() {
             </div>
             <div className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Brand</h6>
+                <h6>Thương hiệu</h6>
               </div>
               {items.map((elm, i) => (
                 <div
@@ -135,7 +130,7 @@ export default function Compare() {
             
             <div className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Category</h6>
+                <h6>Danh mục</h6>
               </div>
               {items.map((elm, i) => (
                 <div
@@ -148,7 +143,7 @@ export default function Compare() {
             </div>
             <div className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Rating</h6>
+                <h6>Đánh giá</h6>
               </div>
               {items.map((elm, i) => (
                 <div
@@ -158,14 +153,14 @@ export default function Compare() {
                   {elm?.rating !== undefined && elm?.rating !== null ? (
                     <Rating number={elm?.rating} />
                   ) : (
-                    "No rating"
+                    "Chưa có đánh giá"
                   )}
                 </div>              
               ))}
             </div>
             <div className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>For skin type</h6>
+                <h6>Loại da phù hợp</h6>
               </div>
               {items.map((elm, i) => (
                 <div
@@ -182,7 +177,7 @@ export default function Compare() {
               className="tf-compare-row grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4"
             >
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>{key.replace(/([A-Z])/g, " $1")}</h6>
+                <h6>{translateSpecification(key)}</h6>
               </div>
               {items.map((elm, i) => (
                 <div
@@ -190,7 +185,7 @@ export default function Compare() {
                   className="tf-compare-col tf-compare-value text-center flex items-center justify-center"
                   style={{ flex: 1 }}
                 >
-                  {elm?.specifications?.[key] || "N/A"}
+                  {elm?.specifications?.[key] || "Không có"}
                 </div>
               ))}
             </div>
@@ -200,4 +195,41 @@ export default function Compare() {
       </div>
     </section>
   );
+}
+
+// Thêm hàm helper để dịch các specification
+function translateSpecification(key) {
+  const translations = {
+    skinIssues: "Vấn đề về da",
+    ingredients: "Thành phần",
+    usage: "Cách sử dụng",
+    effect: "Công dụng",
+    volume: "Dung tích",
+    origin: "Xuất xứ",
+    mainFunction: "Công dụng chính",
+    texture: "Kết cấu",
+    englishName: "Tên tiếng Anh",
+    keyActiveIngredients: "Thành phần hoạt tính chính",
+    fragrance: "Mùi hương",
+    skinType: "Loại da phù hợp",
+    productForm: "Dạng sản phẩm",
+    expiryDate: "Hạn sử dụng",
+    madeIn: "Nơi sản xuất",
+    manufacturer: "Nhà sản xuất",
+    distributor: "Nhà phân phối",
+    storageConditions: "Điều kiện bảo quản",
+    precautions: "Lưu ý khi sử dụng",
+    benefits: "Lợi ích sản phẩm",
+    suitableFor: "Phù hợp với",
+    howToUse: "Hướng dẫn sử dụng",
+    packageIncludes: "Bao gồm trong hộp",
+    productLine: "Dòng sản phẩm",
+    productionDate: "Ngày sản xuất",
+    detailedIngredients: "Thành phần chi tiết",
+    storageInstruction: "Hướng dẫn bảo quản",
+    usageInstruction: "Hướng dẫn sử dụng"
+  };
+  
+  // Nếu không có bản dịch, format key thành dạng có khoảng trắng
+  return translations[key] || key.replace(/([A-Z])/g, " $1").toLowerCase();
 }

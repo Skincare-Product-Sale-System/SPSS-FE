@@ -155,7 +155,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             isMenuActive(allHomepages) ? "activeMenu" : ""
           } `}
         >
-          Trang chủ
+          Trang Chủ
         </a>
       </li>
       <li className="menu-item">
@@ -171,7 +171,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
               : ""
           } `}
         >
-          Khảo sát da
+          Khảo Sát Da
         </a>
       </li>
       {/* <li className="menu-item">
@@ -275,18 +275,17 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             isMenuActive(productDetailPages) ? "activeMenu" : ""
           }`}
         >
-          Sản phẩm<i className="icon icon-arrow-down" style={{ display: 'inline-block', width: '12px', marginLeft: '1px' }}></i>
+          Sản Phẩm<i className="icon icon-arrow-down" style={{ display: 'inline-block', width: '12px', marginLeft: '1px' }}></i>
         </a>
         <div className="sub-menu mega-menu">
           <div className="container">
             <div className="row">
               <div className="col-lg-4">
                 <div className="mega-menu-item">
-                  <div className="menu-heading">Categories</div>
+                  <div className="menu-heading">Danh Mục</div>
                   {!categories.isLoading && renderCategories(categories.data)}
                   
-                  {/* Thêm phần Skin Types với kiểm tra mảng và cập nhật tên trường */}
-                  <div className="menu-heading mt-4">Skin Types</div>
+                  <div className="menu-heading mt-4">Loại Da</div>
                   <ul className="menu-list">
                     {Array.isArray(skinTypes) && skinTypes.length > 0 ? (
                       skinTypes.map((skinType, index) => (
@@ -302,7 +301,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                         </li>
                       ))
                     ) : (
-                      <li><span className="menu-link-text">Loading skin types...</span></li>
+                      <li><span className="menu-link-text">Đang tải loại da...</span></li>
                     )}
                   </ul>
                 </div>
@@ -330,7 +329,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                 </div>
               ))} */}
               <div className="col-lg-8">
-                <div className="menu-heading">Best seller</div>
+                <div className="menu-heading">Sản Phẩm Bán Chạy</div>
                 <div className="hover-sw-nav hover-sw-2">
                   <Swiper
                     dir="ltr"
@@ -439,7 +438,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             isMenuActive(blogLinks) ? "activeMenu" : ""
           }`}
         > 
-          Blogs
+          Bài Viết
           {/* <div className="sub-menu links-default">
             <ul className="menu-list">
               {blogLinks.map((linkItem, index) => (
