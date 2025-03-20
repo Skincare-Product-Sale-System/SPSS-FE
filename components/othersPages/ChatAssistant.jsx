@@ -16,12 +16,86 @@ export default function ChatAssistant() {
   const [isLoading, setIsLoading] = useState(false);
   const messageEndRef = useRef(null);
   const [inputMessage, setInputMessage] = useState("");
+  const notificationSoundRef = useRef(null);
+  const popupSoundRef = useRef(null);
 
+  // Refs cho âm thanh
+  useEffect(() => {
+    // Thêm log để xác nhận đường dẫn
+    console.log("Đường dẫn file notification:", '/sound/message-notification.mp3');
+    console.log("Đường dẫn file popup:", '/sound/message-popup.mp3');
+    
+    // Tạo audio elements với đường dẫn tuyệt đối
+    notificationSoundRef.current = new Audio(`${window.location.origin}/sound/message-notification.mp3`);
+    popupSoundRef.current = new Audio(`${window.location.origin}/sound/message-popup.mp3`);
+    
+    // Preload audio
+    if (notificationSoundRef.current) {
+      notificationSoundRef.current.load();
+    }
+    if (popupSoundRef.current) {
+      popupSoundRef.current.load();
+    }
+    
+    // Thêm event listener để kiểm tra lỗi
+    if (notificationSoundRef.current) {
+      notificationSoundRef.current.addEventListener('error', (e) => {
+        console.error("Lỗi khi tải file notification:", e);
+      });
+    }
+    
+    if (popupSoundRef.current) {
+      popupSoundRef.current.addEventListener('error', (e) => {
+        console.error("Lỗi khi tải file popup:", e);
+      });
+    }
+    
+    // Điều chỉnh âm lượng
+    if (notificationSoundRef.current) notificationSoundRef.current.volume = 0.5;
+    if (popupSoundRef.current) popupSoundRef.current.volume = 0.3;
+    
+    // Cleanup
+    return () => {
+      // Loại bỏ event listeners
+      if (notificationSoundRef.current) {
+        notificationSoundRef.current.removeEventListener('error', () => {});
+        notificationSoundRef.current.pause();
+        notificationSoundRef.current = null;
+      }
+      if (popupSoundRef.current) {
+        popupSoundRef.current.removeEventListener('error', () => {});
+        popupSoundRef.current.pause();
+        popupSoundRef.current = null;
+      }
+    };
+  }, []);
+
+  // Scroll xuống khi có tin nhắn mới
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+    
+    // Phát âm thanh khi có tin nhắn mới (trừ tin nhắn đầu tiên)
+    if (messages.length > 1) {
+      const lastMessage = messages[messages.length - 1];
+      
+      // Nếu là tin nhắn từ model và chat đang mở, phát âm thanh popup
+      if (lastMessage.sender === "model" && isOpen) {
+        if (popupSoundRef.current) {
+          popupSoundRef.current.currentTime = 0;
+          popupSoundRef.current.play().catch(err => console.log("Không thể phát âm thanh:", err));
+        }
+      } 
+      // Nếu tin nhắn từ model và chat đang đóng, phát âm thanh thông báo
+      else if (lastMessage.sender === "model" && !isOpen) {
+        if (notificationSoundRef.current) {
+          notificationSoundRef.current.currentTime = 0;
+          notificationSoundRef.current.play().catch(err => console.log("Không thể phát âm thanh:", err));
+        }
+      }
+    }
+  }, [messages, isOpen]);
 
   const handleSend = async () => {
     if (inputMessage.trim() === "") return;
@@ -29,6 +103,7 @@ export default function ChatAssistant() {
     const messageContent = inputMessage;
     setInputMessage("");
 
+    // Thêm tin nhắn của người dùng
     setMessages((prev) => [
       ...prev,
       {
@@ -36,6 +111,13 @@ export default function ChatAssistant() {
         sender: "me",
       },
     ]);
+    
+    // Phát âm thanh tin nhắn popup khi người dùng gửi
+    if (popupSoundRef.current) {
+      popupSoundRef.current.currentTime = 0;
+      popupSoundRef.current.play().catch(err => console.log("Không thể phát âm thanh:", err));
+    }
+    
     setIsLoading(true);
 
     try {
@@ -46,6 +128,8 @@ export default function ChatAssistant() {
           sender: "me",
         },
       ]);
+      
+      // Thêm tin nhắn từ model (âm thanh sẽ được xử lý trong useEffect)
       setMessages((prev) => [
         ...prev,
         {
@@ -57,6 +141,57 @@ export default function ChatAssistant() {
       console.log(error);
     } finally {
       setIsLoading(false);
+    }
+
+    // Tạo beep sound thay vì dùng file
+    const createBeepSound = () => {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 800; // Hz
+      gainNode.gain.value = 0.1; // volume
+      
+      oscillator.start();
+      setTimeout(() => oscillator.stop(), 200); // ms
+    };
+    
+    // Trong hàm handleSend hoặc khi nhận tin nhắn mới
+    createBeepSound();
+  };
+
+  // Thay vì gọi play trực tiếp, cần xử lý qua tương tác người dùng
+  const playSound = (audioRef) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      
+      // Thêm một Promise để xử lý lỗi một cách tốt hơn
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Phát thành công
+            console.log("Âm thanh đang phát");
+          })
+          .catch(err => {
+            // Xử lý lỗi
+            console.error("Không thể phát âm thanh:", err);
+            
+            // Có thể là do chính sách autoplay, thử lại với muted
+            if (err.name === "NotAllowedError") {
+              audioRef.current.muted = true;
+              audioRef.current.play().then(() => {
+                // Sau khi đã có tương tác, bỏ muted
+                audioRef.current.muted = false;
+              });
+            }
+          });
+      }
     }
   };
 
@@ -103,6 +238,17 @@ export default function ChatAssistant() {
           <SendIcon />
         </button>
       </div>
+      <button 
+        onClick={() => {
+          if (popupSoundRef.current) {
+            popupSoundRef.current.currentTime = 0;
+            popupSoundRef.current.play().catch(err => console.error("Lỗi khi phát:", err));
+          }
+        }}
+        className="text-gray-500 text-xs mt-1"
+      >
+        Test Sound
+      </button>
     </div>
   ) : (
     <button

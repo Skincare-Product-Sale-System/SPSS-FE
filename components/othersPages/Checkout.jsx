@@ -25,7 +25,8 @@ export default function Checkout() {
   });
   const { switcher, revalidate } = useQueryStore();
   const { Id } = useAuthStore();
-  const [paymentMethod, setPaymentMethod] = useState("bank");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentMethods, setPaymentMethods] = useState([]);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [countries, setCountries] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -72,6 +73,7 @@ export default function Checkout() {
   useEffect(() => {
     fetchAddresses();
     fetchCountries();
+    fetchPaymentMethods();
   }, []);
 
   const fetchAddresses = async () => {
@@ -99,6 +101,22 @@ export default function Checkout() {
     } catch (error) {
       console.error("Error fetching countries:", error);
       toast.error("Failed to load countries");
+    }
+  };
+
+  const fetchPaymentMethods = async () => {
+    try {
+      const { data } = await request.get("/payment-methods");
+      const methods = data?.data?.items || [];
+      setPaymentMethods(methods);
+      
+      // Set default payment method if available
+      if (methods.length > 0) {
+        setPaymentMethod(methods[0].id);
+      }
+    } catch (error) {
+      console.error("Error fetching payment methods:", error);
+      toast.error("Failed to load payment methods");
     }
   };
 
@@ -227,12 +245,12 @@ export default function Checkout() {
   return (
     <section className="flat-spacing-11">
       <div className="container">
-        <div className="tf-page-cart-wrap layout-2">
+        <div className="layout-2 tf-page-cart-wrap">
           <div className="tf-page-cart-item">
             <div className="flex justify-between items-center mb-4">
               <h5 className="fw-5" style={{ fontFamily: '"Roboto", sans-serif' }}>Địa Chỉ Giao Hàng</h5>
               <button
-                className="px-4 py-2 rounded-md text-white transition-all hover:opacity-90"
+                className="rounded-md text-white hover:opacity-90 px-4 py-2 transition-all"
                 style={{ backgroundColor: theme.palette.primary.main, fontFamily: '"Roboto", sans-serif' }}
                 onClick={() => setShowAddressForm(!showAddressForm)}
               >
@@ -243,7 +261,7 @@ export default function Checkout() {
             {/* Add Address Form */}
             {showAddressForm && (
               <div
-                className="bg-white p-6 rounded-lg shadow-md mb-8 border"
+                className="bg-white border p-6 rounded-lg shadow-md mb-8"
                 style={{ borderColor: theme.palette.divider }}
               >
                 <h3
@@ -255,17 +273,17 @@ export default function Checkout() {
 
                 <form
                   onSubmit={handleAddAddress}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  className="grid grid-cols-1 gap-4 md:grid-cols-2"
                 >
                   <div className="tf-field">
                     <label
-                      className="block text-sm font-medium mb-1"
+                      className="text-sm block font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
                       Tên Khách Hàng
                     </label>
                     <input
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         focusRing: theme.palette.primary.light,
@@ -280,13 +298,13 @@ export default function Checkout() {
 
                   <div className="tf-field">
                     <label
-                      className="block text-sm font-medium mb-1"
+                      className="text-sm block font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
                       Số Điện Thoại
                     </label>
                     <input
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         focusRing: theme.palette.primary.light,
@@ -301,13 +319,13 @@ export default function Checkout() {
 
                   <div className="tf-field">
                     <label
-                      className="block text-sm font-medium mb-1"
+                      className="text-sm block font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
                       Số Nhà
                     </label>
                     <input
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         focusRing: theme.palette.primary.light,
@@ -322,13 +340,13 @@ export default function Checkout() {
 
                   <div className="tf-field">
                     <label
-                      className="block text-sm font-medium mb-1"
+                      className="text-sm block font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
                       Địa Chỉ 1
                     </label>
                     <input
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         focusRing: theme.palette.primary.light,
@@ -343,13 +361,13 @@ export default function Checkout() {
 
                   <div className="tf-field">
                     <label
-                      className="block text-sm font-medium mb-1"
+                      className="text-sm block font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
                       Địa Chỉ 2 (Tùy chọn)
                     </label>
                     <input
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         focusRing: theme.palette.primary.light,
@@ -364,13 +382,13 @@ export default function Checkout() {
 
                   <div className="tf-field">
                     <label
-                      className="block text-sm font-medium mb-1"
+                      className="text-sm block font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
                       Thành Phố
                     </label>
                     <input
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         focusRing: theme.palette.primary.light,
@@ -385,13 +403,13 @@ export default function Checkout() {
 
                   <div className="tf-field">
                     <label
-                      className="block text-sm font-medium mb-1"
+                      className="text-sm block font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
                       Phường/Xã
                     </label>
                     <input
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         focusRing: theme.palette.primary.light,
@@ -406,13 +424,13 @@ export default function Checkout() {
 
                   <div className="tf-field">
                     <label
-                      className="block text-sm font-medium mb-1"
+                      className="text-sm block font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
                       Quận/Huyện
                     </label>
                     <input
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         focusRing: theme.palette.primary.light,
@@ -427,13 +445,13 @@ export default function Checkout() {
 
                   <div className="tf-field">
                     <label
-                      className="block text-sm font-medium mb-1"
+                      className="text-sm block font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
                       Mã Bưu Điện
                     </label>
                     <input
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         focusRing: theme.palette.primary.light,
@@ -446,15 +464,15 @@ export default function Checkout() {
                     />
                   </div>
 
-                  <div className="tf-field md:col-span-2">
+                  <div className="md:col-span-2 tf-field">
                     <label
-                      className="block text-sm font-medium mb-1"
+                      className="text-sm block font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
                       Quốc Gia
                     </label>
                     <select
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         focusRing: theme.palette.primary.light,
@@ -477,7 +495,7 @@ export default function Checkout() {
                     </select>
                   </div>
 
-                  <div className="md:col-span-2 flex items-center mt-2">
+                  <div className="flex items-center md:col-span-2 mt-2">
                     <input
                       type="checkbox"
                       id="isDefault"
@@ -494,10 +512,10 @@ export default function Checkout() {
                     </label>
                   </div>
 
-                  <div className="md:col-span-2 flex justify-end gap-4 mt-4">
+                  <div className="flex justify-end gap-4 md:col-span-2 mt-4">
                     <button
                       type="button"
-                      className="px-4 py-2 border rounded-md"
+                      className="border rounded-md px-4 py-2"
                       style={{
                         borderColor: theme.palette.divider,
                         color: theme.palette.text.primary,
@@ -511,7 +529,7 @@ export default function Checkout() {
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 rounded-md text-white"
+                      className="rounded-md text-white px-4 py-2"
                       style={{ backgroundColor: theme.palette.primary.main }}
                       disabled={saving}
                     >
@@ -540,7 +558,7 @@ export default function Checkout() {
             </div>
 
             {addresses.length === 0 && !showAddressForm && (
-              <div className="text-center py-8 rounded-lg border border-gray-200 bg-gray-50">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg text-center py-8">
                 <p className="text-gray-600 mb-4" style={{ fontFamily: '"Roboto", sans-serif' }}>
                   Chưa có địa chỉ nào. Vui lòng thêm địa chỉ để tiếp tục.
                 </p>
@@ -582,14 +600,14 @@ export default function Checkout() {
                 </ul>
                 {!cartProducts.length && (
                   <div className="container">
-                    <div className="row align-items-center mt-5 mb-5">
+                    <div className="row align-items-center mb-5 mt-5">
                       <div className="col-12 fs-18" style={{ fontFamily: '"Roboto", sans-serif' }}>
                         Giỏ hàng của bạn đang trống
                       </div>
                       <div className="col-12 mt-3">
                         <Link
                           href={`/shop-default`}
-                          className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                          className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
                           style={{ width: "fit-content", fontFamily: '"Roboto", sans-serif' }}
                         >
                           Khám phá sản phẩm!
@@ -638,7 +656,7 @@ export default function Checkout() {
                           });
                         });
                     }}
-                    className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
+                    className="btn-fill btn-icon btn-sm animate-hover-btn radius-3 tf-btn"
                   >
                     Áp dụng
                   </div>
@@ -662,42 +680,42 @@ export default function Checkout() {
 
                 <div className="d-flex justify-content-between line pb_20">
                   <h6 className="fw-5">Total</h6>
-                  <h6 className="total fw-5">
+                  <h6 className="fw-5 total">
                     {formatPrice(totalPrice * (1 - voucher.discountRate/100))}
                     {voucher.code != "invalid" && voucher.code && (
-                      <span className="strikethrough ml-2">
+                      <span className="ml-2 strikethrough">
                         {formatPrice(totalPrice)}
                       </span>
                     )}
                   </h6>
                 </div>
                 <div className="wd-check-payment">
-                  <div className="fieldset-radio mb_20">
-                    <input
-                      required
-                      type="radio"
-                      name="payment"
-                      id="bank"
-                      className="tf-check"
-                      defaultChecked
-                      value="bank"
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-                    <label htmlFor="bank">Thanh toán qua VNPAY</label>
-                  </div>
-                  <div className="fieldset-radio mb_20">
-                    <input
-                      required
-                      type="radio"
-                      name="payment"
-                      id="delivery"
-                      className="tf-check"
-                      value="cod"
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-                    <label htmlFor="delivery">Thanh toán khi nhận hàng (COD)</label>
-                  </div>
-                  <p className="text_black-2 mb_20" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                  {paymentMethods.map((method) => (
+                    <div className="fieldset-radio mb_20" key={method.id}>
+                      <input
+                        required
+                        type="radio"
+                        name="payment"
+                        id={method.id}
+                        className="tf-check"
+                        checked={paymentMethod === method.id}
+                        value={method.id}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                      />
+                      <label htmlFor={method.id} className="flex items-center">
+                        <Image 
+                          src={method.imageUrl} 
+                          alt={method.paymentType} 
+                          width={50} 
+                          height={30} 
+                          className="mr-2 object-contain"
+                        />
+                        {method.paymentType === "COD" ? "Thanh toán khi nhận hàng (COD)" : `Thanh toán qua ${method.paymentType}`}
+                      </label>
+                    </div>
+                  ))}
+                  
+                  <p className="mb_20 text_black-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
                     Thông tin cá nhân của bạn sẽ được sử dụng để xử lý đơn hàng và hỗ trợ trải nghiệm của bạn trên website này. Xem thêm trong 
                     <Link
                       href={`/privacy-policy`}
@@ -718,7 +736,7 @@ export default function Checkout() {
                       Tôi đã đọc và đồng ý với
                       <Link
                         href={`/terms-conditions`}
-                        className="ps-1 text-decoration-underline"
+                        className="text-decoration-underline ps-1"
                       >
                         điều khoản và điều kiện
                       </Link>
@@ -728,7 +746,7 @@ export default function Checkout() {
                 </div>
                 {cartProducts.length ? (
                   <button
-                    className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
+                    className="btn-fill btn-icon justify-content-center animate-hover-btn radius-3 tf-btn"
                     onClick={async () => {
                       if (!selectedAddress?.id) {
                         toast.error("Vui lòng chọn địa chỉ giao hàng");
@@ -750,9 +768,7 @@ export default function Checkout() {
                       const voucherId = document.querySelector("input#voucherId").value;
                       const orderData = {
                         addressId: selectedAddress.id,
-                        paymentMethodId: paymentMethod === "bank"
-                          ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
-                          : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
+                        paymentMethodId: paymentMethod,
                         voucherId: voucher?.id || null,
                         orderDetail: cartProducts.map((elm) => ({
                           productItemId: elm.productItemId,
@@ -771,7 +787,7 @@ export default function Checkout() {
                         if (res.status === 201) {
                           const orderId = res.data.data.id;
 
-                          if (paymentMethod === "bank") {
+                          if (paymentMethods.find(m => m.id === paymentMethod)?.paymentType === "VNPAY") {
                             const vnpayRes = await request.get(
                               `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=https%3A%2F%2Flocalhost%3A44358`
                             );
