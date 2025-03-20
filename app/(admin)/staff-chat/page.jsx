@@ -624,8 +624,240 @@ export default function StaffChat() {
         Hệ thống chat hỗ trợ Skincede
       </Typography>
       
-      {/* Client-side rendering cho phần sử dụng localStorage */}
-      <ChatContent />
+      <Box sx={{ display: 'flex', height: 'calc(100vh - 200px)', bgcolor: '#f5f5f5', borderRadius: 2, overflow: 'hidden' }}>
+        {/* Danh sách chat */}
+        <Paper sx={{ width: 320, borderRadius: 0, display: { xs: selectedChat ? 'none' : 'block', md: 'block' } }}>
+          <Box sx={{ p: 2, bgcolor: mainColor.primary, color: 'white' }}>
+            <Typography variant="h6">Danh sách cuộc trò chuyện</Typography>
+            
+            <Box sx={{ mt: 1, position: 'relative' }}>
+              <TextField
+                placeholder="Tìm kiếm..."
+                size="small"
+                fullWidth
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                sx={{ bgcolor: 'white', borderRadius: 1 }}
+              />
+              <SearchIcon sx={{ position: 'absolute', top: '50%', right: 10, transform: 'translateY(-50%)', color: 'grey.500' }} />
+            </Box>
+            
+            <Button 
+              variant="contained" 
+              color="error" 
+              size="small" 
+              startIcon={<DeleteIcon />} 
+              onClick={clearChatData}
+              sx={{ mt: 1 }}
+            >
+              Xóa tất cả dữ liệu
+            </Button>
+          </Box>
+          
+          <List sx={{ overflow: 'auto', height: 'calc(100% - 136px)' }}>
+            {sortedChats.length === 0 ? (
+              <ListItem>
+                <ListItemText 
+                  primary="Không có cuộc trò chuyện nào" 
+                  secondary="Chờ người dùng chat..." 
+                />
+              </ListItem>
+            ) : (
+              sortedChats.map(chat => (
+                <ListItem
+                  key={chat.userId}
+                  button
+                  onClick={() => handleSelectChat(chat)}
+                  selected={selectedChat?.userId === chat.userId}
+                  sx={{
+                    borderBottom: '1px solid #f0f0f0',
+                    bgcolor: selectedChat?.userId === chat.userId ? `${mainColor.primary}10` : 'transparent',
+                    '&:hover': {
+                      bgcolor: `${mainColor.primary}20`,
+                    }
+                  }}
+                >
+                  <Badge
+                    badgeContent={chat.unreadCount}
+                    color="primary"
+                    sx={{ mr: 2 }}
+                  >
+                    <Avatar sx={{ bgcolor: chat.avatarColor }}>
+                      <PersonIcon />
+                    </Avatar>
+                  </Badge>
+                  <ListItemText
+                    primary={
+                      <Typography variant="subtitle1" noWrap fontWeight={chat.unreadCount > 0 ? 'bold' : 'normal'}>
+                        {chat.username}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography variant="body2" noWrap color={chat.unreadCount > 0 ? 'text.primary' : 'text.secondary'}>
+                        {chat.lastMessage}
+                      </Typography>
+                    }
+                  />
+                  <Typography variant="caption" color="text.secondary">
+                    {formatTime(chat.timestamp)}
+                  </Typography>
+                </ListItem>
+              ))
+            )}
+          </List>
+        </Paper>
+        
+        {/* Chat area */}
+        {selectedChat ? (
+          <Box sx={{ 
+            flexGrow: 1, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            backgroundColor: '#f5f5f5',
+            position: 'relative'
+          }}>
+            <AppBar position="static" color="default" elevation={1}>
+              <Toolbar variant="dense">
+                <IconButton 
+                  edge="start" 
+                  sx={{ mr: 1, display: { xs: 'inline-flex', md: 'none' } }}
+                  onClick={() => setSelectedChat(null)}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+                <Avatar sx={{ mr: 2, bgcolor: selectedChat.avatarColor }}>
+                  <PersonIcon />
+                </Avatar>
+                <Typography variant="subtitle1" fontWeight="medium">
+                  {selectedChat.username}
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            
+            <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2, display: 'flex', flexDirection: 'column' }}>
+              {isLoading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                  <CircularProgress />
+                </Box>
+              ) : messages.length === 0 ? (
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  justifyContent: 'center', 
+                  alignItems: 'center', 
+                  height: '100%',
+                  opacity: 0.7
+                }}>
+                  <MessageIcon sx={{ fontSize: 80, color: 'text.secondary', opacity: 0.3 }} />
+                  <Typography variant="body1" color="text.secondary" mt={2}>
+                    Chưa có tin nhắn nào
+                  </Typography>
+                  <Typography variant="body2" color="text.disabled">
+                    Hãy bắt đầu cuộc trò chuyện
+                  </Typography>
+                </Box>
+              ) : (
+                messages.map((msg, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: msg.sender === MESSAGE_TYPES.STAFF ? 'flex-end' : 'flex-start',
+                      mb: 2
+                    }}
+                  >
+                    {msg.sender === MESSAGE_TYPES.USER && (
+                      <Avatar 
+                        sx={{ 
+                          width: 32, 
+                          height: 32, 
+                          mr: 1,
+                          bgcolor: selectedChat.avatarColor
+                        }}
+                      >
+                        <PersonIcon fontSize="small" />
+                      </Avatar>
+                    )}
+                    
+                    <Paper
+                      elevation={1}
+                      sx={{
+                        p: 1.5,
+                        maxWidth: '70%',
+                        borderRadius: msg.sender === MESSAGE_TYPES.STAFF 
+                          ? '16px 4px 16px 16px' 
+                          : '4px 16px 16px 16px',
+                        bgcolor: msg.sender === MESSAGE_TYPES.STAFF 
+                          ? mainColor.primary 
+                          : 'white',
+                        color: msg.sender === MESSAGE_TYPES.STAFF 
+                          ? 'white' 
+                          : 'text.primary'
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                        {msg.content}
+                      </Typography>
+                      <Typography variant="caption" sx={{ opacity: 0.7, mt: 0.5, display: 'block', textAlign: 'right' }}>
+                        {formatTime(msg.timestamp)}
+                      </Typography>
+                    </Paper>
+                  </Box>
+                ))
+              )}
+              <div ref={messageEndRef} />
+            </Box>
+            
+            <Box sx={{ p: 2, bgcolor: '#fff', borderTop: '1px solid #eee' }}>
+              <Grid container spacing={1}>
+                <Grid item xs>
+                  <TextField
+                    fullWidth
+                    placeholder="Nhập tin nhắn..."
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
+                    multiline
+                    maxRows={4}
+                    disabled={!isConnected}
+                  />
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    sx={{ height: '100%' }}
+                    onClick={handleSendMessage}
+                    disabled={!newMessage.trim() || !isConnected}
+                  >
+                    <SendIcon />
+                  </Button>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        ) : (
+          <Box sx={{ 
+            flexGrow: 1, 
+            display: { xs: 'none', md: 'flex' }, 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            flexDirection: 'column',
+            p: 4,
+            bgcolor: '#f9f9f9'
+          }}>
+            <MessageIcon sx={{ fontSize: 100, color: 'text.disabled', mb: 2 }} />
+            <Typography variant="h6" color="text.secondary" textAlign="center">
+              Chọn một cuộc trò chuyện để bắt đầu
+            </Typography>
+          </Box>
+        )}
+      </Box>
     </Container>
   );
 } 
