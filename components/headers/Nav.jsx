@@ -433,7 +433,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             isMenuActive(blogLinks) ? "activeMenu" : ""
           }`}
         > 
-          Bài Viết
+          Blog
           {/* <div className="links-default sub-menu">
             <ul className="menu-list">
               {blogLinks.map((linkItem, index) => (

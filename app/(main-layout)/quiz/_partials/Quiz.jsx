@@ -44,34 +44,13 @@ export default function Quiz() {
         fontFamily: 'Roboto, sans-serif' 
       }}
     >
-      <Box sx={{ textAlign: 'center', mb: 12 }}>
-        <Typography 
-          variant="h3" 
-          fontWeight="bold" 
-          mb={4}
-          fontFamily="Roboto, sans-serif"
-          sx={{ color: theme.palette.text.primary }}
-        >
-          Bài Kiểm Tra Làm Đẹp
-        </Typography>
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            color: theme.palette.text.secondary,
-            fontFamily: 'Roboto, sans-serif'
-          }}
-        >
-          Làm các bài trắc nghiệm để khám phá sản phẩm làm đẹp phù hợp với bạn
-        </Typography>
-      </Box>
 
       <Box 
         sx={{ 
           display: 'grid',
           gridTemplateColumns: {
             xs: '1fr',
-            md: 'repeat(2, 1fr)',
-            lg: 'repeat(3, 1fr)'
+            md: 'repeat(2, 1fr)'
           },
           gap: 8
         }}
