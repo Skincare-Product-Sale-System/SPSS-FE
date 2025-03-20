@@ -1,18 +1,22 @@
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
-import PaymentSuccess from "@/components/othersPages/PaymentSuccess";
-import React from "react";
+import dynamic from 'next/dynamic';
 
 export const metadata = {
-  title: "Payment Success",
-  description: "Payment Success",
+  title: "Thanh toán thành công",
+  description: "Thanh toán thành công tại SPSS",
 };
-export default function page() {
-  return (
-    <>
-      <Header2 />
-      <PaymentSuccess />
-      <Footer1 />
-    </>
-  );
+
+const PaymentSuccessContent = dynamic(
+  () => import('@/components/payment/PaymentSuccessContent'),
+  {
+    loading: () => (
+      <div className="container text-center py-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+        <div className="mt-4">Đang xử lý...</div>
+      </div>
+    )
+  }
+);
+
+export default function Page() {
+  return <PaymentSuccessContent />;
 }

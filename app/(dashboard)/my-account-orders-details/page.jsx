@@ -1,36 +1,20 @@
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
-import AccountSideBar from "@/components/othersPages/dashboard/AccountSideBar";
-import OrderDetails from "@/components/othersPages/dashboard/OrderDetails";
-import Orders from "@/components/othersPages/dashboard/Orders";
-import React from "react";
+import ClientOrderDetails from '@/components/orders/ClientOrderDetails';
 
 export const metadata = {
   title: "Chi Tiết Đơn Hàng | SPSS - Website Chăm Sóc Da",
   description: "Xem chi tiết đơn hàng của bạn tại SPSS",
 };
 
-export default function page() {
+export default function OrderDetailsPage() {
   return (
     <>
       <div className="tf-page-title">
         <div className="container-full">
-          <div 
-            className="heading text-center"
-            style={{
-              fontFamily: '"Roboto", sans-serif'
-            }}
-          >
-            Chi Tiết Đơn Hàng
-          </div>
+          <div className="heading text-center">Chi tiết đơn hàng</div>
         </div>
       </div>
-
-      <section>
-        <div className="container">
-          <OrderDetails />
-        </div>
-      </section>
+      
+      <ClientOrderDetails />
     </>
   );
 }

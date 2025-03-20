@@ -9,6 +9,7 @@ import Context from '@/context/Context';
 import NextTopLoader from 'nextjs-toploader';
 import ScrollTop from "@/components/common/ScrollTop";
 import { Toaster } from "react-hot-toast";
+import { ClientProvider } from '@/providers/ClientProvider';
 
 // Modal imports
 import HomesModal from "@/components/modals/HomesModal";
@@ -194,33 +195,35 @@ export default function RootLayout({ children }) {
           <MuiThemeProvider>
             <Providers>
               <Context>
-                <NextTopLoader />
-                <div id="wrapper">{children}</div>
-                
-                {/* Modals */}
-                <HomesModal />
-                <QuickView />
-                {/* <QuickAdd /> */}
-                <ProductSidebar />
-                <Compare />
-                <ShopCart />
-                <AskQuestion />
-                <BlogSidebar />
-                <ColorCompare />
-                <DeliveryReturn />
-                <FindSize />
-                <Login />
-                <MobileMenu />
-                <Register />
-                <ResetPass />
-                <SearchModal />
-                <ToolbarBottom />
-                <ToolbarShop />
-                <ShareModal />
-                
-                {/* Chat components */}
-                <ChatAssistant />
-                <RealTimeChat />
+                <ClientProvider>
+                  <NextTopLoader />
+                  <div id="wrapper">{children}</div>
+                  
+                  {/* Modals */}
+                  <HomesModal />
+                  <QuickView />
+                  {/* <QuickAdd /> */}
+                  <ProductSidebar />
+                  <Compare />
+                  <ShopCart />
+                  <AskQuestion />
+                  <BlogSidebar />
+                  <ColorCompare />
+                  <DeliveryReturn />
+                  <FindSize />
+                  <Login />
+                  <MobileMenu />
+                  <Register />
+                  <ResetPass />
+                  <SearchModal />
+                  <ToolbarBottom />
+                  <ToolbarShop />
+                  <ShareModal />
+                  
+                  {/* Chat components */}
+                  <ChatAssistant />
+                  <RealTimeChat />
+                </ClientProvider>
               </Context>
             </Providers>
           </MuiThemeProvider>

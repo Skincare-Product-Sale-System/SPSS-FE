@@ -6,6 +6,7 @@ import { CircularProgress, IconButton } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import useAuthStore from "@/context/authStore";
 import ForumIcon from '@mui/icons-material/Forum';
+import * as LocalStorage from '@/utils/localStorage'; // Import utility
 
 const MESSAGE_TYPES = {
   USER: 'user',      // Tin nhắn từ khách hàng
@@ -28,19 +29,27 @@ export default function RealTimeChat() {
   const messageEndRef = useRef(null);
   const mainColor = useThemeColors();
   const { Id } = useAuthStore();
-  const [userId, setUserId] = useState(() => {
-    // Lấy Id từ auth nếu có
-    if (Id) return Id;
+  const [userId, setUserId] = useState(null);
+
+  // Khởi tạo userId sử dụng utility
+  useEffect(() => {
+    if (Id) {
+      setUserId(Id);
+      return;
+    }
     
-    // Không thì dùng từ localStorage
-    const savedId = localStorage.getItem('chatUserId');
-    if (savedId) return savedId;
+    // Lấy từ localStorage nếu có
+    let savedId = LocalStorage.getItem('chatUserId');
+    if (savedId) {
+      setUserId(savedId);
+      return;
+    }
     
     // Tạo mới nếu không có
     const newId = `user-${Math.random().toString(36).substring(2, 9)}`;
-    localStorage.setItem('chatUserId', newId);
-    return newId;
-  });
+    LocalStorage.setItem('chatUserId', newId);
+    setUserId(newId);
+  }, [Id]);
 
   // Set up SignalR connection
   useEffect(() => {
