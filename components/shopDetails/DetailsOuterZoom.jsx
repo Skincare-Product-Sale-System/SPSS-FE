@@ -299,7 +299,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       {product?.brand && (
                         <div className="d-flex align-items-center mb-2 mr-4">
                           <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Brand:</Typography>
-                          <Link href={`/products?brand=${product.brand.id}`} className="text-primary fs-14 hover:underline">
+                          <Link href={`/products?brandId=${product.brand.id}`} className="text-primary fs-14 hover:underline">
                             {product.brand.name}
                           </Link>
                         </div>
@@ -309,7 +309,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       {product?.category && (
                         <div className="d-flex align-items-center mb-2 mr-4">
                           <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Category:</Typography>
-                          <Link href={`/products?category=${product.category.id}`} className="text-primary fs-14 hover:underline">
+                          <Link href={`/products?categoryId=${product.category.id}`} className="text-primary fs-14 hover:underline">
                             {product.category.categoryName}
                           </Link>
                         </div>
@@ -333,7 +333,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         <div className="d-flex flex-wrap align-items-center">
                           <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-2">Skin types:</Typography>
                           {product.skinTypes.map(skinType => (
-                            <Link key={skinType.id} href={`/products?skinType=${skinType.id}`}>
+                            <Link key={skinType.id} href={`/products?skinTypeId=${skinType.id}`}>
                               <Chip 
                                 label={skinType.name} 
                                 size="small" 
