@@ -2,8 +2,8 @@
 import { useContextElement } from "@/context/Context";
 import useQueryStore from "@/context/queryStore";
 import { products1 } from "@/data/products";
-import request from "@/utlis/axios";
-import { defaultProductImage } from "@/utlis/default";
+import request from "@/utils/axios";
+import { defaultProductImage } from "@/utils/default";
 import { formatPrice } from "@/utils/priceFormatter";
 import Image from "next/image";
 import Link from "next/link";
@@ -47,11 +47,11 @@ export default function ShopCart() {
   const addShipingRef = useRef();
 
   return (
-    <div className="modal fullRight fade modal-shopping-cart" id="shoppingCart">
+    <div className="modal modal-shopping-cart fade fullRight" id="shoppingCart">
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="header">
-            <div className="title fw-5" style={{ fontFamily: '"Roboto", sans-serif' }}>
+            <div className="fw-5 title" style={{ fontFamily: '"Roboto", sans-serif' }}>
               Giỏ Hàng
             </div>
             <span
@@ -82,7 +82,7 @@ export default function ShopCart() {
                 </span>
               </div>
               <div className="tf-progress-msg">
-                Buy <span className="price fw-6">$75.00</span> more to enjoy
+                Buy <span className="fw-6 price">$75.00</span> more to enjoy
                 <span className="fw-6">Free Shipping</span>
               </div>
             </div> */}
@@ -105,7 +105,7 @@ export default function ShopCart() {
                         </div>
                         <div className="tf-mini-cart-info">
                           <Link
-                            className="title link"
+                            className="link title"
                             href={`/product-detail/${elm.productId}`}
                             style={{ fontFamily: '"Roboto", sans-serif' }}
                           >
@@ -114,7 +114,7 @@ export default function ShopCart() {
                           <div className="meta-variant" style={{ fontFamily: '"Roboto", sans-serif' }}>
                             {elm.variationOptionValues[0]}
                           </div>
-                          <div className="price fw-6" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                          <div className="fw-6 price" style={{ fontFamily: '"Roboto", sans-serif' }}>
                             <span
                               style={{
                                 color: "#ff0000",
@@ -122,12 +122,12 @@ export default function ShopCart() {
                             >
                               {formatPrice(elm?.price)} {" "}
                             </span>
-                            <span className="strikethrough ms-1 compare-at-price">
+                            <span className="compare-at-price ms-1 strikethrough">
                               {elm.marketPrice && formatPrice(elm.marketPrice)}
                             </span>
                           </div>
                           <div className="tf-mini-cart-btns">
-                            <div className="wg-quantity small">
+                            <div className="small wg-quantity">
                               <span
                                 className="btn-quantity minus-btn"
                                 onClick={() => {
@@ -195,14 +195,14 @@ export default function ShopCart() {
 
                     {!cartProducts?.length && (
                       <div className="container">
-                        <div className="row align-items-center mt-5 mb-5">
+                        <div className="row align-items-center mb-5 mt-5">
                           <div className="col-12 fs-18" style={{ fontFamily: '"Roboto", sans-serif' }}>
                             Giỏ hàng của bạn đang trống
                           </div>
                           <div className="col-12 mt-3">
                             <Link
                               href={`/products`}
-                              className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                              className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
                               style={{ width: "fit-content", fontFamily: '"Roboto", sans-serif' }}
                             >
                               Khám Phá Sản Phẩm!
@@ -217,7 +217,7 @@ export default function ShopCart() {
                       <div className="tf-minicart-recommendations-title">
                         You may also like
                       </div>
-                      <div className="sw-dots small style-2 cart-slide-pagination spdsc1" />
+                      <div className="cart-slide-pagination small spdsc1 style-2 sw-dots" />
                     </div>
                     <Swiper
                       dir="ltr"
@@ -242,7 +242,7 @@ export default function ShopCart() {
                                 />
                               </Link>
                             </div>
-                            <div className="tf-minicart-recommendations-item-infos flex-grow-1">
+                            <div className="flex-grow-1 tf-minicart-recommendations-item-infos">
                               <Link
                                 className="title"
                                 href={`/product-detail/${1}`}
@@ -258,7 +258,7 @@ export default function ShopCart() {
                                 href="#quick_view"
                                 data-bs-toggle="modal"
                                 onClick={() => setQuickViewItem(elm)}
-                                className="btn-show-quickview quickview hover-tooltip"
+                                className="btn-show-quickview hover-tooltip quickview"
                               >
                                 <span className="icon icon-view" />
                               </a>
@@ -273,7 +273,7 @@ export default function ShopCart() {
               <div className="tf-mini-cart-bottom">
                 {/* <div className="tf-mini-cart-tool">
                   <div
-                    className="tf-mini-cart-tool-btn btn-add-note"
+                    className="btn-add-note tf-mini-cart-tool-btn"
                     onClick={() => addNoteRef.current.classList.add("open")}
                   >
                     <svg
@@ -288,7 +288,7 @@ export default function ShopCart() {
                     </svg>
                   </div>
                   <div
-                    className="tf-mini-cart-tool-btn btn-add-gift"
+                    className="btn-add-gift tf-mini-cart-tool-btn"
                     onClick={() => addGiftRef.current.classList.add("open")}
                   >
                     <svg
@@ -306,7 +306,7 @@ export default function ShopCart() {
                     </svg>
                   </div>
                   <div
-                    className="tf-mini-cart-tool-btn btn-estimate-shipping"
+                    className="btn-estimate-shipping tf-mini-cart-tool-btn"
                     onClick={() => addShipingRef.current.classList.add("open")}
                   >
                     <svg
@@ -328,7 +328,7 @@ export default function ShopCart() {
                   <div className="tf-cart-totals-discounts">
                     <div className="tf-cart-total" style={{ fontFamily: '"Roboto", sans-serif' }}>Tạm tính</div>
                     
-                    <div className="tf-totals-total-value fw-6">
+                    <div className="fw-6 tf-totals-total-value">
                       {formatPrice(totalPrice)}
                     </div>
                   </div>
@@ -362,21 +362,21 @@ export default function ShopCart() {
                   <div className="tf-mini-cart-view-checkout">
                     <Link
                       href={`/view-cart`}
-                      className="tf-btn btn-outline radius-3 link w-100 justify-content-center"
+                      className="btn-outline justify-content-center w-100 link radius-3 tf-btn"
                     >
                       Xem Giỏ Hàng
                     </Link>
                     {cartProducts.length ? (
                       <Link
                         href="/checkout"
-                        className="tf-btn radius-3 w-100 justify-content-center"
+                        className="justify-content-center w-100 radius-3 tf-btn"
                         style={{ backgroundColor: '#000000', color: '#ffffff' }}
                       >
                         <span>Thanh Toán</span>
                       </Link>
                     ) : (
                       <div
-                        className="tf-btn radius-3 w-100 justify-content-center"
+                        className="justify-content-center w-100 radius-3 tf-btn"
                         style={{ backgroundColor: '#757575', color: '#e0e0e0', cursor: 'not-allowed', pointerEvents: 'none' }}
                       >
                         <span>Thanh Toán</span>
@@ -386,7 +386,7 @@ export default function ShopCart() {
                 </div>
               </div>
               <div
-                className="tf-mini-cart-tool-openable add-gift"
+                className="add-gift tf-mini-cart-tool-openable"
                 ref={addGiftRef}
               >
                 <div
@@ -417,19 +417,19 @@ export default function ShopCart() {
                       <div className="tf-gift-wrap-infos">
                         <p>Bạn có muốn gói quà không?</p>
                         Chỉ với
-                        <span className="price fw-6">{formatPrice(5000)}</span>
+                        <span className="fw-6 price">{formatPrice(5000)}</span>
                       </div>
                     </div>
                     <div className="tf-cart-tool-btns">
                       <button
                         type="submit"
-                        className="tf-btn fw-6 w-100 justify-content-center btn-fill animate-hover-btn radius-3"
+                        className="btn-fill justify-content-center w-100 animate-hover-btn fw-6 radius-3 tf-btn"
                         title="Thêm gói quà"
                       >
                         <span>Thêm gói quà</span>
                       </button>
                       <div
-                        className="tf-mini-cart-tool-primary text-center w-100 fw-6 tf-mini-cart-tool-close"
+                        className="text-center w-100 fw-6 tf-mini-cart-tool-close tf-mini-cart-tool-primary"
                         onClick={() =>
                           addGiftRef.current.classList.remove("open")
                         }
@@ -441,7 +441,7 @@ export default function ShopCart() {
                 </form>
               </div>
               <div
-                className="tf-mini-cart-tool-openable estimate-shipping"
+                className="estimate-shipping tf-mini-cart-tool-openable"
                 ref={addShipingRef}
               >
                 <div
@@ -470,7 +470,7 @@ export default function ShopCart() {
                   <div className="field">
                     <p>Quốc gia</p>
                     <select
-                      className="tf-select w-100"
+                      className="w-100 tf-select"
                       id="ShippingCountry_CartDrawer-Form"
                       name="address[country]"
                       data-default=""
@@ -620,12 +620,12 @@ export default function ShopCart() {
                   <div className="tf-cart-tool-btns">
                     <a
                       href="#"
-                      className="tf-btn fw-6 justify-content-center btn-fill w-100 animate-hover-btn radius-3"
+                      className="btn-fill justify-content-center w-100 animate-hover-btn fw-6 radius-3 tf-btn"
                     >
                       <span>Ước tính</span>
                     </a>
                     <div
-                      className="tf-mini-cart-tool-primary text-center fw-6 w-100 tf-mini-cart-tool-close"
+                      className="text-center w-100 fw-6 tf-mini-cart-tool-close tf-mini-cart-tool-primary"
                       onClick={() =>
                         addShipingRef.current.classList.remove("open")
                       }

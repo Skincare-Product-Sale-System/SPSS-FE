@@ -1,22 +1,17 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { products1 } from "@/data/products";
 import { ProductCard } from "../shopCards/ProductCard";
 import { Navigation } from "swiper/modules";
 import {
   allHomepages,
   blogLinks,
-  demoItems,
-  pages,
   productDetailPages,
-  productsPages,
 } from "@/data/menu";
 import { usePathname } from "next/navigation";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import { useQueries } from "@tanstack/react-query";
 
 export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
@@ -184,7 +179,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
           Shop
           {isArrow ? <i className="icon icon-arrow-down" /> : ""}
         </a>
-        <div className="sub-menu mega-menu">
+        <div className="mega-menu sub-menu">
           <div className="container">
             <div className="row">
               {productsPages.map((menu, index) => (
@@ -227,7 +222,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                     <div className="collection-content">
                       <Link
                         href={`/home-men`}
-                        className="tf-btn hover-icon btn-xl collection-title fs-16"
+                        className="collection-title btn-xl fs-16 hover-icon tf-btn"
                       >
                         <span>Men</span>
                         <i className="icon icon-arrow1-top-left" />
@@ -255,7 +250,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                     <div className="collection-content">
                       <Link
                         href={`/shop-women`}
-                        className="tf-btn btn-xl collection-title fs-16 hover-icon"
+                        className="collection-title btn-xl fs-16 hover-icon tf-btn"
                       >
                         <span>Women</span>
                         <i className="icon icon-arrow1-top-left" />
@@ -277,7 +272,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
         >
           Sản Phẩm<i className="icon icon-arrow-down" style={{ display: 'inline-block', width: '12px', marginLeft: '1px' }}></i>
         </a>
-        <div className="sub-menu mega-menu">
+        <div className="mega-menu sub-menu">
           <div className="container">
             <div className="row">
               <div className="col-lg-4">
@@ -330,7 +325,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
               ))} */}
               <div className="col-lg-8">
                 <div className="menu-heading">Sản Phẩm Bán Chạy</div>
-                <div className="hover-sw-nav hover-sw-2">
+                <div className="hover-sw-2 hover-sw-nav">
                   <Swiper
                     dir="ltr"
                     modules={[Navigation]}
@@ -349,10 +344,10 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                         </SwiperSlide>
                       ))}
                   </Swiper>
-                  <div className="nav-sw nav-next-slider nav-next-product-header box-icon w_46 round snmpn1">
+                  <div className="nav-next-product-header nav-next-slider nav-sw box-icon round snmpn1 w_46">
                     <span className="icon icon-arrow-left" />
                   </div>
-                  <div className="nav-sw nav-prev-slider nav-prev-product-header box-icon w_46 round snmnn1">
+                  <div className="nav-prev-product-header nav-prev-slider nav-sw box-icon round snmnn1 w_46">
                     <span className="icon icon-arrow-right" />
                   </div>
                 </div>
@@ -361,7 +356,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
           </div>
         </div>
       </li>
-      {/* <li className="menu-item position-relative">
+      {/* <li className="position-relative menu-item">
         <a
           href="#"
           className={`item-link ${Linkfs} ${textColor} ${
@@ -431,15 +426,15 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
           </ul>
         </div>
       </li> */}
-      <li className="menu-item position-relative">
+      <li className="position-relative menu-item">
         <a
           href="/blog"
           className={`item-link ${Linkfs} ${textColor}  ${
             isMenuActive(blogLinks) ? "activeMenu" : ""
           }`}
         > 
-          Bài Viết
-          {/* <div className="sub-menu links-default">
+          Blog
+          {/* <div className="links-default sub-menu">
             <ul className="menu-list">
               {blogLinks.map((linkItem, index) => (
                 <li key={index}>

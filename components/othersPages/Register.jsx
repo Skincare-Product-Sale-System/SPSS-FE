@@ -6,11 +6,12 @@ export default function Register() {
     <section className="flat-spacing-10">
       <div className="container">
         <div className="form-register-wrap">
-          <div className="flat-title align-items-start gap-0 mb_30 px-0">
-            <h5 className="mb_18">Register</h5>
-            <p className="text_black-2">
-              Sign up for early Sale access plus tailored new arrivals, trends
-              and promotions. To opt out, click unsubscribe in our emails
+          <div className="align-items-start flat-title gap-0 mb_30 px-0">
+            <h5 className="mb_18" style={{ fontFamily: 'Playfair Display, serif' }}>Đăng ký</h5>
+            <p className="text_black-2" style={{ fontFamily: 'Roboto, sans-serif' }}>
+              Đăng ký để nhận thông tin khuyến mãi sớm nhất cùng với các sản phẩm mới, 
+              xu hướng và ưu đãi đặc biệt. Bạn có thể hủy đăng ký bất kỳ lúc nào bằng cách 
+              nhấp vào liên kết hủy đăng ký trong email của chúng tôi
             </p>
           </div>
           <div>
@@ -23,7 +24,7 @@ export default function Register() {
               acceptCharset="utf-8"
               data-mailchimp="true"
             >
-              <div className="tf-field style-1 mb_15">
+              <div className="mb_15 style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -33,13 +34,14 @@ export default function Register() {
                   required
                 />
                 <label
-                  className="tf-field-label fw-4 text_black-2"
+                  className="fw-4 text_black-2 tf-field-label"
                   htmlFor="property1"
+                  style={{ fontFamily: 'Roboto, sans-serif' }}
                 >
-                  First name
+                  Họ
                 </label>
               </div>
-              <div className="tf-field style-1 mb_15">
+              <div className="mb_15 style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -49,13 +51,14 @@ export default function Register() {
                   required
                 />
                 <label
-                  className="tf-field-label fw-4 text_black-2"
+                  className="fw-4 text_black-2 tf-field-label"
                   htmlFor="property2"
+                  style={{ fontFamily: 'Roboto, sans-serif' }}
                 >
-                  Last name
+                  Tên
                 </label>
               </div>
-              <div className="tf-field style-1 mb_15">
+              <div className="mb_15 style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -66,13 +69,14 @@ export default function Register() {
                   required
                 />
                 <label
-                  className="tf-field-label fw-4 text_black-2"
+                  className="fw-4 text_black-2 tf-field-label"
                   htmlFor="property3"
+                  style={{ fontFamily: 'Roboto, sans-serif' }}
                 >
                   Email *
                 </label>
               </div>
-              <div className="tf-field style-1 mb_30">
+              <div className="mb_30 style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -83,23 +87,25 @@ export default function Register() {
                   required
                 />
                 <label
-                  className="tf-field-label fw-4 text_black-2"
+                  className="fw-4 text_black-2 tf-field-label"
                   htmlFor="property4"
+                  style={{ fontFamily: 'Roboto, sans-serif' }}
                 >
-                  Password *
+                  Mật khẩu *
                 </label>
               </div>
               <div className="mb_20">
                 <button
                   type="submit"
-                  className="tf-btn w-100 radius-3 btn-fill animate-hover-btn justify-content-center"
+                  className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
+                  style={{ fontFamily: 'Roboto, sans-serif' }}
                 >
-                  Register
+                  Đăng ký
                 </button>
               </div>
               <div className="text-center">
-                <Link href={`/login`} className="tf-btn btn-line">
-                  Already have an account? Log in here
+                <Link href={`/login`} className="btn-line tf-btn" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                  Đã có tài khoản? Đăng nhập tại đây
                   <i className="icon icon-arrow1-top-left" />
                 </Link>
               </div>

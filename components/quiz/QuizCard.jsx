@@ -4,13 +4,11 @@ import Image from "next/image";
 
 export default function QuizCard({ quiz, onStart }) {
   const getImage = () => {
-    if (quiz?.name?.includes("Skin")) return quizImage.skinType;
-    if (quiz?.name?.includes("Hair")) return quizImage.hairCare;
-    if (quiz?.name?.includes("Fragrance")) return quizImage.fragrance;
+    return quizImage.skinType1;
   };
   return (
-    <div className="quiz-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <div className="relative h-60">
+    <div className="bg-white rounded-lg shadow-md duration-300 hover:shadow-lg overflow-hidden quiz-card transition-shadow">
+      <div className="h-60 relative">
         <Image
           src={getImage()}
           alt={quiz?.name}
@@ -19,14 +17,15 @@ export default function QuizCard({ quiz, onStart }) {
         />
       </div>
       <div className="p-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold mb-2">{quiz?.name}</h3>
-          <span className="text-sm text-gray-500"></span>
+        <div className="flex justify-between items-center">
+          <h3 className="text-xl font-semibold mb-2" style={{ fontFamily: 'Roboto, sans-serif' }}>{quiz?.name}</h3>
+          <span className="text-gray-500 text-sm" style={{ fontFamily: 'Roboto, sans-serif' }}></span>
           <button
             onClick={() => onStart(quiz)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
+            className="bg-blue-600 rounded-md text-white duration-300 hover:bg-blue-700 px-4 py-2 transition-colors"
+            style={{ fontFamily: 'Roboto, sans-serif' }}
           >
-            Start Quiz
+            Bắt đầu
           </button>
         </div>
       </div>

@@ -124,7 +124,7 @@ export const quizTypes = [
 ];
 
 export const quizImage = {
-  skinType: "https://images.pexels.com/photos/286951/pexels-photo-286951.jpeg",
-  hairCare: "/images/quiz/hair-care.jpg",
+  skinType1: "https://cdn.hswstatic.com/gif/combination-skin.jpg",
+  skinType2: "https://www.dermalogica.co.uk/cdn/shop/articles/Sensitive-skin-blog-image.jpg",
   fragrance: "/images/quiz/fragrance.jpg",
 };

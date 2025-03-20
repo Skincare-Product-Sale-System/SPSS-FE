@@ -1,8 +1,8 @@
 "use client";
 import { useContextElement } from "@/context/Context";
 import useQueryStore from "@/context/queryStore";
-import request from "@/utlis/axios";
-import { defaultProductImage } from "@/utlis/default";
+import request from "@/utils/axios";
+import { defaultProductImage } from "@/utils/default";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -29,10 +29,10 @@ export default function Cart() {
   return (
     <section className="flat-spacing-11">
       <div className="container">
-        {/* <div className="tf-page-cart text-center mt_140 mb_200">
+        {/* <div className="text-center mb_200 mt_140 tf-page-cart">
               <h5 className="mb_24">Your cart is empty</h5>
               <p className="mb_24">You may check out all the available products and buy some in the shop</p>
-              <Link href={`/shop-default`} className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn">Return to shop<i className="icon icon-arrow1-top-left"></i></Link>
+              <Link href={`/shop-default`} className="btn-fill btn-icon btn-sm animate-hover-btn radius-3 tf-btn">Return to shop<i className="icon icon-arrow1-top-left"></i></Link>
           </div> */}
         <div className="tf-cart-countdown">
           <div className="title-left">
@@ -72,7 +72,7 @@ export default function Cart() {
                 </thead>
                 <tbody>
                   {cartProducts?.map((elm, i) => (
-                    <tr key={i} className="tf-cart-item file-delete">
+                    <tr key={i} className="file-delete tf-cart-item">
                       <td className="tf-cart-item_product">
                         <Link
                           href={`/product-detail/${elm.productId}`}
@@ -96,7 +96,7 @@ export default function Cart() {
                             {elm.variationOptionValues[0]}
                           </div>
                           <span
-                            className="remove-cart link remove"
+                            className="link remove remove-cart"
                             style={{ fontFamily: '"Roboto", sans-serif' }}
                             onClick={() =>
                               request
@@ -214,7 +214,7 @@ export default function Cart() {
                     <div className="col-6">
                       <Link
                         href={`/shop-default`}
-                        className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                        className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
                         style={{ width: "fit-content" }}
                       >
                         Khám phá sản phẩm!
@@ -257,7 +257,7 @@ export default function Cart() {
                   </span>
                 </div>
                 <div className="tf-progress-msg">
-                  Buy <span className="price fw-6">$75.00</span> more to enjoy{" "}
+                  Buy <span className="fw-6 price">$75.00</span> more to enjoy{" "}
                   <span className="fw-6">Free Shipping</span>
                 </div>
               </div> */}
@@ -265,7 +265,7 @@ export default function Cart() {
               <div className="tf-page-cart-checkout">
                 {/* <div className="shipping-calculator">
                   <summary
-                    className="accordion-shipping-header d-flex justify-content-between align-items-center collapsed"
+                    className="collapsed d-flex align-items-center justify-content-between accordion-shipping-header"
                     data-bs-target="#shipping"
                     data-bs-toggle="collapse"
                     aria-controls="shipping"
@@ -280,7 +280,7 @@ export default function Cart() {
                       <fieldset className="field">
                         <label className="label">Country</label>
                         <select
-                          className="tf-select w-100"
+                          className="w-100 tf-select"
                           id="ShippingCountry_CartDrawer-Form"
                           name="address[country]"
                           data-default=""
@@ -423,7 +423,7 @@ export default function Cart() {
                         <label className="label">Zip code</label>
                         <input type="text" name="text" placeholder="" />
                       </fieldset>
-                      <button className="tf-btn btn-fill animate-hover-btn radius-3 justify-content-center">
+                      <button className="btn-fill justify-content-center animate-hover-btn radius-3 tf-btn">
                         <span>Estimate</span>
                       </button>
                     </div>
@@ -468,14 +468,14 @@ export default function Cart() {
                   {cartProducts.length ? (
                     <Link
                       href="/checkout"
-                      className="tf-btn w-100 radius-3 justify-content-center"
+                      className="justify-content-center w-100 radius-3 tf-btn"
                       style={{ backgroundColor: '#000000', color: '#ffffff', fontFamily: '"Roboto", sans-serif' }}
                     >
                       <span>Thanh toán</span>
                     </Link>
                   ) : (
                     <div
-                      className="tf-btn w-100 radius-3 justify-content-center"
+                      className="justify-content-center w-100 radius-3 tf-btn"
                       style={{ backgroundColor: '#757575', color: '#e0e0e0', cursor: 'not-allowed', pointerEvents: 'none', fontFamily: '"Roboto", sans-serif' }}
                     >
                       <span>Thanh toán</span>

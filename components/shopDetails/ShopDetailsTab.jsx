@@ -1,6 +1,6 @@
 "use client";
 
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Box, Typography, Divider, Paper } from "@mui/material";
@@ -20,13 +20,13 @@ export default function ShopDetailsTab({ product }) {
 
   return (
     <section
-      className="flat-spacing-10 pt_0 bg-neutral-50"
+      className="bg-neutral-50 flat-spacing-10 pt_0"
       style={{ maxWidth: "100vw", overflow: "clip" }}
     >
       <div className="container">
         <div className="row">
           <div className="col-12">
-            <Paper elevation={0} className="widget-tabs style-has-border rounded-lg overflow-hidden">
+            <Paper elevation={0} className="rounded-lg overflow-hidden style-has-border widget-tabs">
               <Box className="widget-menu-tab" sx={{ 
                 display: 'flex', 
                 borderBottom: '1px solid #e5e7eb',
@@ -62,7 +62,7 @@ export default function ShopDetailsTab({ product }) {
                   </Box>
                 ))}
               </Box>
-              <div className="widget-content-tab bg-white p-4">
+              <div className="bg-white p-4 widget-content-tab">
                 <div
                   className={`widget-content-inner ${
                     currentTab == 1 ? "active" : ""
@@ -70,18 +70,18 @@ export default function ShopDetailsTab({ product }) {
                 >
                   <div className="">
                     {product.description && (
-                      <Typography variant="body2" className="mb-3 text-neutral-700">
+                      <Typography variant="body2" className="text-neutral-700 mb-3">
                         {product.description}
                       </Typography>
                     )}
                     
                     {/* Specifications Table */}
                     {product?.specifications && Object.values(product.specifications).some(value => value) && (
-                      <div className="specifications-section mt-4 pt-3 border-top">
-                        <Typography variant="subtitle1" className="font-medium mb-2 fs-16">Product Specifications</Typography>
+                      <div className="border-top mt-4 pt-3 specifications-section">
+                        <Typography variant="subtitle1" className="font-medium fs-16 mb-2">Product Specifications</Typography>
                         
                         <div className="specifications-table">
-                          <table className="w-100 border-collapse">
+                          <table className="border-collapse w-100">
                             <tbody>
                               {Object.entries(product.specifications).map(([key, value]) => {
                                 if (!value) return null;
@@ -93,8 +93,8 @@ export default function ShopDetailsTab({ product }) {
                                 
                                 return (
                                   <tr key={key} className="border-bottom" style={{ borderBottom: '1px solid #f0f0f0' }}>
-                                    <td className="py-2 px-3 bg-gray-50 text-gray-600 fs-14" style={{ width: '40%' }}>{formattedKey}</td>
-                                    <td className="py-2 px-3 text-gray-800 fs-14">{value}</td>
+                                    <td className="bg-gray-50 text-gray-600 fs-14 px-3 py-2" style={{ width: '40%' }}>{formattedKey}</td>
+                                    <td className="text-gray-800 fs-14 px-3 py-2">{value}</td>
                                   </tr>
                                 );
                               })}
@@ -103,6 +103,38 @@ export default function ShopDetailsTab({ product }) {
                         </div>
                       </div>
                     )}
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                      <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center' }}>
+                        <span style={{ marginRight: '8px', fontWeight: 500 }}>Rating:</span> 
+                        <span>{product.ratingDisplay}</span>
+                        <Box sx={{ display: 'flex', ml: 1 }}>
+                          {/* Stars */}
+                          <i className="icon-start" />
+                          <i className="icon-start" />
+                          <i className="icon-start" />
+                          <i className="icon-start" />
+                          <i className="icon-start" />
+                        </Box>
+                      </Typography>
+                      
+                      <Box component="span" sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        color: '#666',
+                        '&::before': {
+                          content: '""',
+                          display: 'inline-block',
+                          width: '4px',
+                          height: '4px',
+                          borderRadius: '50%',
+                          backgroundColor: '#999',
+                          margin: '0 8px'
+                        }
+                      }}>
+                        Đã bán: <span style={{ color: '#ff0000', fontWeight: 500, marginLeft: '4px' }}>{product.soldCount?.toLocaleString('vi-VN')}</span>
+                      </Box>
+                    </Box>
                   </div>
                 </div>
                 
@@ -113,18 +145,18 @@ export default function ShopDetailsTab({ product }) {
                   } `}
                 >
                   <div className="tf-page-privacy-policy">
-                    <Typography variant="subtitle1" component="div" className="font-serif text-primary-800 mb-3">
+                    <Typography variant="subtitle1" component="div" className="text-primary-800 font-serif mb-3">
                       Shipping Policy
                     </Typography>
-                    <Typography variant="body2" className="mb-2 text-neutral-700">
+                    <Typography variant="body2" className="text-neutral-700 mb-2">
                       We strive to deliver your skincare products as quickly and safely as possible. All orders are processed within 1-2 business days.
                     </Typography>
-                    <Typography variant="body2" className="mb-2 text-neutral-700">
+                    <Typography variant="body2" className="text-neutral-700 mb-2">
                       Shipping times:
                     </Typography>
-                    <ul className="list-disc pl-4 mb-3 text-neutral-700">
-                      <li className="mb-1 fs-14">Domestic (Vietnam): 1-3 business days</li>
-                      <li className="mb-1 fs-14">International: 7-14 business days</li>
+                    <ul className="list-disc text-neutral-700 mb-3 pl-4">
+                      <li className="fs-14 mb-1">Domestic (Vietnam): 1-3 business days</li>
+                      <li className="fs-14 mb-1">International: 7-14 business days</li>
                     </ul>
                   </div>
                 </div>
@@ -136,19 +168,19 @@ export default function ShopDetailsTab({ product }) {
                   } `}
                 >
                   <div className="tf-page-privacy-policy">
-                    <Typography variant="subtitle1" component="div" className="font-serif text-primary-800 mb-3">
+                    <Typography variant="subtitle1" component="div" className="text-primary-800 font-serif mb-3">
                       Return Policy
                     </Typography>
-                    <Typography variant="body2" className="mb-2 text-neutral-700">
+                    <Typography variant="body2" className="text-neutral-700 mb-2">
                       We accept returns within 30 days of delivery for a full refund or exchange.
                     </Typography>
-                    <Typography variant="body2" className="mb-2 text-neutral-700">
+                    <Typography variant="body2" className="text-neutral-700 mb-2">
                       To be eligible for a return, your item must be:
                     </Typography>
-                    <ul className="list-disc pl-4 mb-3 text-neutral-700">
-                      <li className="mb-1 fs-14">Unused and in the same condition</li>
-                      <li className="mb-1 fs-14">In the original packaging</li>
-                      <li className="mb-1 fs-14">With receipt or proof of purchase</li>
+                    <ul className="list-disc text-neutral-700 mb-3 pl-4">
+                      <li className="fs-14 mb-1">Unused and in the same condition</li>
+                      <li className="fs-14 mb-1">In the original packaging</li>
+                      <li className="fs-14 mb-1">With receipt or proof of purchase</li>
                     </ul>
                   </div>
                 </div>

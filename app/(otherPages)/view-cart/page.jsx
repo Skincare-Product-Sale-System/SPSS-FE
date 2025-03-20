@@ -1,8 +1,6 @@
-import Testimonials from "@/components/common/Testimonials";
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
 import Cart from "@/components/othersPages/Cart";
-import RecentProducts from "@/components/shopDetails/RecentProducts";
 import React from "react";
 import Products from "@/components/shopDetails/Products";
 import Overlay from "@/components/common/Overlay";
@@ -32,7 +30,7 @@ export default function page() {
                 color: "white",
               }}
             >
-              <div className="heading text-center" style={{}}>
+              <div className="text-center heading" style={{}}>
                 Giỏ hàng
               </div>
             </div>
@@ -41,7 +39,6 @@ export default function page() {
       </div>
 
       <Cart />
-      {/* <Testimonials /> */}
       <Products />
       <Footer1 />
     </>

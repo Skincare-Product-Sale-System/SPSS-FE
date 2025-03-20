@@ -1,8 +1,8 @@
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
 import React from "react";
-import DashboardNav from "@/components/othersPages/dashboard/AccountSideBar";
 import Overlay from "@/components/common/Overlay";
+import ResponsiveLayoutWrapper from "./ResponsiveLayoutWrapper";
 
 export const metadata = {
   title: "Skincede",
@@ -23,21 +23,14 @@ export default function Layout({ children }) {
         <div className="container-full">
           <div className="row">
             <div className="col-12">
-              <div className="heading text-center" style={{}}></div>
+              <div className="text-center heading"></div>
             </div>
           </div>
         </div>
       </div>
-      <section className="flat-spacing-11">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-3">
-              <DashboardNav />
-            </div>
-            <div className="col-lg-9">{children}</div>
-          </div>
-        </div>
-      </section>
+      <ResponsiveLayoutWrapper>
+        {children}
+      </ResponsiveLayoutWrapper>
       <Footer1 />
     </>
   );

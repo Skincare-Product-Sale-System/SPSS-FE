@@ -11,8 +11,8 @@ export default function PaymentFailure() {
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-lg-6">
-            <div className="tf-page-cart-checkout flex flex-col items-center justify-center">
-              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="flex flex-col justify-center items-center tf-page-cart-checkout">
+              <div className="flex bg-red-100 h-20 justify-center rounded-full w-20 items-center mb-4 mx-auto">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="40px"
@@ -25,19 +25,19 @@ export default function PaymentFailure() {
                   <path d="M15.32 3H8.68c-.26 0-.52.11-.7.29L3.29 7.98c-.18.18-.29.44-.29.7v6.63c0 .27.11.52.29.71l4.68 4.68c.19.19.45.3.71.3h6.63c.27 0 .52-.11.71-.29l4.68-4.68c.19-.19.29-.44.29-.71V8.68c0-.27-.11-.52-.29-.71l-4.68-4.68c-.18-.18-.44-.29-.7-.29zM12 17.3c-.72 0-1.3-.58-1.3-1.3s.58-1.3 1.3-1.3 1.3.58 1.3 1.3-.58 1.3-1.3 1.3zm0-4.3c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1z" />
                 </svg>
               </div>
-              <div className="font-bold text-xl !text-red-500" style={{ fontFamily: '"Roboto", sans-serif' }}>
+              <div className="text-xl !text-red-500 font-bold" style={{ fontFamily: '"Roboto", sans-serif' }}>
                 Thanh Toán Thất Bại
               </div>
-              <div className="font-semibold text-2xl mb-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
+              <div className="text-2xl font-semibold mb-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
                 Đã xảy ra lỗi trong quá trình thanh toán
               </div>
-              <div className="text-lg text-center mb-4" style={{ fontFamily: '"Roboto", sans-serif' }}>
+              <div className="text-center text-lg mb-4" style={{ fontFamily: '"Roboto", sans-serif' }}>
                 Chúng tôi không thể xử lý thanh toán của bạn. Vui lòng thử lại hoặc sử dụng phương thức thanh toán khác.
               </div>
 
               <a
                 href={`/my-account-orders-details?id=${orderId}`}
-                className="mt-2 tf-btn w-100 btn-fill animate-hover-btn radius-3 justify-content-center"
+                className="btn-fill justify-content-center w-100 animate-hover-btn mt-2 radius-3 tf-btn"
                 style={{ fontFamily: '"Roboto", sans-serif' }}
               >
                 <span>Theo dõi đơn hàng</span>
@@ -45,7 +45,7 @@ export default function PaymentFailure() {
 
               <Link
                 href={`/products`}
-                className="mt-2 tf-btn w-100 btn-outline animate-hover-btn rounded-0 justify-content-center"
+                className="btn-outline justify-content-center rounded-0 w-100 animate-hover-btn mt-2 tf-btn"
                 style={{ fontFamily: '"Roboto", sans-serif' }}
               >
                 <span>Tiếp tục mua sắm</span>

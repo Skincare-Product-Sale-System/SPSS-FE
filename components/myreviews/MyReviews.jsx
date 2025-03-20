@@ -1,6 +1,6 @@
 "use client";
 import { useContextElement } from "@/context/Context";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import React, { useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { useSearchParams } from "next/navigation";

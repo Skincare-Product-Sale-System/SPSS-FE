@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import dayjs from "dayjs";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useThemeColors } from "@/context/ThemeContext";
@@ -225,7 +225,7 @@ export default function OrderDetails() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
+      <div className="flex justify-center items-center py-8">
         <CircularProgress sx={{ color: mainColor }} />
       </div>
     );
@@ -238,7 +238,7 @@ export default function OrderDetails() {
   const { currentStep, lastValidStep } = getStatusInfo(order.status);
 
   return (
-    <div className="my-account-content account-order-details">
+    <div className="account-order-details my-account-content">
       <div className="flex justify-end py-2">
         <Button
           variant="outlined"
@@ -282,10 +282,10 @@ export default function OrderDetails() {
         {/* Order Progress Tracker */}
         <div className="mb-4">
           <div className="relative">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex justify-between items-center mb-2">
               {/* Progress Line Background */}
               <div 
-                className="absolute top-4 left-12 right-12 h-1 rounded-full -z-5"
+                className="h-1 rounded-full -z-5 absolute left-12 right-12 top-4"
                 style={{
                   background: currentStep === -1 
                     ? `linear-gradient(to right, 
@@ -301,7 +301,7 @@ export default function OrderDetails() {
               />
 
               {/* Step Circles */}
-              <div className="flex items-center justify-between w-full relative z-10">
+              <div className="flex justify-between w-full items-center relative z-10">
                 {currentStep === -1 ? (
                   // Hiển thị 3 bước khi cancelled
                   ['Đặt hàng', 'Xử lý', 'Đã hủy'].map((label, index) => (
@@ -343,9 +343,9 @@ export default function OrderDetails() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
           <div className="bg-gray-50 p-3 rounded-lg text-sm">
-            <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2 border-b pb-1">
+            <h4 className="border-b text-gray-700 text-xs font-semibold mb-2 pb-1 uppercase">
               ĐỊA CHỈ GIAO HÀNG
             </h4>
             <p className="font-medium">{order.address.customerName}</p>
@@ -356,24 +356,24 @@ export default function OrderDetails() {
               {order.address.postcode}
             </p>
             <p>{order.address.countryName}</p>
-            <div className="mt-2 pt-2 border-t border-gray-200">
-              <p className="text-xs font-semibold text-gray-700 mb-1">ĐIỆN THOẠI</p>
+            <div className="border-gray-200 border-t mt-2 pt-2">
+              <p className="text-gray-700 text-xs font-semibold mb-1">ĐIỆN THOẠI</p>
               <p>{order.address.phoneNumber}</p>
             </div>
           </div>
           <div className="bg-gray-50 p-3 rounded-lg text-sm">
-            <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2 border-b pb-1">
+            <h4 className="border-b text-gray-700 text-xs font-semibold mb-2 pb-1 uppercase">
               THÔNG TIN ĐƠN HÀNG
             </h4>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-xs font-semibold text-gray-700 mb-1">
+                <p className="text-gray-700 text-xs font-semibold mb-1">
                   MÃ ĐƠN HÀNG:
                 </p>
                 <p className="font-medium">#{order.id.substring(0, 8)}</p>
               </div>
               <div>
-                <p className="text-xs font-semibold text-gray-700 mb-1">
+                <p className="text-gray-700 text-xs font-semibold mb-1">
                   THANH TOÁN:
                 </p>
                 <p className="font-medium">
@@ -384,18 +384,18 @@ export default function OrderDetails() {
                 </p>
               </div>
             </div>
-            <div className="mt-2 pt-2 border-t border-gray-200">
-              <div className="flex justify-between mb-1 text-sm">
+            <div className="border-gray-200 border-t mt-2 pt-2">
+              <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-600">Tạm tính:</span>
                 <span className="font-medium">
                   {formatCurrency(order.orderTotal)}
                 </span>
               </div>
-              <div className="flex justify-between mb-1 text-sm">
+              <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-600">Phí vận chuyển:</span>
                 <span className="font-medium">{formatCurrency(0)}</span>
               </div>
-              <div className="flex justify-between font-bold pt-1 border-t border-gray-200">
+              <div className="flex border-gray-200 border-t justify-between font-bold pt-1">
                 <span>Tổng cộng</span>
                 <span style={{ color: mainColor }}>
                   {formatCurrency(order.orderTotal)}
@@ -407,38 +407,38 @@ export default function OrderDetails() {
 
         {/* Order Items - More compact */}
         <div className="mt-4">
-          <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2 border-b pb-1">
+          <h4 className="border-b text-gray-700 text-xs font-semibold mb-2 pb-1 uppercase">
             SẢN PHẨM
           </h4>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="text-sm w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-2 px-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="text-gray-500 text-left text-xs font-medium px-3 py-2 uppercase">
                     SẢN PHẨM
                   </th>
-                  <th className="py-2 px-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  <th className="text-gray-500 text-right text-xs font-medium px-3 py-2 uppercase">
                     GIÁ
                   </th>
-                  <th className="py-2 px-3 text-center text-xs font-medium text-gray-500 uppercase">
+                  <th className="text-center text-gray-500 text-xs font-medium px-3 py-2 uppercase">
                     SỐ LƯỢNG
                   </th>
-                  <th className="py-2 px-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  <th className="text-gray-500 text-right text-xs font-medium px-3 py-2 uppercase">
                     TỔNG TIỀN
                   </th>
-                  <th className="py-2 px-3 text-center text-xs font-medium text-gray-500 uppercase">
+                  <th className="text-center text-gray-500 text-xs font-medium px-3 py-2 uppercase">
                     THAO TÁC
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-gray-200 divide-y">
                 {order.orderDetails.map((item, index) => (
                   <tr key={index}>
-                    <td className="py-2 px-3">
+                    <td className="px-3 py-2">
                       <div className="flex items-center">
                         <Link
                           href={`/product-detail/${item.productId}`}
-                          className="flex-shrink-0 h-12 w-12 mr-3 hover:opacity-80 transition-opacity"
+                          className="flex-shrink-0 h-12 w-12 hover:opacity-80 mr-3 transition-opacity"
                         >
                           <Image
                             src={
@@ -454,27 +454,27 @@ export default function OrderDetails() {
                         <div>
                           <Link
                             href={`/product-detail/${item.productId}`}
-                            className="font-medium text-gray-900 text-sm hover:text-[color:var(--mainColor)] transition-colors"
+                            className="text-gray-900 text-sm font-medium hover:text-[color:var(--mainColor)] transition-colors"
                           >
                             {item.productName}
                           </Link>
                           {item.variationOptionValues &&
                             item.variationOptionValues.length > 0 && (
-                              <div className="text-xs text-gray-500">
+                              <div className="text-gray-500 text-xs">
                                 {item.variationOptionValues.join(", ")}
                               </div>
                             )}
                         </div>
                       </div>
                     </td>
-                    <td className="py-2 px-3 text-right">
+                    <td className="text-right px-3 py-2">
                       {formatCurrency(item.price)}
                     </td>
-                    <td className="py-2 px-3 text-center">x{item.quantity}</td>
-                    <td className="py-2 px-3 text-right font-medium">
+                    <td className="text-center px-3 py-2">x{item.quantity}</td>
+                    <td className="text-right font-medium px-3 py-2">
                       {formatCurrency(item.price * item.quantity)}
                     </td>
-                    <td className="py-2 px-3 text-center">
+                    <td className="text-center px-3 py-2">
                       <button
                         className={`px-3 py-1.5 text-xs rounded-md transition-all ${
                           order.status?.toLowerCase() === "delivered" && item.isReviewable
@@ -514,22 +514,22 @@ export default function OrderDetails() {
 
         {/* Status Timeline */}
         {order.statusChanges && order.statusChanges.length > 0 && (
-          <div className="mt-4 border-t pt-3">
-            <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2">
+          <div className="border-t mt-4 pt-3">
+            <h4 className="text-gray-700 text-xs font-semibold mb-2 uppercase">
               LỊCH SỬ ĐƠN HÀNG
             </h4>
             <div className="flow-root">
               <ul role="list" className="-mb-4">
                 {order.statusChanges.map((statusChange, idx) => (
                   <li key={idx}>
-                    <div className="relative pb-4">
+                    <div className="pb-4 relative">
                       {idx !== order.statusChanges.length - 1 ? (
                         <span
-                          className="absolute left-3 top-3 -ml-px h-full w-0.5 bg-gray-200"
+                          className="bg-gray-200 h-full w-0.5 -ml-px absolute left-3 top-3"
                           aria-hidden="true"
                         />
                       ) : null}
-                      <div className="relative flex space-x-3">
+                      <div className="flex relative space-x-3">
                         <div>
                           <span
                             className={`h-8 w-8 rounded-full flex items-center justify-center ring-4 ring-white
@@ -562,17 +562,17 @@ export default function OrderDetails() {
                             </div>
                           </span>
                         </div>
-                        <div className="flex min-w-0 flex-1 justify-between items-center space-x-2">
+                        <div className="flex flex-1 justify-between items-center min-w-0 space-x-2">
                           <div>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-gray-600 text-sm">
                               Trạng thái:{" "}
-                              <span className="font-medium text-gray-900">
+                              <span className="text-gray-900 font-medium">
                                 {translateStatus(statusChange.status)}
                               </span>
                               {statusChange.status === "Cancelled" && <div>(Lý do: {reason})</div>}
                             </p>
                           </div>
-                          <div className="whitespace-nowrap text-right text-xs text-gray-500">
+                          <div className="text-gray-500 text-right text-xs whitespace-nowrap">
                             {dayjs(statusChange.date).format("MMM DD, HH:mm")}
                           </div>
                         </div>
@@ -588,7 +588,7 @@ export default function OrderDetails() {
         {/* Action Buttons - Only show for appropriate statuses */}
         {(order.status === "Processing" ||
           order.status === "Awaiting Payment") && (
-          <div className="mt-4 flex justify-end gap-3">
+          <div className="flex justify-end gap-3 mt-4">
             {order.status === "Awaiting Payment" && (
               <Button
                 variant="contained"

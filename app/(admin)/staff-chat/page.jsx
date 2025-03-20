@@ -21,8 +21,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const ChatContent = dynamic(() => import('@/components/chat/ChatContent'), { 
   ssr: false, // Không render trên server
   loading: () => (
-    <div className="flex justify-center items-center h-96">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+    <div className="flex h-96 justify-center items-center">
+      <div className="border-b-2 border-primary border-t-2 h-16 rounded-full w-16 animate-spin"></div>
     </div>
   )
 });
@@ -624,22 +624,46 @@ export default function StaffChat() {
         Hệ thống chat hỗ trợ Skincede
       </Typography>
       
-      <Box sx={{ display: 'flex', height: 'calc(100vh - 200px)', bgcolor: '#f5f5f5', borderRadius: 2, overflow: 'hidden' }}>
+      <Box sx={{ display: 'flex', height: 'calc(100vh - 200px)', bgcolor: '#f5f5f5', borderRadius: 2, overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
         {/* Danh sách chat */}
-        <Paper sx={{ width: 320, borderRadius: 0, display: { xs: selectedChat ? 'none' : 'block', md: 'block' } }}>
+        <Paper sx={{ 
+          width: 320, 
+          borderRadius: 0, 
+          display: { xs: selectedChat ? 'none' : 'block', md: 'block' },
+          borderRight: '1px solid #e0e0e0'
+        }}>
           <Box sx={{ p: 2, bgcolor: mainColor.primary, color: 'white' }}>
-            <Typography variant="h6">Danh sách cuộc trò chuyện</Typography>
+            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>
+              Danh sách cuộc trò chuyện
+            </Typography>
             
-            <Box sx={{ mt: 1, position: 'relative' }}>
+            <Box sx={{ mt: 1.5, position: 'relative' }}>
               <TextField
                 placeholder="Tìm kiếm..."
                 size="small"
                 fullWidth
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ bgcolor: 'white', borderRadius: 1 }}
+                sx={{ 
+                  bgcolor: 'white', 
+                  borderRadius: 1,
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'transparent',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'transparent',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'transparent',
+                      borderWidth: 1,
+                    },
+                  },
+                }}
+                InputProps={{
+                  endAdornment: <SearchIcon sx={{ color: 'grey.500' }} />
+                }}
               />
-              <SearchIcon sx={{ position: 'absolute', top: '50%', right: 10, transform: 'translateY(-50%)', color: 'grey.500' }} />
             </Box>
             
             <Button 
@@ -648,18 +672,26 @@ export default function StaffChat() {
               size="small" 
               startIcon={<DeleteIcon />} 
               onClick={clearChatData}
-              sx={{ mt: 1 }}
+              sx={{ mt: 2, borderRadius: '8px', textTransform: 'none', fontWeight: 500 }}
             >
               Xóa tất cả dữ liệu
             </Button>
           </Box>
           
-          <List sx={{ overflow: 'auto', height: 'calc(100% - 136px)' }}>
+          <List sx={{ overflow: 'auto', height: 'calc(100% - 136px)', px: 0 }}>
             {sortedChats.length === 0 ? (
               <ListItem>
                 <ListItemText 
-                  primary="Không có cuộc trò chuyện nào" 
-                  secondary="Chờ người dùng chat..." 
+                  primary={
+                    <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                      Không có cuộc trò chuyện nào
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                      Chờ người dùng chat...
+                    </Typography>
+                  }
                 />
               </ListItem>
             ) : (
@@ -674,7 +706,8 @@ export default function StaffChat() {
                     bgcolor: selectedChat?.userId === chat.userId ? `${mainColor.primary}10` : 'transparent',
                     '&:hover': {
                       bgcolor: `${mainColor.primary}20`,
-                    }
+                    },
+                    py: 1.5
                   }}
                 >
                   <Badge
@@ -682,23 +715,46 @@ export default function StaffChat() {
                     color="primary"
                     sx={{ mr: 2 }}
                   >
-                    <Avatar sx={{ bgcolor: chat.avatarColor }}>
+                    <Avatar sx={{ bgcolor: chat.avatarColor, width: 40, height: 40 }}>
                       <PersonIcon />
                     </Avatar>
                   </Badge>
                   <ListItemText
                     primary={
-                      <Typography variant="subtitle1" noWrap fontWeight={chat.unreadCount > 0 ? 'bold' : 'normal'}>
+                      <Typography 
+                        variant="subtitle1" 
+                        noWrap 
+                        sx={{ 
+                          fontWeight: chat.unreadCount > 0 ? 700 : 500,
+                          fontSize: '0.95rem',
+                          mb: 0.5
+                        }}
+                      >
                         {chat.username}
                       </Typography>
                     }
                     secondary={
-                      <Typography variant="body2" noWrap color={chat.unreadCount > 0 ? 'text.primary' : 'text.secondary'}>
+                      <Typography 
+                        variant="body2" 
+                        noWrap 
+                        sx={{ 
+                          color: chat.unreadCount > 0 ? 'text.primary' : 'text.secondary',
+                          fontSize: '0.82rem'
+                        }}
+                      >
                         {chat.lastMessage}
                       </Typography>
                     }
+                    secondaryTypographyProps={{ noWrap: true }}
                   />
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      color: 'text.secondary',
+                      fontSize: '0.7rem',
+                      ml: 1
+                    }}
+                  >
                     {formatTime(chat.timestamp)}
                   </Typography>
                 </ListItem>
@@ -713,11 +769,11 @@ export default function StaffChat() {
             flexGrow: 1, 
             display: 'flex', 
             flexDirection: 'column', 
-            backgroundColor: '#f5f5f5',
+            backgroundColor: '#f9f9f9',
             position: 'relative'
           }}>
-            <AppBar position="static" color="default" elevation={1}>
-              <Toolbar variant="dense">
+            <AppBar position="static" color="default" elevation={1} sx={{ backgroundColor: 'white' }}>
+              <Toolbar variant="dense" sx={{ minHeight: '64px' }}>
                 <IconButton 
                   edge="start" 
                   sx={{ mr: 1, display: { xs: 'inline-flex', md: 'none' } }}
@@ -725,16 +781,28 @@ export default function StaffChat() {
                 >
                   <ArrowBackIcon />
                 </IconButton>
-                <Avatar sx={{ mr: 2, bgcolor: selectedChat.avatarColor }}>
+                <Avatar sx={{ mr: 2, bgcolor: selectedChat.avatarColor, width: 40, height: 40 }}>
                   <PersonIcon />
                 </Avatar>
-                <Typography variant="subtitle1" fontWeight="medium">
-                  {selectedChat.username}
-                </Typography>
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="500">
+                    {selectedChat.username}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Online
+                  </Typography>
+                </Box>
               </Toolbar>
             </AppBar>
             
-            <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2, display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ 
+              flexGrow: 1, 
+              overflow: 'auto', 
+              p: 2, 
+              display: 'flex', 
+              flexDirection: 'column',
+              backgroundColor: '#f5f5f5'
+            }}>
               {isLoading ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                   <CircularProgress />
@@ -772,7 +840,9 @@ export default function StaffChat() {
                           width: 32, 
                           height: 32, 
                           mr: 1,
-                          bgcolor: selectedChat.avatarColor
+                          bgcolor: selectedChat.avatarColor,
+                          alignSelf: 'flex-end',
+                          mb: 0.5
                         }}
                       >
                         <PersonIcon fontSize="small" />
@@ -780,10 +850,10 @@ export default function StaffChat() {
                     )}
                     
                     <Paper
-                      elevation={1}
+                      elevation={0}
                       sx={{
                         p: 1.5,
-                        maxWidth: '70%',
+                        maxWidth: '75%',
                         borderRadius: msg.sender === MESSAGE_TYPES.STAFF 
                           ? '16px 4px 16px 16px' 
                           : '4px 16px 16px 16px',
@@ -792,13 +862,30 @@ export default function StaffChat() {
                           : 'white',
                         color: msg.sender === MESSAGE_TYPES.STAFF 
                           ? 'white' 
-                          : 'text.primary'
+                          : 'text.primary',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
                       }}
                     >
-                      <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                      <Typography 
+                        variant="body1" 
+                        sx={{ 
+                          whiteSpace: 'pre-wrap', 
+                          wordBreak: 'break-word',
+                          lineHeight: 1.5
+                        }}
+                      >
                         {msg.content}
                       </Typography>
-                      <Typography variant="caption" sx={{ opacity: 0.7, mt: 0.5, display: 'block', textAlign: 'right' }}>
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          opacity: msg.sender === MESSAGE_TYPES.STAFF ? 0.8 : 0.6, 
+                          mt: 0.5, 
+                          display: 'block', 
+                          textAlign: 'right',
+                          fontSize: '0.7rem'
+                        }}
+                      >
                         {formatTime(msg.timestamp)}
                       </Typography>
                     </Paper>
@@ -825,13 +912,25 @@ export default function StaffChat() {
                     multiline
                     maxRows={4}
                     disabled={!isConnected}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '& fieldset': {
+                          borderColor: '#e0e0e0',
+                        },
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item>
                   <Button
                     variant="contained"
                     color="primary"
-                    sx={{ height: '100%' }}
+                    sx={{ 
+                      height: '100%', 
+                      minWidth: '50px',
+                      borderRadius: '12px'
+                    }}
                     onClick={handleSendMessage}
                     disabled={!newMessage.trim() || !isConnected}
                   >

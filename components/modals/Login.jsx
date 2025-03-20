@@ -1,6 +1,6 @@
 "use client";
 import useAuthStore from "@/context/authStore";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import React, { useRef } from "react";
 import toast from "react-hot-toast";
 
@@ -10,7 +10,7 @@ export default function Login() {
 
   return (
     <div
-      className="modal modalCentered fade form-sign-in modal-part-content"
+      className="form-sign-in modal modal-part-content modalCentered fade"
       id="login"
     >
       <div className="modal-dialog modal-dialog-centered">
@@ -52,7 +52,7 @@ export default function Login() {
               className=""
               acceptCharset="utf-8"
             >
-              <div className="tf-field style-1">
+              <div className="style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -65,7 +65,7 @@ export default function Login() {
                   Email *
                 </label>
               </div>
-              <div className="tf-field style-1">
+              <div className="style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -91,7 +91,7 @@ export default function Login() {
                 <div className="w-100">
                   <button
                     type="submit"
-                    className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                    className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
                   >
                     <span>Log in</span>
                   </button>
@@ -100,7 +100,7 @@ export default function Login() {
                   <a
                     href="#register"
                     data-bs-toggle="modal"
-                    className="btn-link fw-6 w-100 link"
+                    className="btn-link w-100 fw-6 link"
                   >
                     New customer? Create your account
                     <i className="icon icon-arrow1-top-left" />

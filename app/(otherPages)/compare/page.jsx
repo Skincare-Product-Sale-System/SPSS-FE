@@ -1,7 +1,6 @@
 import Overlay from "@/components/common/Overlay";
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
-import Topbar1 from "@/components/headers/Topbar1";
 
 import Compare from "@/components/othersPages/Compare";
 import React from "react";
@@ -31,8 +30,8 @@ export default function page() {
                 color: "white",
               }}
             >
-              <div className="heading text-center" style={{}}>
-                Compare Products
+              <div className="text-center heading" style={{}}>
+                So sánh sản phẩm
               </div>
             </div>
           </div>

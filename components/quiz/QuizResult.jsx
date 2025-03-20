@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import request from "@/utlis/axios";
-import { ProductCard } from "../shopCards/ProductCard";
+import request from "@/utils/axios";
 import { useThemeColors } from "@/context/ThemeContext";
 import { Typography, Box, Button, Chip, Divider, Paper, Grid, Card, CardContent, CardMedia } from "@mui/material";
-import { formatPrice } from "@/utlis/priceFormatter";
+import { formatPrice } from "@/utils/priceFormatter";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Link from "next/link";
@@ -43,10 +42,10 @@ export default function QuizResult({ quiz, answers, onClose }) {
   }, [quiz, answers]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[900]">
+    <div className="flex bg-black bg-opacity-50 justify-center fixed inset-0 items-center z-[900]">
       <Paper 
         elevation={3} 
-        className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+        className="bg-white p-6 rounded-lg w-full max-h-[90vh] max-w-4xl mx-4 overflow-y-auto"
         sx={{ 
           borderRadius: 2,
           border: `1px solid ${mainColor.lightGrey}`
@@ -72,7 +71,7 @@ export default function QuizResult({ quiz, answers, onClose }) {
               '&:hover': { color: mainColor.primary }
             }}
           >
-            <span className="icon-close text-xl"></span>
+            <span className="text-xl icon-close"></span>
           </Button>
         </Box>
 
@@ -80,7 +79,7 @@ export default function QuizResult({ quiz, answers, onClose }) {
           <>
             <Box className="text-center mb-6">
               <Box 
-                className="mx-auto mb-4 flex items-center justify-center"
+                className="flex justify-center items-center mb-4 mx-auto"
                 sx={{ 
                   width: 80, 
                   height: 80, 

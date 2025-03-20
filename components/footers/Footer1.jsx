@@ -3,8 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
-import LanguageSelect from "../common/LanguageSelect";
-import CurrencySelect from "../common/CurrencySelect";
 
 import { aboutLinks, footerLinks, paymentImages } from "@/data/footerLinks";
 
@@ -75,7 +73,7 @@ export default function Footer1({ bgColor = "" }) {
         <div className="footer-body">
           <div className="container">
             <div className="row">
-              <div className="col-xl-3 col-md-6 col-12">
+              <div className="col-12 col-md-6 col-xl-3">
                 <div className="footer-infor">
                   <div className="footer-logo">
                     <Link
@@ -122,55 +120,55 @@ export default function Footer1({ bgColor = "" }) {
                       </p>
                     </li>
                   </ul>
-                  <Link href={`/contact-1`} className="tf-btn btn-line">
+                  <Link href={`/contact-1`} className="btn-line tf-btn">
                     Chỉ đường
                     <i className="icon icon-arrow1-top-left" />
                   </Link>
-                  <ul className="tf-social-icon d-flex gap-10">
+                  <ul className="d-flex gap-10 tf-social-icon">
                     <li>
                       <a
                         href="#"
-                        className="box-icon w_34 round social-facebook social-line"
+                        className="box-icon round social-facebook social-line w_34"
                       >
-                        <i className="icon fs-14 icon-fb" />
+                        <i className="fs-14 icon icon-fb" />
                       </a>
                     </li>
                     <li>
                       <a
                         href="#"
-                        className="box-icon w_34 round social-twiter social-line"
+                        className="box-icon round social-line social-twiter w_34"
                       >
-                        <i className="icon fs-12 icon-Icon-x" />
+                        <i className="fs-12 icon icon-Icon-x" />
                       </a>
                     </li>
                     <li>
                       <a
                         href="#"
-                        className="box-icon w_34 round social-instagram social-line"
+                        className="box-icon round social-instagram social-line w_34"
                       >
-                        <i className="icon fs-14 icon-instagram" />
+                        <i className="fs-14 icon icon-instagram" />
                       </a>
                     </li>
                     <li>
                       <a
                         href="#"
-                        className="box-icon w_34 round social-tiktok social-line"
+                        className="box-icon round social-line social-tiktok w_34"
                       >
-                        <i className="icon fs-14 icon-tiktok" />
+                        <i className="fs-14 icon icon-tiktok" />
                       </a>
                     </li>
                     <li>
                       <a
                         href="#"
-                        className="box-icon w_34 round social-pinterest social-line"
+                        className="box-icon round social-line social-pinterest w_34"
                       >
-                        <i className="icon fs-14 icon-pinterest-1" />
+                        <i className="fs-14 icon icon-pinterest-1" />
                       </a>
                     </li>
                   </ul>
                 </div>
               </div>
-              <div className="col-xl-3 col-md-6 col-12 footer-col-block">
+              <div className="col-12 col-md-6 col-xl-3 footer-col-block">
                 <div className="footer-heading footer-heading-desktop">
                   <h6>Trợ giúp</h6>
                 </div>
@@ -187,7 +185,7 @@ export default function Footer1({ bgColor = "" }) {
                   ))}
                 </ul>
               </div>
-              <div className="col-xl-3 col-md-6 col-12 footer-col-block">
+              <div className="col-12 col-md-6 col-xl-3 footer-col-block">
                 <div className="footer-heading footer-heading-desktop">
                   <h6>Về chúng tôi</h6>
                 </div>
@@ -204,8 +202,8 @@ export default function Footer1({ bgColor = "" }) {
                   ))}
                 </ul>
               </div>
-              <div className="col-xl-3 col-md-6 col-12">
-                <div className="footer-newsletter footer-col-block">
+              <div className="col-12 col-md-6 col-xl-3">
+                <div className="footer-col-block footer-newsletter">
                   <div className="footer-heading footer-heading-desktop">
                     <h6>Đăng ký nhận tin</h6>
                   </div>
@@ -254,7 +252,7 @@ export default function Footer1({ bgColor = "" }) {
                         </fieldset>
                         <div className="button-submit">
                           <button
-                            className="subscribe-button tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
+                            className="btn-fill btn-icon btn-sm animate-hover-btn radius-3 subscribe-button tf-btn"
                             type="submit"
                           >
                             Đăng ký
@@ -264,14 +262,6 @@ export default function Footer1({ bgColor = "" }) {
                       </div>
                       <div className="subscribe-msg" />
                     </form>
-                    <div className="tf-cur">
-                      <div className="tf-currencies">
-                        <CurrencySelect />
-                      </div>
-                      <div className="tf-languages">
-                        <LanguageSelect />
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -282,7 +272,7 @@ export default function Footer1({ bgColor = "" }) {
           <div className="container">
             <div className="row">
               <div className="col-12">
-                <div className="footer-bottom-wrap d-flex gap-20 flex-wrap justify-content-between align-items-center">
+                <div className="d-flex flex-wrap align-items-center justify-content-between footer-bottom-wrap gap-20">
                   <div className="footer-menu_item">
                     © {new Date().getFullYear()} Skincede Store. Đã đăng ký Bản quyền
                   </div>
