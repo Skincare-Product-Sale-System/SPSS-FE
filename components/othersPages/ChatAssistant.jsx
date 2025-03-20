@@ -1,5 +1,9 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import PersonIcon from '@mui/icons-material/Person';
+import SendIcon from '@mui/icons-material/Send';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +15,7 @@ export default function ChatAssistant() {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const messageEndRef = useRef(null);
+  const [inputMessage, setInputMessage] = useState("");
 
   useEffect(() => {
     if (messageEndRef.current) {
@@ -18,15 +23,55 @@ export default function ChatAssistant() {
     }
   }, [messages]);
 
+  const handleSend = async () => {
+    if (inputMessage.trim() === "") return;
+    
+    const messageContent = inputMessage;
+    setInputMessage("");
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        content: messageContent,
+        sender: "me",
+      },
+    ]);
+    setIsLoading(true);
+
+    try {
+      const answer = await getAnswer([
+        ...messages,
+        {
+          content: messageContent,
+          sender: "me",
+        },
+      ]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          content: answer,
+          sender: "model",
+        },
+      ]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return isOpen ? (
-    <div className="fixed bottom-20 right-5 w-[500px] bg-white border rounded-lg shadow-lg p-4 z-50">
-      <div className="flex justify-between items-center border-b pb-2">
-        <span className="font-bold">Trợ lý ảo Skincede</span>
+    <div className="bg-white border p-4 rounded-lg shadow-lg w-[500px] bottom-20 fixed right-5 z-50">
+      <div className="flex border-b justify-between items-center pb-2">
+        <div className="flex gap-2 items-center">
+          <SmartToyIcon sx={{ color: '#3b82f6' }} />
+          <span className="font-bold">Trợ lý ảo Skincede</span>
+        </div>
         <button onClick={() => setIsOpen(false)} className="text-red-500">
-          ✖
+          <CloseIcon fontSize="small" />
         </button>
       </div>
-      <div className="small-scrollbar grow h-96 overflow-y-scroll rounded-xl mt-4 py-1 relative">
+      <div className="h-96 rounded-xl grow mt-4 overflow-y-scroll py-1 relative small-scrollbar">
         {messages.map((message, index) => (
           <MessageItem key={index} data={message} />
         ))}
@@ -37,84 +82,72 @@ export default function ChatAssistant() {
         )}
         <div className="" ref={messageEndRef}></div>
       </div>
-      <textarea
-        className="h-16 py-2 px-2 mt-3 border rounded-lg text-black"
-        placeholder="Enter your message..."
-        onKeyDown={async (e) => {
-          if (e.key === "Enter" && e.shiftKey) {
-            return;
-          }
-          if (e.key === "Enter") {
-            try {
-              const messageContent = e.target.value;
-              if (messageContent.trim() === "") return;
+      
+      <div className="flex gap-2 mt-3">
+        <textarea
+          className="flex-grow border h-16 rounded-lg text-black px-2 py-2"
+          placeholder="Nhập tin nhắn của bạn..."
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              e.target.value = "";
-
-              setMessages((prev) => [
-                ...prev,
-                {
-                  content: messageContent,
-                  sender: "me",
-                },
-              ]);
-              setIsLoading(true);
-
-              const answer = await getAnswer([
-                ...messages,
-                {
-                  content: messageContent,
-                  sender: "me",
-                },
-              ]);
-              setMessages((prev) => [
-                ...prev,
-                {
-                  content: answer,
-                  sender: "model",
-                },
-              ]);
-              setIsLoading(false);
-            } catch (error) {
-              console.log(error);
+              handleSend();
             }
-          }
-        }}
-      />
+          }}
+        />
+        <button 
+          onClick={handleSend}
+          className="flex bg-blue-600 h-16 justify-center rounded-lg text-white items-center px-3"
+        >
+          <SendIcon />
+        </button>
+      </div>
     </div>
   ) : (
     <button
-      className="fixed bottom-5 right-5 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center z-50"
+      className="flex bg-blue-600 h-14 justify-center rounded-full shadow-lg text-white w-14 bottom-5 fixed hover:bg-blue-700 items-center right-5 transition-colors z-50"
       onClick={() => setIsOpen(true)}
     >
-      💬
+      <SmartToyIcon sx={{ fontSize: 28 }} />
     </button>
   );
 }
 
 const MessageItem = ({ data }) => {
-  //   const parsedContent = marked(data.content);
   return (
     <div
-      className={`flex gap-2 ${
-        data.sender === "me" ? "justify-end" : "message-p "
+      className={`flex gap-2 items-end mb-3 ${
+        data.sender === "me" ? "justify-end" : "justify-start"
       }`}
     >
-      {/* <div dangerouslySetInnerHTML={{ __html: parsedContent }}></div> */}
-      <p
-        className={`min-w-14 m-1 py-2 px-3 text-[16px] rounded-2xl text-start ${
+      {data.sender !== "me" && (
+        <div className="flex bg-blue-100 h-8 justify-center rounded-full w-8 items-center">
+          <SmartToyIcon sx={{ fontSize: 18, color: '#3b82f6' }} />
+        </div>
+      )}
+
+      <div
+        className={`py-2 px-3 rounded-2xl shadow-sm ${
           data.sender === "me"
-            ? "justify-end bg-blue-600 dark:bg-blue-600 text-white"
-            : "justify-start bg-zinc-300"
+            ? "bg-blue-600 text-white"
+            : "bg-white border border-gray-200"
         }`}
         style={{
           wordWrap: "break-word",
-          maxWidth: "80%",
+          maxWidth: "75%",
         }}
-        // dangerouslySetInnerHTML={{ __html: parsedContent }}
       >
-        {data.content}
-      </p>
+        <div className="text-[15px]" style={{ whiteSpace: 'pre-wrap' }}>
+          {data.content}
+        </div>
+      </div>
+
+      {data.sender === "me" && (
+        <div className="flex bg-blue-100 h-8 justify-center rounded-full w-8 items-center">
+          <PersonIcon sx={{ fontSize: 18, color: '#3b82f6' }} />
+        </div>
+      )}
     </div>
   );
 };
