@@ -137,12 +137,19 @@ export default function RealTimeChat() {
     connection.on("ReceiveMessage", (message, userType) => {
       console.log("Message received:", message, userType);
       
-      // Chuẩn hóa userType
+      // Chuẩn hóa userType - đảm bảo nhất quán
       const normalizedUserType = userType === 'support' ? MESSAGE_TYPES.STAFF : MESSAGE_TYPES.USER;
+      const uiSender = normalizedUserType === MESSAGE_TYPES.STAFF ? "support" : "me";
       
       // Lưu vào localStorage với định dạng thống nhất
       const storageKey = `chat_${userId}`;
-      const existingMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      let existingMessages = [];
+      
+      try {
+        existingMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      } catch (err) {
+        console.error("Error parsing messages from localStorage:", err);
+      }
       
       existingMessages.push({
         content: message,
@@ -152,11 +159,11 @@ export default function RealTimeChat() {
       
       localStorage.setItem(storageKey, JSON.stringify(existingMessages));
       
-      // Cập nhật UI (vẫn giữ 'me' trong UI cho một trải nghiệm thân thiện hơn)
+      // Cập nhật UI với định dạng nhất quán
       setMessages(prev => [
         ...prev,
         {
-          sender: normalizedUserType === MESSAGE_TYPES.STAFF ? "support" : "me",
+          sender: uiSender,
           content: message,
           timestamp: new Date()
         }
@@ -250,7 +257,7 @@ export default function RealTimeChat() {
       {/* Chat button */}
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-5 left-5 bg-white p-3 rounded-full shadow-lg z-40 flex items-center justify-center hover:opacity-90 transition-opacity"
+        className="flex bg-white justify-center p-3 rounded-full shadow-lg bottom-5 fixed hover:opacity-90 items-center left-5 transition-opacity z-40"
         style={{ 
           backgroundColor: mainColor.secondary || '#85715e',
           width: '56px',
@@ -270,17 +277,17 @@ export default function RealTimeChat() {
       
       {/* Chat window */}
       {isOpen && (
-        <div className="fixed bottom-20 left-5 w-[400px] bg-white border rounded-lg shadow-lg z-50 flex flex-col"
+        <div className="flex flex-col bg-white border rounded-lg shadow-lg w-[400px] bottom-20 fixed left-5 z-50"
              style={{ maxHeight: 'calc(100vh - 160px)' }}>
           {/* Header */}
-          <div className="flex justify-between items-center p-3 border-b" 
+          <div className="flex border-b justify-between p-3 items-center" 
                style={{ 
                  backgroundColor: mainColor.secondary || '#85715e', 
                  color: 'white', 
                  borderRadius: '8px 8px 0 0' 
                }}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex gap-2 items-center">
               <ForumIcon sx={{ 
                 fontSize: 22,
                 filter: 'drop-shadow(0px 1px 1px rgba(0,0,0,0.1))'
@@ -302,18 +309,18 @@ export default function RealTimeChat() {
           </div>
           
           {/* Messages area */}
-          <div className="flex-1 overflow-y-auto p-4" style={{ minHeight: '300px', maxHeight: 'calc(100vh - 280px)' }}>
+          <div className="flex-1 p-4 overflow-y-auto" style={{ minHeight: '300px', maxHeight: 'calc(100vh - 280px)' }}>
             {messages.map((message, index) => (
               <MessageItem key={index} data={message} mainColor={mainColor} />
             ))}
             
             {isLoading && (
               <div className="flex items-start mt-4">
-                <div className="bg-gray-100 rounded-lg py-2 px-4 max-w-[80%] flex items-center">
-                  <div className="animate-pulse flex space-x-2">
-                    <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
-                    <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
-                    <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
+                <div className="flex bg-gray-100 rounded-lg items-center max-w-[80%] px-4 py-2">
+                  <div className="flex animate-pulse space-x-2">
+                    <div className="bg-gray-400 h-2 rounded-full w-2"></div>
+                    <div className="bg-gray-400 h-2 rounded-full w-2"></div>
+                    <div className="bg-gray-400 h-2 rounded-full w-2"></div>
                   </div>
                 </div>
               </div>
@@ -326,7 +333,7 @@ export default function RealTimeChat() {
           <div className="border-t p-3">
             <div className="flex">
               <textarea
-                className="flex-1 border rounded-l-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-opacity-50 resize-none"
+                className="flex-1 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 px-3 py-2 resize-none"
                 style={{ 
                   height: '56px',
                   maxHeight: '120px',
@@ -346,20 +353,20 @@ export default function RealTimeChat() {
               />
               <button
                 onClick={sendMessage}
-                className="px-4 rounded-r-lg text-white"
+                className="rounded-r-lg text-white px-4"
                 style={{ backgroundColor: mainColor.secondary || '#85715e' }}
                 disabled={isLoading || !newMessage.trim() || !isConnected}
               >
                 {isLoading ? (
                   <CircularProgress size={20} sx={{ color: 'white' }} />
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
                     <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
                   </svg>
                 )}
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-gray-500 text-xs mt-1">
               {isConnected 
                 ? "Bạn đang kết nối với nhân viên Skincede" 
                 : "Đang kết nối..."}
