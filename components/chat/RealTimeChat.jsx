@@ -276,13 +276,14 @@ export default function RealTimeChat() {
       {/* Chat button */}
       <button 
         onClick={() => setIsOpen(true)}
-        className="flex justify-center p-3 rounded-full shadow-lg bottom-5 fixed hover:opacity-90 items-center left-5 transition-opacity z-[9999]"
+        className="flex justify-center p-3 rounded-full shadow-lg fixed hover:opacity-90 items-center left-5 transition-opacity z-[1001]"
         style={{ 
           backgroundColor: mainColor.secondary || '#85715e',
           width: '56px',
           height: '56px',
           border: 'none',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          bottom: 'calc(4rem + 20px)' // 4rem (64px) là chiều cao của nav mobile + 20px spacing
         }}
       >
         <ChatBubbleIcon sx={{ color: 'white', fontSize: 24 }} />
@@ -290,8 +291,13 @@ export default function RealTimeChat() {
       
       {/* Chat window */}
       {isOpen && (
-        <div className="flex flex-col bg-white border rounded-lg shadow-lg w-[600px] bottom-20 fixed left-5 z-[9999]"
-             style={{ maxHeight: 'calc(100vh - 160px)' }}>
+        <div 
+          className="flex flex-col bg-white border rounded-lg shadow-lg w-[600px] fixed left-5 z-[1001]"
+          style={{ 
+            bottom: 'calc(4rem + 40px)', // 4rem (64px) là chiều cao của nav mobile + 40px spacing
+            maxHeight: 'calc(100vh - 160px - 4rem)' // Trừ thêm chiều cao của nav mobile
+          }}
+        >
           {/* Header */}
           <div className="flex border-b justify-between p-3 items-center" 
                style={{ 

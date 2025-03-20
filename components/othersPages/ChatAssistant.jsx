@@ -196,7 +196,10 @@ export default function ChatAssistant() {
   };
 
   return isOpen ? (
-    <div className="bg-white border p-4 rounded-lg shadow-lg w-[500px] bottom-20 fixed right-5 z-50">
+    <div className="bg-white border p-4 rounded-lg shadow-lg w-[500px] fixed right-5 z-[1001]" 
+      style={{
+        bottom: 'calc(4rem + 40px)' // 4rem (64px) là chiều cao của nav mobile + 40px spacing
+      }}>
       <div className="flex border-b justify-between items-center pb-2">
         <div className="flex gap-2 items-center">
           <SmartToyIcon sx={{ color: '#3b82f6' }} />
@@ -252,8 +255,11 @@ export default function ChatAssistant() {
     </div>
   ) : (
     <button
-      className="flex bg-blue-600 h-14 justify-center rounded-full shadow-lg text-white w-14 bottom-5 fixed hover:bg-blue-700 items-center right-5 transition-colors z-50"
+      className="flex bg-blue-600 h-14 justify-center rounded-full shadow-lg text-white w-14 fixed hover:bg-blue-700 items-center right-5 transition-colors z-[1001]"
       onClick={() => setIsOpen(true)}
+      style={{
+        bottom: 'calc(4rem + 20px)' // 4rem (64px) là chiều cao của nav mobile + 20px spacing
+      }}
     >
       <SmartToyIcon sx={{ fontSize: 28 }} />
     </button>

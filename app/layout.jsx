@@ -14,7 +14,7 @@ import Compare from "@/components/modals/Compare";
 import ShopCart from "@/components/modals/ShopCart";
 // Modal imports
 import QuickView from "@/components/modals/QuickView";
-
+import MobileMenu from "@/components/modals/MobileMenu";
 // Import styles
 import "../public/scss/main.scss";
 import "photoswipe/dist/photoswipe.css";
@@ -185,6 +185,7 @@ export default function RootLayout({ children }) {
                   <Compare />
                   <QuickView />
                   <ShopCart />
+                  <MobileMenu />
                   {/* Chat components */}
                   <ChatAssistant />
                   <RealTimeChat />

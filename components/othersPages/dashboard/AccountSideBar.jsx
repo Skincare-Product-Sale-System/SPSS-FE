@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Box, List, ListItem, ListItemButton, ListItemText, Divider, useTheme } from '@mui/material';
+import { Box, List, ListItem, ListItemButton, ListItemText, Divider, useTheme, IconButton } from '@mui/material';
 import { useThemeColors } from "@/context/ThemeContext";
-import { ExitToApp as LogoutIcon } from '@mui/icons-material';
+import { ExitToApp as LogoutIcon, Close as CloseIcon } from '@mui/icons-material';
 
 const accountLinks = [
   { href: "/my-account", label: "Tài Khoản" },
@@ -13,7 +13,7 @@ const accountLinks = [
   { href: "/change-password", label: "Đổi Mật Khẩu" },
 ];
 
-export default function AccountSideBar() {
+export default function AccountSideBar({ onClose }) {
   const pathname = usePathname();
   const mainColor = useThemeColors();
   const theme = useTheme();
@@ -28,8 +28,32 @@ export default function AccountSideBar() {
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
         overflow: 'hidden',
         border: `1px solid ${mainColor.lightGrey}`,
+        position: 'relative',
       }}
     >
+      {/* Nút đóng trên mobile */}
+      {onClose && (
+        <Box 
+          sx={{ 
+            display: { xs: 'flex', lg: 'none' },
+            justifyContent: 'flex-end',
+            p: 1,
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            zIndex: 10
+          }}
+        >
+          <IconButton 
+            onClick={onClose}
+            size="small"
+            sx={{ color: mainColor.text }}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      )}
+
       <List
         sx={{
           padding: 0,
@@ -43,7 +67,7 @@ export default function AccountSideBar() {
           },
           '& .MuiListItemText-primary': {
             fontWeight: 500,
-            fontSize: '0.95rem',
+            fontSize: { xs: '0.9rem', sm: '0.95rem' },
             color: mainColor.text,
             fontFamily: '"Roboto", sans-serif',
           },
@@ -55,6 +79,7 @@ export default function AccountSideBar() {
               component={Link}
               href={link.href}
               selected={pathname === link.href}
+              onClick={onClose} // Đóng drawer khi click vào menu item trên mobile
               sx={{
                 bgcolor: pathname === link.href ? mainColor.light : 'transparent',
                 borderLeft: pathname === link.href ? `4px solid ${mainColor.primary}` : '4px solid transparent',
@@ -80,6 +105,7 @@ export default function AccountSideBar() {
           <ListItemButton
             component={Link}
             href="/login"
+            onClick={onClose} // Đóng drawer khi đăng xuất trên mobile
             sx={{
               color: theme.palette.error.main,
               '&:hover': {
