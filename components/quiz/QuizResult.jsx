@@ -170,7 +170,7 @@ export default function QuizResult({ quiz, answers, onClose }) {
                           </Typography>
                           
                           <Link 
-                            href={`/shop?categoryId=${step.category.id}&skinTypeId=${quizResult.skinTypeId}`}
+                            href={`/products?categoryId=${step.category.id}&skinTypeId=${quizResult.skinTypeId}`}
                             passHref
                           >
                             <Chip 
@@ -195,7 +195,7 @@ export default function QuizResult({ quiz, answers, onClose }) {
                         
                         <Button
                           component={Link}
-                          href={`/shop?categoryId=${step.category.id}&skinTypeId=${quizResult.skinTypeId}`}
+                          href={`/products?categoryId=${step.category.id}&skinTypeId=${quizResult.skinTypeId}`}
                           variant="outlined"
                           size="small"
                           endIcon={<ArrowForwardIcon />}
