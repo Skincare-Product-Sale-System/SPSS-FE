@@ -4,8 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useContextElement } from "@/context/Context";
 import { allProducts } from "@/data/products";
-import request from "@/utlis/axios";
-import { defaultProductImage } from "@/utlis/default";
+import request from "@/utils/axios";
+import { defaultProductImage } from "@/utils/default";
 import { formatPrice } from "@/utils/priceFormatter";
 
 export default function Compare() {
@@ -28,7 +28,7 @@ export default function Compare() {
   }, [compareItem]);
 
   return (
-    <div className="offcanvas offcanvas-bottom canvas-compare" id="compare">
+    <div className="canvas-compare offcanvas offcanvas-bottom" id="compare">
       <div className="canvas-wrapper">
         <header className="canvas-header">
           <div className="close-popup">
@@ -60,7 +60,7 @@ export default function Compare() {
                           </div>
                           <Link href={`/product-detail/${elm?.id}`}>
                             <Image
-                              className="radius-3 aspect-square h-[120px]"
+                              className="h-[120px] aspect-square radius-3"
                               alt="image"
                               src={elm?.thumbnail || defaultProductImage}
                               style={{ objectFit: "cover" }}
@@ -68,7 +68,7 @@ export default function Compare() {
                               height={1005}
                             />
                           </Link>
-                          <div className="line-clamp-1 text-sm text-start">
+                          <div className="text-sm text-start line-clamp-1">
                             {elm?.name}
                           </div>
                           <div className="text-start">
@@ -91,12 +91,12 @@ export default function Compare() {
                     <div className="tf-compare-buttons-wrap">
                       <Link
                         href={`/compare`}
-                        className="tf-btn radius-3 btn-fill justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
+                        className="flex-grow-1 btn-fill justify-content-center animate-hover-btn fs-14 fw-6 radius-3 tf-btn"
                       >
                         So Sánh
                       </Link>
                       <div
-                        className="tf-compapre-button-clear-all link"
+                        className="link tf-compapre-button-clear-all"
                         onClick={() => setCompareItem([])}
                       >
                         Xóa Tất Cả

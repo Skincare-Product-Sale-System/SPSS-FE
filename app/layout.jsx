@@ -10,27 +10,10 @@ import NextTopLoader from 'nextjs-toploader';
 import ScrollTop from "@/components/common/ScrollTop";
 import { Toaster } from "react-hot-toast";
 import { ClientProvider } from '@/providers/ClientProvider';
-
-// Modal imports
-import HomesModal from "@/components/modals/HomesModal";
-import QuickView from "@/components/modals/QuickView";
-import ProductSidebar from "@/components/modals/ProductSidebar";
-import QuickAdd from "@/components/modals/QuickAdd";
 import Compare from "@/components/modals/Compare";
 import ShopCart from "@/components/modals/ShopCart";
-import AskQuestion from "@/components/modals/AskQuestion";
-import BlogSidebar from "@/components/modals/BlogSidebar";
-import ColorCompare from "@/components/modals/ColorCompare";
-import DeliveryReturn from "@/components/modals/DeliveryReturn";
-import FindSize from "@/components/modals/FindSize";
-import Login from "@/components/modals/Login";
-import MobileMenu from "@/components/modals/MobileMenu";
-import Register from "@/components/modals/Register";
-import ResetPass from "@/components/modals/ResetPass";
-import SearchModal from "@/components/modals/SearchModal";
-import ToolbarBottom from "@/components/modals/ToolbarBottom";
-import ToolbarShop from "@/components/modals/ToolbarShop";
-import ShareModal from "@/components/modals/ShareModal";
+// Modal imports
+import QuickView from "@/components/modals/QuickView";
 
 // Import styles
 import "../public/scss/main.scss";
@@ -145,7 +128,7 @@ export default function RootLayout({ children }) {
   // Initialize WOW.js
   useEffect(() => {
     try {
-      const WOW = require("@/utlis/wow");
+      const WOW = require("@/utils/wow");
       const wow = new WOW.default({
         mobile: false,
         live: false,
@@ -198,28 +181,10 @@ export default function RootLayout({ children }) {
                 <ClientProvider>
                   <NextTopLoader />
                   <div id="wrapper">{children}</div>
-                  
                   {/* Modals */}
-                  <HomesModal />
-                  <QuickView />
-                  {/* <QuickAdd /> */}
-                  <ProductSidebar />
                   <Compare />
+                  <QuickView />
                   <ShopCart />
-                  <AskQuestion />
-                  <BlogSidebar />
-                  <ColorCompare />
-                  <DeliveryReturn />
-                  <FindSize />
-                  <Login />
-                  <MobileMenu />
-                  <Register />
-                  <ResetPass />
-                  <SearchModal />
-                  <ToolbarBottom />
-                  <ToolbarShop />
-                  <ShareModal />
-                  
                   {/* Chat components */}
                   <ChatAssistant />
                   <RealTimeChat />

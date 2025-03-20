@@ -1,15 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Nav from "./Nav";
-import Image from "next/image";
 import Link from "next/link";
-import CartLength from "../common/CartLength";
-import WishlistLength from "../common/WishlistLength";
 import { MdLogout } from "react-icons/md";
-import toast from "react-hot-toast";
 import useAuthStore from "@/context/authStore";
 import useQueryStore from "@/context/queryStore";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 
 export default function Header2({
   textClass,
@@ -38,9 +34,9 @@ export default function Header2({
       id="header"
       className={`header-default ${uppercase ? "header-uppercase" : ""}`}
     >
-      <div className="px_15 lg-px_40">
-        <div className="row wrapper-header align-items-center">
-          <div className="col-md-4 col-3 tf-lg-hidden">
+      <div className="lg-px_40 px_15">
+        <div className="row align-items-center wrapper-header">
+          <div className="col-3 col-md-4 tf-lg-hidden">
             <a
               href="#mobileMenu"
               data-bs-toggle="offcanvas"
@@ -60,7 +56,7 @@ export default function Header2({
               </svg>
             </a>
           </div>
-          <div className="col-xl-3 col-md-4 col-6">
+          <div className="col-6 col-md-4 col-xl-3">
             <Link href={`/`} className="d-flex align-items-center gap-2">
               <img
                 alt="image"
@@ -92,8 +88,8 @@ export default function Header2({
             </Link>
           </div>
           <div className="col-xl-6 tf-md-hidden">
-            <nav className="box-navigation text-center">
-              <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
+            <nav className="text-center box-navigation">
+              <ul className="d-flex align-items-center justify-content-center box-nav-ul gap-30">
                 <Nav isArrow={isArrow} Linkfs={Linkfs} />
                 {/* <li className={`menu-item`}>
                   <a
@@ -106,8 +102,8 @@ export default function Header2({
               </ul>
             </nav>
           </div>
-          <div className="col-xl-3 col-md-4 col-3">
-            <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
+          <div className="col-3 col-md-4 col-xl-3">
+            <ul className="d-flex nav-icon align-items-center justify-content-end gap-20">
               {/* <li className="nav-search">
                 <a
                   href="#canvasSearch"

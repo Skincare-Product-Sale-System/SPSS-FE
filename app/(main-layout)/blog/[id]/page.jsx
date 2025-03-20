@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Box, Typography, Container, Grid, Paper, Divider } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import RelatedBlogs from "@/components/blogs/RelatedBlogs";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 
 export default function Page() {
   const theme = useTheme();
@@ -37,7 +37,7 @@ export default function Page() {
     return (
       <Container maxWidth="lg" sx={{ py: 8, textAlign: 'center' }}>
         <Typography variant="h5">Blog not found</Typography>
-        <Link href="/blog" className="tf-btn btn-fill mt-4">
+        <Link href="/blog" className="btn-fill mt-4 tf-btn">
           Return to Blogs
         </Link>
       </Container>

@@ -1,7 +1,5 @@
-import { products1 } from "@/data/products";
 import React from "react";
 import { ProductCard } from "../shopCards/ProductCard";
-import Productcard23 from "../shopCards/Productcard23";
 import { useThemeColors } from "@/context/ThemeContext";
 
 export default function ProductGrid({
@@ -45,7 +43,6 @@ export default function ProductGrid({
                 }
               }}
             >
-              <Productcard23 product={elm} />
             </div>
           ))}
         </div>

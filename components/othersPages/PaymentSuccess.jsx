@@ -9,18 +9,18 @@ export default function PaymentConfirmation() {
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-lg-6">
-            <div className="tf-page-cart-checkout flex flex-col items-center justify-center">
-              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="icon-check text-3xl text-blue-600"></span>
+            <div className="flex flex-col justify-center items-center tf-page-cart-checkout">
+              <div className="flex bg-blue-100 h-20 justify-center rounded-full w-20 items-center mb-4 mx-auto">
+                <span className="text-3xl text-blue-600 icon-check"></span>
               </div>
-              <div className="font-bold text-xl !text-blue-500">
-                Your order was successful
+              <div className="text-xl !text-blue-500 font-bold" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                Đặt hàng thành công
               </div>
-              <div className="font-semibold text-2xl mb-2">
-                Thanks for your purchase!
+              <div className="text-2xl font-semibold mb-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                Cảm ơn bạn đã mua hàng!
               </div>
-              <div className="text-lg">
-                Your order is processing
+              <div className="text-lg" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                Đơn hàng của bạn đang được xử lý
               </div>
               {/* <div className="d-flex align-items-center justify-content-between mb_15">
                 <div className="fs-18">Date</div>
@@ -53,15 +53,17 @@ export default function PaymentConfirmation() {
 
               <a
                 href={`/my-account-orders-details?id=${orderId}`}
-                className="mt-2 tf-btn w-100 btn-fill animate-hover-btn radius-3 justify-content-center"
+                className="btn-fill justify-content-center w-100 animate-hover-btn mt-2 radius-3 tf-btn"
+                style={{ fontFamily: '"Roboto", sans-serif' }}
               >
-                <span>Track your order</span>
+                <span>Theo dõi đơn hàng</span>
               </a>
               <Link
                 href={`/products`}
-                className="mt-2 tf-btn w-100 btn-outline animate-hover-btn rounded-0 justify-content-center"
+                className="btn-outline justify-content-center rounded-0 w-100 animate-hover-btn mt-2 tf-btn"
+                style={{ fontFamily: '"Roboto", sans-serif' }}
               >
-                <span>Continue Shopping</span>
+                <span>Tiếp tục mua sắm</span>
               </Link>
             </div>
           </div>

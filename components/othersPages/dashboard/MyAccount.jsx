@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import useAuthStore from "@/context/authStore";
 import { useTheme } from "@mui/material/styles";
 import { 
@@ -159,19 +159,19 @@ export default function MyAccount() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
+      <div className="flex justify-center items-center py-8">
         <CircularProgress sx={{ color: theme.palette.primary.main }} />
       </div>
     );
   }
 
   return (
-    <div className="my-account-content account-dashboard bg-white p-6 rounded-lg shadow-sm border" 
+    <div className="bg-white border p-6 rounded-lg shadow-sm account-dashboard my-account-content" 
          style={{ borderColor: theme.palette.divider }}>
       
       {/* User Profile Section - Highlighted */}
-      <div className="p-6 mb-8 rounded-lg" style={{ backgroundColor: theme.palette.primary.light + '20' }}>
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+      <div className="p-6 rounded-lg mb-8" style={{ backgroundColor: theme.palette.primary.light + '20' }}>
+        <div className="flex flex-col gap-6 items-center md:flex-row md:items-start">
           {!isEditing ? (
             <div className="relative">
               <Avatar 
@@ -196,7 +196,7 @@ export default function MyAccount() {
                   filter: 'brightness(0.8)',
                 }}
               />
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="flex justify-center absolute inset-0 items-center">
                 <input
                   accept="image/*"
                   style={{ display: 'none' }}
@@ -222,7 +222,7 @@ export default function MyAccount() {
               {formData.avatarUrl && (
                 <button
                   onClick={handleDeleteAvatar}
-                  className="absolute -bottom-2 -right-2 p-1.5 rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
+                  className="bg-red-500 p-1.5 rounded-full text-white -bottom-2 -right-2 absolute hover:bg-red-600 transition-colors"
                   style={{
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                   }}
@@ -241,11 +241,11 @@ export default function MyAccount() {
               {isEditing ? "Chỉnh Sửa Hồ Sơ" : `${userData?.surName} ${userData?.lastName}`}
             </h3>
             
-            <div className="space-y-3 mb-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="mb-4 space-y-3">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {!isEditing ? (
                   <>
-                    <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
+                    <div className="border p-3 rounded-md" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                       <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
                         Họ
                       </p>
@@ -254,7 +254,7 @@ export default function MyAccount() {
                       </p>
                     </div>
                     
-                    <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
+                    <div className="border p-3 rounded-md" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                       <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
                         Tên
                       </p>
@@ -308,7 +308,7 @@ export default function MyAccount() {
               
               {!isEditing ? (
                 <>
-                  <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
+                  <div className="border p-3 rounded-md" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                     <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
                       Tên đăng nhập
                     </p>
@@ -317,7 +317,7 @@ export default function MyAccount() {
                     </p>
                   </div>
                   
-                  <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
+                  <div className="border p-3 rounded-md" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                     <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
                       Địa chỉ email
                     </p>
@@ -326,7 +326,7 @@ export default function MyAccount() {
                     </p>
                   </div>
                   
-                  <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
+                  <div className="border p-3 rounded-md" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                     <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
                       Số điện thoại
                     </p>
@@ -335,7 +335,7 @@ export default function MyAccount() {
                     </p>
                   </div>
                   
-                  <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
+                  <div className="border p-3 rounded-md" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                     <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
                       Thành viên từ
                     </p>
@@ -409,7 +409,7 @@ export default function MyAccount() {
             {!isEditing ? (
               <button 
                 onClick={() => setIsEditing(true)}
-                className="inline-block px-4 py-2 rounded-md text-white text-sm font-medium"
+                className="rounded-md text-sm text-white font-medium inline-block px-4 py-2"
                 style={{ backgroundColor: theme.palette.primary.main }}>
                 Chỉnh Sửa Hồ Sơ
               </button>
@@ -418,14 +418,14 @@ export default function MyAccount() {
                 <button 
                   onClick={handleSave}
                   disabled={saving}
-                  className="inline-block px-4 py-2 rounded-md text-white text-sm font-medium"
+                  className="rounded-md text-sm text-white font-medium inline-block px-4 py-2"
                   style={{ backgroundColor: theme.palette.primary.main }}>
                   {saving ? 'Saving...' : 'Lưu thay đổi'}
                 </button>
                 
                 <button 
                   onClick={() => setIsEditing(false)}
-                  className="inline-block px-4 py-2 rounded-md text-sm font-medium border"
+                  className="border rounded-md text-sm font-medium inline-block px-4 py-2"
                   style={{ 
                     color: theme.palette.text.primary,
                     borderColor: theme.palette.divider
@@ -440,13 +440,13 @@ export default function MyAccount() {
       
       {/* Skin Type Section */}
       {userData?.skinType ? (
-        <div className="p-5 rounded-lg mb-6 border" style={{ borderColor: theme.palette.primary.main }}>
+        <div className="border p-5 rounded-lg mb-6" style={{ borderColor: theme.palette.primary.main }}>
           <h5 className="text-lg font-medium mb-3" style={{ color: theme.palette.primary.main }}>
             Loại da của bạn
           </h5>
           <div className="flex items-center">
             <span 
-              className="inline-block px-4 py-2 rounded-full text-white font-medium mr-3"
+              className="rounded-full text-white font-medium inline-block mr-3 px-4 py-2"
               style={{ backgroundColor: theme.palette.primary.main }}
             >
               {userData.skinType || "Specific Skin Type"}
@@ -460,7 +460,7 @@ export default function MyAccount() {
           </div>
         </div>
       ) : (
-        <div className="p-5 rounded-lg mb-6 border border-dashed" style={{ borderColor: theme.palette.primary.main }}>
+        <div className="border border-dashed p-5 rounded-lg mb-6" style={{ borderColor: theme.palette.primary.main }}>
           <h5 className="text-lg font-medium mb-2" style={{ color: theme.palette.primary.main }}>
             Khám phá loại da của bạn
           </h5>
@@ -468,7 +468,7 @@ export default function MyAccount() {
             Làm khảo sát nhanh để nhận được đề xuất sản phẩm phù hợp với loại da của bạn.
           </p>
           <Link href="/quiz" 
-                className="inline-block px-4 py-2 rounded-md text-white text-sm"
+                className="rounded-md text-sm text-white inline-block px-4 py-2"
                 style={{ backgroundColor: theme.palette.primary.main }}>
             Làm Khảo Sát Da
           </Link>
@@ -480,8 +480,8 @@ export default function MyAccount() {
         <h5 className="text-lg font-medium mb-3" style={{ color: theme.palette.text.primary }}>
           Quản Lý Tài Khoản
         </h5>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Link href="/my-account-orders" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <Link href="/my-account-orders" className="flex flex-col border p-4 rounded-lg text-center hover:shadow-md items-center transition-all"
                 style={{ borderColor: theme.palette.divider }}>
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <ShoppingBagOutlinedIcon fontSize="inherit" />
@@ -489,7 +489,7 @@ export default function MyAccount() {
             <span className="font-medium" style={{ color: theme.palette.text.primary }}>Đơn Hàng Của Tôi</span>
           </Link>
           
-          <Link href="/my-account-address" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
+          <Link href="/my-account-address" className="flex flex-col border p-4 rounded-lg text-center hover:shadow-md items-center transition-all"
                 style={{ borderColor: theme.palette.divider }}>
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <HomeOutlinedIcon fontSize="inherit" />
@@ -497,7 +497,7 @@ export default function MyAccount() {
             <span className="font-medium" style={{ color: theme.palette.text.primary }}>Sổ Địa Chỉ</span>
           </Link>
           
-          <Link href="/my-reviews" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
+          <Link href="/my-reviews" className="flex flex-col border p-4 rounded-lg text-center hover:shadow-md items-center transition-all"
                 style={{ borderColor: theme.palette.divider }}>
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <StarOutlinedIcon fontSize="inherit" />
@@ -505,7 +505,7 @@ export default function MyAccount() {
             <span className="font-medium" style={{ color: theme.palette.text.primary }}>Đánh Giá Của Tôi</span>
           </Link>
           
-          <Link href="/change-password" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
+          <Link href="/change-password" className="flex flex-col border p-4 rounded-lg text-center hover:shadow-md items-center transition-all"
                 style={{ borderColor: theme.palette.divider }}>
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <LockOutlinedIcon fontSize="inherit" />

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, Box, Typography, Alert, CircularProgress } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import toast from "react-hot-toast";
 
 // Password validation schema
@@ -186,7 +186,7 @@ export default function ChangePassword() {
             fontWeight: 500,
             boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
           }}
-          className="tf-btn w-full md:w-auto radius-3 btn-fill animate-hover-btn justify-content-center"
+          className="btn-fill justify-content-center w-full animate-hover-btn md:w-auto radius-3 tf-btn"
         >
           {loading ? (
             <CircularProgress size={24} color="inherit" />

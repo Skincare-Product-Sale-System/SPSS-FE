@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { ProductCard } from "../shopCards/ProductCard";
 import { Navigation, Pagination } from "swiper/modules";
 import { useEffect, useState } from "react";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import { useQueries } from "@tanstack/react-query";
 
 export default function Products() {
@@ -27,9 +27,9 @@ export default function Products() {
     <>
       <div className="container">
         <div className="flat-title">
-          <span className="title">People Also Bought</span>
+          <span className="title" style={{ fontFamily: 'Playfair Display, serif' }}>Sản Phẩm Khác Mua Cùng</span>
         </div>
-        <div className="hover-sw-nav hover-sw-2">
+        <div className="hover-sw-2 hover-sw-nav">
           <Swiper
             dir="ltr"
             className="swiper tf-sw-product-sell wrap-sw-over"
@@ -60,13 +60,13 @@ export default function Products() {
               </SwiperSlide>
             ))}
           </Swiper>
-          <div className="nav-sw nav-next-slider nav-next-product box-icon w_46 round snbp3070">
+          <div className="nav-next-product nav-next-slider nav-sw box-icon round snbp3070 w_46">
             <span className="icon icon-arrow-left" />
           </div>
-          <div className="nav-sw nav-prev-slider nav-prev-product box-icon w_46 round snbn3070">
+          <div className="nav-prev-product nav-prev-slider nav-sw box-icon round snbn3070 w_46">
             <span className="icon icon-arrow-right" />
           </div>
-          <div className="sw-dots style-2 sw-pagination-product justify-content-center spd307" />
+          <div className="justify-content-center spd307 style-2 sw-dots sw-pagination-product" />
         </div>
       </div>
     </>

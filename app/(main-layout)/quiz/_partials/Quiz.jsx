@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import QuizCard from "@/components/quiz/QuizCard";
 import QuizModal from "@/components/quiz/QuizModal";
 import QuizResult from "@/components/quiz/QuizResult";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import { useTheme } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
 

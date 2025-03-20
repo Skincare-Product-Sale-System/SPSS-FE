@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import Link from "next/link";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
@@ -11,7 +11,7 @@ export default function Register() {
 
   return (
     <div
-      className="modal modalCentered fade form-sign-in modal-part-content"
+      className="form-sign-in modal modal-part-content modalCentered fade"
       id="register"
     >
       <div className="modal-dialog modal-dialog-centered">
@@ -56,7 +56,7 @@ export default function Register() {
                   });
               }}
             >
-              <div className="tf-field style-1">
+              <div className="style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -68,7 +68,7 @@ export default function Register() {
                   Username
                 </label>
               </div>
-              <div className="tf-field style-1">
+              <div className="style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -80,7 +80,7 @@ export default function Register() {
                   Sur name
                 </label>
               </div>
-              <div className="tf-field style-1">
+              <div className="style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -92,7 +92,7 @@ export default function Register() {
                   Last name
                 </label>
               </div>
-              <div className="tf-field style-1">
+              <div className="style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -106,7 +106,7 @@ export default function Register() {
                 </label>
               </div>
 
-              <div className="tf-field style-1">
+              <div className="style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -118,7 +118,7 @@ export default function Register() {
                   Phone *
                 </label>
               </div>
-              <div className="tf-field style-1">
+              <div className="style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -131,7 +131,7 @@ export default function Register() {
                   Password *
                 </label>
               </div>
-              <div className="tf-field style-1">
+              <div className="style-1 tf-field">
                 <input
                   className="tf-field-input tf-input"
                   placeholder=" "
@@ -148,7 +148,7 @@ export default function Register() {
                 <div className="w-100">
                   <button
                     // href={`/register`}
-                    className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                    className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
                   >
                     <span>Register</span>
                   </button>
@@ -158,7 +158,7 @@ export default function Register() {
                     id="login"
                     href="#login"
                     data-bs-toggle="modal"
-                    className="btn-link fw-6 w-100 link"
+                    className="btn-link w-100 fw-6 link"
                   >
                     Already have an account? Log in here
                     <i className="icon icon-arrow1-top-left" />

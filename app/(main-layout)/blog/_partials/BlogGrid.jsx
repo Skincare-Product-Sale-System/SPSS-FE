@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { blogPosts } from "@/data/blogs";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 export default function BlogGrid() {
   const [blogs, setBlogs] = useState([]);
 
@@ -22,9 +22,9 @@ export default function BlogGrid() {
         {/* Featured Banner Blog */}
         {latestBlog && (
           <div className="mb-20 relative">
-            <div className="relative w-full h-[500px]">
+            <div className="h-[500px] w-full relative">
               <Image
-                className="w-full h-full object-cover rounded-lg"
+                className="h-full rounded-lg w-full object-cover"
                 src={latestBlog?.thumbnail}
                 alt={latestBlog?.title}
                 width={1200}
@@ -33,15 +33,15 @@ export default function BlogGrid() {
               />
               
               {/* White box on the left side */}
-              <div className="absolute left-16 top-1/2 -translate-y-1/2 max-w-md">
-                <div className="bg-white rounded-lg shadow-xl p-8">
+              <div className="-translate-y-1/2 absolute left-16 max-w-md top-1/2">
+                <div className="bg-white p-8 rounded-lg shadow-xl">
                   <Link href={`/blog/${latestBlog?.id}`}>
-                    <h2 className="text-3xl font-bold mb-5 text-gray-900 hover:text-primary transition-colors">
+                    <h2 className="text-3xl text-gray-900 font-bold hover:text-primary mb-5 transition-colors">
                       {latestBlog?.title}
                     </h2>
                   </Link>
                   <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
+                    <div className="h-10 rounded-full w-10 mr-3 overflow-hidden">
                       <Image 
                         src={latestBlog?.authorAvatar || "/assets/images/default-avatar.png"} 
                         alt={latestBlog?.author || "Admin"}
@@ -49,9 +49,9 @@ export default function BlogGrid() {
                         height={40}
                       />
                     </div>
-                    <div className="flex items-center text-gray-600">
+                    <div className="flex text-gray-600 items-center">
                       <span className="font-medium">{latestBlog?.author || "Admin"}</span>
-                      <span className="mx-2 text-gray-400">•</span>
+                      <span className="text-gray-400 mx-2">•</span>
                       <span>
                         {latestBlog?.lastUpdatedTime ? new Date(latestBlog.lastUpdatedTime).toLocaleDateString('en-US', {
                           year: 'numeric',
@@ -68,16 +68,16 @@ export default function BlogGrid() {
         )}
 
         {/* Latest Posts Heading */}
-        <h2 className="text-2xl font-bold mb-8 border-b border-gray-200 pb-3">Latest Post</h2>
+        <h2 className="border-b border-gray-200 text-2xl font-bold mb-8 pb-3">Latest Post</h2>
 
         {/* Blog Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {otherBlogs?.map((blog, index) => (
-            <div key={blog.id || index} className="rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+            <div key={blog.id || index} className="rounded-lg shadow-sm duration-300 hover:shadow-md overflow-hidden transition-all">
               <Link href={`/blog/${blog?.id}`} className="block">
-                <div className="relative h-56">
+                <div className="h-56 relative">
                   <Image
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                     src={blog?.thumbnail}
                     alt={blog?.title}
                     width={400}
@@ -86,7 +86,7 @@ export default function BlogGrid() {
                   />
                   {/* Optional category badge */}
                   {blog?.category && (
-                    <span className="absolute top-3 left-3 bg-primary text-white text-xs rounded px-2 py-1">
+                    <span className="bg-primary rounded text-white text-xs absolute left-3 px-2 py-1 top-3">
                       {blog.category}
                     </span>
                   )}
@@ -94,13 +94,13 @@ export default function BlogGrid() {
               </Link>
               <div className="p-4">
                 <Link href={`/blog/${blog?.id}`} className="block">
-                  <h3 className="text-lg font-bold mb-2 hover:text-primary transition-colors line-clamp-2">
+                  <h3 className="text-lg font-bold hover:text-primary line-clamp-2 mb-2 transition-colors">
                     {blog?.title}
                   </h3>
                 </Link>
-                <div className="flex items-center mb-3 text-sm text-gray-500">
+                <div className="flex text-gray-500 text-sm items-center mb-3">
                   <div className="flex items-center">
-                    <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
+                    <div className="h-6 rounded-full w-6 mr-2 overflow-hidden">
                       <Image 
                         src={blog?.authorAvatar || "/assets/images/default-avatar.png"} 
                         alt={blog?.author || "Admin"}
@@ -120,7 +120,7 @@ export default function BlogGrid() {
                   </span>
                 </div>
                 {blog?.blogContent && (
-                  <p className="text-gray-600 mb-3 line-clamp-2">
+                  <p className="text-gray-600 line-clamp-2 mb-3">
                     {blog?.blogContent}
                   </p>
                 )}

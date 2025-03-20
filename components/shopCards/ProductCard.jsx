@@ -3,15 +3,13 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useContextElement } from "@/context/Context";
-import CountdownComponent from "../common/Countdown";
-import { defaultProductImage } from "@/utlis/default";
+import { defaultProductImage } from "@/utils/default";
 import { formatPrice } from "@/utils/priceFormatter";
 
 export const ProductCard = ({ product }) => {
   const [currentImage, setCurrentImage] = useState(product.imgSrc);
   const { setQuickViewItem } = useContextElement();
   const {
-    setQuickAddItem,
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
@@ -25,7 +23,7 @@ export const ProductCard = ({ product }) => {
       <div className="card-product-wrapper">
         <Link href={`/product-detail/${product.id}`} className="product-img">
           <Image
-            className="lazyload img-product"
+            className="img-product lazyload"
             data-src={product.thumbnail}
             src={product.thumbnail}
             alt="image-product"
@@ -39,7 +37,7 @@ export const ProductCard = ({ product }) => {
             }}
           />
           <Image
-            className="lazyload img-hover"
+            className="img-hover lazyload"
             data-src={product.thumbnail}
             src={product.thumbnail}
             alt="image-product"
@@ -60,21 +58,12 @@ export const ProductCard = ({ product }) => {
         ) : (
           <>
             <div className="list-product-btn">
-              {/* <a
-                href="#quick_add"
-                onClick={() => setQuickAddItem(product.id)}
-                data-bs-toggle="modal"
-                className="box-icon bg_white quick-add tf-btn-loading"
-              >
-                <span className="icon icon-bag" />
-                <span className="tooltip">Quick Add</span>
-              </a> */}
               <a
                 href="#compare"
                 data-bs-toggle="offcanvas"
                 aria-controls="offcanvasLeft"
                 onClick={() => addToCompareItem(product.id)}
-                className="box-icon bg_white compare btn-icon-action"
+                className="btn-icon-action bg_white box-icon compare"
               >
                 <span
                   className={`icon icon-compare ${
@@ -93,78 +82,33 @@ export const ProductCard = ({ product }) => {
                 href="#quick_view"
                 onClick={() => setQuickViewItem(product)}
                 data-bs-toggle="modal"
-                className="box-icon bg_white quickview tf-btn-loading"
+                className="bg_white box-icon quickview tf-btn-loading"
               >
                 <span className="icon icon-view" />
                 <span className="tooltip">Quick View</span>
               </a>
             </div>
-            {product.countdown && (
-              <div className="countdown-box">
-                <div className="js-countdown">
-                  <CountdownComponent />
-                </div>
-              </div>
-            )}
-            {product.sizes && (
-              <div className="size-list">
-                {product.sizes.map((size) => (
-                  <span key={size}>{size}</span>
-                ))}
-              </div>
-            )}
           </>
         )}
       </div>
       <div className="card-product-info">
-        <Link href={`/product-detail/${product.id}`} className="title link">
+        <Link href={`/product-detail/${product.id}`} className="link title">
           {product.name}
         </Link>
-        <div className="text-sm text-gray-500 line-clamp-1">
+        <div className="text-gray-500 text-sm line-clamp-1">
           {product.description}
         </div>
-        <span className="price" style={{ color: "#ff0000" }}>
-          {formatPrice(product.price)}
-          <span className="pr-8 compare-at-price strikethrough">
-            {product.marketPrice && formatPrice(product.marketPrice)}
+        <div className="flex justify-between items-center">
+          <span className="price" style={{ color: "#ff0000" }}>
+            {formatPrice(product.price)}
+            <span className="compare-at-price pr-8 strikethrough">
+              {product.marketPrice && formatPrice(product.marketPrice)}
+            </span>
           </span>
-        </span>
-
-        <div className="rating">
-          <i className="icon-start" />
-          <i className="icon-start" />
-          <i className="icon-start" />
-          <i className="icon-start" />
-          <i className="icon-start" />
+          <span className="text-gray-500 text-xs" style={{ fontFamily: 'Roboto, sans-serif' }}>
+            Đã bán: {product.soldCount?.toLocaleString('vi-VN') || 0}
+          </span>
         </div>
-        {product.colors && (
-          <ul className="list-color-product">
-            {product.colors.map((color, i) => (
-              <li
-                className={`list-color-item color-swatch ${
-                  currentImage == color.imgSrc ? "active" : ""
-                } `}
-                key={i}
-                onMouseOver={() => setCurrentImage(color.imgSrc)}
-              >
-                <span className="tooltip">{color.name}</span>
-                <span className={`swatch-value ${color.colorClass}`} />
-                <Image
-                  className="lazyload"
-                  data-src={color.imgSrc}
-                  src={color.imgSrc}
-                  alt="image-product"
-                  width={720}
-                  height={1005}
-                  style={{
-                    aspectRatio: "1/1",
-                    objectFit: "cover",
-                  }}
-                />
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </div>
   );

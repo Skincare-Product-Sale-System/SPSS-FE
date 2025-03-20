@@ -4,9 +4,14 @@ import * as signalR from "@microsoft/signalr";
 import { useThemeColors } from "@/context/ThemeContext";
 import { CircularProgress, IconButton } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
+import CloseIcon from '@mui/icons-material/Close';
+import PersonIcon from '@mui/icons-material/Person';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import InfoIcon from '@mui/icons-material/Info';
+import SendIcon from '@mui/icons-material/Send';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import useAuthStore from "@/context/authStore";
-import ForumIcon from '@mui/icons-material/Forum';
-import * as LocalStorage from '@/utils/localStorage'; // Import utility
+import * as LocalStorage from '@/utils/localStorage';
 
 const MESSAGE_TYPES = {
   USER: 'user',      // Tin nhắn từ khách hàng
@@ -20,6 +25,7 @@ export default function RealTimeChat() {
     {
       sender: "system",
       content: "Kết nối với nhân viên hỗ trợ của Skincede...",
+      timestamp: new Date()
     }
   ]);
   const [newMessage, setNewMessage] = useState("");
@@ -77,6 +83,7 @@ export default function RealTimeChat() {
               {
                 sender: "system",
                 content: "Đã kết nối với hỗ trợ viên. Bạn có thể bắt đầu nhắn tin.",
+                timestamp: new Date()
               }
             ]);
             
@@ -90,6 +97,7 @@ export default function RealTimeChat() {
               {
                 sender: "system",
                 content: "Không thể kết nối với hỗ trợ viên. Vui lòng thử lại sau.",
+                timestamp: new Date()
               }
             ]);
           });
@@ -137,7 +145,7 @@ export default function RealTimeChat() {
     connection.on("ReceiveMessage", (message, userType) => {
       console.log("Message received:", message, userType);
       
-      // Chuẩn hóa userType - đảm bảo nhất quán
+      // Chuẩn hóa userType
       const normalizedUserType = userType === 'support' ? MESSAGE_TYPES.STAFF : MESSAGE_TYPES.USER;
       const uiSender = normalizedUserType === MESSAGE_TYPES.STAFF ? "support" : "me";
       
@@ -159,7 +167,7 @@ export default function RealTimeChat() {
       
       localStorage.setItem(storageKey, JSON.stringify(existingMessages));
       
-      // Cập nhật UI với định dạng nhất quán
+      // Cập nhật UI
       setMessages(prev => [
         ...prev,
         {
@@ -252,12 +260,23 @@ export default function RealTimeChat() {
     }
   }, [isOpen, userId]);
 
+  // Thay thế bằng hàm format thời gian đơn giản
+  const formatMessageTime = (date) => {
+    if (!date) return "";
+    
+    const d = new Date(date);
+    const hours = d.getHours().toString().padStart(2, '0');
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+    
+    return `${hours}:${minutes}`;
+  };
+
   return (
     <>
       {/* Chat button */}
       <button 
         onClick={() => setIsOpen(true)}
-        className="flex bg-white justify-center p-3 rounded-full shadow-lg bottom-5 fixed hover:opacity-90 items-center left-5 transition-opacity z-40"
+        className="flex justify-center p-3 rounded-full shadow-lg bottom-5 fixed hover:opacity-90 items-center left-5 transition-opacity z-[9999]"
         style={{ 
           backgroundColor: mainColor.secondary || '#85715e',
           width: '56px',
@@ -266,18 +285,12 @@ export default function RealTimeChat() {
           cursor: 'pointer'
         }}
       >
-        <ForumIcon 
-          sx={{ 
-            color: 'white', 
-            fontSize: 24,
-            filter: 'drop-shadow(0px 2px 2px rgba(0,0,0,0.1))'
-          }} 
-        />
+        <ChatBubbleIcon sx={{ color: 'white', fontSize: 24 }} />
       </button>
       
       {/* Chat window */}
       {isOpen && (
-        <div className="flex flex-col bg-white border rounded-lg shadow-lg w-[400px] bottom-20 fixed left-5 z-50"
+        <div className="flex flex-col bg-white border rounded-lg shadow-lg w-[600px] bottom-20 fixed left-5 z-[9999]"
              style={{ maxHeight: 'calc(100vh - 160px)' }}>
           {/* Header */}
           <div className="flex border-b justify-between p-3 items-center" 
@@ -288,30 +301,30 @@ export default function RealTimeChat() {
                }}
           >
             <div className="flex gap-2 items-center">
-              <ForumIcon sx={{ 
+              <ChatIcon sx={{ 
                 fontSize: 22,
                 filter: 'drop-shadow(0px 1px 1px rgba(0,0,0,0.1))'
               }} />
               <span className="font-medium">Chat với nhân viên Skincede</span>
             </div>
-            <button 
+            <IconButton 
               onClick={() => setIsOpen(false)} 
-              className="text-white hover:text-gray-200 transition-colors"
-              style={{
-                border: 'none',
-                background: 'none',
-                cursor: 'pointer',
-                padding: '4px'
-              }}
+              size="small"
+              sx={{ color: 'white' }}
             >
-              ✖
-            </button>
+              <CloseIcon fontSize="small" />
+            </IconButton>
           </div>
           
           {/* Messages area */}
           <div className="flex-1 p-4 overflow-y-auto" style={{ minHeight: '300px', maxHeight: 'calc(100vh - 280px)' }}>
             {messages.map((message, index) => (
-              <MessageItem key={index} data={message} mainColor={mainColor} />
+              <MessageItem 
+                key={index} 
+                data={message} 
+                mainColor={mainColor}
+                formatTime={formatMessageTime}
+              />
             ))}
             
             {isLoading && (
@@ -353,16 +366,17 @@ export default function RealTimeChat() {
               />
               <button
                 onClick={sendMessage}
-                className="rounded-r-lg text-white px-4"
-                style={{ backgroundColor: mainColor.secondary || '#85715e' }}
+                className="flex justify-center rounded-r-lg text-white items-center"
+                style={{ 
+                  backgroundColor: mainColor.secondary || '#85715e',
+                  width: '56px'
+                }}
                 disabled={isLoading || !newMessage.trim() || !isConnected}
               >
                 {isLoading ? (
                   <CircularProgress size={20} sx={{ color: 'white' }} />
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
-                    <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
-                  </svg>
+                  <SendIcon />
                 )}
               </button>
             </div>
@@ -379,36 +393,36 @@ export default function RealTimeChat() {
 }
 
 // Message component
-function MessageItem({ data, mainColor }) {
+function MessageItem({ data, mainColor, formatTime }) {
   const getMessageStyle = () => {
     switch(data.sender) {
       case 'me':
         return {
           justify: 'justify-end',
-          bg: `${mainColor.secondary || '#85715e'}20`,
-          textColor: 'text-black',
+          bg: mainColor.secondary || '#85715e',
+          textColor: 'white',
           borderRadius: '16px 4px 16px 16px'
         };
       case 'support':
-      case 'staff': // Thêm trường hợp 'staff' để hỗ trợ định dạng mới
+      case 'staff':
         return {
           justify: 'justify-start',
-          bg: `${mainColor.primary}20`,
-          textColor: 'text-black',
+          bg: 'white',
+          textColor: 'black',
           borderRadius: '4px 16px 16px 16px'
         };
       case 'system':
         return {
           justify: 'justify-center',
-          bg: 'bg-gray-100',
-          textColor: 'text-gray-500',
+          bg: '#f3f4f6',
+          textColor: '#6b7280',
           borderRadius: '16px'
         };
       default:
         return {
           justify: 'justify-start',
-          bg: 'bg-gray-100',
-          textColor: 'text-black',
+          bg: 'white',
+          textColor: 'black',
           borderRadius: '4px 16px 16px 16px'
         };
     }
@@ -417,19 +431,52 @@ function MessageItem({ data, mainColor }) {
   const style = getMessageStyle();
   
   return (
-    <div className={`flex mb-4 ${style.justify}`}>
+    <div className={`flex mb-4 items-end ${style.justify}`}>
+      {(data.sender === 'support' || data.sender === 'staff') && (
+        <div className="flex bg-blue-100 h-8 justify-center rounded-full w-8 items-center mr-2">
+          <SupportAgentIcon sx={{ fontSize: 18, color: '#3b82f6' }} />
+        </div>
+      )}
+
       <div 
-        className={`rounded-lg py-2 px-4 max-w-[80%] ${style.textColor}`}
+        className="shadow-sm max-w-[75%] px-4 py-2 relative"
         style={{
           backgroundColor: style.bg,
           borderRadius: style.borderRadius,
+          color: style.textColor,
+          border: style.bg === 'white' ? '1px solid #e5e7eb' : 'none'
         }}
       >
         {/* Format message preserving line breaks */}
         <div style={{ whiteSpace: 'pre-wrap' }}>
           {data.content}
         </div>
+        
+        {/* Thêm timestamp */}
+        {data.timestamp && (
+          <div style={{ 
+            fontSize: '10px', 
+            opacity: 0.7, 
+            marginTop: '4px', 
+            textAlign: 'right',
+            color: style.textColor === 'white' ? 'rgba(255,255,255,0.8)' : 'inherit'
+          }}>
+            {formatTime(data.timestamp)}
+          </div>
+        )}
       </div>
+
+      {data.sender === 'me' && (
+        <div className="flex bg-blue-100 h-8 justify-center rounded-full w-8 items-center ml-2">
+          <PersonIcon sx={{ fontSize: 18, color: '#3b82f6' }} />
+        </div>
+      )}
+      
+      {data.sender === 'system' && style.justify === 'justify-center' && (
+        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', marginTop: '-24px' }}>
+          <InfoIcon fontSize="small" sx={{ color: '#9ca3af', fontSize: 16 }} />
+        </div>
+      )}
     </div>
   );
 } 
