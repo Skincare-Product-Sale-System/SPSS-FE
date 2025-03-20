@@ -14,17 +14,17 @@ import Quantity from "./Quantity";
 import Slider1ZoomOuter from "./sliders/Slider1ZoomOuter";
 import { allProducts } from "@/data/products";
 import { useContextElement } from "@/context/Context";
-import { openCartModal } from "@/utlis/openCartModal";
+import { openCartModal } from "@/utils/openCartModal";
 import Rating from "../common/Rating";
-import { defaultProductImage } from "@/utlis/default";
+import { defaultProductImage } from "@/utils/default";
 import { usePathname } from "next/navigation";
 import { useQueries } from "@tanstack/react-query";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import toast from "react-hot-toast";
 import useQueryStore from "@/context/queryStore";
 import { useTheme } from "@mui/material/styles";
 import { ShoppingCart } from "@mui/icons-material";
-import { Typography, Divider, Chip, Link } from "@mui/material";
+import { Typography, Divider, Chip, Link, Box, Rating as MuiRating } from "@mui/material";
 import { formatPrice, calculateDiscount } from "@/utils/priceFormatter";
 
 export default function DetailsOuterZoom({ product = allProducts[0] }) {
@@ -204,17 +204,17 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
 
   return (
     <section
-      className="flat-spacing-4 pt_0 bg-neutral-50"
+      className="bg-neutral-50 flat-spacing-4 pt_0"
       style={{ maxWidth: "100vw", overflow: "clip" }}
     >
       <div
-        className="tf-main-product section-image-zoom"
+        className="section-image-zoom tf-main-product"
         style={{ maxWidth: "100vw", overflow: "clip" }}
       >
         <div className="container">
           <div className="row">
             <div className="col-md-6">
-              <div className="tf-product-media-wrap sticky-top">
+              <div className="sticky-top tf-product-media-wrap">
                 <div className="thumbs-slider">
                   <Slider1ZoomOuter
                     images={productImages || []}
@@ -234,30 +234,56 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
               </div>
             </div>
             <div className="col-md-6">
-              <div className="tf-product-info-wrap position-relative">
+              <div className="position-relative tf-product-info-wrap">
                 <div className="tf-zoom-main" />
-                <div className="tf-product-info-list other-image-zoom p-4 rounded-lg shadow-sm bg-white">
-                  <div className="tf-product-info-title mb-2">
-                    <h5 className="font-serif text-primary-800 fs-20">{product?.name || 'Product Name'}</h5>
-                    <div className="d-flex align-items-center gap-2 mb-1">
-                      {product?.rating > 0 && <Rating number={product.rating} />}
-                      {product?.soldCount > 0 && (
-                        <span className="text-neutral-600 fs-14">
-                          | Sold: {product.soldCount.toLocaleString()}
-                        </span>
-                      )}
+                <div className="bg-white p-4 rounded-lg shadow-sm other-image-zoom tf-product-info-list">
+                  <div className="mb-2 tf-product-info-title">
+                    <h5 className="text-primary-800 font-serif fs-20">{product?.name || 'Product Name'}</h5>
+                    <div className="d-flex gap-3 items-center product-rating">
+                      <div className="flex items-center rating">
+                        <span className="mr-2 rating-value">{product.ratingDisplay}</span>
+                        <MuiRating
+                          value={product.rating || 0}
+                          precision={0.5}
+                          readOnly
+                          size="small"
+                          sx={{
+                            color: theme.palette.warning.main,
+                            '& .MuiRating-iconEmpty': {
+                              color: '#d1d5db'
+                            }
+                          }}
+                        />
+                      </div>
+                      <Box component="span" sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        color: '#666',
+                        fontSize: '14px',
+                        '&::before': {
+                          content: '""',
+                          display: 'inline-block',
+                          width: '4px',
+                          height: '4px',
+                          borderRadius: '50%',
+                          backgroundColor: '#999',
+                          margin: '0 8px'
+                        }
+                      }}>
+                        Đã bán: {product.soldCount?.toLocaleString('vi-VN')}
+                      </Box>
                     </div>
                   </div>
                   
-                  <div className="tf-product-info-price mb-3 p-3 bg-rose-50 rounded">
+                  <div className="bg-rose-50 p-3 rounded mb-3 tf-product-info-price">
                     <div className="d-flex align-items-center">
-                      <div className="price-on-sale text-rose-600 font-medium fs-24 mr-2">
+                      <div className="text-rose-600 font-medium fs-24 mr-2 price-on-sale">
                         {formatPrice(currentPrice?.price)}
                       </div>
-                      <div className="compare-at-price text-neutral-500 text-decoration-line-through fs-16">
+                      <div className="text-decoration-line-through text-neutral-500 compare-at-price fs-16">
                         {formatPrice(currentPrice?.marketPrice)}
                       </div>
-                      <div className="badges-on-sale bg-rose-100 text-rose-700 ml-2 px-2 py-1 rounded">
+                      <div className="badges-on-sale bg-rose-100 rounded text-rose-700 ml-2 px-2 py-1">
                         <span>
                           {calculateDiscount(currentPrice?.marketPrice, currentPrice?.price)}
                         </span>
@@ -267,13 +293,13 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                   </div>
                   
                   {/* Compact Product Information */}
-                  <div className="product-info-compact mb-3">
+                  <div className="mb-3 product-info-compact">
                     <div className="d-flex flex-wrap">
                       {/* Brand */}
                       {product?.brand && (
-                        <div className="d-flex align-items-center mr-4 mb-2">
-                          <Typography variant="subtitle2" className="text-gray-600 mr-1 fs-14">Brand:</Typography>
-                          <Link href={`/shop?brand=${product.brand.id}`} className="text-primary hover:underline fs-14">
+                        <div className="d-flex align-items-center mb-2 mr-4">
+                          <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Brand:</Typography>
+                          <Link href={`/shop?brand=${product.brand.id}`} className="text-primary fs-14 hover:underline">
                             {product.brand.name}
                           </Link>
                         </div>
@@ -281,9 +307,9 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       
                       {/* Category */}
                       {product?.category && (
-                        <div className="d-flex align-items-center mr-4 mb-2">
-                          <Typography variant="subtitle2" className="text-gray-600 mr-1 fs-14">Category:</Typography>
-                          <Link href={`/shop?category=${product.category.id}`} className="text-primary hover:underline fs-14">
+                        <div className="d-flex align-items-center mb-2 mr-4">
+                          <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Category:</Typography>
+                          <Link href={`/shop?category=${product.category.id}`} className="text-primary fs-14 hover:underline">
                             {product.category.categoryName}
                           </Link>
                         </div>
@@ -291,7 +317,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       
                       {/* Status */}
                       <div className="d-flex align-items-center mb-2">
-                        <Typography variant="subtitle2" className="text-gray-600 mr-1 fs-14">Status:</Typography>
+                        <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Status:</Typography>
                         <Chip 
                           label={product?.status || "Available"} 
                           color={product?.status === "Available" ? "success" : "default"}
@@ -304,8 +330,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     {/* Skin Types */}
                     {product?.skinTypes && product.skinTypes.length > 0 && (
                       <div className="mb-2">
-                        <div className="d-flex align-items-center flex-wrap">
-                          <Typography variant="subtitle2" className="text-gray-600 mr-2 fs-14">Skin types:</Typography>
+                        <div className="d-flex flex-wrap align-items-center">
+                          <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-2">Skin types:</Typography>
                           {product.skinTypes.map(skinType => (
                             <Link key={skinType.id} href={`/shop?skinType=${skinType.id}`}>
                               <Chip 
@@ -330,11 +356,11 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                   
                   <div className="tf-product-info-variant-picker">
                     {variations.map((variation, index) => (
-                      <div className="variant-picker-item mb-3" key={variation.name}>
-                        <div className="d-flex justify-content-between align-items-center">
-                          <div className="variant-picker-label text-neutral-700 font-medium fs-14">{variation.name}:</div>
+                      <div className="mb-3 variant-picker-item" key={variation.name}>
+                        <div className="d-flex align-items-center justify-content-between">
+                          <div className="text-neutral-700 font-medium fs-14 variant-picker-label">{variation.name}:</div>
                         </div>
-                        <div className="variant-picker-options mt-1">
+                        <div className="mt-1 variant-picker-options">
                           {variation.options.map((option) => {
                             // Tìm product item có option này
                             const productItemWithOption = product.productItems.find(item => 
@@ -352,7 +378,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                                 type="button"
                                 onClick={() => !isOutOfStock && handleOptionSelect(variation.name, option.optionId)}
                                 disabled={isOutOfStock}
-                                className="variant-picker-option mr-2 mb-2 px-3 py-1 border rounded-md transition-all fs-14"
+                                className="border rounded-md fs-14 mb-2 mr-2 px-3 py-1 transition-all variant-picker-option"
                                 style={{ 
                                   borderColor: selectedOptions[variation.name] === option.optionId 
                                     ? theme.palette.primary.main 
@@ -393,19 +419,19 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     ))}
                   </div>
                   
-                  <div className="tf-product-info-quantity mb-3">
+                  <div className="mb-3 tf-product-info-quantity">
                     {currentProductItem && (
                       <div className="d-flex align-items-center mb-2">
                         
 
                     {/* Hiển thị quantityInStock */}
                     {currentProductItem && (
-                      <div className="variant-picker-item mb-3">
-                        <div className="d-flex justify-content-between align-items-center">
-                          <div className="variant-picker-label text-neutral-700 font-medium fs-14">Stock:</div>
+                      <div className="mb-3 variant-picker-item">
+                        <div className="d-flex align-items-center justify-content-between">
+                          <div className="text-neutral-700 font-medium fs-14 variant-picker-label">Stock:</div>
                         </div>
                         <div className="mt-1">
-                          <div className="px-3 py-1 border rounded-md fs-14" style={{
+                          <div className="border rounded-md fs-14 px-3 py-1" style={{
                             borderColor: currentProductItem.quantityInStock > 0 
                               ? theme.palette.success.light 
                               : theme.palette.error.light,
@@ -456,7 +482,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     )}
                     
                     <div className="d-flex align-items-center">
-                      <div className="quantity-title fw-6 fs-14 mr-3">Quantity</div>
+                      <div className="fs-14 fw-6 mr-3 quantity-title">Quantity</div>
                       <div className="quantity-input-container" style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -535,7 +561,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     </div>
                   </div>
                   
-                  <div className="tf-product-info-buy-button mb-3">
+                  <div className="mb-3 tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()} className="d-flex gap-2">
                       <a
                         onClick={() => {
@@ -620,48 +646,48 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     </form>
                   </div>
                   
-                  <div className="tf-product-info-extra-link d-flex gap-3 mb-3">
+                  <div className="d-flex gap-3 mb-3 tf-product-info-extra-link">
                     <a
                       href="#ask_question"
                       data-bs-toggle="modal"
-                      className="tf-product-extra-icon d-flex align-items-center"
+                      className="d-flex align-items-center tf-product-extra-icon"
                     >
-                      <div className="icon text-primary-600 fs-14 mr-1">
+                      <div className="text-primary-600 fs-14 icon mr-1">
                         <i className="icon-question" />
                       </div>
-                      <div className="text fw-6 text-neutral-700 fs-14">Ask a question</div>
+                      <div className="text-neutral-700 fs-14 fw-6 text">Ask a question</div>
                     </a>
                     <a
                       href="#share_social"
                       data-bs-toggle="modal"
-                      className="tf-product-extra-icon d-flex align-items-center"
+                      className="d-flex align-items-center tf-product-extra-icon"
                     >
-                      <div className="icon text-primary-600 fs-14 mr-1">
+                      <div className="text-primary-600 fs-14 icon mr-1">
                         <i className="icon-share" />
                       </div>
-                      <div className="text fw-6 text-neutral-700 fs-14">Share</div>
+                      <div className="text-neutral-700 fs-14 fw-6 text">Share</div>
                     </a>
                   </div>
                   
-                  <div className="tf-product-info-delivery-return bg-neutral-50 rounded-md p-3">
+                  <div className="bg-neutral-50 p-3 rounded-md tf-product-info-delivery-return">
                     <div className="row">
-                      <div className="col-xl-6 col-12">
-                        <div className="tf-product-delivery d-flex align-items-center">
-                          <div className="icon text-primary-600 mr-2">
+                      <div className="col-12 col-xl-6">
+                        <div className="d-flex align-items-center tf-product-delivery">
+                          <div className="text-primary-600 icon mr-2">
                             <i className="icon-delivery-time" />
                           </div>
-                          <p className="text-neutral-700 mb-0 fs-14">
-                            Free shipping for orders over <span className="fw-7 text-primary-700">500.000₫</span>
+                          <p className="text-neutral-700 fs-14 mb-0">
+                            Free shipping for orders over <span className="text-primary-700 fw-7">500.000₫</span>
                           </p>
                         </div>
                       </div>
-                      <div className="col-xl-6 col-12">
-                        <div className="tf-product-delivery mb-0 d-flex align-items-center">
-                          <div className="icon text-primary-600 mr-2">
+                      <div className="col-12 col-xl-6">
+                        <div className="d-flex align-items-center mb-0 tf-product-delivery">
+                          <div className="text-primary-600 icon mr-2">
                             <i className="icon-return-order" />
                           </div>
-                          <p className="text-neutral-700 mb-0 fs-14">
-                            Return within <span className="fw-7 text-primary-700">30 days</span>
+                          <p className="text-neutral-700 fs-14 mb-0">
+                            Return within <span className="text-primary-700 fw-7">30 days</span>
                           </p>
                         </div>
                       </div>

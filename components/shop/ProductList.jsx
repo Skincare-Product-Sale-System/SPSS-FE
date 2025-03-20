@@ -5,7 +5,7 @@ import { layouts, sortingOptions } from "@/data/shop";
 import ProductGrid from "./ProductGrid";
 import Pagination from "../common/Pagination";
 import { useQueries } from "@tanstack/react-query";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Box, Chip, Typography, Button } from "@mui/material";
 import { useThemeColors } from "@/context/ThemeContext";
@@ -268,7 +268,7 @@ export default function ShopSidebarleft() {
                   placeholder="Search products..."
                   value={filters.name || ""}
                   onChange={(e) => handleFilterChange("name", e.target.value)}
-                  className="w-full px-4 py-2 pl-10 rounded-md border"
+                  className="border rounded-md w-full pl-10 px-4 py-2"
                   style={{
                     borderColor: mainColor.grey,
                     color: mainColor.text,
@@ -276,7 +276,7 @@ export default function ShopSidebarleft() {
                   }}
                 />
                 <div 
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  className="text-gray-400 -translate-y-1/2 absolute right-3 top-1/2 transform"
                   style={{ color: mainColor.grey }}
                 >
                   <svg 
@@ -294,9 +294,9 @@ export default function ShopSidebarleft() {
             </Box>
           </Box>
 
-          <div className="tf-shop-control grid-3 align-items-center">
+          <div className="grid-3 align-items-center tf-shop-control">
             <div className="tf-control-filter"></div>
-            <ul className="tf-control-layout d-flex justify-content-center">
+            <ul className="d-flex justify-content-center tf-control-layout">
               {layouts.slice(0, 4).map((layout, index) => (
                 <li
                   key={index}
@@ -335,7 +335,7 @@ export default function ShopSidebarleft() {
               />
               
               {products.items?.length > 0 && (
-                <ul className="tf-pagination-wrap tf-pagination-list">
+                <ul className="tf-pagination-list tf-pagination-wrap">
                   <Pagination
                     currentPage={products.pageNumber}
                     totalPages={products.totalPages}

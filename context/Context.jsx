@@ -1,6 +1,6 @@
 "use client";
-import { openCartModal } from "@/utlis/openCartModal";
-// import { openCart } from "@/utlis/toggleCart";
+import { openCartModal } from "@/utils/openCartModal";
+// import { openCart } from "@/utils/toggleCart";
 import React, { useEffect } from "react";
 import { useContext, useState } from "react";
 const dataContext = React.createContext();

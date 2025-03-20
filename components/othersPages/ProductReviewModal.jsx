@@ -13,7 +13,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { useThemeColors } from "@/context/ThemeContext";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import CloseIcon from '@mui/icons-material/Close';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import DeleteIcon from '@mui/icons-material/Delete';

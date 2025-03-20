@@ -1,5 +1,5 @@
 import Footer1 from "@/components/footers/Footer1";
-import Header1 from "@/components/headers/Header1";
+import Header2 from "@/components/headers/Header2";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -7,7 +7,7 @@ import React from "react";
 export default function NotFound() {
   return (
     <>
-      <Header1 />
+      <Header2 />
       <section className="page-404-wrap">
         <div className="container">
           <div className="row">
@@ -20,16 +20,18 @@ export default function NotFound() {
                   height="319"
                 />
               </div>
-              <div className="title">Oops...That link is broken.</div>
-              <p>
-                Sorry for the inconvenience. Go to our homepage to check out our
-                latest collections.
+              <div className="title" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                Rất tiếc... Đường dẫn này không tồn tại.
+              </div>
+              <p style={{ fontFamily: '"Roboto", sans-serif' }}>
+                Xin lỗi vì sự bất tiện này. Vui lòng quay lại trang chủ để xem các bộ sưu tập mới nhất của chúng tôi.
               </p>
               <Link
                 href="/"
-                className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
+                className="btn-fill btn-icon btn-sm animate-hover-btn radius-3 tf-btn"
+                style={{ fontFamily: '"Roboto", sans-serif' }}
               >
-                Go to Home
+                Về Trang Chủ
               </Link>
             </div>
           </div>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Image from "next/image";
 import { Navigation, Pagination } from "swiper/modules";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
@@ -23,9 +23,9 @@ export default function RelatedBlogs() {
     <section className="mb_30">
       <div className="container">
         <div className="flat-title mb-5">
-          <h4 className="text-2xl font-semibold text-center">Related Articles</h4>
+          <h4 className="text-2xl text-center font-semibold">Related Articles</h4>
         </div>
-        <div className="hover-sw-nav view-default hover-sw-5">
+        <div className="hover-sw-5 hover-sw-nav view-default">
           <Swiper
             dir="ltr"
             spaceBetween={30}
@@ -45,11 +45,11 @@ export default function RelatedBlogs() {
           >
             {blogs.map((blog, index) => (
               <SwiperSlide key={blog.id || index}>
-                <div className="blog-article-item shadow-sm hover:shadow-md transition-shadow rounded-lg overflow-hidden">
+                <div className="rounded-lg shadow-sm blog-article-item hover:shadow-md overflow-hidden transition-shadow">
                   <div className="article-thumb">
                     <Link href={`/blog/${blog?.id}`}>
                       <Image
-                        className="w-full h-auto object-cover"
+                        className="h-auto w-full object-cover"
                         src={blog?.thumbnail}
                         alt={blog?.title}
                         width={550}
@@ -57,24 +57,24 @@ export default function RelatedBlogs() {
                       />
                     </Link>
                   </div>
-                  <div className="article-content p-4">
+                  <div className="p-4 article-content">
                     <div className="article-title mb-3">
                       <Link href={`/blog/${blog?.id}`} className="text-xl font-medium hover:text-primary transition-colors">
                         {blog?.title}
                       </Link>
                     </div>
                     {blog?.blogContent && (
-                      <div className="article-excerpt text-gray-600 mb-4 line-clamp-2">
+                      <div className="text-gray-600 article-excerpt line-clamp-2 mb-4">
                         {blog?.blogContent}
                       </div>
                     )}
-                    <div className="article-meta flex items-center justify-between text-sm text-gray-500 mb-3">
+                    <div className="flex justify-between text-gray-500 text-sm article-meta items-center mb-3">
                       <span className="flex items-center">
-                        <span className="material-icons text-primary mr-1" style={{ fontSize: '16px' }}>person</span>
+                        <span className="text-primary material-icons mr-1" style={{ fontSize: '16px' }}>person</span>
                         {blog?.author || "Admin"}
                       </span>
                       <span className="flex items-center">
-                        <span className="material-icons text-primary mr-1" style={{ fontSize: '16px' }}>calendar_today</span>
+                        <span className="text-primary material-icons mr-1" style={{ fontSize: '16px' }}>calendar_today</span>
                         {blog?.lastUpdatedTime ? new Date(blog.lastUpdatedTime).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
@@ -85,7 +85,7 @@ export default function RelatedBlogs() {
                     <div className="article-btn">
                       <Link
                         href={`/blog/${blog?.id}`}
-                        className="tf-btn btn-line fw-6 hover:text-primary transition-colors"
+                        className="btn-line fw-6 hover:text-primary tf-btn transition-colors"
                       >
                         Read more
                         <i className="icon icon-arrow1-top-left ml-2" />
@@ -96,13 +96,13 @@ export default function RelatedBlogs() {
               </SwiperSlide>
             ))}
           </Swiper>
-          <div className="nav-sw nav-next-slider nav-next-recent box-icon w_46 round snbp101">
+          <div className="nav-next-recent nav-next-slider nav-sw box-icon round snbp101 w_46">
             <span className="icon icon-arrow-left" />
           </div>
-          <div className="nav-sw nav-prev-slider nav-prev-recent box-icon w_46 round snbn101">
+          <div className="nav-prev-recent nav-prev-slider nav-sw box-icon round snbn101 w_46">
             <span className="icon icon-arrow-right" />
           </div>
-          <div className="sw-dots d-flex style-2 sw-pagination-recent justify-content-center spd101" />
+          <div className="d-flex justify-content-center spd101 style-2 sw-dots sw-pagination-recent" />
         </div>
       </div>
     </section>

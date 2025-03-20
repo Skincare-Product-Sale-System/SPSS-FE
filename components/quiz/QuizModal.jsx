@@ -1,5 +1,5 @@
 "use client";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import { useEffect, useState } from "react";
 
 export default function QuizModal({ quiz, onClose, onComplete }) {
@@ -27,20 +27,20 @@ export default function QuizModal({ quiz, onClose, onComplete }) {
   const question = quizData?.quizQuestions?.[currentQuestion];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[900]">
-      <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4">
+    <div className="flex bg-black bg-opacity-50 justify-center fixed inset-0 items-center z-[900]">
+      <div className="bg-white p-8 rounded-lg w-full max-w-2xl mx-4">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold">{quizData?.quizSetName}</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >
-            <span className="icon-close text-xl"></span>
+            <span className="text-xl icon-close"></span>
           </button>
         </div>
 
         <div className="mb-8">
-          <div className="text-sm text-gray-500 mb-2">
+          <div className="text-gray-500 text-sm mb-2">
             Question {currentQuestion + 1} of {quizData?.quizQuestions?.length}
           </div>
           <h3 className="text-xl mb-4">{question?.value}</h3>
@@ -50,7 +50,7 @@ export default function QuizModal({ quiz, onClose, onComplete }) {
               <button
                 key={index}
                 onClick={() => handleAnswer(option.score)}
-                className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-colors duration-300"
+                className="border border-gray-200 p-4 rounded-lg text-left w-full duration-300 hover:bg-blue-50 hover:border-blue-500 transition-colors"
               >
                 {option.value}
               </button>
@@ -59,9 +59,9 @@ export default function QuizModal({ quiz, onClose, onComplete }) {
         </div>
 
         <div className="flex justify-between items-center">
-          <div className="h-2 bg-gray-200 rounded-full flex-1 mr-4">
+          <div className="flex-1 bg-gray-200 h-2 rounded-full mr-4">
             <div
-              className="h-full bg-blue-600 rounded-full transition-all duration-300"
+              className="bg-blue-600 h-full rounded-full duration-300 transition-all"
               style={{
                 width: `${
                   ((currentQuestion + 1) / quizData?.quizQuestions?.length) *
@@ -70,7 +70,7 @@ export default function QuizModal({ quiz, onClose, onComplete }) {
               }}
             />
           </div>
-          <span className="text-sm text-gray-500">
+          <span className="text-gray-500 text-sm">
             {Math.round(
               ((currentQuestion + 1) / quizData?.quizQuestions?.length) * 100
             )}

@@ -1,8 +1,6 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import LanguageSelect from "../common/LanguageSelect";
-import CurrencySelect from "../common/CurrencySelect";
 import { navItems } from "@/data/menu";
 import { usePathname } from "next/navigation";
 export default function MobileMenu() {
@@ -34,7 +32,7 @@ export default function MobileMenu() {
     return active;
   };
   return (
-    <div className="offcanvas offcanvas-start canvas-mb" id="mobileMenu">
+    <div className="canvas-mb offcanvas offcanvas-start" id="mobileMenu">
       <span
         className="icon-close icon-close-popup"
         data-bs-dismiss="offcanvas"
@@ -76,7 +74,7 @@ export default function MobileMenu() {
                               <span className="btn-open-sub" />
                             </a>
                             <div id={subItem.id} className="collapse">
-                              <ul className="sub-nav-menu sub-menu-level-2">
+                              <ul className="sub-menu-level-2 sub-nav-menu">
                                 {subItem.links.map((innerItem, i3) => (
                                   <li key={i3}>
                                     <Link
@@ -130,21 +128,6 @@ export default function MobileMenu() {
             </li>
           </ul>
           <div className="mb-other-content">
-            <div className="d-flex group-icon">
-              <Link href={`/wishlist`} className="site-nav-icon">
-                <i className="icon icon-heart" />
-                Wishlist
-              </Link>
-              <Link href={`/home-search`} className="site-nav-icon">
-                <i className="icon icon-search" />
-                Search
-              </Link>
-            </div>
-            <div className="mb-notice">
-              <Link href={`/contact-1`} className="text-need">
-                Need help ?
-              </Link>
-            </div>
             <ul className="mb-info">
               <li>
                 Address: 1234 Fashion Street, Suite 567, <br />
@@ -164,18 +147,6 @@ export default function MobileMenu() {
             <i className="icon icon-account" />
             Login
           </Link>
-          <div className="bottom-bar-language">
-            <div className="tf-currencies">
-              <CurrencySelect />
-            </div>
-            <div className="tf-languages">
-              <LanguageSelect
-                parentClassName={
-                  "image-select center style-default type-languages"
-                }
-              />
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -276,7 +276,7 @@ export default function RealTimeChat() {
       {/* Chat button */}
       <button 
         onClick={() => setIsOpen(true)}
-        className="flex justify-center p-3 rounded-full shadow-lg bottom-5 fixed hover:opacity-90 items-center left-5 transition-opacity z-40"
+        className="flex justify-center p-3 rounded-full shadow-lg bottom-5 fixed hover:opacity-90 items-center left-5 transition-opacity z-[9999]"
         style={{ 
           backgroundColor: mainColor.secondary || '#85715e',
           width: '56px',
@@ -290,7 +290,7 @@ export default function RealTimeChat() {
       
       {/* Chat window */}
       {isOpen && (
-        <div className="flex flex-col bg-white border rounded-lg shadow-lg w-[400px] bottom-20 fixed left-5 z-50"
+        <div className="flex flex-col bg-white border rounded-lg shadow-lg w-[600px] bottom-20 fixed left-5 z-[9999]"
              style={{ maxHeight: 'calc(100vh - 160px)' }}>
           {/* Header */}
           <div className="flex border-b justify-between p-3 items-center" 

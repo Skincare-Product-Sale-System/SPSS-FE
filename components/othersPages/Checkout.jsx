@@ -2,8 +2,8 @@
 import useAuthStore from "@/context/authStore";
 import { useContextElement } from "@/context/Context";
 import useQueryStore from "@/context/queryStore";
-import request from "@/utlis/axios";
-import { defaultProductImage } from "@/utlis/default";
+import request from "@/utils/axios";
+import { defaultProductImage } from "@/utils/default";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";

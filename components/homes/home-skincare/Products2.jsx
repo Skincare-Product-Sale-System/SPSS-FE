@@ -7,8 +7,8 @@ import { useContextElement } from "@/context/Context";
 import Link from "next/link";
 import { Navigation, Pagination } from "swiper/modules";
 import { use, useEffect, useState } from "react";
-import { defaultProductImage } from "@/utlis/default";
-import request from "@/utlis/axios";
+import { defaultProductImage } from "@/utils/default";
+import request from "@/utils/axios";
 import { useQueries } from "@tanstack/react-query";
 
 export default function Products() {
@@ -37,11 +37,11 @@ export default function Products() {
   console.log("products2", products);
 
   return (
-    <section className="flat-spacing-9 bg_grey-6 flat-spacing-26">
+    <section className="bg_grey-6 flat-spacing-26 flat-spacing-9">
       <div className="container">
-        <div className="flat-tab-store flat-animate-tab overflow-unset">
+        <div className="flat-animate-tab flat-tab-store overflow-unset">
           <ul
-            className="widget-tab-3 d-flex justify-content-center flex-wrap wow fadeInUp"
+            className="d-flex flex-wrap justify-content-center fadeInUp widget-tab-3 wow"
             data-wow-delay="0s"
             role="tablist"
           >
@@ -58,7 +58,7 @@ export default function Products() {
           </ul>
           <div className="tab-content">
             <div
-              className="tab-pane active show"
+              className="active show tab-pane"
               id="essentials"
               role="tabpanel"
             >
@@ -85,7 +85,7 @@ export default function Products() {
                         <div className="card-product-wrapper">
                           <a href={product.id} className="product-img">
                             <Image
-                              className="lazyload img-product"
+                              className="img-product lazyload"
                               data-src={product.thumbnail}
                               alt="image-product"
                               src={product.thumbnail}
@@ -93,7 +93,7 @@ export default function Products() {
                               height={384}
                             />
                             <Image
-                              className="lazyload img-hover"
+                              className="img-hover lazyload"
                               data-src={product.thumbnail}
                               alt="image-product"
                               src={product.thumbnail}
@@ -104,7 +104,7 @@ export default function Products() {
                           <div className="list-product-btn">
                             <a
                               onClick={() => addToWishlist(product.id)}
-                              className="box-icon bg_white wishlist btn-icon-action"
+                              className="btn-icon-action bg_white box-icon wishlist"
                             >
                               <span
                                 className={`icon icon-heart ${
@@ -123,7 +123,7 @@ export default function Products() {
                               data-bs-toggle="offcanvas"
                               aria-controls="offcanvasLeft"
                               onClick={() => addToCompareItem(product.id)}
-                              className="box-icon bg_white compare btn-icon-action"
+                              className="btn-icon-action bg_white box-icon compare"
                             >
                               <span
                                 className={`icon icon-compare ${
@@ -144,7 +144,7 @@ export default function Products() {
                               href="#quick_view"
                               onClick={() => setQuickViewItem(product)}
                               data-bs-toggle="modal"
-                              className="box-icon bg_white quickview tf-btn-loading"
+                              className="bg_white box-icon quickview tf-btn-loading"
                             >
                               <span className="icon icon-view" />
                               <span className="tooltip">Quick View</span>
@@ -154,13 +154,13 @@ export default function Products() {
                         <div className="card-product-info text-center">
                           <Link
                             href={`/product-detail/${product.id}`}
-                            className="title link"
+                            className="link title"
                           >
                             {product.name}
                           </Link>
                           <span className="price">
                             {product.marketPrice && (
-                              <span className="fw-4 text-sale">
+                              <span className="text-sale fw-4">
                                 {product.marketPrice}
                               </span>
                             )}{" "}
@@ -172,7 +172,7 @@ export default function Products() {
                             {["300ml", "500ml", "700ml"].map((size, i) => (
                               <span
                                 key={i}
-                                className="tf-size-list-item fw-6 radius-3"
+                                className="fw-6 radius-3 tf-size-list-item"
                               >
                                 {size}
                               </span>
@@ -180,7 +180,7 @@ export default function Products() {
                             {/* {product.sizes.map((size, i) => (
                               <span
                                 key={i}
-                                className="tf-size-list-item fw-6 radius-3"
+                                className="fw-6 radius-3 tf-size-list-item"
                               >
                                 {size}
                               </span>
@@ -191,7 +191,7 @@ export default function Products() {
                               href={"/product-detail/" + product.id}
                               // onClick={() => setQuickAddItem(product.id)}
                               // data-bs-toggle="modal"
-                              className="tf-btn style-3 radius-3 btn-fill animate-hover-btn"
+                              className="btn-fill animate-hover-btn radius-3 style-3 tf-btn"
                             >
                               View detail
                             </a>
@@ -201,13 +201,13 @@ export default function Products() {
                     </SwiperSlide>
                   ))}
                 </Swiper>
-                <div className="nav-sw style-not-line nav-next-slider nav-next-sell-1 box-icon w_46 round snbp265">
+                <div className="nav-next-sell-1 nav-next-slider nav-sw box-icon round snbp265 style-not-line w_46">
                   <span className="icon icon-arrow-left" />
                 </div>
-                <div className="nav-sw style-not-line nav-prev-slider nav-prev-sell-1 box-icon w_46 round snbn265">
+                <div className="nav-prev-sell-1 nav-prev-slider nav-sw box-icon round snbn265 style-not-line w_46">
                   <span className="icon icon-arrow-right" />
                 </div>
-                <div className="sw-dots style-2 sw-pagination-sell-1 justify-content-center spd265" />
+                <div className="justify-content-center spd265 style-2 sw-dots sw-pagination-sell-1" />
               </div>
             </div>
           </div>

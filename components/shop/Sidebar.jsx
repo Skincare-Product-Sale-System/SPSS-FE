@@ -7,7 +7,7 @@ import { galleryItems } from "@/data/gallery";
 // import { categories } from "@/data/categories";
 import { socialLinks } from "@/data/socials";
 import { useQueries } from "@tanstack/react-query";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import { Box, List, ListItem, ListItemButton, ListItemText, Typography, Collapse } from "@mui/material";
 import { useThemeColors } from "@/context/ThemeContext";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -168,7 +168,7 @@ export default function Sidebar({
 
   return (
     <aside className="tf-shop-sidebar wrap-sidebar-mobile">
-      <div className="widget-facet wd-categories">
+      <div className="wd-categories widget-facet">
         <div className="mb-6">
           {renderFilterSection(
             "Danh mục sản phẩm",

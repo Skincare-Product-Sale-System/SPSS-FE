@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { Paper, Typography, Box, Button, Grid, Pagination, Dialog, IconButton } from "@mui/material";
 import Rating from "../common/Rating";
-import { defaultUserImage } from "@/utlis/default";
+import { defaultUserImage } from "@/utils/default";
 import dayjs from "dayjs";
-import request from "@/utlis/axios";
+import request from "@/utils/axios";
 import StarIcon from '@mui/icons-material/Star';
 import { useThemeColors } from "@/context/ThemeContext";
 import CloseIcon from '@mui/icons-material/Close';
@@ -200,15 +200,15 @@ export default function ProductReviews({ productId }) {
   };
 
   return (
-    <section className="product-reviews-section bg-neutral-50 py-5">
+    <section className="bg-neutral-50 product-reviews-section py-5">
       <div className="container">
         <Paper elevation={0} className="p-4 rounded-lg mb-4">
-          <Typography variant="h5" component="h2" className="font-medium mb-4 text-neutral-800">
+          <Typography variant="h5" component="h2" className="text-neutral-800 font-medium mb-4">
             ĐÁNH GIÁ SẢN PHẨM
           </Typography>
           
           {/* Rating Summary */}
-          <div className="rating-summary mb-4 p-4 bg-neutral-50 rounded-lg">
+          <div className="bg-neutral-50 p-4 rounded-lg mb-4 rating-summary">
             <div className="d-flex align-items-center mb-3">
               <Typography 
                 variant="h3" 
@@ -316,7 +316,7 @@ export default function ProductReviews({ productId }) {
           </div>
           
           {/* Debug Info - Remove in production */}
-          <div className="debug-info mb-3 p-2 bg-gray-100 rounded text-xs" style={{ display: 'none' }}>
+          <div className="bg-gray-100 p-2 rounded text-xs debug-info mb-3" style={{ display: 'none' }}>
             <div>Active Filter: {activeFilter}</div>
             <div>Star Filter: {activeStarFilter}</div>
             <div>Has Images: {hasImages ? 'Yes' : 'No'}</div>
@@ -331,21 +331,21 @@ export default function ProductReviews({ productId }) {
                 <Paper 
                   key={review.id} 
                   elevation={0} 
-                  className="review-card p-4 mb-3 border border-neutral-200 rounded-lg"
+                  className="border border-neutral-200 p-4 rounded-lg mb-3 review-card"
                 >
-                  <div className="review-header d-flex items-start mb-3">
+                  <div className="d-flex items-start mb-3 review-header">
                     <img
                       src={review.avatarUrl || defaultUserImage}
                       alt={`${review.userName}'s avatar`}
-                      className="avatar w-12 h-12 rounded-full object-cover mr-3"
+                      className="h-12 rounded-full w-12 avatar mr-3 object-cover"
                     />
                     <div className="user-info">
-                      <div className="user-name font-medium text-neutral-800 fs-15 mb-1">
+                      <div className="text-neutral-800 font-medium fs-15 mb-1 user-name">
                         {review.userName}
                       </div>
                       <div className="d-flex align-items-center">
                         <Rating number={review.ratingValue} />
-                        <span className="text-muted fs-13 text-neutral-500 ml-2">
+                        <span className="text-muted text-neutral-500 fs-13 ml-2">
                           {dayjs(review.lastUpdatedTime).format("YYYY-MM-DD HH:mm")}
                         </span>
                       </div>
@@ -354,7 +354,7 @@ export default function ProductReviews({ productId }) {
                   
                   {/* Variation Options */}
                   {review.variationOptionValues && review.variationOptionValues.length > 0 && (
-                    <div className="review-details mb-3">
+                    <div className="mb-3 review-details">
                       <div className="d-flex flex-wrap mb-2">
                         <Typography variant="body2" className="text-neutral-600 fs-14">
                           <span className="font-medium">Phân loại hàng:</span> {review.variationOptionValues.join(", ")}
@@ -369,18 +369,18 @@ export default function ProductReviews({ productId }) {
                     </Typography>
                     
                     {review.reviewImages && review.reviewImages.length > 0 && (
-                      <div className="review-images d-flex flex-wrap gap-2 mb-3">
+                      <div className="d-flex flex-wrap gap-2 mb-3 review-images">
                         {review.reviewImages.map((image, index) => (
                           <div 
                             key={index} 
-                            className="review-image-container cursor-pointer hover:opacity-90 transition-opacity" 
+                            className="cursor-pointer hover:opacity-90 review-image-container transition-opacity" 
                             style={{ width: '80px', height: '80px' }}
                             onClick={() => handleOpenPreview(image, review.reviewImages, index)}
                           >
                             <img
                               src={image}
                               alt={`Review image ${index + 1}`}
-                              className="review-image w-100 h-100 object-cover rounded"
+                              className="h-100 rounded w-100 object-cover review-image"
                             />
                           </div>
                         ))}
@@ -389,16 +389,16 @@ export default function ProductReviews({ productId }) {
                     
                     {/* Shop Reply */}
                     {review.reply && (
-                      <div className="shop-reply mt-3 p-3 bg-neutral-50 rounded-lg">
+                      <div className="bg-neutral-50 p-3 rounded-lg mt-3 shop-reply">
                         <div className="d-flex items-start">
                           <div className="shop-info">
-                            <div className="shop-name font-medium text-neutral-800 fs-14 mb-1">
+                            <div className="text-neutral-800 font-medium fs-14 mb-1 shop-name">
                               <span style={{ color: mainColor.primary }}>Shop</span> {review.reply.userName}
                             </div>
                             <Typography variant="body2" className="text-neutral-700 fs-14">
                               {review.reply.replyContent}
                             </Typography>
-                            <div className="text-muted fs-12 text-neutral-500 mt-1">
+                            <div className="text-muted text-neutral-500 fs-12 mt-1">
                               {dayjs(review.reply.lastUpdatedTime).format("YYYY-MM-DD HH:mm")}
                             </div>
                           </div>
@@ -471,7 +471,7 @@ export default function ProductReviews({ productId }) {
             <img
               src={imagePreview.currentImage}
               alt="Review preview"
-              className="max-w-full max-h-full object-contain"
+              className="max-h-full max-w-full object-contain"
             />
             
             {imagePreview.images.length > 1 && (

@@ -1,20 +1,21 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+
 export default function Login() {
   return (
     <section className="flat-spacing-10">
       <div className="container">
-        <div className="tf-grid-layout lg-col-2 tf-login-wrap">
+        <div className="lg-col-2 tf-grid-layout tf-login-wrap">
           <div className="tf-login-form">
             <div id="recover">
-              <h5 className="mb_24">Reset your password</h5>
-              <p className="mb_30">
-                We will send you an email to reset your password
+              <h5 className="mb_24" style={{ fontFamily: 'Playfair Display, serif' }}>Khôi phục mật khẩu</h5>
+              <p className="mb_30" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                Chúng tôi sẽ gửi email hướng dẫn khôi phục mật khẩu cho bạn
               </p>
               <div>
                 <form onSubmit={(e) => e.preventDefault()} className="">
-                  <div className="tf-field style-1 mb_15">
+                  <div className="mb_15 style-1 tf-field">
                     <input
                       className="tf-field-input tf-input"
                       placeholder=""
@@ -25,33 +26,35 @@ export default function Login() {
                       name="email"
                     />
                     <label
-                      className="tf-field-label fw-4 text_black-2"
+                      className="fw-4 text_black-2 tf-field-label"
                       htmlFor="property3"
+                      style={{ fontFamily: 'Roboto, sans-serif' }}
                     >
                       Email *
                     </label>
                   </div>
                   <div className="mb_20">
-                    <a href="#login" className="tf-btn btn-line">
-                      Cancel
+                    <a href="#login" className="btn-line tf-btn" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                      Hủy
                     </a>
                   </div>
                   <div className="">
                     <button
                       type="submit"
-                      className="tf-btn w-100 radius-3 btn-fill animate-hover-btn justify-content-center"
+                      className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
+                      style={{ fontFamily: 'Roboto, sans-serif' }}
                     >
-                      Reset password
+                      Khôi phục mật khẩu
                     </button>
                   </div>
                 </form>
               </div>
             </div>
             <div id="login">
-              <h5 className="mb_36">Log in</h5>
+              <h5 className="mb_36" style={{ fontFamily: 'Playfair Display, serif' }}>Đăng nhập</h5>
               <div>
                 <form onSubmit={(e) => e.preventDefault()}>
-                  <div className="tf-field style-1 mb_15">
+                  <div className="mb_15 style-1 tf-field">
                     <input
                       required
                       className="tf-field-input tf-input"
@@ -62,13 +65,14 @@ export default function Login() {
                       name="email"
                     />
                     <label
-                      className="tf-field-label fw-4 text_black-2"
+                      className="fw-4 text_black-2 tf-field-label"
                       htmlFor="property3"
+                      style={{ fontFamily: 'Roboto, sans-serif' }}
                     >
                       Email *
                     </label>
                   </div>
-                  <div className="tf-field style-1 mb_30">
+                  <div className="mb_30 style-1 tf-field">
                     <input
                       required
                       className="tf-field-input tf-input"
@@ -79,23 +83,25 @@ export default function Login() {
                       autoComplete="current-password"
                     />
                     <label
-                      className="tf-field-label fw-4 text_black-2"
+                      className="fw-4 text_black-2 tf-field-label"
                       htmlFor="property4"
+                      style={{ fontFamily: 'Roboto, sans-serif' }}
                     >
-                      Password *
+                      Mật khẩu *
                     </label>
                   </div>
                   <div className="mb_20">
-                    <a href="#recover" className="tf-btn btn-line">
-                      Forgot your password?
+                    <a href="#recover" className="btn-line tf-btn" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                      Quên mật khẩu?
                     </a>
                   </div>
                   <div className="">
                     <button
                       type="submit"
-                      className="tf-btn w-100 radius-3 btn-fill animate-hover-btn justify-content-center"
+                      className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
+                      style={{ fontFamily: 'Roboto, sans-serif' }}
                     >
-                      Log in
+                      Đăng nhập
                     </button>
                   </div>
                 </form>
@@ -103,13 +109,12 @@ export default function Login() {
             </div>
           </div>
           <div className="tf-login-content">
-            <h5 className="mb_36">I'm new here</h5>
-            <p className="mb_20">
-              Sign up for early Sale access plus tailored new arrivals, trends
-              and promotions. To opt out, click unsubscribe in our emails.
+            <h5 className="mb_36" style={{ fontFamily: 'Playfair Display, serif' }}>Bạn chưa có tài khoản?</h5>
+            <p className="mb_20" style={{ fontFamily: 'Roboto, sans-serif' }}>
+              Đăng ký để được cập nhật sớm nhất về khuyến mãi, sản phẩm mới và các xu hướng mới nhất. Bạn có thể hủy đăng ký bất kỳ lúc nào.
             </p>
-            <Link href={`/register`} className="tf-btn btn-line">
-              Register
+            <Link href={`/register`} className="btn-line tf-btn" style={{ fontFamily: 'Roboto, sans-serif' }}>
+              Đăng ký
               <i className="icon icon-arrow1-top-left" />
             </Link>
           </div>

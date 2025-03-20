@@ -6,8 +6,8 @@ import React from "react";
 import Link from "next/link";
 import DetailsOuterZoom from "@/components/shopDetails/DetailsOuterZoom";
 import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";
-import request from "@/utlis/axios";
-import { formatPrice } from "@/utlis/priceFormatter";
+import request from "@/utils/axios";
+import { formatPrice } from "@/utils/priceFormatter";
 import { Box, Chip, Typography, Grid, Paper, Divider } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
@@ -64,8 +64,9 @@ export default async function page({ params }) {
       category: product.category,
       skinTypes: product.skinTypes || [],
       specifications: product.specifications || {},
-      soldCount: product.soldCount,
-      rating: product.rating,
+      soldCount: product.soldCount || 0,
+      ratingDisplay: product.rating ? `${product.rating.toFixed(1)}/5` : "0/5",
+      rating: product.rating || 0,
       status: product.status,
       description: product.description
     };
@@ -73,7 +74,7 @@ export default async function page({ params }) {
     return (
       <>
         <Header2 />
-        <div className="pt-6 md:pt-8">
+        <div className="md:pt-8 pt-6">
           <DetailsOuterZoom product={formattedProduct} />
           <ShopDetailsTab product={formattedProduct} />
           <ProductReviews productId={product.id} />
@@ -88,11 +89,11 @@ export default async function page({ params }) {
     return (
       <>
         <Header2 />
-        <div className="container my-12 py-8 text-center">
+        <div className="container text-center my-12 py-8">
           <h2 className="text-2xl font-medium mb-4">Unable to load product information</h2>
           <p className="mb-6">An error occurred while loading product information. Please try again later.</p>
-          <p className="text-sm text-gray-600 mb-6">Error details: {error.message}</p>
-          <Link href="/shop" className="tf-btn btn-primary">
+          <p className="text-gray-600 text-sm mb-6">Error details: {error.message}</p>
+          <Link href="/shop" className="btn-primary tf-btn">
             Back to shop
           </Link>
         </div>

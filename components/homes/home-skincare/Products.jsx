@@ -7,8 +7,8 @@ import { useContextElement } from "@/context/Context";
 import Link from "next/link";
 import { Navigation, Pagination } from "swiper/modules";
 import { useEffect, useState } from "react";
-import { defaultProductImage } from "@/utlis/default";
-import request from "@/utlis/axios";
+import { defaultProductImage } from "@/utils/default";
+import request from "@/utils/axios";
 import { useQueries } from "@tanstack/react-query";
 import { useTheme } from "@mui/material/styles";
 import { Box, Tab, Tabs, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
@@ -118,7 +118,7 @@ export default function Products() {
                         style={{ display: 'block', aspectRatio: '1/1' }}
                       >
                         <Image
-                          className="object-cover transition-transform duration-500 hover:scale-105"
+                          className="duration-500 hover:scale-105 object-cover transition-transform"
                           src={product.thumbnail || defaultProductImage}
                           alt={product.name}
                           width={360}
