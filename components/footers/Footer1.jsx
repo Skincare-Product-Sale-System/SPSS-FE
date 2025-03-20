@@ -100,30 +100,30 @@ export default function Footer1({ bgColor = "" }) {
                           fontWeight: "600",
                         }}
                       >
-                        SPSS
+                        Skincede
                       </div>
                     </Link>
                   </div>
                   <ul>
                     <li>
                       <p>
-                        Address: 1234 Fashion Street, Suite 567, <br />
-                        New York, NY 10001
+                        Địa chỉ: 1234 Đường Thời Trang, Số 567, <br />
+                        Hà Nội, Việt Nam 10001
                       </p>
                     </li>
                     <li>
                       <p>
-                        Email: <a href="#">info@fashionshop.com</a>
+                        Email: <a href="#">info@Skincede.com</a>
                       </p>
                     </li>
                     <li>
                       <p>
-                        Phone: <a href="#">(212) 555-1234</a>
+                        Điện thoại: <a href="#">(024) 5555-1234</a>
                       </p>
                     </li>
                   </ul>
                   <Link href={`/contact-1`} className="tf-btn btn-line">
-                    Get direction
+                    Chỉ đường
                     <i className="icon icon-arrow1-top-left" />
                   </Link>
                   <ul className="tf-social-icon d-flex gap-10">
@@ -172,10 +172,10 @@ export default function Footer1({ bgColor = "" }) {
               </div>
               <div className="col-xl-3 col-md-6 col-12 footer-col-block">
                 <div className="footer-heading footer-heading-desktop">
-                  <h6>Help</h6>
+                  <h6>Trợ giúp</h6>
                 </div>
                 <div className="footer-heading footer-heading-moblie">
-                  <h6>Help</h6>
+                  <h6>Trợ giúp</h6>
                 </div>
                 <ul className="footer-menu-list tf-collapse-content">
                   {footerLinks.map((link, index) => (
@@ -189,10 +189,10 @@ export default function Footer1({ bgColor = "" }) {
               </div>
               <div className="col-xl-3 col-md-6 col-12 footer-col-block">
                 <div className="footer-heading footer-heading-desktop">
-                  <h6>About us</h6>
+                  <h6>Về chúng tôi</h6>
                 </div>
                 <div className="footer-heading footer-heading-moblie">
-                  <h6>About us</h6>
+                  <h6>Về chúng tôi</h6>
                 </div>
                 <ul className="footer-menu-list tf-collapse-content">
                   {aboutLinks.slice(0, 4).map((link, index) => (
@@ -207,15 +207,15 @@ export default function Footer1({ bgColor = "" }) {
               <div className="col-xl-3 col-md-6 col-12">
                 <div className="footer-newsletter footer-col-block">
                   <div className="footer-heading footer-heading-desktop">
-                    <h6>Sign Up for Email</h6>
+                    <h6>Đăng ký nhận tin</h6>
                   </div>
                   <div className="footer-heading footer-heading-moblie">
-                    <h6>Sign Up for Email</h6>
+                    <h6>Đăng ký nhận tin</h6>
                   </div>
                   <div className="tf-collapse-content">
                     <div className="footer-menu_item">
-                      Sign up to get first dibs on new arrivals, sales,
-                      exclusive content, events and more!
+                      Đăng ký để nhận thông tin về sản phẩm mới, khuyến mãi, 
+                      nội dung độc quyền, sự kiện và nhiều hơn nữa!
                     </div>
                     <div
                       className={`tfSubscribeMsg ${
@@ -224,10 +224,10 @@ export default function Footer1({ bgColor = "" }) {
                     >
                       {success ? (
                         <p style={{ color: "rgb(52, 168, 83)" }}>
-                          You have successfully subscribed.
+                          Bạn đã đăng ký thành công.
                         </p>
                       ) : (
-                        <p style={{ color: "red" }}>Something went wrong</p>
+                        <p style={{ color: "red" }}>Đã xảy ra lỗi</p>
                       )}
                     </div>
                     <form
@@ -246,7 +246,7 @@ export default function Footer1({ bgColor = "" }) {
                             type="email"
                             name="email"
                             className="subscribe-email"
-                            placeholder="Enter your email...."
+                            placeholder="Nhập email của bạn...."
                             tabIndex={0}
                             aria-required="true"
                             autoComplete="abc@xyz.com"
@@ -257,7 +257,7 @@ export default function Footer1({ bgColor = "" }) {
                             className="subscribe-button tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
                             type="submit"
                           >
-                            Subscribe
+                            Đăng ký
                             <i className="icon icon-arrow1-top-left" />
                           </button>
                         </div>
@@ -284,8 +284,7 @@ export default function Footer1({ bgColor = "" }) {
               <div className="col-12">
                 <div className="footer-bottom-wrap d-flex gap-20 flex-wrap justify-content-between align-items-center">
                   <div className="footer-menu_item">
-                    © {new Date().getFullYear()} Ecomus Store. All Rights
-                    Reserved
+                    © {new Date().getFullYear()} Skincede Store. Đã đăng ký Bản quyền
                   </div>
                   <div className="tf-payment">
                     {paymentImages.map((image, index) => (

@@ -42,6 +42,29 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       },
     ],
   });
+  
+  // Thêm state và fetch cho skin types
+  const [skinTypes, setSkinTypes] = useState([]);
+  
+  useEffect(() => {
+    const fetchSkinTypes = async () => {
+      try {
+        const { data } = await request.get("/skin-types");
+        // Kiểm tra cấu trúc dữ liệu theo response API thực tế
+        if (data && data.data && Array.isArray(data.data.items)) {
+          setSkinTypes(data.data.items);
+        } else {
+          console.error("Skin types data is not in expected format:", data);
+          setSkinTypes([]);
+        }
+      } catch (error) {
+        console.error("Error fetching skin types:", error);
+        setSkinTypes([]);
+      }
+    };
+    
+    fetchSkinTypes();
+  }, []);
 
   const pathname = usePathname();
   const isMenuActive = (menuItem) => {
@@ -132,7 +155,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             isMenuActive(allHomepages) ? "activeMenu" : ""
           } `}
         >
-          Home
+          Trang Chủ
         </a>
       </li>
       <li className="menu-item">
@@ -148,7 +171,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
               : ""
           } `}
         >
-          Quizzes
+          Khảo Sát Da
         </a>
       </li>
       {/* <li className="menu-item">
@@ -252,15 +275,35 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
             isMenuActive(productDetailPages) ? "activeMenu" : ""
           }`}
         >
-          Products<i className="icon icon-arrow-down" style={{ display: 'inline-block', width: '12px', marginLeft: '1px' }}></i>
+          Sản Phẩm<i className="icon icon-arrow-down" style={{ display: 'inline-block', width: '12px', marginLeft: '1px' }}></i>
         </a>
         <div className="sub-menu mega-menu">
           <div className="container">
             <div className="row">
               <div className="col-lg-4">
                 <div className="mega-menu-item">
-                  <div className="menu-heading">Categories</div>
+                  <div className="menu-heading">Danh Mục</div>
                   {!categories.isLoading && renderCategories(categories.data)}
+                  
+                  <div className="menu-heading mt-4">Loại Da</div>
+                  <ul className="menu-list">
+                    {Array.isArray(skinTypes) && skinTypes.length > 0 ? (
+                      skinTypes.map((skinType, index) => (
+                        <li key={`skin-${index}`}>
+                          <Link
+                            href={`/products?skinTypeId=${skinType.id}`}
+                            className={`menu-link-text link position-relative ${
+                              isMenuActive({ href: `/products?skinTypeId=${skinType.id}` }) ? "activeMenu" : ""
+                            }`}
+                          >
+                            {skinType.name}
+                          </Link>
+                        </li>
+                      ))
+                    ) : (
+                      <li><span className="menu-link-text">Đang tải loại da...</span></li>
+                    )}
+                  </ul>
                 </div>
               </div>
               {/* {productDetailPages.map((menuItem, index) => (
@@ -286,7 +329,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                 </div>
               ))} */}
               <div className="col-lg-8">
-                <div className="menu-heading">Best seller</div>
+                <div className="menu-heading">Sản Phẩm Bán Chạy</div>
                 <div className="hover-sw-nav hover-sw-2">
                   <Swiper
                     dir="ltr"
@@ -394,8 +437,8 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
           className={`item-link ${Linkfs} ${textColor}  ${
             isMenuActive(blogLinks) ? "activeMenu" : ""
           }`}
-        >
-          Blogs
+        > 
+          Bài Viết
           {/* <div className="sub-menu links-default">
             <ul className="menu-list">
               {blogLinks.map((linkItem, index) => (

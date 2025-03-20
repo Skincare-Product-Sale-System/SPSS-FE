@@ -50,7 +50,7 @@ export default function MyAccount() {
       console.log(formData);
       setLoading(false);
     } catch (error) {
-      toast.error("Failed to load account information");
+      toast.error("Không thể tải thông tin tài khoản");
       setLoading(false);
     }
   };
@@ -73,9 +73,9 @@ export default function MyAccount() {
         ...formData
       });
       setIsEditing(false);
-      toast.success("Profile updated successfully");
+      toast.success("Cập nhật hồ sơ thành công");
     } catch (error) {
-      toast.error("Failed to update profile");
+      toast.error("Không thể cập nhật hồ sơ");
     } finally {
       setSaving(false);
     }
@@ -87,14 +87,14 @@ export default function MyAccount() {
       try {
         // Validate file type
         if (!file.type.startsWith('image/')) {
-          toast.error('Please select an image file');
+          toast.error('Vui lòng chọn file hình ảnh');
           return;
         }
 
         // Validate file size (e.g., max 5MB)
         const maxSize = 5 * 1024 * 1024; // 5MB
         if (file.size > maxSize) {
-          toast.error('File size should not exceed 5MB');
+          toast.error('Kích thước file không được vượt quá 5MB');
           return;
         }
 
@@ -102,7 +102,7 @@ export default function MyAccount() {
         const formDataFile = new FormData();
         formDataFile.append('avatarFiles', file); // Changed to match controller parameter name
         
-        toast.loading('Uploading avatar...');
+        toast.loading('Đang tải ảnh đại diện...');
         
         const response = await request.post('/accounts/upload-avatar', formDataFile);
         
@@ -111,7 +111,7 @@ export default function MyAccount() {
           await fetchUserData();
           
           toast.dismiss();
-          toast.success('Avatar uploaded successfully');
+          toast.success('Tải ảnh đại diện thành công');
         } else {
           throw new Error(response.data?.message || 'Failed to upload avatar');
         }
@@ -125,13 +125,13 @@ export default function MyAccount() {
 
   const handleDeleteAvatar = async () => {
     if (!formData.avatarUrl) {
-      toast.error('No avatar to delete');
+      toast.error('Không có ảnh đại diện để xóa');
       return;
     }
 
-    if (window.confirm('Are you sure you want to delete your avatar?')) {
+    if (window.confirm('Bạn có chắc chắn muốn xóa ảnh đại diện?')) {
       try {
-        toast.loading('Deleting avatar...');
+        toast.loading('Đang xóa ảnh đại diện...');
         
         // Send the current avatar URL as a query parameter
         await request.delete(`/accounts/delete-avatar?imageUrl=${encodeURIComponent(formData.avatarUrl)}`);
@@ -148,7 +148,7 @@ export default function MyAccount() {
         }));
         
         toast.dismiss();
-        toast.success('Avatar deleted successfully');
+        toast.success('Xóa ảnh đại diện thành công');
       } catch (error) {
         console.error('Error deleting avatar:', error);
         toast.dismiss();
@@ -238,7 +238,7 @@ export default function MyAccount() {
           
           <div className="flex-1 text-left md:text-left">
             <h3 className="text-2xl font-semibold mb-3" style={{ color: theme.palette.primary.dark }}>
-              {isEditing ? "Edit Profile" : `${userData?.surName} ${userData?.lastName}`}
+              {isEditing ? "Chỉnh Sửa Hồ Sơ" : `${userData?.surName} ${userData?.lastName}`}
             </h3>
             
             <div className="space-y-3 mb-4">
@@ -247,7 +247,7 @@ export default function MyAccount() {
                   <>
                     <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                       <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
-                        First Name
+                        Họ
                       </p>
                       <p className="font-medium" style={{ color: theme.palette.text.primary }}>
                         {userData?.surName || "N/A"}
@@ -256,7 +256,7 @@ export default function MyAccount() {
                     
                     <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                       <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
-                        Last Name
+                        Tên
                       </p>
                       <p className="font-medium" style={{ color: theme.palette.text.primary }}>
                         {userData?.lastName || "N/A"}
@@ -266,7 +266,7 @@ export default function MyAccount() {
                 ) : (
                   <>
                     <TextField
-                      label="First Name"
+                      label="Họ"
                       name="surName"
                       value={formData.surName}
                       onChange={handleInputChange}
@@ -285,7 +285,7 @@ export default function MyAccount() {
                     />
                     
                     <TextField
-                      label="Last Name"
+                      label="Tên"
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
@@ -310,7 +310,7 @@ export default function MyAccount() {
                 <>
                   <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                     <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
-                      Username
+                      Tên đăng nhập
                     </p>
                     <p className="font-medium" style={{ color: theme.palette.text.primary }}>
                       {userData?.userName || "N/A"}
@@ -319,7 +319,7 @@ export default function MyAccount() {
                   
                   <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                     <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
-                      Email Address
+                      Địa chỉ email
                     </p>
                     <p className="font-medium" style={{ color: theme.palette.text.primary }}>
                       {userData?.emailAddress || "N/A"}
@@ -328,7 +328,7 @@ export default function MyAccount() {
                   
                   <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                     <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
-                      Phone Number
+                      Số điện thoại
                     </p>
                     <p className="font-medium" style={{ color: theme.palette.text.primary }}>
                       {userData?.phoneNumber || "N/A"}
@@ -337,7 +337,7 @@ export default function MyAccount() {
                   
                   <div className="p-3 rounded-md border" style={{ borderColor: theme.palette.divider, height: '56px' }}>
                     <p className="text-sm font-medium mb-0" style={{ color: theme.palette.text.secondary }}>
-                      Member Since
+                      Thành viên từ
                     </p>
                     <p className="font-medium" style={{ color: theme.palette.text.primary }}>
                       {userData?.createdTime ? new Date(userData.createdTime).toLocaleDateString() : "N/A"}
@@ -347,7 +347,7 @@ export default function MyAccount() {
               ) : (
                 <>
                   <TextField
-                    label="Username"
+                    label="Tên đăng nhập"
                     name="userName"
                     value={formData.userName}
                     onChange={handleInputChange}
@@ -366,7 +366,7 @@ export default function MyAccount() {
                   />
                   
                   <TextField
-                    label="Email Address"
+                    label="Địa chỉ email"
                     name="emailAddress"
                     value={formData.emailAddress}
                     onChange={handleInputChange}
@@ -385,7 +385,7 @@ export default function MyAccount() {
                   />
                   
                   <TextField
-                    label="Phone Number"
+                    label="Số điện thoại"
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
@@ -411,7 +411,7 @@ export default function MyAccount() {
                 onClick={() => setIsEditing(true)}
                 className="inline-block px-4 py-2 rounded-md text-white text-sm font-medium"
                 style={{ backgroundColor: theme.palette.primary.main }}>
-                Edit Profile
+                Chỉnh Sửa Hồ Sơ
               </button>
             ) : (
               <div className="flex gap-3">
@@ -420,7 +420,7 @@ export default function MyAccount() {
                   disabled={saving}
                   className="inline-block px-4 py-2 rounded-md text-white text-sm font-medium"
                   style={{ backgroundColor: theme.palette.primary.main }}>
-                  {saving ? 'Saving...' : 'Save Changes'}
+                  {saving ? 'Saving...' : 'Lưu thay đổi'}
                 </button>
                 
                 <button 
@@ -430,7 +430,7 @@ export default function MyAccount() {
                     color: theme.palette.text.primary,
                     borderColor: theme.palette.divider
                   }}>
-                  Cancel
+                  Hủy
                 </button>
               </div>
             )}
@@ -442,7 +442,7 @@ export default function MyAccount() {
       {userData?.skinType ? (
         <div className="p-5 rounded-lg mb-6 border" style={{ borderColor: theme.palette.primary.main }}>
           <h5 className="text-lg font-medium mb-3" style={{ color: theme.palette.primary.main }}>
-            Your Skin Type
+            Loại da của bạn
           </h5>
           <div className="flex items-center">
             <span 
@@ -454,7 +454,7 @@ export default function MyAccount() {
             <p style={{ color: theme.palette.text.primary }}>
               <Link href="/quiz" className="text-sm font-medium hover:underline" 
                     style={{ color: theme.palette.primary.main }}>
-                Take our skin quiz again
+                Làm lại khảo sát da
               </Link>
             </p>
           </div>
@@ -462,15 +462,15 @@ export default function MyAccount() {
       ) : (
         <div className="p-5 rounded-lg mb-6 border border-dashed" style={{ borderColor: theme.palette.primary.main }}>
           <h5 className="text-lg font-medium mb-2" style={{ color: theme.palette.primary.main }}>
-            Discover Your Skin Type
+            Khám phá loại da của bạn
           </h5>
           <p className="mb-3" style={{ color: theme.palette.text.primary }}>
-            Take our quick skin quiz to get personalized product recommendations for your skin type.
+            Làm khảo sát nhanh để nhận được đề xuất sản phẩm phù hợp với loại da của bạn.
           </p>
           <Link href="/quiz" 
                 className="inline-block px-4 py-2 rounded-md text-white text-sm"
                 style={{ backgroundColor: theme.palette.primary.main }}>
-            Take Skin Quiz
+            Làm Khảo Sát Da
           </Link>
         </div>
       )}
@@ -478,7 +478,7 @@ export default function MyAccount() {
       {/* Account Navigation Section */}
       <div className="p-5 rounded-lg mb-6" style={{ backgroundColor: theme.palette.background.paper }}>
         <h5 className="text-lg font-medium mb-3" style={{ color: theme.palette.text.primary }}>
-          Account Management
+          Quản Lý Tài Khoản
         </h5>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Link href="/my-account-orders" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
@@ -486,7 +486,7 @@ export default function MyAccount() {
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <ShoppingBagOutlinedIcon fontSize="inherit" />
             </span>
-            <span className="font-medium" style={{ color: theme.palette.text.primary }}>My Orders</span>
+            <span className="font-medium" style={{ color: theme.palette.text.primary }}>Đơn Hàng Của Tôi</span>
           </Link>
           
           <Link href="/my-account-address" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
@@ -494,7 +494,7 @@ export default function MyAccount() {
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <HomeOutlinedIcon fontSize="inherit" />
             </span>
-            <span className="font-medium" style={{ color: theme.palette.text.primary }}>My Addresses</span>
+            <span className="font-medium" style={{ color: theme.palette.text.primary }}>Sổ Địa Chỉ</span>
           </Link>
           
           <Link href="/my-reviews" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
@@ -502,7 +502,7 @@ export default function MyAccount() {
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <StarOutlinedIcon fontSize="inherit" />
             </span>
-            <span className="font-medium" style={{ color: theme.palette.text.primary }}>My Reviews</span>
+            <span className="font-medium" style={{ color: theme.palette.text.primary }}>Đánh Giá Của Tôi</span>
           </Link>
           
           <Link href="/change-password" className="p-4 rounded-lg border hover:shadow-md transition-all flex flex-col items-center text-center"
@@ -510,7 +510,7 @@ export default function MyAccount() {
             <span className="text-3xl mb-2" style={{ color: theme.palette.primary.main }}>
               <LockOutlinedIcon fontSize="inherit" />
             </span>
-            <span className="font-medium" style={{ color: theme.palette.text.primary }}>Change Password</span>
+            <span className="font-medium" style={{ color: theme.palette.text.primary }}>Đổi Mật Khẩu</span>
           </Link>
         </div>
       </div>

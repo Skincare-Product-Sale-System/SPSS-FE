@@ -51,10 +51,13 @@ export default function ShopCart() {
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="header">
-            <div className="title fw-5">Shopping cart</div>
+            <div className="title fw-5" style={{ fontFamily: '"Roboto", sans-serif' }}>
+              Giỏ Hàng
+            </div>
             <span
               className="icon-close icon-close-popup"
               data-bs-dismiss="modal"
+              aria-label="Đóng"
             />
           </div>
           <div className="wrap">
@@ -104,13 +107,14 @@ export default function ShopCart() {
                           <Link
                             className="title link"
                             href={`/product-detail/${elm.productId}`}
+                            style={{ fontFamily: '"Roboto", sans-serif' }}
                           >
                             {elm.productName}
                           </Link>
-                          <div className="meta-variant">
+                          <div className="meta-variant" style={{ fontFamily: '"Roboto", sans-serif' }}>
                             {elm.variationOptionValues[0]}
                           </div>
-                          <div className="price fw-6">
+                          <div className="price fw-6" style={{ fontFamily: '"Roboto", sans-serif' }}>
                             <span
                               style={{
                                 color: "#ff0000",
@@ -138,7 +142,7 @@ export default function ShopCart() {
                                       revalidate();
                                     })
                                     .catch((err) => {
-                                      toast.error("Something went wrong");
+                                      toast.error("Đã xảy ra lỗi");
                                     });
                                 }}
                               >
@@ -166,7 +170,7 @@ export default function ShopCart() {
                                     })
                                     .catch((err) => {
                                       console.log("err", err);
-                                      toast.error("Something went wrong");
+                                      toast.error("Đã xảy ra lỗi");
                                     });
                                 }}
                               >
@@ -182,7 +186,7 @@ export default function ShopCart() {
                                   .then((res) => revalidate());
                               }}
                             >
-                              Remove
+                              Xóa
                             </div>
                           </div>
                         </div>
@@ -192,16 +196,16 @@ export default function ShopCart() {
                     {!cartProducts?.length && (
                       <div className="container">
                         <div className="row align-items-center mt-5 mb-5">
-                          <div className="col-12 fs-18">
-                            Your shop cart is empty
+                          <div className="col-12 fs-18" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                            Giỏ hàng của bạn đang trống
                           </div>
                           <div className="col-12 mt-3">
                             <Link
                               href={`/products`}
                               className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
-                              style={{ width: "fit-content" }}
+                              style={{ width: "fit-content", fontFamily: '"Roboto", sans-serif' }}
                             >
-                              Explore Products!
+                              Khám Phá Sản Phẩm!
                             </Link>
                           </div>
                         </div>
@@ -322,7 +326,8 @@ export default function ShopCart() {
                 </div> */}
                 <div className="tf-mini-cart-bottom-wrap">
                   <div className="tf-cart-totals-discounts">
-                    <div className="tf-cart-total">Subtotal</div>
+                    <div className="tf-cart-total" style={{ fontFamily: '"Roboto", sans-serif' }}>Tạm tính</div>
+                    
                     <div className="tf-totals-total-value fw-6">
                       {formatPrice(totalPrice)}
                     </div>
@@ -344,9 +349,13 @@ export default function ShopCart() {
                       </div>
                     </div>
                     <label htmlFor="CartDrawer-Form_agree">
-                      I agree with the
-                      <a href="#" title="Terms of Service" className="ps-1">
-                        terms and conditions
+                      Tôi đồng ý với
+                      <a 
+                        href="#" 
+                        title="Điều khoản dịch vụ" 
+                        className="ps-1"
+                      >
+                        điều khoản và điều kiện
                       </a>
                     </label>
                   </div>
@@ -355,7 +364,7 @@ export default function ShopCart() {
                       href={`/view-cart`}
                       className="tf-btn btn-outline radius-3 link w-100 justify-content-center"
                     >
-                      View cart
+                      Xem Giỏ Hàng
                     </Link>
                     {cartProducts.length ? (
                       <Link
@@ -363,58 +372,16 @@ export default function ShopCart() {
                         className="tf-btn radius-3 w-100 justify-content-center"
                         style={{ backgroundColor: '#000000', color: '#ffffff' }}
                       >
-                        <span>Check out</span>
+                        <span>Thanh Toán</span>
                       </Link>
                     ) : (
                       <div
                         className="tf-btn radius-3 w-100 justify-content-center"
                         style={{ backgroundColor: '#757575', color: '#e0e0e0', cursor: 'not-allowed', pointerEvents: 'none' }}
                       >
-                        <span>Check out</span>
+                        <span>Thanh Toán</span>
                       </div>
                     )}
-                  </div>
-                </div>
-              </div>
-              <div
-                className="tf-mini-cart-tool-openable add-note"
-                ref={addNoteRef}
-              >
-                <div
-                  className="overplay tf-mini-cart-tool-close"
-                  onClick={() => addNoteRef.current.classList.remove("open")}
-                />
-                <div className="tf-mini-cart-tool-content">
-                  <label htmlFor="Cart-note" className="tf-mini-cart-tool-text">
-                    <div className="icon">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={18}
-                        viewBox="0 0 16 18"
-                        fill="currentColor"
-                      >
-                        <path d="M5.12187 16.4582H2.78952C2.02045 16.4582 1.39476 15.8325 1.39476 15.0634V2.78952C1.39476 2.02045 2.02045 1.39476 2.78952 1.39476H11.3634C12.1325 1.39476 12.7582 2.02045 12.7582 2.78952V7.07841C12.7582 7.46357 13.0704 7.77579 13.4556 7.77579C13.8407 7.77579 14.1529 7.46357 14.1529 7.07841V2.78952C14.1529 1.25138 12.9016 0 11.3634 0H2.78952C1.25138 0 0 1.25138 0 2.78952V15.0634C0 16.6015 1.25138 17.8529 2.78952 17.8529H5.12187C5.50703 17.8529 5.81925 17.5407 5.81925 17.1555C5.81925 16.7704 5.50703 16.4582 5.12187 16.4582Z" />
-                        <path d="M15.3882 10.0971C14.5724 9.28136 13.2452 9.28132 12.43 10.0965L8.60127 13.9168C8.51997 13.9979 8.45997 14.0979 8.42658 14.2078L7.59276 16.9528C7.55646 17.0723 7.55292 17.1993 7.58249 17.3207C7.61206 17.442 7.67367 17.5531 7.76087 17.6425C7.84807 17.7319 7.95768 17.7962 8.07823 17.8288C8.19879 17.8613 8.32587 17.8609 8.44621 17.8276L11.261 17.0479C11.3769 17.0158 11.4824 16.9543 11.5675 16.8694L15.3882 13.0559C16.2039 12.2401 16.2039 10.9129 15.3882 10.0971ZM10.712 15.7527L9.29586 16.145L9.71028 14.7806L12.2937 12.2029L13.2801 13.1893L10.712 15.7527ZM14.4025 12.0692L14.2673 12.204L13.2811 11.2178L13.4157 11.0834C13.6876 10.8115 14.1301 10.8115 14.402 11.0834C14.6739 11.3553 14.6739 11.7977 14.4025 12.0692Z" />
-                      </svg>
-                    </div>
-                    <span>Add Order Note</span>
-                  </label>
-                  <textarea
-                    name="note"
-                    id="Cart-note"
-                    placeholder="How can we help you?"
-                    defaultValue={""}
-                  />
-                  <div className="tf-cart-tool-btns justify-content-center">
-                    <div
-                      className="tf-mini-cart-tool-primary text-center w-100 fw-6 tf-mini-cart-tool-close "
-                      onClick={() =>
-                        addNoteRef.current.classList.remove("open")
-                      }
-                    >
-                      Close
-                    </div>
                   </div>
                 </div>
               </div>
@@ -448,8 +415,8 @@ export default function ShopCart() {
                         </svg>
                       </div>
                       <div className="tf-gift-wrap-infos">
-                        <p>Do you want a gift wrap?</p>
-                        Only
+                        <p>Bạn có muốn gói quà không?</p>
+                        Chỉ với
                         <span className="price fw-6">{formatPrice(5000)}</span>
                       </div>
                     </div>
@@ -457,8 +424,9 @@ export default function ShopCart() {
                       <button
                         type="submit"
                         className="tf-btn fw-6 w-100 justify-content-center btn-fill animate-hover-btn radius-3"
+                        title="Thêm gói quà"
                       >
-                        <span>Add a gift wrap</span>
+                        <span>Thêm gói quà</span>
                       </button>
                       <div
                         className="tf-mini-cart-tool-primary text-center w-100 fw-6 tf-mini-cart-tool-close"
@@ -466,7 +434,7 @@ export default function ShopCart() {
                           addGiftRef.current.classList.remove("open")
                         }
                       >
-                        Cancel
+                        Hủy
                       </div>
                     </div>
                   </div>
@@ -497,10 +465,10 @@ export default function ShopCart() {
                         />
                       </svg>
                     </div>
-                    <span className="fw-6">Estimate Shipping</span>
+                    <span className="fw-6">Ước tính</span>
                   </div>
                   <div className="field">
-                    <p>Country</p>
+                    <p>Quốc gia</p>
                     <select
                       className="tf-select w-100"
                       id="ShippingCountry_CartDrawer-Form"
@@ -642,15 +610,19 @@ export default function ShopCart() {
                     </select>
                   </div>
                   <div className="field">
-                    <p>Zip code</p>
-                    <input type="text" name="text" placeholder="" />
+                    <p>Mã bưu điện</p>
+                    <input 
+                      type="text" 
+                      name="text" 
+                      placeholder="Nhập mã bưu điện" 
+                    />
                   </div>
                   <div className="tf-cart-tool-btns">
                     <a
                       href="#"
                       className="tf-btn fw-6 justify-content-center btn-fill w-100 animate-hover-btn radius-3"
                     >
-                      <span>Estimate</span>
+                      <span>Ước tính</span>
                     </a>
                     <div
                       className="tf-mini-cart-tool-primary text-center fw-6 w-100 tf-mini-cart-tool-close"
@@ -658,7 +630,7 @@ export default function ShopCart() {
                         addShipingRef.current.classList.remove("open")
                       }
                     >
-                      Cancel
+                      Hủy
                     </div>
                   </div>
                 </div>

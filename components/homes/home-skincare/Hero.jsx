@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function Hero() {
   return (
-    <div className="tf-slideshow slider-effect-fade slider-skincare position-relative">
+    <div className="tf-slideshow slider-effect-fade slider-skincare position-relative" style={{ fontFamily: 'Roboto, sans-serif' }}>
       <Swiper
         dir="ltr"
         slidesPerView={1}
@@ -55,17 +55,17 @@ export default function Hero() {
               </div>
               <div className="box-content text-center" style={{ zIndex: 2 }}>
                 <div className="container">
-                  <h1 className="fade-item fade-item-1 text-white heading">
+                  <h1 className="fade-item fade-item-1 text-white heading" style={{ fontFamily: 'Roboto, sans-serif' }}>
                     {slide.heading}
                   </h1>
-                  <p className="fade-item fade-item-2 text-white">
+                  <p className="fade-item fade-item-2 text-white" style={{ fontFamily: 'Roboto, sans-serif' }}>
                     {slide.description}
                   </p>
                   <Link
                     href={`/products`}
                     className="fade-item fade-item-3 tf-btn btn-light-icon animate-hover-btn btn-xl radius-3"
                   >
-                    <span>Shop collection</span>
+                    <span>Bộ sưu tập</span>
                     <i className="icon icon-arrow-right" />
                   </Link>
                 </div>

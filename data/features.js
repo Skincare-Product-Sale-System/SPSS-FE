@@ -2,170 +2,173 @@ import Link from "next/link";
 export const iconBoxes = [
   {
     iconClass: "icon-shipping-1",
-    title: "Free Shipping",
-    description: "Free shipping over order $120",
+    title: "Miễn Phí Vận Chuyển",
+    description: "Miễn phí vận chuyển cho đơn hàng trên 2.800.000₫",
+    fontFamily: '"Playfair Display", serif'
   },
   {
     iconClass: "icon-payment-1",
-    title: "Flexible Payment",
-    description: "Pay with Multiple Credit Cards",
+    title: "Thanh Toán Linh Hoạt",
+    description: "Thanh toán với nhiều loại thẻ tín dụng",
+    fontFamily: '"Playfair Display", serif'
   },
   {
     iconClass: "icon-return-1",
-    title: "14 Day Returns",
-    description: "Within 30 days for an exchange",
+    title: "Đổi Trả Trong 14 Ngày",
+    description: "Trong vòng 30 ngày để đổi sản phẩm",
+    fontFamily: '"Playfair Display", serif'
   },
 ];
 
 export const iconBoxData = [
   {
     iconClass: "icon-shipping",
-    title: "Free Shipping",
-    description: "Free shipping over order $120",
+    title: "Miễn Phí Vận Chuyển",
+    description: "Miễn phí vận chuyển cho đơn hàng trên 2.800.000₫",
   },
   {
     iconClass: "icon-payment fs-22",
-    title: "Flexible Payment",
-    description: "Pay with Multiple Credit Cards",
+    title: "Thanh Toán Linh Hoạt",
+    description: "Thanh toán với nhiều loại thẻ tín dụng",
   },
   {
     iconClass: "icon-return fs-20",
-    title: "14 Day Returns",
-    description: "Within 30 days for an exchange",
+    title: "Đổi Trả Trong 14 Ngày",
+    description: "Trong vòng 30 ngày để đổi sản phẩm",
   },
   {
     iconClass: "icon-suport",
-    title: "Premium Support",
-    description: "Outstanding premium support",
+    title: "Hỗ Trợ Cao Cấp",
+    description: "Dịch vụ hỗ trợ khách hàng xuất sắc",
   },
   {
     iconClass: "icon-shipping",
-    title: "Free Shipping",
-    description: "Free shipping over order $120",
+    title: "Miễn Phí Vận Chuyển",
+    description: "Miễn phí vận chuyển cho đơn hàng trên 2.800.000₫",
   },
   {
     iconClass: "icon-payment fs-22",
-    title: "Flexible Payment",
-    description: "Pay with Multiple Credit Cards",
+    title: "Thanh Toán Linh Hoạt",
+    description: "Thanh toán với nhiều loại thẻ tín dụng",
   },
   {
     iconClass: "icon-return fs-20",
-    title: "14 Day Returns",
-    description: "Within 30 days for an exchange",
+    title: "Đổi Trả Trong 14 Ngày",
+    description: "Trong vòng 30 ngày để đổi sản phẩm",
   },
   {
     iconClass: "icon-suport",
-    title: "Premium Support",
-    description: "Outstanding premium support",
+    title: "Hỗ Trợ Cao Cấp",
+    description: "Dịch vụ hỗ trợ khách hàng xuất sắc",
   },
 ];
 export const iconBoxes7 = [
   {
     iconClass: "icon-shipping",
     iconStyle: "",
-    title: "Free Shipping",
-    description: "Free shipping over order $120",
+    title: "Miễn Phí Vận Chuyển",
+    description: "Miễn phí vận chuyển cho đơn hàng trên 2.800.000₫",
   },
   {
     iconClass: "icon-payment",
     iconStyle: "fs-22",
-    title: "Flexible Payment",
-    description: "Pay with Multiple Credit Cards",
+    title: "Thanh Toán Linh Hoạt",
+    description: "Thanh toán với nhiều loại thẻ tín dụng",
   },
   {
     iconClass: "icon-return",
     iconStyle: "fs-20",
-    title: "14 Day Returns",
-    description: "Within 30 days for an exchange",
+    title: "Đổi Trả Trong 14 Ngày",
+    description: "Trong vòng 30 ngày để đổi sản phẩm",
   },
   {
     iconClass: "icon-suport",
     iconStyle: "",
-    title: "Premium Support",
-    description: "Outstanding premium support",
+    title: "Hỗ Trợ Cao Cấp",
+    description: "Dịch vụ hỗ trợ khách hàng xuất sắc",
   },
 ];
 export const slides23 = [
   {
     iconClass: "icon-shipping",
-    title: "Free Shipping",
-    description: "Free shipping over order $120",
+    title: "Miễn Phí Vận Chuyển",
+    description: "Miễn phí vận chuyển cho đơn hàng trên 2.800.000₫",
   },
   {
     iconClass: "icon-payment fs-22",
-    title: "Flexible Payment",
-    description: "Pay with Multiple Credit Cards",
+    title: "Thanh Toán Linh Hoạt",
+    description: "Thanh toán với nhiều loại thẻ tín dụng",
   },
   {
     iconClass: "icon-return fs-20",
-    title: "14 Day Returns",
-    description: "Within 30 days for an exchange",
+    title: "Đổi Trả Trong 14 Ngày",
+    description: "Trong vòng 30 ngày để đổi sản phẩm",
   },
   {
     iconClass: "icon-suport",
-    title: "Premium Support",
-    description: "Outstanding premium support",
+    title: "Hỗ Trợ Cao Cấp",
+    description: "Dịch vụ hỗ trợ khách hàng xuất sắc",
   },
 ];
 export const iconBoxes2 = [
   {
     iconClass: "icon-shipping-1",
-    title: "Fast & free shipping",
+    title: "Vận chuyển nhanh & miễn phí",
     description:
-      "Every single order ships for free. No minimums, no tiers, no fine print whatsoever.",
+      "Mọi đơn đặt hàng đều được vận chuyển miễn phí. Không tối thiểu, không phân cấp, không điều khoản chi tiết nào.",
   },
   {
     iconClass: "icon-payment-1",
-    title: "Modular, easy-to-move design",
+    title: "Thiết kế模块化, dễ di chuyển",
     description:
-      "Our innovative modular design is driven by the belief that furniture should fit this home, and the next one.",
+      "Thiết kế sáng tạo của chúng tôi với niềm tin rằng nội thất nên phù hợp với ngôi nhà này và cả ngôi nhà tiếp theo.",
   },
   {
     iconClass: "icon-return-1",
-    title: "Durable, premium materials",
+    title: "Vật liệu cao cấp, bền bỉ",
     description:
-      "We use materials like sustainably-forested wood, strengthened steel hardware, and top-grain Italian leather.",
+      "Chúng tôi sử dụng các vật liệu như gỗ rừng bền vững, phần cứng thép tăng cường và da Ý cao cấp.",
   },
   {
     iconClass: "icon-shipping-1",
-    title: "Fast & free shipping",
+    title: "Vận chuyển nhanh & miễn phí",
     description:
-      "Every single order ships for free. No minimums, no tiers, no fine print whatsoever.",
+      "Mọi đơn đặt hàng đều được vận chuyển miễn phí. Không tối thiểu, không phân cấp, không điều khoản chi tiết nào.",
   },
   {
     iconClass: "icon-payment-1",
-    title: "Modular, easy-to-move design",
+    title: "Thiết kế模块化, dễ di chuyển",
     description:
-      "Our innovative modular design is driven by the belief that furniture should fit this home, and the next one.",
+      "Thiết kế sáng tạo của chúng tôi với niềm tin rằng nội thất nên phù hợp với ngôi nhà này và cả ngôi nhà tiếp theo.",
   },
   {
     iconClass: "icon-return-1",
-    title: "Durable, premium materials",
+    title: "Vật liệu cao cấp, bền bỉ",
     description:
-      "We use materials like sustainably-forested wood, strengthened steel hardware, and top-grain Italian leather.",
+      "Chúng tôi sử dụng các vật liệu như gỗ rừng bền vững, phần cứng thép tăng cường và da Ý cao cấp.",
   },
 ];
 
 export const slides = [
   {
     iconClass: "icon-shipping",
-    title: "Free Shipping on Orders Over $120",
+    title: "Miễn Phí Vận Chuyển cho Đơn Hàng Trên 2.800.000₫",
     justifyClass: "justify-content-end",
   },
   {
     iconClass: "icon-trial",
-    title: "100-days risk-free trial",
+    title: "Dùng thử miễn rủi ro 100 ngày",
     justifyClass: "justify-content-center",
   },
   {
     iconClass: "icon-warranty",
-    title: "Free 4-years warranty",
+    title: "Bảo hành miễn phí 4 năm",
     justifyClass: "",
   },
 
   {
     iconClass: "icon-trial",
-    title: "100-days risk-free trial",
+    title: "Dùng thử miễn rủi ro 100 ngày",
     justifyClass: "justify-content-center",
   },
 ];
@@ -173,74 +176,79 @@ export const slides = [
 export const iconBoxes3 = [
   {
     iconClass: "icon-shipping",
-    title: "Free Shipping",
-    description: "Free shipping over order $120",
+    title: "Miễn Phí Vận Chuyển",
+    description: "Miễn phí vận chuyển cho đơn hàng trên 2.800.000₫",
+    fontFamily: '"Playfair Display", serif'
   },
   {
     iconClass: "icon-payment fs-22",
-    title: "Flexible Payment",
-    description: "Pay with Multiple Credit Cards",
+    title: "Thanh Toán Linh Hoạt",
+    description: "Thanh toán với nhiều loại thẻ tín dụng",
+    fontFamily: '"Playfair Display", serif'
   },
   {
     iconClass: "icon-return fs-20",
-    title: "14 Day Returns",
-    description: "Within 30 days for an exchange",
+    title: "Đổi Trả Trong 14 Ngày",
+    description: "Trong vòng 30 ngày để đổi sản phẩm",
+    fontFamily: '"Playfair Display", serif'
   },
   {
     iconClass: "icon-suport",
-    title: "Premium Support",
-    description: "Outstanding premium support",
+    title: "Hỗ Trợ Cao Cấp",
+    description: "Dịch vụ hỗ trợ khách hàng xuất sắc",
+    fontFamily: '"Playfair Display", serif'
   },
 
   {
     iconClass: "icon-return fs-20",
-    title: "14 Day Returns",
-    description: "Within 30 days for an exchange",
+    title: "Đổi Trả Trong 14 Ngày",
+    description: "Trong vòng 30 ngày để đổi sản phẩm",
+    fontFamily: '"Playfair Display", serif'
   },
 ];
 
 export const iconBoxSlides = [
   {
-    title: "Huge Selection",
+    title: "Lựa Chọn Đa Dạng",
     desc: (
       <>
-        With over 1,600 fun sock styles, our{" "}
+        Với hơn 1,600 mẫu tất độc đáo, bộ sưu tập{" "}
         <Link href={`/shop-default`} className="text-decoration-underline">
-          sock
+          tất
         </Link>
         <br />
         <Link href="/shop-default" className="text-decoration-underline">
-          selection
+          của chúng tôi
         </Link>{" "}
-        is unmatched!
+        là không ai sánh bằng!
       </>
     ),
   },
   {
-    title: "Perfect Gift",
+    title: "Quà Tặng Hoàn Hảo",
     desc: (
       <>
-        Every order arrives wrapped in a <br />
-        cute friendly mailer to look like a present
+        Mỗi đơn hàng được gói trong <br />
+        bao bì xinh xắn như một món quà
       </>
     ),
   },
   {
-    title: "Pay Your Way",
+    title: "Thanh Toán Đa Dạng",
     desc: (
       <>
-        We accept all major credit cards and offer
+        Chúng tôi chấp nhận tất cả các thẻ tín dụng chính và
         <br />
-        installments through Shop Pay.
+        cung cấp trả góp thông qua Shop Pay.
       </>
     ),
   },
   {
-    title: "Perfect Gift",
+    title: "Quà Tặng Hoàn Hảo",
     desc: (
       <>
-        Every order arrives wrapped in a <br />
-        cute friendly mailer to look like a present
+        Mỗi đơn hàng được gói trong <br />
+        bao bì xinh xắn như một món quà
       </>
     ),
   },
@@ -253,8 +261,8 @@ export const recentCollectionSlides = [
     width: 800,
     height: 792,
     wowDelay: "0s",
-    subheading: "UP TO 30% OFF",
-    heading: "Beachwear on Sale",
+    subheading: "GIẢM TỚI 30%",
+    heading: "Đồ Biển Giảm Giá",
     btnClass:
       "tf-btn btn-color-2 style-3 text-uppercase rounded-0 fw-6 animate-hover-btn letter-2",
   },
@@ -264,8 +272,8 @@ export const recentCollectionSlides = [
     width: 800,
     height: 792,
     wowDelay: "0s",
-    subheading: "UP TO 30% OFF",
-    heading: "Athleisure Wear",
+    subheading: "GIẢM TỚI 30%",
+    heading: "Trang Phục Athleisure",
     btnClass:
       "tf-btn btn-color-3 text-uppercase style-3 rounded-0 fw-6 animate-hover-btn letter-2",
   },
@@ -275,8 +283,8 @@ export const recentCollectionSlides = [
     width: 800,
     height: 792,
     wowDelay: "0s",
-    subheading: "UP TO 30% OFF",
-    heading: "Beachwear on Sale",
+    subheading: "GIẢM TỚI 30%",
+    heading: "Đồ Biển Giảm Giá",
     btnClass:
       "tf-btn btn-color-2 style-3 text-uppercase rounded-0 fw-6 animate-hover-btn letter-2",
   },
@@ -286,8 +294,8 @@ export const recentCollectionSlides = [
     width: 800,
     height: 792,
     wowDelay: "0s",
-    subheading: "UP TO 30% OFF",
-    heading: "Athleisure Wear",
+    subheading: "GIẢM TỚI 30%",
+    heading: "Trang Phục Athleisure",
     btnClass:
       "tf-btn btn-color-3 text-uppercase style-3 rounded-0 fw-6 animate-hover-btn letter-2",
   },
@@ -296,41 +304,41 @@ export const recentCollectionSlides = [
 export const iconBoxes4 = [
   {
     iconClass: "icon-materials",
-    title: "High-Quality Materials",
+    title: "Chất Liệu Cao Cấp",
     description:
-      "Crafted with precision and excellence, our activewear is meticulously engineered using premium materials to ensure unmatched comfort and durability.",
+      "Được chế tác với độ chính xác và sự xuất sắc, trang phục tập luyện của chúng tôi được thiết kế tỉ mỉ bằng vật liệu cao cấp để đảm bảo sự thoải mái và độ bền vượt trội.",
   },
   {
     iconClass: "icon-design",
-    title: "Laconic Design",
+    title: "Thiết Kế Tinh Giản",
     description:
-      "Simplicity refined. Our activewear embodies the essence of minimalistic design, delivering effortless style that speaks volumes.",
+      "Sự đơn giản được nâng tầm. Trang phục tập luyện của chúng tôi thể hiện tinh hoa của thiết kế tối giản, mang lại phong cách dễ dàng nhưng đầy ấn tượng.",
   },
   {
     iconClass: "icon-sizes",
-    title: "Various Sizes",
+    title: "Đa Dạng Kích Cỡ",
     description:
-      "Designed for every body and anyone, our activewear embraces diversity with a wide range of sizes and shapes, celebrating the beauty of individuality.",
+      "Được thiết kế cho mọi dáng người, trang phục tập luyện của chúng tôi tôn vinh sự đa dạng với nhiều kích cỡ và kiểu dáng, khẳng định vẻ đẹp của sự riêng biệt.",
   },
   {
     iconClass: "icon-design",
-    title: "Laconic Design",
+    title: "Thiết Kế Tinh Giản",
     description:
-      "Simplicity refined. Our activewear embodies the essence of minimalistic design, delivering effortless style that speaks volumes.",
+      "Sự đơn giản được nâng tầm. Trang phục tập luyện của chúng tôi thể hiện tinh hoa của thiết kế tối giản, mang lại phong cách dễ dàng nhưng đầy ấn tượng.",
   },
 ];
 
 export const swiperData = [
   {
     iconClass: "icon-shipping",
-    title: "Free Shipping on Orders Over $120",
+    title: "Miễn Phí Vận Chuyển cho Đơn Hàng Trên 2.800.000₫",
   },
   {
     iconClass: "icon-trial",
-    title: "100-days risk-free trial",
+    title: "Dùng thử miễn rủi ro 100 ngày",
   },
   {
     iconClass: "icon-warranty",
-    title: "Free 4-years warranty",
+    title: "Bảo hành miễn phí 4 năm",
   },
 ];

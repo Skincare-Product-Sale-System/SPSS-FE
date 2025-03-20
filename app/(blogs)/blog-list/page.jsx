@@ -3,11 +3,13 @@ import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
 import React from "react";
 import Link from "next/link";
+
 export const metadata = {
-  title: "Blog List || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Blog List || Skincede - Skincare Store",
+  description: "Explore our collection of skincare articles and tips",
 };
-export default function page() {
+
+export default function Page() {
   return (
     <>
       <Header2 />
@@ -30,7 +32,6 @@ export default function page() {
         </div>
       </div>
       <BlogList />
-
       <Footer1 />
     </>
   );

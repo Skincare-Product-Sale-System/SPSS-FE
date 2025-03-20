@@ -39,13 +39,6 @@ export default function QuickAdd() {
           <div className="wrap">
             <div className="tf-product-info-item">
               <div className="image">
-                <Image
-                  alt="image"
-                  style={{ objectFit: "contain" }}
-                  src={item.imgSrc}
-                  width={720}
-                  height={1005}
-                />
               </div>
               <div className="content">
                 <Link href={`/product-detail/${item.id}`}>{item.title}</Link>

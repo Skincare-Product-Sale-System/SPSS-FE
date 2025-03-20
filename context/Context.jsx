@@ -1,5 +1,4 @@
 "use client";
-import { allProducts } from "@/data/products";
 import { openCartModal } from "@/utlis/openCartModal";
 // import { openCart } from "@/utlis/toggleCart";
 import React, { useEffect } from "react";
@@ -11,10 +10,10 @@ export const useContextElement = () => {
 
 export default function Context({ children }) {
   const [cartProducts, setCartProducts] = useState([]);
-  const [wishList, setWishList] = useState([1, 2, 3]);
+  const [wishList, setWishList] = useState([]);
   const [compareItem, setCompareItem] = useState([]);
-  const [quickViewItem, setQuickViewItem] = useState(allProducts[0]);
-  const [quickAddItem, setQuickAddItem] = useState(1);
+  const [quickViewItem, setQuickViewItem] = useState(null);
+  const [quickAddItem, setQuickAddItem] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
   useEffect(() => {
     const subtotal = cartProducts.reduce((accumulator, product) => {

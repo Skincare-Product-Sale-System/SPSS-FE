@@ -6,11 +6,11 @@ import { useThemeColors } from "@/context/ThemeContext";
 import { ExitToApp as LogoutIcon } from '@mui/icons-material';
 
 const accountLinks = [
-  { href: "/my-account", label: "My Account" },
-  { href: "/my-account-orders", label: "Orders" },
-  { href: "/my-account-address", label: "Addresses" },
-  { href: "/my-reviews", label: "My Reviews" },
-  { href: "/change-password", label: "Change Password" },
+  { href: "/my-account", label: "Tài Khoản" },
+  { href: "/my-account-orders", label: "Đơn Hàng" },
+  { href: "/my-account-address", label: "Sổ Địa Chỉ" },
+  { href: "/my-reviews", label: "Đánh Giá" },
+  { href: "/change-password", label: "Đổi Mật Khẩu" },
 ];
 
 export default function AccountSideBar() {
@@ -45,6 +45,7 @@ export default function AccountSideBar() {
             fontWeight: 500,
             fontSize: '0.95rem',
             color: mainColor.text,
+            fontFamily: '"Roboto", sans-serif',
           },
         }}
       >
@@ -65,6 +66,7 @@ export default function AccountSideBar() {
                   '& .MuiListItemText-primary': {
                     color: mainColor.primary,
                     fontWeight: 600,
+                    fontFamily: '"Roboto", sans-serif',
                   },
                 },
               }}
@@ -85,11 +87,12 @@ export default function AccountSideBar() {
               },
               '& .MuiListItemText-primary': {
                 color: theme.palette.error.main,
+                fontFamily: '"Roboto", sans-serif',
               },
             }}
           >
             <LogoutIcon sx={{ mr: 1, fontSize: '1.2rem' }} />
-            <ListItemText primary="Logout" />
+            <ListItemText primary="Đăng Xuất" />
           </ListItemButton>
         </ListItem>
       </List>

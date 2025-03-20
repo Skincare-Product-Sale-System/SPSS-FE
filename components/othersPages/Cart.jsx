@@ -50,7 +50,7 @@ export default function Cart() {
                 d="M10.0899 24C11.3119 22.1928 11.4245 20.2409 10.4277 18.1443C10.1505 19.2691 9.64344 19.9518 8.90645 20.1924C9.59084 18.2379 9.01896 16.1263 7.19079 13.8576C7.15133 16.2007 6.58824 17.9076 5.50148 18.9782C4.00436 20.4517 4.02197 22.1146 5.55428 23.9669C-0.806588 20.5819 -1.70399 16.0418 2.86196 10.347C3.14516 11.7228 3.83141 12.5674 4.92082 12.8809C3.73335 7.84186 4.98274 3.54821 8.66895 0C8.6916 7.87426 11.1062 8.57414 14.1592 12.089C17.4554 16.3071 15.5184 21.1748 10.0899 24Z"
               />
             </svg>
-            <p>These products are limited, checkout within</p>
+            <p style={{ fontFamily: '"Roboto", sans-serif' }}>Những sản phẩm này có số lượng giới hạn, vui lòng thanh toán trong</p>
           </div>
           <div
             className="js-countdown timer-count"
@@ -64,10 +64,10 @@ export default function Cart() {
               <table className="tf-table-page-cart">
                 <thead>
                   <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
+                    <th style={{ fontFamily: '"Roboto", sans-serif' }}>Sản phẩm</th>
+                    <th style={{ fontFamily: '"Roboto", sans-serif' }}>Giá</th>
+                    <th style={{ fontFamily: '"Roboto", sans-serif' }}>Số lượng</th>
+                    <th style={{ fontFamily: '"Roboto", sans-serif' }}>Tổng cộng</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -97,13 +97,14 @@ export default function Cart() {
                           </div>
                           <span
                             className="remove-cart link remove"
+                            style={{ fontFamily: '"Roboto", sans-serif' }}
                             onClick={() =>
                               request
                                 .delete(`/cart-items/${elm.id}`)
                                 .then((res) => revalidate())
                             }
                           >
-                            Remove
+                            Xóa
                           </span>
                         </div>
                       </td>
@@ -207,14 +208,16 @@ export default function Cart() {
               {!cartProducts.length && (
                 <>
                   <div className="row align-items-center mb-5">
-                    <div className="col-6 fs-18">Your shop cart is empty</div>
+                    <div className="col-6 fs-18" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                      Giỏ hàng của bạn đang trống
+                    </div>
                     <div className="col-6">
                       <Link
                         href={`/shop-default`}
                         className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
                         style={{ width: "fit-content" }}
                       >
-                        Explore Products!
+                        Khám phá sản phẩm!
                       </Link>
                     </div>
                   </div>
@@ -438,7 +441,7 @@ export default function Cart() {
                   </label>
                 </div> */}
                 <div className="tf-cart-totals-discounts">
-                  <h3>Subtotal</h3>
+                  <h3 style={{ fontFamily: '"Roboto", sans-serif' }}>Tổng tiền</h3>
                   <span className="total-value">
                     {formatPrice(totalPrice)}
                   </span>
@@ -454,10 +457,10 @@ export default function Cart() {
                     className="tf-check"
                     id="check-agree"
                   />
-                  <label htmlFor="check-agree" className="fw-4">
-                    I agree with the
+                  <label htmlFor="check-agree" className="fw-4" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                    Tôi đồng ý với
                     <Link className="ps-1" href={`/terms-conditions`}>
-                      terms and conditions
+                      điều khoản và điều kiện
                     </Link>
                   </label>
                 </div>
@@ -466,21 +469,23 @@ export default function Cart() {
                     <Link
                       href="/checkout"
                       className="tf-btn w-100 radius-3 justify-content-center"
-                      style={{ backgroundColor: '#000000', color: '#ffffff' }}
+                      style={{ backgroundColor: '#000000', color: '#ffffff', fontFamily: '"Roboto", sans-serif' }}
                     >
-                      <span>Check out</span>
+                      <span>Thanh toán</span>
                     </Link>
                   ) : (
                     <div
                       className="tf-btn w-100 radius-3 justify-content-center"
-                      style={{ backgroundColor: '#757575', color: '#e0e0e0', cursor: 'not-allowed', pointerEvents: 'none' }}
+                      style={{ backgroundColor: '#757575', color: '#e0e0e0', cursor: 'not-allowed', pointerEvents: 'none', fontFamily: '"Roboto", sans-serif' }}
                     >
-                      <span>Check out</span>
+                      <span>Thanh toán</span>
                     </div>
                   )}
                 </div>
                 <div className="tf-page-cart_imgtrust">
-                  <p className="text-center fw-6">Guarantee Safe Checkout</p>
+                  <p className="text-center fw-6" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                    Đảm bảo thanh toán an toàn
+                  </p>
                   <div className="cart-list-social">
                     <div className="payment-item">
                       <svg

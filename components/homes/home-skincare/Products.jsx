@@ -11,16 +11,13 @@ import { defaultProductImage } from "@/utlis/default";
 import request from "@/utlis/axios";
 import { useQueries } from "@tanstack/react-query";
 import { useTheme } from "@mui/material/styles";
-import { Box, Tab, Tabs, Typography, Button } from "@mui/material";
+import { Box, Tab, Tabs, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { formatPrice } from "@/utils/priceFormatter";
 
 export default function Products() {
   const theme = useTheme();
   const {
     setQuickViewItem,
-    setQuickAddItem,
-    addToWishlist,
-    isAddedtoWishlist,
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
@@ -40,6 +37,15 @@ export default function Products() {
     ],
   });
 
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = (product) => {
+    setQuickViewItem({
+      id: product.id,
+      productId: product.id
+    });
+  };
+
   return (
     <section className="py-16" style={{ backgroundColor: theme.palette.background.default }}>
       <div className="container mx-auto px-4">
@@ -54,7 +60,7 @@ export default function Products() {
             fontSize: { xs: '1.75rem', md: '2.25rem' }
           }}
         >
-          Bestsellers
+          Sản Phẩm Bán Chạy
         </Typography>
         
         <Typography
@@ -67,7 +73,7 @@ export default function Products() {
             mb: 5
           }}
         >
-          Discover our most popular skincare products loved by customers
+          Khám phá các sản phẩm chăm sóc da phổ biến nhất được yêu thích bởi khách hàng
         </Typography>
         
         <div className="relative">
@@ -188,15 +194,13 @@ export default function Products() {
                               transition: 'all 0.3s ease'
                             }}
                           >
-                            {isAddedtoCompareItem(product.id) ? "Remove from Compare" : "Add to Compare"}
+                            {isAddedtoCompareItem(product.id) ? "Xóa khỏi So Sánh" : "Thêm vào So Sánh"}
                           </Box>
                         </Box>
                         
                         <Box
                           component="a"
-                          href="#quick_view"
-                          onClick={() => setQuickViewItem(product)}
-                          data-bs-toggle="modal"
+                          onClick={() => handleOpen(product)}
                           sx={{
                             width: 40,
                             height: 40,
@@ -238,7 +242,7 @@ export default function Products() {
                               transition: 'all 0.3s ease'
                             }}
                           >
-                            Quick View
+                            Xem Nhanh
                           </Box>
                         </Box>
                       </Box>

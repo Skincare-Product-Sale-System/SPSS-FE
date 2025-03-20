@@ -248,13 +248,14 @@ export default function OrderDetails() {
           sx={{
             borderColor: mainColor,
             color: mainColor,
+            fontFamily: '"Roboto", sans-serif',
             "&:hover": {
               borderColor: mainColor,
               backgroundColor: `${mainColor}10`,
             },
           }}
         >
-          Back to List
+          Quay Lại Danh Sách
         </Button>
       </div>
 
@@ -262,11 +263,11 @@ export default function OrderDetails() {
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-base font-medium mb-1">
-              Order #{order.id.substring(0, 8)}
+              Đơn Hàng #{order.id.substring(0, 8)}
             </h3>
             <p className="text-gray-500 text-sm">
-              {dayjs(order.createdTime).format("MMMM DD, YYYY")} •{" "}
-              {order.orderDetails.length} Products
+              {dayjs(order.createdTime).format("DD/MM/YYYY")} •{" "}
+              {order.orderDetails.length} Sản phẩm
             </p>
           </div>
           <span
@@ -303,7 +304,7 @@ export default function OrderDetails() {
               <div className="flex items-center justify-between w-full relative z-10">
                 {currentStep === -1 ? (
                   // Hiển thị 3 bước khi cancelled
-                  ['Order', 'Processing', 'Cancelled'].map((label, index) => (
+                  ['Đặt hàng', 'Xử lý', 'Đã hủy'].map((label, index) => (
                     <div key={index} className="flex flex-col items-center">
                       <div
                         className={`w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ${
@@ -322,7 +323,7 @@ export default function OrderDetails() {
                 ) : (
                   // Hiển thị 4 bước bình thường
                   // Hiển thị 4 bước bình thường: Order > Processing > Delivering > Delivered
-                  ['Order', 'Processing', 'Delivering', 'Delivered'].map((label, index) => (
+                  ['Đặt hàng', 'Xử lý', 'Đang giao', 'Đã giao'].map((label, index) => (
                     <div key={index} className="flex flex-col items-center">
                       <div
                         className={`w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ${
@@ -345,7 +346,7 @@ export default function OrderDetails() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div className="bg-gray-50 p-3 rounded-lg text-sm">
             <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2 border-b pb-1">
-              SHIPPING ADDRESS
+              ĐỊA CHỈ GIAO HÀNG
             </h4>
             <p className="font-medium">{order.address.customerName}</p>
             <p>{order.address.addressLine1}</p>
@@ -356,46 +357,46 @@ export default function OrderDetails() {
             </p>
             <p>{order.address.countryName}</p>
             <div className="mt-2 pt-2 border-t border-gray-200">
-              <p className="text-xs font-semibold text-gray-700 mb-1">PHONE</p>
+              <p className="text-xs font-semibold text-gray-700 mb-1">ĐIỆN THOẠI</p>
               <p>{order.address.phoneNumber}</p>
             </div>
           </div>
           <div className="bg-gray-50 p-3 rounded-lg text-sm">
             <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2 border-b pb-1">
-              ORDER SUMMARY
+              THÔNG TIN ĐƠN HÀNG
             </h4>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <p className="text-xs font-semibold text-gray-700 mb-1">
-                  ORDER ID:
+                  MÃ ĐƠN HÀNG:
                 </p>
                 <p className="font-medium">#{order.id.substring(0, 8)}</p>
               </div>
               <div>
                 <p className="text-xs font-semibold text-gray-700 mb-1">
-                  PAYMENT:
+                  THANH TOÁN:
                 </p>
                 <p className="font-medium">
                   {order.paymentMethodId ===
                   "354EDA95-5BE5-41BE-ACC3-CFD70188118A".toLowerCase()
                     ? "VNPay"
-                    : "Cash on delivery"}
+                    : "Thanh toán khi nhận hàng"}
                 </p>
               </div>
             </div>
             <div className="mt-2 pt-2 border-t border-gray-200">
               <div className="flex justify-between mb-1 text-sm">
-                <span className="text-gray-600">Subtotal:</span>
+                <span className="text-gray-600">Tạm tính:</span>
                 <span className="font-medium">
                   {formatCurrency(order.orderTotal)}
                 </span>
               </div>
               <div className="flex justify-between mb-1 text-sm">
-                <span className="text-gray-600">Shipping:</span>
+                <span className="text-gray-600">Phí vận chuyển:</span>
                 <span className="font-medium">{formatCurrency(0)}</span>
               </div>
               <div className="flex justify-between font-bold pt-1 border-t border-gray-200">
-                <span>Total</span>
+                <span>Tổng cộng</span>
                 <span style={{ color: mainColor }}>
                   {formatCurrency(order.orderTotal)}
                 </span>
@@ -407,26 +408,26 @@ export default function OrderDetails() {
         {/* Order Items - More compact */}
         <div className="mt-4">
           <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2 border-b pb-1">
-            PRODUCTS
+            SẢN PHẨM
           </h4>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="py-2 px-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    PRODUCT
+                    SẢN PHẨM
                   </th>
                   <th className="py-2 px-3 text-right text-xs font-medium text-gray-500 uppercase">
-                    PRICE
+                    GIÁ
                   </th>
                   <th className="py-2 px-3 text-center text-xs font-medium text-gray-500 uppercase">
-                    QTY
+                    SỐ LƯỢNG
                   </th>
                   <th className="py-2 px-3 text-right text-xs font-medium text-gray-500 uppercase">
-                    TOTAL
+                    TỔNG TIỀN
                   </th>
                   <th className="py-2 px-3 text-center text-xs font-medium text-gray-500 uppercase">
-                    ACTION
+                    THAO TÁC
                   </th>
                 </tr>
               </thead>
@@ -500,8 +501,8 @@ export default function OrderDetails() {
                         }}
                       >
                         {order.status?.toLowerCase() === "delivered" && !item.isReviewable
-                          ? "Reviewed"
-                          : "Review"}
+                          ? "Đã đánh giá"
+                          : "Đánh giá"}
                       </button>
                     </td>
                   </tr>
@@ -515,7 +516,7 @@ export default function OrderDetails() {
         {order.statusChanges && order.statusChanges.length > 0 && (
           <div className="mt-4 border-t pt-3">
             <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2">
-              ORDER HISTORY
+              LỊCH SỬ ĐƠN HÀNG
             </h4>
             <div className="flow-root">
               <ul role="list" className="-mb-4">
@@ -564,10 +565,11 @@ export default function OrderDetails() {
                         <div className="flex min-w-0 flex-1 justify-between items-center space-x-2">
                           <div>
                             <p className="text-sm text-gray-600">
-                              Status:{" "}
+                              Trạng thái:{" "}
                               <span className="font-medium text-gray-900">
-                                {statusChange.status}
-                              </span> {statusChange.status === "Cancelled" && <div>({reason})</div>}
+                                {translateStatus(statusChange.status)}
+                              </span>
+                              {statusChange.status === "Cancelled" && <div>(Lý do: {reason})</div>}
                             </p>
                           </div>
                           <div className="whitespace-nowrap text-right text-xs text-gray-500">
@@ -599,7 +601,7 @@ export default function OrderDetails() {
                   },
                 }}
               >
-                Pay Now
+                Thanh Toán Ngay
               </Button>
             )}
             <Button
@@ -614,7 +616,7 @@ export default function OrderDetails() {
                 },
               }}
             >
-              Cancel Order
+              Hủy Đơn Hàng
             </Button>
           </div>
         )}
@@ -628,15 +630,14 @@ export default function OrderDetails() {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title" sx={{ fontSize: "1.1rem", pb: 1 }}>
-          {"Cancel Order"}
+          {"Hủy Đơn Hàng"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText
             id="alert-dialog-description"
             sx={{ fontSize: "0.9rem" }}
           >
-            Are you sure you want to cancel this order? This action cannot be
-            undone.
+            Bạn có chắc chắn muốn hủy đơn hàng này? Hành động này không thể hoàn tác.
           </DialogContentText>
         </DialogContent>
         <Select
@@ -669,7 +670,7 @@ export default function OrderDetails() {
               },
             }}
           >
-            No, Keep Order
+            Không, Giữ Đơn Hàng
           </Button>
           <Button
             onClick={handleCancelOrder}
@@ -683,7 +684,7 @@ export default function OrderDetails() {
               },
             }}
           >
-            Yes, Cancel Order
+            Có, Hủy Đơn Hàng
           </Button>
         </DialogActions>
       </Dialog>
@@ -706,4 +707,18 @@ export default function OrderDetails() {
       )}
     </div>
   );
+}
+
+// Hàm hỗ trợ dịch trạng thái
+function translateStatus(status) {
+  const statusMap = {
+    "Pending": "Chờ xử lý",
+    "Processing": "Đang xử lý",
+    "Delivering": "Đang giao hàng",
+    "Delivered": "Đã giao hàng",
+    "Completed": "Hoàn thành",
+    "Cancelled": "Đã hủy",
+    "Awaiting Payment": "Chờ thanh toán"
+  };
+  return statusMap[status] || status;
 }

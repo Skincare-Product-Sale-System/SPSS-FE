@@ -4,7 +4,7 @@ import request from "@/utlis/axios";
 import toast from "react-hot-toast";
 import useAuthStore from "@/context/authStore";
 import useQueryStore from "@/context/queryStore";
-import AddressItem from "@/components/addresses/AddressItem";
+import AddressItem from "@/components/address/AddressItem";
 import { useTheme } from "@mui/material/styles";
 import { 
   CircularProgress, 

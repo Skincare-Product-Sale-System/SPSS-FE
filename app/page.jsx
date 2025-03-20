@@ -61,7 +61,7 @@ export default function Home() {
       {/* <Products2 /> */}
       {/* <Categories /> */}
       {/* <Products2 /> */}
-      <Testimonials />
+      {/* <Testimonials /> */}
       {/* <SkinChange /> */}
       <Features />
       {/* <ShopGram /> */}

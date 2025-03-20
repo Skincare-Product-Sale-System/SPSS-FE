@@ -10,11 +10,11 @@ import toast from "react-hot-toast";
 
 // Password validation schema
 const passwordSchema = z.object({
-  currentPassword: z.string().min(6, { message: "Current password is required" }),
-  newPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z.string().min(6, { message: "Confirm password is required" }),
+  currentPassword: z.string().min(6, { message: "Mật khẩu hiện tại là bắt buộc" }),
+  newPassword: z.string().min(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" }),
+  confirmPassword: z.string().min(6, { message: "Xác nhận mật khẩu là bắt buộc" }),
 }).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "Mật khẩu không khớp",
   path: ["confirmPassword"],
 });
 
@@ -72,18 +72,22 @@ export default function ChangePassword() {
         sx={{ 
           mb: 3, 
           fontWeight: 500,
-          color: theme.palette.text.primary
+          color: theme.palette.text.primary,
+          fontFamily: '"Roboto", sans-serif'
         }}
       >
-        Change Password
+        Đổi Mật Khẩu
       </Typography>
       
       {success && (
         <Alert 
           severity="success" 
-          sx={{ mb: 3 }}
+          sx={{ 
+            mb: 3,
+            fontFamily: '"Roboto", sans-serif'
+          }}
         >
-          Your password has been updated successfully.
+          Mật khẩu của bạn đã được cập nhật thành công.
         </Alert>
       )}
       
@@ -92,7 +96,7 @@ export default function ChangePassword() {
           <TextField
             fullWidth
             type="password"
-            label="Current Password"
+            label="Mật khẩu hiện tại"
             variant="outlined"
             autoComplete="current-password"
             {...register("currentPassword")}
@@ -105,13 +109,19 @@ export default function ChangePassword() {
                   borderColor: theme.palette.primary.main,
                 },
               },
+              '& .MuiInputLabel-root': {
+                fontFamily: '"Roboto", sans-serif'
+              },
+              '& .MuiInputBase-input': {
+                fontFamily: '"Roboto", sans-serif'
+              }
             }}
           />
           
           <TextField
             fullWidth
             type="password"
-            label="New Password"
+            label="Mật khẩu mới"
             variant="outlined"
             autoComplete="new-password"
             {...register("newPassword")}
@@ -124,13 +134,19 @@ export default function ChangePassword() {
                   borderColor: theme.palette.primary.main,
                 },
               },
+              '& .MuiInputLabel-root': {
+                fontFamily: '"Roboto", sans-serif'
+              },
+              '& .MuiInputBase-input': {
+                fontFamily: '"Roboto", sans-serif'
+              }
             }}
           />
           
           <TextField
             fullWidth
             type="password"
-            label="Confirm New Password"
+            label="Xác nhận mật khẩu mới"
             variant="outlined"
             autoComplete="new-password"
             {...register("confirmPassword")}
@@ -143,6 +159,12 @@ export default function ChangePassword() {
                   borderColor: theme.palette.primary.main,
                 },
               },
+              '& .MuiInputLabel-root': {
+                fontFamily: '"Roboto", sans-serif'
+              },
+              '& .MuiInputBase-input': {
+                fontFamily: '"Roboto", sans-serif'
+              }
             }}
           />
         </Box>
@@ -169,7 +191,7 @@ export default function ChangePassword() {
           {loading ? (
             <CircularProgress size={24} color="inherit" />
           ) : (
-            "Update Password"
+            "Cập Nhật Mật Khẩu"
           )}
         </Button>
       </form>

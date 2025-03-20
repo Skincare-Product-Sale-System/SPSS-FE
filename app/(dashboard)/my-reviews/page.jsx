@@ -1,29 +1,23 @@
-import React from "react";
-import DashboardNav from "@/components/othersPages/dashboard/AccountSideBar";
-import MyReviews from "@/components/myreviews/MyReviews";
-import ReviewHeader from "@/components/myreviews/ReviewHeader";
 import { Container } from '@mui/material';
+import dynamic from 'next/dynamic';
 
 export const metadata = {
-  title: "My Reviews",
-  description: "My Reviews",
+  title: "Đánh giá của tôi",
+  description: "Đánh giá của tôi tại SPSS",
 };
 
-export default function Page() {
-    return (
-      <>
-        <div className="tf-page-title">
-        <div className="container-full">
-            <div className="heading text-center">My Reviews</div>
-        </div>
+const ReviewsContent = dynamic(
+  () => import('@/components/myreviews/ReviewsContent'),
+  {
+    loading: () => (
+      <div className="container text-center py-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+        <div className="mt-4">Đang tải đánh giá...</div>
       </div>
-        <section>
-          <Container>
-          <div>
-            <MyReviews />
-          </div>
-          </Container>
-        </section>
-      </>
-    );
+    )
+  }
+);
+
+export default function Page() {
+  return <ReviewsContent />;
 }

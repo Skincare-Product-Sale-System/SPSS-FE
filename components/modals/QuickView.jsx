@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { useContextElement } from "@/context/Context";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,11 +7,15 @@ import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Quantity from "../shopDetails/Quantity";
 import { colors, sizeOptions } from "@/data/singleProductOptions";
-import React, { useState } from "react";
+import React from "react";
 import { defaultProductImage } from "@/utlis/default";
 import { useTheme } from "@mui/material/styles";
-import { Box, Typography, Button, Divider, Chip } from "@mui/material";
+import { Box, Typography, Button, Divider, Chip, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from "@mui/material";
 import { formatPrice, calculateDiscount } from "@/utils/priceFormatter";
+import request from "@/utlis/axios";
+import toast from "react-hot-toast";
+import useQueryStore from "@/context/queryStore";
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function QuickView() {
   const theme = useTheme();
@@ -23,464 +28,352 @@ export default function QuickView() {
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
-  const [currentColor, setCurrentColor] = useState(colors[0]);
-  const [currentSize, setCurrentSize] = useState(sizeOptions[0]);
+  const { revalidate } = useQueryStore();
+
+  // State for product details
+  const [productDetail, setProductDetail] = useState(null);
+  const [variations, setVariations] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState({});
+  const [currentProductItem, setCurrentProductItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [open, setOpen] = useState(false);
 
-  const openModalSizeChoice = () => {
-    const bootstrap = require("bootstrap");
-    var myModal = new bootstrap.Modal(document.getElementById("find_size"), {
-      keyboard: false,
-    });
+  useEffect(() => {
+    if (!quickViewItem?.id) return;
 
-    myModal.show();
-    document
-      .getElementById("find_size")
-      .addEventListener("hidden.bs.modal", () => {
-        myModal.hide();
+    const fetchProductDetail = async () => {
+      try {
+        const productId = quickViewItem.productId || quickViewItem.id;
+        const { data } = await request.get(`/products/${productId}`);
+        const productData = data.data;
+
+        setProductDetail(productData);
+
+        const allVariations = {};
+        if (productData.productItems) {
+          productData.productItems.forEach(item => {
+            if (!item.configurations) return;
+
+            item.configurations.forEach(config => {
+              if (!allVariations[config.variationName]) {
+                allVariations[config.variationName] = [];
+              }
+
+              const existingOption = allVariations[config.variationName].find(
+                opt => opt.optionId === config.optionId
+              );
+
+              if (!existingOption) {
+                allVariations[config.variationName].push({
+                  variationName: config.variationName,
+                  optionName: config.optionName,
+                  optionId: config.optionId
+                });
+              }
+            });
+          });
+        }
+
+        const variationsArray = Object.keys(allVariations).map(variationName => ({
+          name: variationName,
+          options: allVariations[variationName]
+        }));
+
+        setVariations(variationsArray);
+
+        const initialSelectedOptions = {};
+        variationsArray.forEach(variation => {
+          if (variation.options.length > 0) {
+            initialSelectedOptions[variation.name] = variation.options[0].optionId;
+          }
+        });
+
+        setSelectedOptions(initialSelectedOptions);
+
+        const matchingItem = findMatchingProductItem(initialSelectedOptions, productData.productItems);
+        if (matchingItem) {
+          setCurrentProductItem(matchingItem);
+        }
+
+        setOpen(true);
+
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+        toast.error("Không thể tải thông tin sản phẩm");
+      }
+    };
+
+    fetchProductDetail();
+  }, [quickViewItem]);
+
+  const findMatchingProductItem = (options, productItems) => {
+    if (!productItems) return null;
+
+    return productItems.find(item => {
+      if (!item.configurations) return false;
+
+      return Object.keys(options).every(variationName => {
+        const selectedOptionId = options[variationName];
+        return item.configurations.some(
+          config => config.variationName === variationName && config.optionId === selectedOptionId
+        );
       });
-    const backdrops = document.querySelectorAll(".modal-backdrop");
-    if (backdrops.length > 1) {
-      const lastBackdrop = backdrops[backdrops.length - 1];
-      lastBackdrop.style.zIndex = "1057";
+    });
+  };
+
+  const handleOptionSelect = (variationName, optionId) => {
+    const newSelectedOptions = {
+      ...selectedOptions,
+      [variationName]: optionId
+    };
+
+    setSelectedOptions(newSelectedOptions);
+    const matchingItem = findMatchingProductItem(newSelectedOptions, productDetail?.productItems);
+
+    if (matchingItem) {
+      setCurrentProductItem(matchingItem);
     }
   };
 
-  if (!quickViewItem) return null;
+  const handleAddToCart = async () => {
+    if (!currentProductItem) {
+      toast.error("Please select all options first");
+      return;
+    }
 
-  // Calculate discount if both prices exist
-  const discountPercent = quickViewItem.marketPrice && quickViewItem.price 
-    ? calculateDiscount(quickViewItem.marketPrice, quickViewItem.price)
+    if (currentProductItem.quantityInStock <= 0) {
+      toast.error("This product is out of stock");
+      return;
+    }
+
+    try {
+      const response = await request.post("/cart-items", {
+        productItemId: currentProductItem.id,
+        quantity: quantity
+      });
+
+      if (response.status === 200) {
+        toast.success("Added to cart");
+        addProductToCart(productDetail.id, quantity);
+        revalidate();
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add to cart");
+    }
+  };
+
+  if (!productDetail) return null;
+
+  // Calculate discount
+  const discountPercent = currentProductItem?.marketPrice && currentProductItem?.price 
+    ? calculateDiscount(currentProductItem.marketPrice, currentProductItem.price)
     : 0;
 
   return (
-    <div
-      className="modal fade"
-      id="quick_view"
-      tabIndex="-1"
-      aria-labelledby="quick_view"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog modal-dialog-centered modal-xl">
-        <div 
-          className="modal-content"
-          style={{
-            borderRadius: '16px',
-            overflow: 'hidden',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-            border: 'none'
+    <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
+      <DialogTitle sx={{ position: 'relative', padding: '16px 24px' }}>
+        Quick View
+        <IconButton
+          onClick={() => setOpen(false)}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: theme.palette.grey[500],
           }}
         >
-          <div 
-            className="modal-header"
-            style={{
-              borderBottom: `1px solid ${theme.palette.divider}`,
-              padding: '16px 24px',
-              backgroundColor: theme.palette.background.paper
-            }}
-          >
-            <Typography 
-              variant="h6" 
-              component="h2"
-              sx={{
-                fontFamily: theme.typography.h6.fontFamily,
-                color: theme.palette.text.primary,
-                fontWeight: 500
-              }}
-            >
-              Quick View
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
+        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
+          <Box sx={{ flex: 1, position: 'relative' }}>
+            <Image
+              src={productDetail?.thumbnail || defaultProductImage}
+              alt={productDetail?.name || "Product Image"}
+              width={500}
+              height={500}
+              style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '500px' }}
+            />
+            {/* {discountPercent > 0 && (
+              <Chip
+                label={`-${discountPercent}%`}
+                color="error"
+                sx={{ position: 'absolute', top: 20, right: 20 }}
+              />
+            )} */}
+          </Box>
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h5" component="h1" sx={{ mb: 1, fontWeight: 500 }}>
+              {productDetail.name}
             </Typography>
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                fontSize: '24px',
-                cursor: 'pointer',
-                color: theme.palette.text.secondary
-              }}
-            >
-              <span className="icon-close"></span>
-            </button>
-          </div>
-          <div 
-            className="modal-body p-0"
-            style={{
-              backgroundColor: theme.palette.background.default
-            }}
-          >
-            <div className="row g-0">
-              <div className="col-md-6">
-                <Box
-                  sx={{
-                    position: 'relative',
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 4
-                  }}
-                >
-                  {quickViewItem.thumbnail && (
-                    <Image
-                      src={quickViewItem.thumbnail || defaultProductImage}
-                      alt={quickViewItem.title || quickViewItem.name || "Product Image"}
-                      width={500}
-                      height={500}
-                      style={{ 
-                        objectFit: 'contain',
-                        maxWidth: '100%',
-                        maxHeight: '500px'
-                      }}
-                    />
-                  )}
-                  
-                  {discountPercent > 0 && (
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: 20,
-                        right: 20,
-                        backgroundColor: theme.palette.error.main,
-                        color: '#fff',
-                        borderRadius: '50%',
-                        width: 50,
-                        height: 50,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 600
-                      }}
+            <Box sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
+              <Typography variant="h6" component="span" sx={{ color: theme.palette.primary.main, fontWeight: 600, mr: 2 }}>
+                {formatPrice(currentProductItem?.price)}
+              </Typography>
+              {currentProductItem?.marketPrice && (
+                <Typography variant="body1" component="span" sx={{ textDecoration: 'line-through', mr: 2 }}>
+                  {formatPrice(currentProductItem.marketPrice)}
+                </Typography>
+              )}
+              {discountPercent > 0 && (
+                <Chip label={`-${discountPercent}%`} size="small" sx={{ backgroundColor: theme.palette.error.light }} />
+              )}
+            </Box>
+            {productDetail.description && (
+              <Typography variant="body2" sx={{ mb: 3 }}>
+                {productDetail.description}
+              </Typography>
+            )}
+            {variations.map((variation) => (
+              <Box key={variation.name} sx={{ mb: 3 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  {variation.name}:
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  {variation.options.map((option) => (
+                    <Button
+                      key={option.optionId}
+                      variant={selectedOptions[variation.name] === option.optionId ? "contained" : "outlined"}
+                      onClick={() => handleOptionSelect(variation.name, option.optionId)}
+                      size="small"
                     >
-                      -{discountPercent}%
-                    </Box>
-                  )}
+                      {option.optionName}
+                    </Button>
+                  ))}
                 </Box>
-              </div>
-              <div className="col-md-6">
-                <Box
-                  sx={{
-                    p: 4,
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}
-                >
-                  <Typography
-                    variant="h5"
-                    component="h1"
-                    sx={{
-                      fontFamily: theme.typography.h5.fontFamily,
+              </Box>
+            ))}
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                Quantity:
+              </Typography>
+              <div className="d-flex align-items-center">
+                <div className="quantity-input-container" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  backgroundColor: '#fff',
+                  border: `1px solid ${theme.palette.grey[200]}`,
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  width: 'fit-content',
+                  padding: '4px'
+                }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (quantity > 1) {
+                        setQuantity(quantity - 1);
+                      }
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: theme.palette.grey[100],
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: quantity > 1 ? 'pointer' : 'not-allowed',
+                      color: theme.palette.primary.main,
+                      transition: 'all 0.2s ease',
+                      fontSize: '20px'
+                    }}
+                    disabled={quantity <= 1}
+                  >
+                    −
+                  </button>
+                  <input
+                    type="text"
+                    value={quantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val >= 1) {
+                        setQuantity(val);
+                      }
+                    }}
+                    style={{
+                      width: '60px',
+                      height: '32px',
+                      textAlign: 'center',
+                      border: 'none',
+                      backgroundColor: 'transparent',
+                      fontSize: '16px',
+                      fontWeight: '500',
                       color: theme.palette.text.primary,
-                      mb: 1,
-                      fontWeight: 500
+                      margin: '0 8px'
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(quantity + 1)}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: theme.palette.grey[100],
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      color: theme.palette.primary.main,
+                      transition: 'all 0.2s ease',
+                      fontSize: '20px'
                     }}
                   >
-                    {quickViewItem.title || quickViewItem.name}
-                  </Typography>
-                  
-                  <Box sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
-                    <Typography
-                      variant="h6"
-                      component="span"
-                      sx={{
-                        color: theme.palette.primary.main,
-                        fontWeight: 600,
-                        mr: 2
-                      }}
-                    >
-                      {formatPrice(quickViewItem.price)}
-                    </Typography>
-                    
-                    {quickViewItem.marketPrice && (
-                      <Typography
-                        variant="body1"
-                        component="span"
-                        sx={{
-                          color: theme.palette.text.secondary,
-                          textDecoration: 'line-through',
-                          mr: 2
-                        }}
-                      >
-                        {formatPrice(quickViewItem.marketPrice)}
-                      </Typography>
-                    )}
-                    
-                    {discountPercent > 0 && (
-                      <Chip
-                        label={`-${discountPercent}%`}
-                        size="small"
-                        sx={{
-                          backgroundColor: theme.palette.error.light,
-                          color: theme.palette.error.contrastText,
-                          fontWeight: 500
-                        }}
-                      />
-                    )}
-                  </Box>
-                  
-                  {quickViewItem.description && (
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: theme.palette.text.secondary,
-                        mb: 3
-                      }}
-                    >
-                      {quickViewItem.description}
-                    </Typography>
-                  )}
-                  
-                  {quickViewItem.colors && quickViewItem.colors.length > 0 && (
-                    <Box sx={{ mb: 3 }}>
-                      <Typography
-                        variant="subtitle2"
-                        sx={{
-                          fontWeight: 600,
-                          mb: 1,
-                          color: theme.palette.text.primary
-                        }}
-                      >
-                        Color:
-                      </Typography>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        {quickViewItem.colors.map((color, index) => (
-                          <Box
-                            key={index}
-                            onClick={() => setCurrentColor(color)}
-                            sx={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: '50%',
-                              backgroundColor: color.colorCode || color.colorClass,
-                              border: currentColor === color ? `2px solid ${theme.palette.primary.main}` : '2px solid transparent',
-                              cursor: 'pointer',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                transform: 'scale(1.1)'
-                              }
-                            }}
-                          />
-                        ))}
-                      </Box>
-                    </Box>
-                  )}
-                  
-                  {quickViewItem.sizes && quickViewItem.sizes.length > 0 && (
-                    <Box sx={{ mb: 3 }}>
-                      <Typography
-                        variant="subtitle2"
-                        sx={{
-                          fontWeight: 600,
-                          mb: 1,
-                          color: theme.palette.text.primary
-                        }}
-                      >
-                        Size:
-                      </Typography>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        {quickViewItem.sizes.map((size, index) => (
-                          <Box
-                            key={index}
-                            onClick={() => setCurrentSize(size)}
-                            sx={{
-                              padding: '6px 12px',
-                              borderRadius: '4px',
-                              border: `1px solid ${currentSize === size ? theme.palette.primary.main : theme.palette.divider}`,
-                              backgroundColor: currentSize === size ? `${theme.palette.primary.main}10` : 'transparent',
-                              color: currentSize === size ? theme.palette.primary.main : theme.palette.text.primary,
-                              cursor: 'pointer',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                borderColor: theme.palette.primary.main
-                              }
-                            }}
-                          >
-                            {size}
-                          </Box>
-                        ))}
-                      </Box>
-                    </Box>
-                  )}
-                  
-                  <Box sx={{ mb: 3 }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        fontWeight: 600,
-                        mb: 1,
-                        color: theme.palette.text.primary
-                      }}
-                    >
-                      Quantity:
-                    </Typography>
-                    <div className="d-flex align-items-center">
-                      <div className="quantity-input-container" style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        backgroundColor: '#fff',
-                        border: `1px solid ${theme.palette.grey[200]}`,
-                        borderRadius: '8px',
-                        overflow: 'hidden',
-                        width: 'fit-content',
-                        padding: '4px'
-                      }}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (quantity > 1) {
-                              setQuantity(quantity - 1);
-                            }
-                          }}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: theme.palette.grey[100],
-                            border: 'none',
-                            borderRadius: '6px',
-                            cursor: quantity > 1 ? 'pointer' : 'not-allowed',
-                            color: theme.palette.primary.main,
-                            transition: 'all 0.2s ease',
-                            fontSize: '20px'
-                          }}
-                          disabled={quantity <= 1}
-                        >
-                          −
-                        </button>
-                        
-                        <input
-                          type="text"
-                          value={quantity}
-                          onChange={(e) => {
-                            const val = parseInt(e.target.value);
-                            if (!isNaN(val) && val >= 1) {
-                              setQuantity(val);
-                            }
-                          }}
-                          style={{
-                            width: '60px',
-                            height: '32px',
-                            textAlign: 'center',
-                            border: 'none',
-                            backgroundColor: 'transparent',
-                            fontSize: '16px',
-                            fontWeight: '500',
-                            color: theme.palette.text.primary,
-                            margin: '0 8px'
-                          }}
-                        />
-                        
-                        <button
-                          type="button"
-                          onClick={() => setQuantity(quantity + 1)}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: theme.palette.grey[100],
-                            border: 'none',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            color: theme.palette.primary.main,
-                            transition: 'all 0.2s ease',
-                            fontSize: '20px'
-                          }}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', gap: 2, mt: 'auto' }}>
-                    <Button
-                      variant="contained"
-                      onClick={() => addProductToCart(quickViewItem.id)}
-                      sx={{
-                        backgroundColor: theme.palette.primary.main,
-                        color: '#fff',
-                        borderRadius: '24px',
-                        padding: '10px 24px',
-                        flex: 1,
-                        textTransform: 'none',
-                        fontWeight: 500,
-                        '&:hover': {
-                          backgroundColor: theme.palette.primary.dark
-                        }
-                      }}
-                    >
-                      {isAddedToCartProducts(quickViewItem.id) ? "Added to Cart" : "Add to Cart"}
-                    </Button>
-{/*                     
-                    <Button
-                      variant="outlined"
-                      onClick={() => addToWishlist(quickViewItem.id)}
-                      sx={{
-                        borderColor: theme.palette.primary.main,
-                        color: theme.palette.primary.main,
-                        borderRadius: '24px',
-                        padding: '10px 0',
-                        minWidth: '44px',
-                        '&:hover': {
-                          borderColor: theme.palette.primary.dark,
-                          backgroundColor: 'rgba(0,0,0,0.04)'
-                        }
-                      }}
-                    >
-                      <span className={`icon icon-heart ${isAddedtoWishlist(quickViewItem.id) ? "added" : ""}`} />
-                    </Button>
-                     */}
-                    <Button
-                      variant="outlined"
-                      onClick={() => addToCompareItem(quickViewItem.id)}
-                      href="#compare"
-                      data-bs-toggle="offcanvas"
-                      aria-controls="offcanvasLeft"
-                      sx={{
-                        borderColor: theme.palette.primary.main,
-                        color: theme.palette.primary.main,
-                        borderRadius: '24px',
-                        padding: '10px 0',
-                        minWidth: '44px',
-                        '&:hover': {
-                          borderColor: theme.palette.primary.dark,
-                          backgroundColor: 'rgba(0,0,0,0.04)'
-                        }
-                      }}
-                    >
-                      <span className={`icon icon-compare ${isAddedtoCompareItem(quickViewItem.id) ? "added" : ""}`} />
-                    </Button>
-                  </Box>
-                  
-                  <Box sx={{ mt: 3 }}>
-                    <Link 
-                      href={`/product-detail/${quickViewItem.id}`}
-                      style={{
-                        color: theme.palette.primary.main,
-                        textDecoration: 'none',
-                        fontWeight: 500,
-                        display: 'inline-flex',
-                        alignItems: 'center'
-                      }}
-                    >
-                      View Full Details
-                      <span className="icon-arrow-right" style={{ marginLeft: '8px', fontSize: '14px' }}></span>
-                    </Link>
-                  </Box>
-                </Box>
+                    +
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 2, mt: 'auto' }}>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={handleAddToCart}
+                disabled={!currentProductItem || currentProductItem.quantityInStock <= 0}
+              >
+                {currentProductItem?.quantityInStock <= 0 ? 'Hết hàng' : 'Thêm vào giỏ hàng'}
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => addToCompareItem(productDetail.id)}
+                sx={{
+                  borderColor: theme.palette.primary.main,
+                  color: theme.palette.primary.main,
+                  borderRadius: '24px',
+                  padding: '10px 0',
+                  minWidth: '44px',
+                  '&:hover': {
+                    borderColor: theme.palette.primary.dark,
+                    backgroundColor: 'rgba(0,0,0,0.04)'
+                  }
+                }}
+              >
+                <span className={`icon icon-compare ${isAddedtoCompareItem(productDetail.id) ? "added" : ""}`} />
+              </Button>
+            </Box>
+            <Box sx={{ mt: 3 }}>
+              <Link 
+                href={`/product-detail/${productDetail.id}`}
+                style={{
+                  color: theme.palette.primary.main,
+                  textDecoration: 'none',
+                  fontWeight: 500,
+                  display: 'inline-flex',
+                  alignItems: 'center'
+                }}
+              >
+                Xem chi tiết
+                <span className="icon-arrow-right" style={{ marginLeft: '8px', fontSize: '14px' }}></span>
+              </Link>
+            </Box>
+          </Box>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 }

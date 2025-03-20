@@ -20,45 +20,71 @@ import ProductReviewModal from "../ProductReviewModal";
 export default function Orders() {
   const { Id } = useAuthStore();
   const mainColor = useThemeColors();
-  const [orders, setOrders] = useState([]);
+  const [allOrders, setAllOrders] = useState([]); // Store all fetched orders
+  const [displayedOrders, setDisplayedOrders] = useState([]); // Orders after filtering/sorting
   const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true); // Separate loading state for initial fetch
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  // const [sortOrder, setSortOrder] = useState("desc");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [statusFilter, setStatusFilter] = useState("all");
   const pageSize = 5;
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
+  // Fetch orders only when component mounts or page changes
   useEffect(() => {
     fetchOrders();
-  }, [currentPage, statusFilter]); // Removed sortOrder dependency
+  }, [currentPage]);
+
+  // Apply filters and sorting whenever filter/sort settings or allOrders change
+  useEffect(() => {
+    if (allOrders.length > 0) {
+      applyFiltersAndSort();
+    }
+  }, [statusFilter, sortOrder, allOrders, currentPage]);
 
   const fetchOrders = async () => {
     try {
-      setLoading(true);
-      // Removed sortBy and sortOrder parameters
+      setInitialLoading(true);
       const response = await request.get(`/orders/user?pageNumber=${currentPage}&pageSize=${pageSize}`);
       
-      let filteredOrders = response.data.data.items;
+      const newOrders = response.data.data.items;
+      setAllOrders(newOrders);
+      setTotalPages(response.data.data.totalPages);
       
-      // Apply status filter if not "all"
-      if (statusFilter !== "all") {
-        filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
-        // Recalculate total pages based on filtered results
-        const filteredTotalPages = Math.ceil(filteredOrders.length / pageSize);
-        setTotalPages(filteredTotalPages > 0 ? filteredTotalPages : 1);
-      } else {
-        setTotalPages(response.data.data.totalPages);
-      }
-      
-      setOrders(filteredOrders);
+      // Initial display will be done by the other useEffect
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
+      setInitialLoading(false);
       setLoading(false);
     }
+  };
+
+  // Apply filters and sorting without re-fetching data
+  const applyFiltersAndSort = () => {
+    // Create a shallow copy to avoid mutating the original data
+    let filteredOrders = [...allOrders];
+    
+    // Apply status filter
+    if (statusFilter !== "all") {
+      filteredOrders = filteredOrders.filter(order => 
+        order.status.toLowerCase() === statusFilter.toLowerCase()
+      );
+    }
+    
+    // Apply sorting
+    filteredOrders.sort((a, b) => {
+      const dateA = new Date(a.createdTime).getTime();
+      const dateB = new Date(b.createdTime).getTime();
+      
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
+    
+    // Update displayed orders
+    setDisplayedOrders(filteredOrders);
   };
 
   const formatCurrency = (amount) => {
@@ -84,23 +110,29 @@ export default function Orders() {
         return "bg-gray-100 text-gray-800";
     }
   };
-
+  
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // const handleSortChange = (e) => {
-  //   setSortOrder(e.target.value);
-  //   setCurrentPage(1); // Reset to first page when sort order changes
-  // };
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
+    setCurrentPage(1);
+  };
 
   const handleStatusChange = (e) => {
     setStatusFilter(e.target.value);
-    setCurrentPage(1); // Reset to first page when filter changes
+    setCurrentPage(1);
   };
 
-  if (loading) {
+  // Handle successful review submission
+  const handleReviewSuccess = () => {
+    // Only refetch the current page to update review status
+    fetchOrders();
+  };
+
+  if (initialLoading) {
     return (
       <div className="flex items-center justify-center py-8">
         <CircularProgress sx={{ color: mainColor }} />
@@ -110,53 +142,76 @@ export default function Orders() {
 
   return (
     <div className="my-account-content account-order">
-      <div className="wrap-account-order">
-        <Box className="flex flex-col md:flex-row justify-end items-center mb-8 gap-6">
-          {/* Commented out the sort dropdown
+      <div className="wrap-account-order relative">
+        <Box className="flex flex-col md:flex-row justify-end items-center mb-8 gap-4">
           <FormControl size="small" sx={{ minWidth: 200 }}>
-            <InputLabel>Sort By</InputLabel>
+            <InputLabel>Sort By Date</InputLabel>
             <Select
               value={sortOrder}
-              label="Sort By"
+              label="Sort By Date"
               onChange={handleSortChange}
-              sx={{ '& .MuiSelect-select': { py: 1.5 } }}
+              sx={{ 
+                '& .MuiSelect-select': { py: 1.8, px: 2, mt: 1 },
+                '& .MuiOutlinedInput-notchedOutline': { borderRadius: 1 },
+                '& .MuiInputLabel-root': {
+                  fontFamily: '"Roboto", sans-serif'
+                },
+                '& .MuiInputBase-input': {
+                  fontFamily: '"Roboto", sans-serif'
+                }
+              }}
             >
-              <MenuItem value="desc">Newest First</MenuItem>
-              <MenuItem value="asc">Oldest First</MenuItem>
+              <MenuItem value="desc">Mới nhất</MenuItem>
+              <MenuItem value="asc">Cũ nhất</MenuItem>
             </Select>
           </FormControl>
-          */}
           
-          <FormControl size="small" sx={{ minWidth: 220, marginRight: 2 }}>
+          <FormControl size="small" sx={{ minWidth: 220 }}>
             <InputLabel>Status</InputLabel>
             <Select
-              value={statusFilter}
+              value={statusFilter}  
               label="Status"
               onChange={handleStatusChange}
               sx={{ 
                 '& .MuiSelect-select': { py: 1.8, px: 2, mt: 1 },
-                '& .MuiOutlinedInput-notchedOutline': { borderRadius: 1 }
+                '& .MuiOutlinedInput-notchedOutline': { borderRadius: 1 },
+                '& .MuiInputLabel-root': {
+                  fontFamily: '"Roboto", sans-serif'
+                },
+                '& .MuiInputBase-input': {
+                  fontFamily: '"Roboto", sans-serif'
+                }
               }}
             >
-              <MenuItem value="all">All Status</MenuItem>
-              <MenuItem value="Pending">Pending</MenuItem>
-              <MenuItem value="Completed">Completed</MenuItem>
-              <MenuItem value="Cancelled">Cancelled</MenuItem>
-              <MenuItem value="Awaiting Payment">Awaiting Payment</MenuItem>
+              <MenuItem value="all">Tất cả trạng thái</MenuItem>
+              <MenuItem value="Processing">Đang xử lý</MenuItem>
+              <MenuItem value="Delivered">Đã giao</MenuItem>
+              <MenuItem value="Cancelled">Đã hủy</MenuItem>
+              <MenuItem value="Awaiting Payment">Chờ thanh toán</MenuItem>
             </Select>
           </FormControl>
+          
+          {loading && !initialLoading && (
+            <CircularProgress 
+              size={24} 
+              sx={{ 
+                color: mainColor,
+                ml: 2
+              }} 
+            />
+          )}
         </Box>
 
-        {orders.length === 0 ? (
-          <div className="text-center py-4">
-            No orders found
+        {displayedOrders.length === 0 ? (
+          <div className="text-center py-4 border rounded-lg p-8">
+            <p className="text-gray-500">Không tìm thấy đơn hàng phù hợp với bộ lọc của bạn</p>
           </div>
         ) : (
-          orders.map((order) => (
+          displayedOrders.map((order) => (
             <div key={order.id} className="mb-6 border rounded-lg overflow-hidden shadow-sm">
               <div className="bg-gray-50 p-4 flex justify-between items-center border-b">
                 <div className="flex items-center">
-                  <span className="font-medium mr-2">Order #{order.id.substring(0, 8)}</span>
+                  <span className="font-medium mr-2">Đơn hàng #{order.id.substring(0, 8)}</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                     {order.status}
                   </span>
@@ -207,7 +262,8 @@ export default function Orders() {
                             ? "#FFFFFF" 
                             : "#757575",
                           border: "none",
-                          fontWeight: "medium"
+                          fontWeight: "medium",
+                          fontFamily: '"Roboto", sans-serif'
                         }}
                         disabled={order.status?.toLowerCase() !== "delivered" || !item.isReviewable}
                         onClick={() => {
@@ -219,8 +275,8 @@ export default function Orders() {
                         }}
                       >
                         {order.status?.toLowerCase() === "delivered" && !item.isReviewable
-                          ? "Reviewed"
-                          : "Review"}
+                          ? "Đã đánh giá"
+                          : "Đánh giá"}
                       </button>
                     </div>
                   </div>
@@ -240,10 +296,11 @@ export default function Orders() {
                     style={{ 
                       color: mainColor, 
                       borderColor: mainColor,
-                      backgroundColor: `${mainColor}10`
+                      backgroundColor: `${mainColor}10`,
+                      fontFamily: '"Roboto", sans-serif'
                     }}
                   >
-                    View Details
+                    Xem chi tiết
                   </Link>
                 </div>
               </div>
@@ -265,13 +322,18 @@ export default function Orders() {
                 '& .Mui-selected': {
                   backgroundColor: `${mainColor}20`,
                 },
+                '& .MuiInputLabel-root': {
+                  fontFamily: '"Roboto", sans-serif'
+                },
+                '& .MuiInputBase-input': {
+                  fontFamily: '"Roboto", sans-serif'
+                }
               }}
             />
           </Box>
         )}
       </div>
       
-      {/* Add review modal */}
       {selectedProduct && (
         <ProductReviewModal
           open={reviewModalOpen}
@@ -281,10 +343,7 @@ export default function Orders() {
           }}
           productInfo={selectedProduct}
           orderId={selectedOrderId}
-          onSubmitSuccess={() => {
-            // Refetch orders after successful review submission
-            fetchOrders();
-          }}
+          onSubmitSuccess={handleReviewSuccess}
         />
       )}
     </div>

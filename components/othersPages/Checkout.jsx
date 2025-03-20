@@ -134,39 +134,39 @@ export default function Checkout() {
 
     // Validate form
     if (!formData.customerName) {
-      toast.error("Customer name is required");
+      toast.error("Tên khách hàng là bắt buộc");
       return;
     }
     if (!formData.phoneNumber) {
-      toast.error("Phone number is required");
+      toast.error("Số điện thoại là bắt buộc");
       return;
     }
     if (!formData.streetNumber) {
-      toast.error("Street number is required");
+      toast.error("Số nhà là bắt buộc");
       return;
     }
     if (!formData.addressLine1) {
-      toast.error("Address Line 1 is required");
+      toast.error("Địa chỉ là bắt buộc");
       return;
     }
     if (!formData.city) {
-      toast.error("City is required");
+      toast.error("Thành phố là bắt buộc");
       return;
     }
     if (!formData.ward) {
-      toast.error("Ward is required");
+      toast.error("Phường/Xã là bắt buộc");
       return;
     }
     if (!formData.province) {
-      toast.error("Province is required");
+      toast.error("Quận/Huyện là bắt buộc");
       return;
     }
     if (!formData.postCode) {
-      toast.error("Postal code is required");
+      toast.error("Mã bưu điện là bắt buộc");
       return;
     }
     if (!formData.countryId) {
-      toast.error("Country is required");
+      toast.error("Quốc gia là bắt buộc");
       return;
     }
 
@@ -230,13 +230,13 @@ export default function Checkout() {
         <div className="tf-page-cart-wrap layout-2">
           <div className="tf-page-cart-item">
             <div className="flex justify-between items-center mb-4">
-              <h5 className="fw-5">Shipping Address</h5>
+              <h5 className="fw-5" style={{ fontFamily: '"Roboto", sans-serif' }}>Địa Chỉ Giao Hàng</h5>
               <button
                 className="px-4 py-2 rounded-md text-white transition-all hover:opacity-90"
-                style={{ backgroundColor: theme.palette.primary.main }}
+                style={{ backgroundColor: theme.palette.primary.main, fontFamily: '"Roboto", sans-serif' }}
                 onClick={() => setShowAddressForm(!showAddressForm)}
               >
-                {showAddressForm ? "Cancel" : "Add a new address"}
+                {showAddressForm ? "Hủy" : "Thêm địa chỉ mới"}
               </button>
             </div>
 
@@ -262,7 +262,7 @@ export default function Checkout() {
                       className="block text-sm font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      Customer Name
+                      Tên Khách Hàng
                     </label>
                     <input
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -283,7 +283,7 @@ export default function Checkout() {
                       className="block text-sm font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      Phone Number
+                      Số Điện Thoại
                     </label>
                     <input
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -304,7 +304,7 @@ export default function Checkout() {
                       className="block text-sm font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      Street Number
+                      Số Nhà
                     </label>
                     <input
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -325,7 +325,7 @@ export default function Checkout() {
                       className="block text-sm font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      Address Line 1
+                      Địa Chỉ 1
                     </label>
                     <input
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -346,7 +346,7 @@ export default function Checkout() {
                       className="block text-sm font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      Address Line 2 (Optional)
+                      Địa Chỉ 2 (Tùy chọn)
                     </label>
                     <input
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -367,7 +367,7 @@ export default function Checkout() {
                       className="block text-sm font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      City
+                      Thành Phố
                     </label>
                     <input
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -388,7 +388,7 @@ export default function Checkout() {
                       className="block text-sm font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      Ward
+                      Phường/Xã
                     </label>
                     <input
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -409,7 +409,7 @@ export default function Checkout() {
                       className="block text-sm font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      Province
+                      Quận/Huyện
                     </label>
                     <input
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -430,7 +430,7 @@ export default function Checkout() {
                       className="block text-sm font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      Postal Code
+                      Mã Bưu Điện
                     </label>
                     <input
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -451,7 +451,7 @@ export default function Checkout() {
                       className="block text-sm font-medium mb-1"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      Country
+                      Quốc Gia
                     </label>
                     <select
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -464,7 +464,7 @@ export default function Checkout() {
                       value={formData.countryId}
                       onChange={handleInputChange}
                     >
-                      <option value="">Select a country</option>
+                      <option value="">Chọn quốc gia</option>
                       {countries && countries.length > 0 ? (
                         countries.map((country) => (
                           <option key={country.id} value={country.id}>
@@ -490,7 +490,7 @@ export default function Checkout() {
                       htmlFor="isDefault"
                       style={{ color: theme.palette.text.secondary }}
                     >
-                      Set as default address
+                      Đặt làm địa chỉ mặc định
                     </label>
                   </div>
 
@@ -515,7 +515,7 @@ export default function Checkout() {
                       style={{ backgroundColor: theme.palette.primary.main }}
                       disabled={saving}
                     >
-                      {saving ? "Saving..." : "Add Address"}
+                      {saving ? "Đang lưu..." : "Thêm Địa Chỉ"}
                     </button>
                   </div>
                 </form>
@@ -541,15 +541,15 @@ export default function Checkout() {
 
             {addresses.length === 0 && !showAddressForm && (
               <div className="text-center py-8 rounded-lg border border-gray-200 bg-gray-50">
-                <p className="text-gray-600 mb-4">
-                  No addresses found. Please add an address to continue.
+                <p className="text-gray-600 mb-4" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                  Chưa có địa chỉ nào. Vui lòng thêm địa chỉ để tiếp tục.
                 </p>
               </div>
             )}
           </div>
           <div className="tf-page-cart-footer">
             <div className="tf-cart-footer-inner">
-              <h5 className="fw-5 mb_20">Your order</h5>
+              <h5 className="fw-5 mb_20" style={{ fontFamily: '"Roboto", sans-serif' }}>Đơn hàng của bạn</h5>
               <form
                 onSubmit={(e) => e.preventDefault()}
                 className="tf-page-cart-checkout widget-wrap-checkout"
@@ -583,16 +583,16 @@ export default function Checkout() {
                 {!cartProducts.length && (
                   <div className="container">
                     <div className="row align-items-center mt-5 mb-5">
-                      <div className="col-12 fs-18">
-                        Your shop cart is empty
+                      <div className="col-12 fs-18" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                        Giỏ hàng của bạn đang trống
                       </div>
                       <div className="col-12 mt-3">
                         <Link
                           href={`/shop-default`}
                           className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
-                          style={{ width: "fit-content" }}
+                          style={{ width: "fit-content", fontFamily: '"Roboto", sans-serif' }}
                         >
-                          Explore Products!
+                          Khám phá sản phẩm!
                         </Link>
                       </div>
                     </div>
@@ -602,7 +602,7 @@ export default function Checkout() {
                   <input
                     id="voucherId"
                     type="text"
-                    placeholder="Discount code"
+                    placeholder="Mã giảm giá"
                   />
                   <div
                     onClick={() => {
@@ -640,7 +640,7 @@ export default function Checkout() {
                     }}
                     className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
                   >
-                    Apply
+                    Áp dụng
                   </div>
                 </div>
                 {voucher.code != "" && (
@@ -650,6 +650,7 @@ export default function Checkout() {
                         ? "text-blue-500"
                         : "text-red-400"
                     }`}
+                    style={{ fontFamily: '"Roboto", sans-serif' }}
                   >
                     {voucher.code != "invalid" && voucher.code
                       ? `Applied voucher: ${voucher.code} with discount ${
@@ -682,7 +683,7 @@ export default function Checkout() {
                       value="bank"
                       onChange={(e) => setPaymentMethod(e.target.value)}
                     />
-                    <label htmlFor="bank">Direct bank transfer</label>
+                    <label htmlFor="bank">Thanh toán qua VNPAY</label>
                   </div>
                   <div className="fieldset-radio mb_20">
                     <input
@@ -694,17 +695,15 @@ export default function Checkout() {
                       value="cod"
                       onChange={(e) => setPaymentMethod(e.target.value)}
                     />
-                    <label htmlFor="delivery">Cash on delivery</label>
+                    <label htmlFor="delivery">Thanh toán khi nhận hàng (COD)</label>
                   </div>
-                  <p className="text_black-2 mb_20">
-                    Your personal data will be used to process your order,
-                    support your experience throughout this website, and for
-                    other purposes described in our
+                  <p className="text_black-2 mb_20" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                    Thông tin cá nhân của bạn sẽ được sử dụng để xử lý đơn hàng và hỗ trợ trải nghiệm của bạn trên website này. Xem thêm trong 
                     <Link
                       href={`/privacy-policy`}
                       className="text-decoration-underline ps-1"
                     >
-                      privacy policy
+                      chính sách bảo mật
                     </Link>
                     .
                   </p>
@@ -715,15 +714,15 @@ export default function Checkout() {
                       id="check-agree"
                       className="tf-check"
                     />
-                    <label htmlFor="check-agree" className="text_black-2">
-                      I have read and agree to the website
+                    <label htmlFor="check-agree" className="text_black-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                      Tôi đã đọc và đồng ý với
                       <Link
                         href={`/terms-conditions`}
                         className="ps-1 text-decoration-underline"
                       >
-                        terms and conditions
+                        điều khoản và điều kiện
                       </Link>
-                      .
+                      của website.
                     </label>
                   </div>
                 </div>
@@ -732,21 +731,39 @@ export default function Checkout() {
                     className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
                     onClick={async () => {
                       if (!selectedAddress?.id) {
-                        toast.error("Please select an address");
+                        toast.error("Vui lòng chọn địa chỉ giao hàng");
                         return;
                       }
+
+                      if (!cartProducts || cartProducts.length === 0) {
+                        toast.error("Giỏ hàng trống");
+                        return;
+                      }
+
+                      // Validate cart products
+                      const invalidProducts = cartProducts.filter(elm => !elm.productItemId);
+                      if (invalidProducts.length > 0) {
+                        toast.error("Có sản phẩm không hợp lệ trong giỏ hàng");
+                        return;
+                      }
+
+                      const voucherId = document.querySelector("input#voucherId").value;
                       const orderData = {
-                        addressId: selectedAddress?.id,
-                        paymentMethodId:
-                          paymentMethod === "bank"
-                            ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
-                            : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
-                        voucherId: voucher.id || null,
+                        addressId: selectedAddress.id,
+                        paymentMethodId: paymentMethod === "bank"
+                          ? "354EDA95-5BE5-41BE-ACC3-CFD70188118A" // VNPay
+                          : "ABB33A09-6065-4DC2-A943-51A9DD9DF27E", // COD
+                        voucherId: voucher?.id || null,
                         orderDetail: cartProducts.map((elm) => ({
                           productItemId: elm.productItemId,
                           quantity: elm.quantity,
                         })),
                       };
+
+                      console.log("Order Data:", orderData);
+                      console.log("Cart Products:", cartProducts);
+                      console.log("Selected Address:", selectedAddress);
+                      console.log("Voucher:", voucher);
 
                       try {
                         const res = await request.post("/orders", orderData);
@@ -760,18 +777,21 @@ export default function Checkout() {
                             );
                             if (vnpayRes.status === 200) {
                               location.href = vnpayRes.data.data;
+                            } else {
+                              toast.error("Không thể khởi tạo thanh toán VNPay");
                             }
                           } else {
                             location.href = `/payment-success?id=${orderId}`;
                           }
                         }
                       } catch (err) {
-                        console.error(err);
+                        console.error("Lỗi tạo đơn hàng:", err);
+                        toast.error(err.response?.data?.message || "Có lỗi xảy ra khi tạo đơn hàng");
                         location.href = "/payment-failure";
                       }
                     }}
                   >
-                    Place order
+                    Đặt hàng
                   </button>
                 ) : null}
               </form>

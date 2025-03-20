@@ -228,7 +228,7 @@ export default function AccountAddress() {
   return (
     <div className="my-account-content account-address">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold" style={{ color: theme.palette.text.primary }}>My Addresses</h2>
+        <h2 className="text-2xl font-semibold" style={{ color: theme.palette.text.primary }}>Địa chỉ của tôi</h2>
         <button
           className="px-4 py-2 rounded-md text-white transition-all hover:opacity-90"
           style={{ backgroundColor: theme.palette.primary.main }}
@@ -239,7 +239,7 @@ export default function AccountAddress() {
             resetForm();
           }}
         >
-          Add a new address
+          Thêm địa chỉ mới
         </button>
       </div>
 
@@ -248,7 +248,7 @@ export default function AccountAddress() {
         <div className="bg-white p-6 rounded-lg shadow-md mb-8 border" style={{ borderColor: theme.palette.divider }}>
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-medium" style={{ color: theme.palette.text.primary }}>
-              {isEditing ? "Edit address" : "Add a new address"}
+              {isEditing ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"}
             </h3>
             <button 
               onClick={() => {
@@ -266,7 +266,7 @@ export default function AccountAddress() {
           <form onSubmit={handleAddAddress} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="tf-field">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-                Customer Name
+                Tên khách hàng
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -284,7 +284,7 @@ export default function AccountAddress() {
             
             <div className="tf-field">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-                Phone Number
+                Số điện thoại
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -302,7 +302,7 @@ export default function AccountAddress() {
             
             <div className="tf-field">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-                Street Number
+                Số nhà
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -320,7 +320,7 @@ export default function AccountAddress() {
             
             <div className="tf-field">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-                Address Line 1
+                Địa chỉ 1
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -338,7 +338,7 @@ export default function AccountAddress() {
             
             <div className="tf-field">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-                Address Line 2 (Optional)
+                Địa chỉ 2 (Tùy chọn)
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -356,7 +356,7 @@ export default function AccountAddress() {
             
             <div className="tf-field">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-                City
+                Thành phố
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -374,7 +374,7 @@ export default function AccountAddress() {
             
             <div className="tf-field">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-                Ward
+                Phường/Xã
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -392,7 +392,7 @@ export default function AccountAddress() {
             
             <div className="tf-field">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-                Province
+                Quận/Huyện
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -410,7 +410,7 @@ export default function AccountAddress() {
             
             <div className="tf-field">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-                Postal Code
+                Mã bưu điện
               </label>
               <input
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -428,7 +428,7 @@ export default function AccountAddress() {
             
             <div className="tf-field md:col-span-2">
               <label className="block text-sm font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-                Country
+                Quốc gia
               </label>
               <select
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
@@ -464,7 +464,7 @@ export default function AccountAddress() {
                 className="mr-2"
               />
               <label htmlFor="isDefault" style={{ color: theme.palette.text.secondary }}>
-                Set as default address
+                Đặt làm địa chỉ mặc định
               </label>
             </div>
             
@@ -481,7 +481,7 @@ export default function AccountAddress() {
                   resetForm();
                 }}
               >
-                Cancel
+                Hủy
               </button>
               <button
                 type="submit"
@@ -499,7 +499,7 @@ export default function AccountAddress() {
       {/* Default Address */}
       {addresses.filter(address => address.isDefault).length > 0 && (
         <div className="mb-8">
-          <h3 className="text-lg font-medium mb-4" style={{ color: theme.palette.text.primary }}>Default Address</h3>
+          <h3 className="text-lg font-medium mb-4" style={{ color: theme.palette.text.primary }}>Địa chỉ mặc định</h3>
           {addresses.filter(address => address.isDefault).map((address) => (
             <div 
               key={address.id}
@@ -515,7 +515,7 @@ export default function AccountAddress() {
                   color: theme.palette.primary.contrastText
                 }}
               >
-                Default
+                Địa chỉ mặc định
               </div>
               
               <div className="flex items-start">
@@ -558,7 +558,7 @@ export default function AccountAddress() {
                   style={{ backgroundColor: theme.palette.primary.main }}
                   onClick={() => handleEdit(address)}
                 >
-                  Edit
+                  Chỉnh sửa
                 </button>
                 
                 <button
@@ -566,7 +566,7 @@ export default function AccountAddress() {
                   style={{ backgroundColor: theme.palette.error.main }}
                   onClick={() => handleDelete(address.id)}
                 >
-                  Delete
+                  Xóa
                 </button>
               </div>
             </div>
@@ -576,7 +576,7 @@ export default function AccountAddress() {
 
       {/* Other Addresses */}
       <div className="mb-4">
-        <h3 className="text-lg font-medium mb-4" style={{ color: theme.palette.text.primary }}>Other Addresses</h3>
+        <h3 className="text-lg font-medium mb-4" style={{ color: theme.palette.text.primary }}>Địa chỉ khác</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {addresses.filter(address => !address.isDefault).map((address) => (
             <div 
@@ -624,7 +624,7 @@ export default function AccountAddress() {
                   style={{ backgroundColor: theme.palette.primary.main }}
                   onClick={() => handleEdit(address)}
                 >
-                  Edit
+                  Chỉnh sửa
                 </button>
                 
                 <button
@@ -632,7 +632,7 @@ export default function AccountAddress() {
                   style={{ backgroundColor: theme.palette.error.main }}
                   onClick={() => handleDelete(address.id)}
                 >
-                  Delete
+                  Xóa
                 </button>
                 
                 <button
@@ -643,7 +643,7 @@ export default function AccountAddress() {
                   }}
                   onClick={() => handleSetDefault(address.id)}
                 >
-                  Set as Default
+                  Đặt làm mặc định
                 </button>
               </div>
             </div>
@@ -656,10 +656,11 @@ export default function AccountAddress() {
           className="text-center py-8 rounded-lg border"
           style={{ 
             borderColor: theme.palette.divider,
-            color: theme.palette.text.secondary
+            color: theme.palette.text.secondary,
+            fontFamily: '"Roboto", sans-serif'
           }}
         >
-          No addresses found. Add your first address!
+          Không tìm thấy địa chỉ nào. Hãy thêm địa chỉ đầu tiên của bạn!
         </div>
       )}
       
