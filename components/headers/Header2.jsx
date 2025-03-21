@@ -185,10 +185,10 @@ export default function Header2({
                     className="nav-icon-item"
                     onClick={() => {
                       setLoggedOut();
-                      location.reload();
                       localStorage.removeItem("accessToken");
                       localStorage.removeItem("refreshToken");
                       localStorage.removeItem("userRole");
+                      window.location.href = '/';
                     }}
                   >
                     <MdLogout size={20} />

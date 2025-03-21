@@ -72,7 +72,7 @@ export default function Login() {
                       // Reload the page to apply the new authentication state
                       if (userRole === 'Staff') {
                         // Force reload đến trang staff home
-                        window.location.href = '/home';
+                        window.location.href = '/staff';
                       } else {
                         // Reload trang hiện tại
                         window.location.reload();
