@@ -4,10 +4,12 @@ import request from "@/utils/axios";
 import React, { useRef } from "react";
 import toast from "react-hot-toast";
 import { jwtDecode } from "jwt-decode";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const closeRef = useRef(null);
   const { setLoggedIn } = useAuthStore();
+  const router = useRouter();
 
   return (
     <div
@@ -37,9 +39,23 @@ export default function Login() {
                     if (res.data.accessToken) {
                       // Decode JWT token to get user info including role
                       const tokenData = jwtDecode(res.data.accessToken);
+                      console.log("Token data:", tokenData); // Ghi log để kiểm tra cấu trúc
                       
-                      // Store user role in localStorage (using the correct claim name)
-                      const userRole = tokenData["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+                      // Tìm role trong payload, có thể nằm ở nhiều vị trí khác nhau
+                      let userRole;
+                      if (tokenData.role) {
+                        userRole = tokenData.role;
+                      } else if (tokenData.Role) {
+                        userRole = tokenData.Role;
+                      } else if (tokenData.claims && tokenData.claims.role) {
+                        userRole = tokenData.claims.role;
+                      } else {
+                        // Fallback nếu không tìm thấy role
+                        console.log("Role not found in token, setting as 'Customer'");
+                        userRole = "Customer";
+                      }
+                      
+                      console.log("Extracted user role:", userRole);
                       
                       // Store the role in localStorage
                       localStorage.setItem("userRole", userRole);
@@ -55,11 +71,11 @@ export default function Login() {
                       
                       // Reload the page to apply the new authentication state
                       if (userRole === 'Staff') {
-                        // Redirect staff to the blog management page
-                        window.location.href = '/blog-management';
+                        // Force reload đến trang staff home
+                        window.location.href = '/home';
                       } else {
-                        // Just reload for regular customers
-                        location.reload();
+                        // Reload trang hiện tại
+                        window.location.reload();
                       }
                     }
                   })

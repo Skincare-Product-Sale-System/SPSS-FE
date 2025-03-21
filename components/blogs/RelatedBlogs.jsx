@@ -13,7 +13,7 @@ export default function RelatedBlogs() {
 
   useEffect(() => {
     request.get("/blogs").then(({ data }) => {
-      // Filter out the current blog post
+      // Lọc ra bài viết hiện tại
       const filteredBlogs = data.data.items.filter(blog => blog.id !== currentBlogId);
       setBlogs(filteredBlogs);
     });
@@ -23,7 +23,7 @@ export default function RelatedBlogs() {
     <section className="mb_30">
       <div className="container">
         <div className="flat-title mb-5">
-          <h4 className="text-2xl text-center font-semibold">Related Articles</h4>
+          <h4 className="text-2xl text-center font-semibold">Bài Viết Liên Quan</h4>
         </div>
         <div className="hover-sw-5 hover-sw-nav view-default">
           <Swiper
@@ -50,8 +50,8 @@ export default function RelatedBlogs() {
                     <Link href={`/blog/${blog?.id}`}>
                       <Image
                         className="h-auto w-full object-cover"
-                        src={blog?.thumbnail}
-                        alt={blog?.title}
+                        src={blog?.thumbnail || "/assets/images/blog-placeholder.jpg"}
+                        alt={blog?.title || "Hình ảnh bài viết"}
                         width={550}
                         height={354}
                       />
@@ -70,12 +70,10 @@ export default function RelatedBlogs() {
                     )}
                     <div className="flex justify-between text-gray-500 text-sm article-meta items-center mb-3">
                       <span className="flex items-center">
-                        <span className="text-primary material-icons mr-1" style={{ fontSize: '16px' }}>person</span>
-                        {blog?.author || "Admin"}
+                        {blog?.authorName || "Quản trị viên"}
                       </span>
                       <span className="flex items-center">
-                        <span className="text-primary material-icons mr-1" style={{ fontSize: '16px' }}>calendar_today</span>
-                        {blog?.lastUpdatedTime ? new Date(blog.lastUpdatedTime).toLocaleDateString('en-US', {
+                        {blog?.lastUpdatedTime ? new Date(blog.lastUpdatedTime).toLocaleDateString('vi-VN', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric'
@@ -87,7 +85,7 @@ export default function RelatedBlogs() {
                         href={`/blog/${blog?.id}`}
                         className="btn-line fw-6 hover:text-primary tf-btn transition-colors"
                       >
-                        Read more
+                        Xem thêm
                         <i className="icon icon-arrow1-top-left ml-2" />
                       </Link>
                     </div>

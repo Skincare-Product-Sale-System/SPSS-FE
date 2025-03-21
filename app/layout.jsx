@@ -28,6 +28,7 @@ import Header2 from "@/components/headers/Header2";
 import Footer1 from "@/components/footers/Footer1";
 import '@/styles/globals.css';
 import { RouterEventsProvider } from './RouterEventsProvider';
+import StaffHeaderWrapper from '@/components/StaffHeaderWrapper';
 
 // Các providers và fonts
 const inter = Inter({ subsets: ['latin'] });
@@ -36,6 +37,10 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
   const [scrollDirection, setScrollDirection] = useState("down");
   const [loading, setLoading] = useState(true);
+  
+  // Check if the current user is a staff member (client-side only)
+  const [isStaff, setIsStaff] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   // Bootstrap initialization
   useEffect(() => {
@@ -198,6 +203,33 @@ export default function RootLayout({ children }) {
     }
   }, []);
 
+  // Kiểm tra role và cập nhật state
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      try {
+        const userRole = localStorage.getItem('userRole');
+        console.log("Layout - User role from localStorage:", userRole);
+        setIsStaff(userRole === 'Staff');
+      } catch (error) {
+        console.error("Error reading role from localStorage:", error);
+      }
+    }
+  }, []);
+
+  // Tạo component ChatComponents để có thể điều kiện render
+  const ChatComponents = () => {
+    if (!mounted) return null;
+    if (isStaff) return null;
+    
+    return (
+      <>
+        <ChatAssistant />
+        <RealTimeChat />
+      </>
+    );
+  };
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -210,7 +242,7 @@ export default function RootLayout({ children }) {
                     <NextTopLoader />
                     <div id="wrapper">
                       {/* Header cố định - load immediately */}
-                      <Header2 />
+                      <StaffHeaderWrapper />
                       
                       {/* Mobile Menu */}
                       <MobileMenu />
@@ -237,10 +269,9 @@ export default function RootLayout({ children }) {
                       <LoginModal />
                       <ShoppingCartModal />
                     </Suspense>
-                    {/* Chat components */}
+                    {/* Chat components - chỉ hiển thị khi không phải staff */}
                     <Suspense fallback={null}>
-                      <ChatAssistant />
-                      <RealTimeChat />
+                      <ChatComponents />
                       <ScrollTop />
                     </Suspense>
                   </ClientProvider>

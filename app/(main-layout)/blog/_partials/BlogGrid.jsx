@@ -41,19 +41,19 @@ export default function BlogGrid() {
                     </h2>
                   </Link>
                   <div className="flex items-center">
-                    <div className="h-10 rounded-full w-10 mr-3 overflow-hidden">
+                    {/* <div className="h-10 rounded-full w-10 mr-3 overflow-hidden">
                       <Image 
                         src={latestBlog?.authorAvatar || "/assets/images/default-avatar.png"} 
-                        alt={latestBlog?.author || "Admin"}
+                        alt={latestBlog?.authorName || "Quản trị viên"}
                         width={40}
                         height={40}
                       />
-                    </div>
+                    </div> */}
                     <div className="flex text-gray-600 items-center">
-                      <span className="font-medium">{latestBlog?.author || "Admin"}</span>
+                      <span className="font-medium">{latestBlog?.authorName || "Quản trị viên"}</span>
                       <span className="text-gray-400 mx-2">•</span>
                       <span>
-                        {latestBlog?.lastUpdatedTime ? new Date(latestBlog.lastUpdatedTime).toLocaleDateString('en-US', {
+                        {latestBlog?.lastUpdatedTime ? new Date(latestBlog.lastUpdatedTime).toLocaleDateString('vi-VN', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric'
@@ -68,7 +68,7 @@ export default function BlogGrid() {
         )}
 
         {/* Latest Posts Heading */}
-        <h2 className="border-b border-gray-200 text-2xl font-bold mb-8 pb-3">Latest Post</h2>
+        <h2 className="border-b border-gray-200 text-2xl font-bold mb-8 pb-3">Bài Viết Mới Nhất</h2>
 
         {/* Blog Grid */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -100,19 +100,19 @@ export default function BlogGrid() {
                 </Link>
                 <div className="flex text-gray-500 text-sm items-center mb-3">
                   <div className="flex items-center">
-                    <div className="h-6 rounded-full w-6 mr-2 overflow-hidden">
+                    {/* <div className="h-6 rounded-full w-6 mr-2 overflow-hidden">
                       <Image 
                         src={blog?.authorAvatar || "/assets/images/default-avatar.png"} 
-                        alt={blog?.author || "Admin"}
+                        alt={blog?.authorName || "Quản trị viên"}
                         width={24}
                         height={24}
                       />
-                    </div>
-                    <span>{blog?.author || "Admin"}</span>
+                    </div> */}
+                    <span>{blog?.authorName || "Quản trị viên"}</span>
                   </div>
                   <span className="mx-2">•</span>
                   <span>
-                    {blog?.lastUpdatedTime ? new Date(blog.lastUpdatedTime).toLocaleDateString('en-US', {
+                    {blog?.lastUpdatedTime ? new Date(blog.lastUpdatedTime).toLocaleDateString('vi-VN', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric'

@@ -17,7 +17,22 @@ export default function Header2({
   const { isLoggedIn, setLoggedOut, Role } = useAuthStore();
   const { switcher, revalidate } = useQueryStore();
   const [cartProducts, setCartProducts] = useState([]);
-  const isStaff = Role === "Staff";
+  const [isStaff, setIsStaff] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Kiểm tra xem người dùng có phải là staff hay không sử dụng localStorage
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      try {
+        const userRole = localStorage.getItem("userRole");
+        console.log("Header2 - User role from localStorage:", userRole);
+        setIsStaff(userRole === 'Staff');
+      } catch (error) {
+        console.error("Error reading role from localStorage:", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!isLoggedIn || isStaff) return;
@@ -31,6 +46,11 @@ export default function Header2({
       })
       .catch((e) => setCartProducts([]));
   }, [switcher, isLoggedIn, isStaff]);
+
+  // Nếu chưa mount hoặc người dùng là staff, không hiển thị header
+  if (!mounted || isStaff) {
+    return null;
+  }
 
   return (
     <header
