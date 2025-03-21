@@ -1,5 +1,5 @@
 import React from "react";
-import ChangePassword from "@/components/changePassword/ChangePassword";
+import ChangePassword from "@/components/changepassword/ChangePassword";
 
 export const metadata = {
     title: "Change Password",
