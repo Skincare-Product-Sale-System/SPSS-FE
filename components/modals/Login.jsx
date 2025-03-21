@@ -3,6 +3,7 @@ import useAuthStore from "@/context/authStore";
 import request from "@/utils/axios";
 import React, { useRef } from "react";
 import toast from "react-hot-toast";
+import { jwtDecode } from "jwt-decode";
 
 export default function Login() {
   const closeRef = useRef(null);
@@ -34,6 +35,16 @@ export default function Login() {
                   })
                   .then((res) => {
                     if (res.data.accessToken) {
+                      // Decode JWT token to get user info including role
+                      const tokenData = jwtDecode(res.data.accessToken);
+                      
+                      // Store user role in localStorage (using the correct claim name)
+                      const userRole = tokenData["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+                      
+                      // Store the role in localStorage
+                      localStorage.setItem("userRole", userRole);
+                      
+                      // Call setLoggedIn to update the auth store with all user details
                       setLoggedIn(res.data.accessToken);
                       toast.success("Login successfully");
                       localStorage.setItem("accessToken", res.data.accessToken);
@@ -41,7 +52,15 @@ export default function Login() {
                         "refreshToken",
                         res.data.refreshToken
                       );
-                      location.reload();
+                      
+                      // Reload the page to apply the new authentication state
+                      if (userRole === 'Staff') {
+                        // Redirect staff to the blog management page
+                        window.location.href = '/blog-management';
+                      } else {
+                        // Just reload for regular customers
+                        location.reload();
+                      }
                     }
                   })
                   .catch((err) => {

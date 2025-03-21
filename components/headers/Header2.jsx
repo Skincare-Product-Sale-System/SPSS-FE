@@ -14,11 +14,14 @@ export default function Header2({
   isArrow = true,
   Linkfs = "",
 }) {
-  const { isLoggedIn, setLoggedOut } = useAuthStore();
+  const { isLoggedIn, setLoggedOut, Role } = useAuthStore();
   const { switcher, revalidate } = useQueryStore();
   const [cartProducts, setCartProducts] = useState([]);
+  const isStaff = Role === "Staff";
 
   useEffect(() => {
+    if (!isLoggedIn || isStaff) return;
+    
     //> fetch data from server
     request
       .get("/cart-items/user/cart")
@@ -27,7 +30,7 @@ export default function Header2({
         setCartProducts(res?.data?.data?.items);
       })
       .catch((e) => setCartProducts([]));
-  }, [switcher]);
+  }, [switcher, isLoggedIn, isStaff]);
 
   return (
     <header
@@ -90,15 +93,24 @@ export default function Header2({
           <div className="col-xl-6 tf-md-hidden">
             <nav className="text-center box-navigation">
               <ul className="d-flex align-items-center justify-content-center box-nav-ul gap-30">
-                <Nav isArrow={isArrow} Linkfs={Linkfs} />
-                {/* <li className={`menu-item`}>
-                  <a
-                    href="https://themeforest.net/item/ecomus-ultimate-html5-template/53417990?s_rank=3"
-                    className={`item-link  ${Linkfs}`}
-                  >
-                    Buy now
-                  </a>
-                </li> */}
+                {isStaff ? (
+                  // Staff Menu
+                  <>
+                    <li className="menu-item">
+                      <Link href="/staff-chat" className={`item-link ${Linkfs}`}>
+                        Customer Chat
+                      </Link>
+                    </li>
+                    <li className="menu-item">
+                      <Link href="/blog-management" className={`item-link ${Linkfs}`}>
+                        Blog Management
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  // Regular Nav menu
+                  <Nav isArrow={isArrow} Linkfs={Linkfs} />
+                )}
               </ul>
             </nav>
           </div>
@@ -132,19 +144,21 @@ export default function Header2({
                   </span>
                 </Link>
               </li> */}
-              <li className="nav-cart">
-                <a
-                  href="#shoppingCart"
-                  data-bs-toggle="modal"
-                  className="nav-icon-item"
-                  onClick={() => revalidate()}
-                >
-                  <i className="icon icon-bag" />
-                  <span className={`count-box ${bgColor} ${textClass}`}>
-                    {cartProducts.length}
-                  </span>
-                </a>
-              </li>
+              {!isStaff && (
+                <li className="nav-cart">
+                  <a
+                    href="#shoppingCart"
+                    data-bs-toggle="modal"
+                    className="nav-icon-item"
+                    onClick={() => revalidate()}
+                  >
+                    <i className="icon icon-bag" />
+                    <span className={`count-box ${bgColor} ${textClass}`}>
+                      {cartProducts.length}
+                    </span>
+                  </a>
+                </li>
+              )}
               {isLoggedIn && (
                 <li className="nav-cart">
                   <a
@@ -154,6 +168,7 @@ export default function Header2({
                       location.reload();
                       localStorage.removeItem("accessToken");
                       localStorage.removeItem("refreshToken");
+                      localStorage.removeItem("userRole");
                     }}
                   >
                     <MdLogout size={20} />
