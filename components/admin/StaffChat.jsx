@@ -387,12 +387,12 @@ export default function StaffChat() {
         }}>
           <Box sx={{ p: 2, bgcolor: mainColor.primary, color: 'white' }}>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>
-              Chat Sessions
+              Phiên Chat
             </Typography>
             
             <Box sx={{ mt: 1.5, position: 'relative' }}>
               <TextField
-                placeholder="Search..."
+                placeholder="Tìm kiếm..."
                 size="small"
                 fullWidth
                 value={searchTerm}
@@ -427,7 +427,7 @@ export default function StaffChat() {
               onClick={clearChatData}
               sx={{ mt: 2, borderRadius: '8px', textTransform: 'none', fontWeight: 500 }}
             >
-              Clear All Data
+              Xóa Tất Cả Dữ Liệu
             </Button>
           </Box>
           
@@ -437,12 +437,12 @@ export default function StaffChat() {
                 <ListItemText 
                   primary={
                     <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                      No conversations
+                      Không có cuộc hội thoại
                     </Typography>
                   }
                   secondary={
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Waiting for customers...
+                      Đang chờ khách hàng...
                     </Typography>
                   }
                 />
@@ -542,7 +542,7 @@ export default function StaffChat() {
                     {selectedChat.username}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Online
+                    Trực tuyến
                   </Typography>
                 </Box>
               </Toolbar>
@@ -574,10 +574,10 @@ export default function StaffChat() {
                 }}>
                   <MessageIcon sx={{ fontSize: 80, color: 'text.secondary', opacity: 0.3 }} />
                   <Typography variant="body1" color="text.secondary" mt={2}>
-                    No messages yet
+                    Chưa có tin nhắn
                   </Typography>
                   <Typography variant="body2" color="text.disabled">
-                    Start a conversation
+                    Bắt đầu cuộc trò chuyện
                   </Typography>
                 </Box>
               ) : (
@@ -655,7 +655,7 @@ export default function StaffChat() {
                 <Grid item xs>
                   <TextField
                     fullWidth
-                    placeholder="Type a message..."
+                    placeholder="Nhập tin nhắn..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={(e) => {
@@ -707,7 +707,7 @@ export default function StaffChat() {
           }}>
             <MessageIcon sx={{ fontSize: 100, color: 'text.disabled', mb: 2 }} />
             <Typography variant="h6" color="text.secondary" textAlign="center">
-              Select a conversation to start
+              Chọn một cuộc trò chuyện để bắt đầu
             </Typography>
           </Box>
         )}

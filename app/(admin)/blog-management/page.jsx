@@ -401,7 +401,7 @@ export default function BlogManagement() {
     <Container maxWidth="xl" sx={{ my: 4, minHeight: 'calc(100vh - 100px)' }}>
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h4" fontWeight="bold" color="primary">
-          Blog Management
+          Quản Lý Bài Viết
         </Typography>
         <Button 
           variant="contained" 
@@ -412,7 +412,7 @@ export default function BlogManagement() {
             '&:hover': { bgcolor: theme.secondary }
           }}
         >
-          Add New Blog
+          Thêm Bài Viết Mới
         </Button>
       </Box>
       
@@ -426,11 +426,11 @@ export default function BlogManagement() {
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
-                  <TableCell>Thumbnail</TableCell>
-                  <TableCell>Title</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Last Updated</TableCell>
-                  <TableCell align="center">Actions</TableCell>
+                  <TableCell>Hình Ảnh</TableCell>
+                  <TableCell>Tiêu Đề</TableCell>
+                  <TableCell>Mô Tả</TableCell>
+                  <TableCell>Cập Nhật Lần Cuối</TableCell>
+                  <TableCell align="center">Thao Tác</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -463,14 +463,14 @@ export default function BlogManagement() {
                       <IconButton 
                         color="primary" 
                         onClick={() => handleEditBlog(blog.id)}
-                        title="Edit"
+                        title="Sửa"
                       >
                         <EditIcon />
                       </IconButton>
                       <IconButton 
                         color="error" 
                         onClick={() => handleDeleteBlog(blog)}
-                        title="Delete"
+                        title="Xóa"
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -480,7 +480,7 @@ export default function BlogManagement() {
                   <TableRow>
                     <TableCell colSpan={5} align="center">
                       <Typography variant="body1" py={3}>
-                        No blogs found. Click "Add New Blog" to create one.
+                        Không tìm thấy bài viết nào. Nhấn "Thêm Bài Viết Mới" để tạo một bài viết.
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -496,6 +496,8 @@ export default function BlogManagement() {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage="Số dòng mỗi trang:"
+            labelDisplayedRows={({ from, to, count }) => `${from}-${to} của ${count}`}
           />
         </Paper>
       )}
@@ -508,7 +510,7 @@ export default function BlogManagement() {
         maxWidth="md"
       >
         <DialogTitle>
-          {currentBlog ? 'Edit Blog' : 'Create New Blog'}
+          {currentBlog ? 'Chỉnh Sửa Bài Viết' : 'Tạo Bài Viết Mới'}
         </DialogTitle>
         <DialogContent dividers>
           <Box component="form" noValidate sx={{ mt: 1 }}>
@@ -516,7 +518,7 @@ export default function BlogManagement() {
               margin="normal"
               required
               fullWidth
-              label="Title"
+              label="Tiêu đề"
               name="title"
               value={formData.title}
               onChange={handleChange}
@@ -525,7 +527,7 @@ export default function BlogManagement() {
             {/* Thumbnail upload */}
             <Box sx={{ mt: 3, mb: 2 }}>
               <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 500 }}>
-                Thumbnail Image
+                Hình Ảnh Đại Diện
               </Typography>
               
               {formData.thumbnail ? (
@@ -540,7 +542,7 @@ export default function BlogManagement() {
                       border: '1px solid rgba(0,0,0,0.12)'
                     }}
                     src={formData.thumbnail}
-                    alt="Blog thumbnail"
+                    alt="Hình ảnh đại diện"
                   />
                   <IconButton 
                     sx={{ 
@@ -581,7 +583,7 @@ export default function BlogManagement() {
                   ) : (
                     <>
                       <ImageIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
-                      <Typography>Click to upload thumbnail image</Typography>
+                      <Typography>Nhấn để tải lên hình ảnh đại diện</Typography>
                     </>
                   )}
                 </Box>
@@ -599,7 +601,7 @@ export default function BlogManagement() {
               {!formData.thumbnail && (
                 <TextField
                   fullWidth
-                  label="Or enter thumbnail URL"
+                  label="Hoặc nhập URL hình ảnh"
                   name="thumbnail"
                   value={formData.thumbnail}
                   onChange={handleChange}
@@ -614,7 +616,7 @@ export default function BlogManagement() {
               margin="normal"
               required
               fullWidth
-              label="Description"
+              label="Mô tả"
               name="description"
               value={formData.description}
               onChange={handleChange}
@@ -623,7 +625,7 @@ export default function BlogManagement() {
             />
             
             <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
-              Blog Sections
+              Các Phần Của Bài Viết
             </Typography>
             
             {formData.sections.map((section, index) => (
@@ -639,7 +641,7 @@ export default function BlogManagement() {
               >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="subtitle1" fontWeight="bold">
-                    Section {index + 1}
+                    Phần {index + 1}
                   </Typography>
                   <Button 
                     variant="outlined" 
@@ -647,7 +649,7 @@ export default function BlogManagement() {
                     size="small"
                     onClick={() => removeSection(index)}
                   >
-                    Remove
+                    Xóa
                   </Button>
                 </Box>
                 
@@ -655,21 +657,21 @@ export default function BlogManagement() {
                   select
                   margin="normal"
                   fullWidth
-                  label="Content Type"
+                  label="Loại Nội Dung"
                   value={section.contentType}
                   onChange={(e) => handleSectionChange(index, 'contentType', e.target.value)}
                   SelectProps={{
                     native: true,
                   }}
                 >
-                  <option value="text">Text</option>
-                  <option value="image">Image</option>
+                  <option value="text">Văn bản</option>
+                  <option value="image">Hình ảnh</option>
                 </TextField>
                 
                 <TextField
                   margin="normal"
                   fullWidth
-                  label="Subtitle"
+                  label="Tiêu đề phụ"
                   value={section.subtitle || ''}
                   onChange={(e) => handleSectionChange(index, 'subtitle', e.target.value)}
                 />
@@ -678,7 +680,7 @@ export default function BlogManagement() {
                   <TextField
                     margin="normal"
                     fullWidth
-                    label="Content"
+                    label="Nội dung"
                     value={section.content || ''}
                     onChange={(e) => handleSectionChange(index, 'content', e.target.value)}
                     multiline
@@ -698,7 +700,7 @@ export default function BlogManagement() {
                             border: '1px solid rgba(0,0,0,0.12)'
                           }}
                           src={section.content}
-                          alt={`Section ${index + 1} image`}
+                          alt={`Hình ảnh phần ${index + 1}`}
                         />
                         <IconButton 
                           sx={{ 
@@ -739,7 +741,7 @@ export default function BlogManagement() {
                         ) : (
                           <>
                             <ImageIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
-                            <Typography>Click to upload section image</Typography>
+                            <Typography>Nhấn để tải lên hình ảnh cho phần này</Typography>
                           </>
                         )}
                       </Box>
@@ -757,7 +759,7 @@ export default function BlogManagement() {
                     {!section.content && (
                       <TextField
                         fullWidth
-                        label="Or enter image URL"
+                        label="Hoặc nhập URL hình ảnh"
                         value={section.content || ''}
                         onChange={(e) => handleSectionChange(index, 'content', e.target.value)}
                         size="small"
@@ -775,18 +777,18 @@ export default function BlogManagement() {
               onClick={addSection}
               sx={{ mt: 1 }}
             >
-              Add Section
+              Thêm Phần
             </Button>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={() => setOpenDialog(false)}>Hủy</Button>
           <Button 
             onClick={handleSave}
             variant="contained" 
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} /> : 'Save'}
+            {loading ? <CircularProgress size={24} /> : 'Lưu'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -796,21 +798,21 @@ export default function BlogManagement() {
         open={confirmDelete}
         onClose={() => setConfirmDelete(false)}
       >
-        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogTitle>Xác Nhận Xóa</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete the blog "{blogToDelete?.title}"? This action cannot be undone.
+            Bạn có chắc chắn muốn xóa bài viết "{blogToDelete?.title}"? Hành động này không thể hoàn tác.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmDelete(false)}>Cancel</Button>
+          <Button onClick={() => setConfirmDelete(false)}>Hủy</Button>
           <Button 
             onClick={confirmDeleteBlog}
             variant="contained" 
             color="error"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} /> : 'Delete'}
+            {loading ? <CircularProgress size={24} /> : 'Xóa'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -826,7 +828,14 @@ export default function BlogManagement() {
           severity={alert.severity}
           sx={{ width: '100%' }}
         >
-          {alert.message}
+          {alert.message === 'Blog deleted successfully' ? 'Xóa bài viết thành công' : 
+           alert.message === 'Failed to delete blog' ? 'Không thể xóa bài viết' :
+           alert.message === 'Blog updated successfully' ? 'Cập nhật bài viết thành công' :
+           alert.message === 'Blog created successfully' ? 'Tạo bài viết thành công' :
+           alert.message === 'Failed to save blog' ? 'Không thể lưu bài viết' :
+           alert.message === 'Failed to load blogs' ? 'Không thể tải danh sách bài viết' :
+           alert.message === 'Failed to load blog details' ? 'Không thể tải thông tin bài viết' :
+           alert.message}
         </Alert>
       </Snackbar>
     </Container>

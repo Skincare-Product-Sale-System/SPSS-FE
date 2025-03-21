@@ -118,12 +118,12 @@ export default function Header2({
                   <>
                     <li className="menu-item">
                       <Link href="/staff-chat" className={`item-link ${Linkfs}`}>
-                        Customer Chat
+                        Chăm sóc khách hàng
                       </Link>
                     </li>
                     <li className="menu-item">
                       <Link href="/blog-management" className={`item-link ${Linkfs}`}>
-                        Blog Management
+                        Quản lý bài viết
                       </Link>
                     </li>
                   </>

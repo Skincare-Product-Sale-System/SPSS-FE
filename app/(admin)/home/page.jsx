@@ -152,7 +152,7 @@ export default function StaffHome() {
           </Box>
           
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold', ml: 2, color: 'white' }}>
-            Staff Portal
+            Cổng thông tin nhân viên
           </Typography>
           
           <IconButton
@@ -208,8 +208,8 @@ export default function StaffHome() {
           }}
           centered
         >
-          <Tab label="Customer Chat" />
-          <Tab label="Blog Management" />
+          <Tab label="Chăm sóc khách hàng" />
+          <Tab label="Quản lý bài viết" />
         </Tabs>
       </AppBar>
       
