@@ -1,8 +1,14 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
-export default function Pagination({
+const PaginationLoading = () => (
+  <div className="flex justify-center">
+    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary"></div>
+  </div>
+);
+
+function PaginationInner({
   totalPages = 1,
   currentPage = 1,
   onPageChange,
@@ -91,5 +97,14 @@ export default function Pagination({
         </a>
       </li>
     </ul>
+  );
+}
+
+// Export a suspense-wrapped version of the component
+export default function Pagination(props) {
+  return (
+    <Suspense fallback={<PaginationLoading />}>
+      <PaginationInner {...props} />
+    </Suspense>
   );
 }

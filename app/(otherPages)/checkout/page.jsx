@@ -1,14 +1,15 @@
+"use client";
 import Overlay from "@/components/common/Overlay";
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
 import Checkout from "@/components/othersPages/Checkout";
-import React from "react";
+import React, { Suspense } from "react";
 
-export const metadata = {
-  title: "Checkout || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
-};
-export default function page() {
+const CheckoutLoading = () => (
+  <div className="flex justify-center items-center py-12">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+  </div>
+);
+
+export default function CheckoutPage() {
   return (
     <>
       <div
@@ -35,7 +36,9 @@ export default function page() {
         </div>
       </div>
 
-      <Checkout />
+      <Suspense fallback={<CheckoutLoading />}>
+        <Checkout />
+      </Suspense>
     </>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Sidebar from "./Sidebar";
 import { layouts, sortingOptions } from "@/data/shop";
 import ProductGrid from "./ProductGrid";
@@ -10,7 +10,24 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Box, Chip, Typography, Button } from "@mui/material";
 import { useThemeColors } from "@/context/ThemeContext";
 
-export default function ShopSidebarleft() {
+// Loading component
+const ShopLoading = () => (
+  <div className="container py-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {[...Array(8)].map((_, i) => (
+        <div key={i} className="rounded-lg bg-gray-100 p-4 animate-pulse">
+          <div className="h-48 bg-gray-200 rounded-md mb-3"></div>
+          <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3 mt-4"></div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// Main component with inner implementation
+function InnerShopSidebar() {
   const mainColor = useThemeColors();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -234,20 +251,19 @@ export default function ShopSidebarleft() {
                   <Button
                     key={option.value}
                     onClick={() => handleSortChange(option.value)}
-                    variant={sortOption === option.value ? "contained" : "outlined"}
                     sx={{
+                      color: sortOption === option.value ? mainColor.dark : mainColor.light,
+                      borderColor: sortOption === option.value ? mainColor.dark : mainColor.grey,
+                      backgroundColor: sortOption === option.value ? `${mainColor.medium}` : 'transparent',
+                      border: '1px solid',
+                      textTransform: 'none',
                       minWidth: 'auto',
                       px: 2,
                       py: 0.5,
-                      textTransform: 'none',
-                      borderRadius: '4px',
-                      backgroundColor: sortOption === option.value ? mainColor.dark : 'transparent',
-                      color: sortOption === option.value ? '#fff' : mainColor.text,
-                      borderColor: sortOption === option.value ? mainColor.dark : mainColor.grey,
                       fontWeight: 500,
                       '&:hover': {
-                        backgroundColor: sortOption === option.value ? mainColor.dark : mainColor.light,
-                        borderColor: mainColor.dark
+                        borderColor: mainColor.dark,
+                        backgroundColor: `${mainColor.medium}`,
                       }
                     }}
                   >
@@ -363,5 +379,14 @@ export default function ShopSidebarleft() {
         </button>
       </div>
     </>
+  );
+}
+
+// Wrapper component with Suspense
+export default function ShopSidebarleft() {
+  return (
+    <Suspense fallback={<ShopLoading />}>
+      <InnerShopSidebar />
+    </Suspense>
   );
 }

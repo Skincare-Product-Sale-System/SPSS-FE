@@ -1,13 +1,17 @@
 "use client"
 import { useState, useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { createContext } from 'react';
+import { createContext, Suspense } from 'react';
 
 export const RouterContext = createContext({
   isNavigating: false
 });
 
-export function RouterEventsProvider({ children }) {
+// Loading component
+const RouterProviderLoading = () => null;
+
+// Inner component that uses useSearchParams
+function RouterEventsProviderInner({ children }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isNavigating, setIsNavigating] = useState(false);
@@ -44,5 +48,14 @@ export function RouterEventsProvider({ children }) {
         </div>
       )}
     </RouterContext.Provider>
+  );
+}
+
+// Exported component wrapped in Suspense
+export function RouterEventsProvider({ children }) {
+  return (
+    <Suspense fallback={<RouterProviderLoading />}>
+      <RouterEventsProviderInner children={children} />
+    </Suspense>
   );
 } 
