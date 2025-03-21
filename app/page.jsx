@@ -15,8 +15,6 @@ import Hero from "@/components/homes/home-skincare/Hero";
 import Products from "@/components/homes/home-skincare/Products";
 import React from "react";
 import Features from "@/components/homes/home-skincare/Features";
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
 import '@fontsource/roboto';
 
 export const metadata = {
@@ -27,11 +25,9 @@ export const metadata = {
 export default function Home() {
   return (
     <>
-      <Header2 />
       <Hero />
       <Products />
       <Features />
-      <Footer1 />
     </>
   );
 }

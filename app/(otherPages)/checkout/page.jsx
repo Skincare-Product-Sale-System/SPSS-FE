@@ -11,7 +11,6 @@ export const metadata = {
 export default function page() {
   return (
     <>
-      <Header2 />
       <div
         className="tf-page-title"
         style={{
@@ -37,7 +36,6 @@ export default function page() {
       </div>
 
       <Checkout />
-      <Footer1 />
     </>
   );
 }

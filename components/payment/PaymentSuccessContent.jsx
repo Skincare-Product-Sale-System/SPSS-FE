@@ -1,7 +1,5 @@
 "use client";
 import dynamic from 'next/dynamic';
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
 
 const ClientPaymentSuccess = dynamic(
   () => import('./ClientPaymentSuccess'),
@@ -17,10 +15,6 @@ const ClientPaymentSuccess = dynamic(
 
 export default function PaymentSuccessContent() {
   return (
-    <>
-      <Header2 />
-      <ClientPaymentSuccess />
-      <Footer1 />
-    </>
+    <ClientPaymentSuccess />
   );
 } 

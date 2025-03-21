@@ -1,30 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
-
-import Image from "next/image";
-import CountdownComponent from "../common/Countdown";
-import {
-  colors,
-  paymentImages,
-  sizeOptions,
-} from "@/data/singleProductOptions";
 import StickyItem from "./StickyItem";
-import Quantity from "./Quantity";
-
 import Slider1ZoomOuter from "./sliders/Slider1ZoomOuter";
 import { allProducts } from "@/data/products";
 import { useContextElement } from "@/context/Context";
 import { openCartModal } from "@/utils/openCartModal";
-import Rating from "../common/Rating";
 import { defaultProductImage } from "@/utils/default";
 import { usePathname } from "next/navigation";
-import { useQueries } from "@tanstack/react-query";
 import request from "@/utils/axios";
 import toast from "react-hot-toast";
 import useQueryStore from "@/context/queryStore";
 import { useTheme } from "@mui/material/styles";
 import { ShoppingCart } from "@mui/icons-material";
-import { Typography, Divider, Chip, Link, Box, Rating as MuiRating } from "@mui/material";
+import { Typography, Chip, Link, Box, Rating as MuiRating } from "@mui/material";
 import { formatPrice, calculateDiscount } from "@/utils/priceFormatter";
 
 export default function DetailsOuterZoom({ product = allProducts[0] }) {
@@ -144,11 +132,6 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
 
   const {
     addProductToCart,
-    isAddedToCartProducts,
-    addToCompareItem,
-    isAddedtoCompareItem,
-    addToWishlist,
-    isAddedtoWishlist,
   } = useContextElement();
 
   const [productImages, setProductImages] = useState([]);
@@ -238,7 +221,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                 <div className="tf-zoom-main" />
                 <div className="bg-white p-4 rounded-lg shadow-sm other-image-zoom tf-product-info-list">
                   <div className="mb-2 tf-product-info-title">
-                    <h5 className="text-primary-800 font-serif fs-20">{product?.name || 'Product Name'}</h5>
+                    <h5 className="text-primary-800 fs-40">{product?.name || 'Tên sản phẩm'}</h5>
                     <div className="d-flex gap-3 items-center product-rating">
                       <div className="flex items-center rating">
                         <span className="mr-2 rating-value">{product.ratingDisplay}</span>
@@ -287,7 +270,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         <span>
                           {calculateDiscount(currentPrice?.marketPrice, currentPrice?.price)}
                         </span>
-                        % OFF
+                        % GIẢM
                       </div>
                     </div>
                   </div>
@@ -298,7 +281,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       {/* Brand */}
                       {product?.brand && (
                         <div className="d-flex align-items-center mb-2 mr-4">
-                          <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Brand:</Typography>
+                          <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Thương hiệu:</Typography>
                           <Link href={`/products?brandId=${product.brand.id}`} className="text-primary fs-14 hover:underline">
                             {product.brand.name}
                           </Link>
@@ -308,7 +291,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       {/* Category */}
                       {product?.category && (
                         <div className="d-flex align-items-center mb-2 mr-4">
-                          <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Category:</Typography>
+                          <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Danh mục:</Typography>
                           <Link href={`/products?categoryId=${product.category.id}`} className="text-primary fs-14 hover:underline">
                             {product.category.categoryName}
                           </Link>
@@ -317,10 +300,10 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       
                       {/* Status */}
                       <div className="d-flex align-items-center mb-2">
-                        <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Status:</Typography>
+                        <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Trạng thái:</Typography>
                         <Chip 
-                          label={product?.status || "Available"} 
-                          color={product?.status === "Available" ? "success" : "default"}
+                          label={product?.status === "Đang hoạt động" ? "Còn hàng" : "Hết hàng"} 
+                          color={product?.status === "Đang hoạt động" ? "success" : "default"}
                           size="small"
                           sx={{ height: '20px', fontSize: '12px' }}
                         />
@@ -331,7 +314,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     {product?.skinTypes && product.skinTypes.length > 0 && (
                       <div className="mb-2">
                         <div className="d-flex flex-wrap align-items-center">
-                          <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-2">Skin types:</Typography>
+                          <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-2">Loại da:</Typography>
                           {product.skinTypes.map(skinType => (
                             <Link key={skinType.id} href={`/products?skinTypeId=${skinType.id}`}>
                               <Chip 
@@ -358,7 +341,19 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     {variations.map((variation, index) => (
                       <div className="mb-3 variant-picker-item" key={variation.name}>
                         <div className="d-flex align-items-center justify-content-between">
-                          <div className="text-neutral-700 font-medium fs-14 variant-picker-label">{variation.name}:</div>
+                          <div className="text-neutral-700 font-medium fs-14 variant-picker-label">
+                            {/* Translate common variation names */}
+                            {variation.name === "Capacity" ? "Dung tích" : 
+                             variation.name === "Color" ? "Màu sắc" : 
+                             variation.name === "Size" ? "Kích thước" :
+                             variation.name === "Weight" ? "Trọng lượng" :
+                             variation.name === "Material" ? "Chất liệu" :
+                             variation.name === "Volume" ? "Thể tích" :
+                             variation.name === "Fragrance" ? "Hương thơm" :
+                             variation.name === "Type" ? "Loại" :
+                             variation.name === "Concentration" ? "Nồng độ" :
+                             variation.name}:
+                          </div>
                         </div>
                         <div className="mt-1 variant-picker-options">
                           {variation.options.map((option) => {
@@ -421,14 +416,9 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                   
                   <div className="mb-3 tf-product-info-quantity">
                     {currentProductItem && (
-                      <div className="d-flex align-items-center mb-2">
-                        
-
-                    {/* Hiển thị quantityInStock */}
-                    {currentProductItem && (
                       <div className="mb-3 variant-picker-item">
                         <div className="d-flex align-items-center justify-content-between">
-                          <div className="text-neutral-700 font-medium fs-14 variant-picker-label">Stock:</div>
+                          <div className="text-neutral-700 font-medium fs-14 variant-picker-label">Tồn kho:</div>
                         </div>
                         <div className="mt-1">
                           <div className="border rounded-md fs-14 px-3 py-1" style={{
@@ -445,44 +435,31 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                           }}>
                             {currentProductItem.quantityInStock > 0 ? (
                               <>
-                                <span className="font-medium">{currentProductItem.quantityInStock}</span> products available
+                                <span className="font-medium">{currentProductItem.quantityInStock}</span> sản phẩm có sẵn
                               </>
                             ) : (
-                              <span className="font-medium">Out of stock</span>
+                              <span className="font-medium">Hết hàng</span>
                             )}
                           </div>
+                          {currentProductItem.quantityInStock < 10 && currentProductItem.quantityInStock > 0 && (
+                            <Typography 
+                              variant="caption" 
+                              sx={{ 
+                                color: theme.palette.warning.main,
+                                ml: 1,
+                                fontWeight: 500,
+                                display: 'inline-block'
+                              }}
+                            >
+                              Chỉ còn {currentProductItem.quantityInStock} sản phẩm!
+                            </Typography>
+                          )}
                         </div>
-                      </div>
-                    )}
-                        {currentProductItem.quantityInStock < 10 && currentProductItem.quantityInStock > 0 && (
-                          <Typography 
-                            variant="caption" 
-                            sx={{ 
-                              color: theme.palette.warning.main,
-                              ml: 1,
-                              fontWeight: 500
-                            }}
-                          >
-                            Only {currentProductItem.quantityInStock} left!
-                          </Typography>
-                        )}
-                        {currentProductItem.quantityInStock <= 0 && (
-                          <Typography 
-                            variant="caption" 
-                            sx={{ 
-                              color: theme.palette.error.main,
-                              ml: 1,
-                              fontWeight: 500
-                            }}
-                          >
-                            Out of stock!
-                          </Typography>
-                        )}
                       </div>
                     )}
                     
                     <div className="d-flex align-items-center">
-                      <div className="fs-14 fw-6 mr-3 quantity-title">Quantity</div>
+                      <div className="fs-14 fw-6 mr-3 quantity-title">Số lượng</div>
                       <div className="quantity-input-container" style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -565,12 +542,16 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     <form onSubmit={(e) => e.preventDefault()} className="d-flex gap-2">
                       <a
                         onClick={() => {
+                          if (product?.status !== "Đang hoạt động") {
+                            toast.error("Sản phẩm này hiện không khả dụng");
+                            return;
+                          }
                           if (!currentProductItem) {
-                            toast.error("Please select all options first");
+                            toast.error("Vui lòng chọn tất cả các tùy chọn");
                             return;
                           }
                           if (currentProductItem.quantityInStock <= 0) {
-                            toast.error("This product is out of stock");
+                            toast.error("Sản phẩm này hiện đã hết hàng");
                             return;
                           }
                           openCartModal();
@@ -581,7 +562,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                             })
                             .then((res) => {
                               if (res.status === 200) {
-                                toast.success("Added to cart");
+                                toast.success("Đã thêm vào giỏ hàng");
                                 addProductToCart(
                                   product?.id,
                                   quantity ? quantity : 1
@@ -590,58 +571,102 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               }
                             })
                             .catch((err) => {
-                              toast.error("Failed to add to cart");
+                              toast.error("Không thể thêm vào giỏ hàng");
                             });
                         }}
-                        className={`tf-btn ${currentProductItem?.quantityInStock <= 0 ? 'btn-disabled' : 'btn-fill'} justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn`}
+                        className={`tf-btn ${product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 ? 'btn-disabled' : 'btn-fill'} justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn`}
                         style={{ 
-                          backgroundColor: currentProductItem?.quantityInStock <= 0 ? theme.palette.grey[400] : theme.palette.primary.main,
+                          backgroundColor: product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 
+                            ? theme.palette.grey[400] 
+                            : theme.palette.primary.main,
                           color: '#fff',
                           padding: '10px 15px',
-                          cursor: currentProductItem?.quantityInStock <= 0 ? 'not-allowed' : 'pointer'
+                          cursor: product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 
+                            ? 'not-allowed' 
+                            : 'pointer'
                         }}
                         onMouseOver={(e) => {
-                          if (currentProductItem?.quantityInStock > 0) {
+                          if (product?.status === "Đang hoạt động" && currentProductItem?.quantityInStock > 0) {
                             e.currentTarget.style.backgroundColor = theme.palette.primary.dark;
                           }
                         }}
                         onMouseOut={(e) => {
-                          if (currentProductItem?.quantityInStock > 0) {
+                          if (product?.status === "Đang hoạt động" && currentProductItem?.quantityInStock > 0) {
                             e.currentTarget.style.backgroundColor = theme.palette.primary.main;
                           }
                         }}
                       >
                         <ShoppingCart className="mr-2" fontSize="small" />
-                        <span>{currentProductItem?.quantityInStock <= 0 ? 'Out of Stock' : 'Add to cart'}</span>
+                        <span>
+                          {product?.status !== "Đang hoạt động" 
+                            ? 'Không khả dụng' 
+                            : currentProductItem?.quantityInStock <= 0 
+                              ? 'Hết hàng' 
+                              : 'Thêm vào giỏ'}
+                        </span>
                       </a>
                       
                       <a 
-                        href={currentProductItem?.quantityInStock > 0 ? "/view-cart" : "#"}
-                        className={`btns-full fs-14 ${currentProductItem?.quantityInStock <= 0 ? 'disabled' : ''}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (product?.status !== "Đang hoạt động") {
+                            toast.error("Sản phẩm này hiện không khả dụng");
+                            return;
+                          }
+                          if (!currentProductItem) {
+                            toast.error("Vui lòng chọn tất cả các tùy chọn");
+                            return;
+                          }
+                          if (currentProductItem.quantityInStock <= 0) {
+                            toast.error("Sản phẩm này hiện đã hết hàng");
+                            return;
+                          }
+                          
+                          // Thêm vào giỏ hàng trước
+                          openCartModal();
+                          request
+                            .post("/cart-items", {
+                              productItemId: currentProductItem.id,
+                              quantity: quantity,
+                            })
+                            .then((res) => {
+                              if (res.status === 200) {
+                                addProductToCart(
+                                  product?.id,
+                                  quantity ? quantity : 1
+                                );
+                                revalidate();
+                                // Chuyển hướng đến trang thanh toán
+                                window.location.href = "/checkout";
+                              }
+                            })
+                            .catch((err) => {
+                              toast.error("Không thể thêm vào giỏ hàng");
+                            });
+                        }}
+                        className={`btns-full fs-14 ${product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 ? 'disabled' : ''}`}
                         style={{ 
-                          backgroundColor: currentProductItem?.quantityInStock <= 0 ? theme.palette.grey[400] : theme.palette.error.main,
+                          backgroundColor: product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 
+                            ? theme.palette.grey[400] 
+                            : theme.palette.error.main,
                           color: '#fff',
                           padding: '10px 15px',
-                          cursor: currentProductItem?.quantityInStock <= 0 ? 'not-allowed' : 'pointer'
-                        }}
-                        onClick={(e) => {
-                          if (currentProductItem?.quantityInStock <= 0) {
-                            e.preventDefault();
-                            toast.error("This product is out of stock");
-                          }
+                          cursor: product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 
+                            ? 'not-allowed' 
+                            : 'pointer'
                         }}
                         onMouseOver={(e) => {
-                          if (currentProductItem?.quantityInStock > 0) {
+                          if (product?.status === "Đang hoạt động" && currentProductItem?.quantityInStock > 0) {
                             e.currentTarget.style.backgroundColor = theme.palette.error.dark;
                           }
                         }}
                         onMouseOut={(e) => {
-                          if (currentProductItem?.quantityInStock > 0) {
+                          if (product?.status === "Đang hoạt động" && currentProductItem?.quantityInStock > 0) {
                             e.currentTarget.style.backgroundColor = theme.palette.error.main;
                           }
                         }}
                       >
-                        Buy Now
+                        Mua Ngay
                       </a>
                     </form>
                   </div>
@@ -655,7 +680,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       <div className="text-primary-600 fs-14 icon mr-1">
                         <i className="icon-question" />
                       </div>
-                      <div className="text-neutral-700 fs-14 fw-6 text">Ask a question</div>
+                      <div className="text-neutral-700 fs-14 fw-6 text">Đặt câu hỏi</div>
                     </a>
                     <a
                       href="#share_social"
@@ -665,7 +690,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       <div className="text-primary-600 fs-14 icon mr-1">
                         <i className="icon-share" />
                       </div>
-                      <div className="text-neutral-700 fs-14 fw-6 text">Share</div>
+                      <div className="text-neutral-700 fs-14 fw-6 text">Chia sẻ</div>
                     </a>
                   </div>
                   
@@ -677,7 +702,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                             <i className="icon-delivery-time" />
                           </div>
                           <p className="text-neutral-700 fs-14 mb-0">
-                            Free shipping for orders over <span className="text-primary-700 fw-7">500.000₫</span>
+                            Miễn phí vận chuyển cho đơn hàng trên <span className="text-primary-700 fw-7">500.000₫</span>
                           </p>
                         </div>
                       </div>
@@ -687,7 +712,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                             <i className="icon-return-order" />
                           </div>
                           <p className="text-neutral-700 fs-14 mb-0">
-                            Return within <span className="text-primary-700 fw-7">30 days</span>
+                            Đổi trả trong vòng <span className="text-primary-700 fw-7">30 ngày</span>
                           </p>
                         </div>
                       </div>

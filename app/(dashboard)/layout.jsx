@@ -1,18 +1,15 @@
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
 import React from "react";
+import AccountSideBar from "@/components/othersPages/dashboard/AccountSideBar";
 import Overlay from "@/components/common/Overlay";
-import ResponsiveLayoutWrapper from "./ResponsiveLayoutWrapper";
 
 export const metadata = {
-  title: "Skincede",
-  description: "Skincede",
+  title: "Skincede - Tài khoản",
+  description: "Skincede - Trang quản lý tài khoản",
 };
 
 export default function Layout({ children }) {
   return (
     <>
-      <Header2 />
       <div
         className="tf-page-title"
         style={{
@@ -28,10 +25,16 @@ export default function Layout({ children }) {
           </div>
         </div>
       </div>
-      <ResponsiveLayoutWrapper>
-        {children}
-      </ResponsiveLayoutWrapper>
-      <Footer1 />
+      <section className="flat-spacing-11">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-3">
+              <AccountSideBar />
+            </div>
+            <div className="col-lg-9">{children}</div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

@@ -36,6 +36,9 @@ export default function ScrollTop() {
     <div
       className={`progress-wrap ${scrolled > 150 ? "active-progress" : ""}`}
       onClick={() => scrollToTop()}
+      style={{
+        right: '85px',
+      }}
     >
       <svg
         className="progress-circle svg-content"

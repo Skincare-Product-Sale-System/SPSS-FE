@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { Box, Typography, Divider, Paper } from "@mui/material";
 
 const tabs = [
-  { title: "Description", active: true },
-  { title: "Shipping", active: false },
-  { title: "Return Policies", active: false },
+  { title: "Mô tả", active: true },
+  { title: "Vận chuyển", active: false },
+  { title: "Chính sách đổi trả", active: false },
 ];
 
 export default function ShopDetailsTab({ product }) {
@@ -43,7 +43,7 @@ export default function ShopDetailsTab({ product }) {
                       cursor: 'pointer',
                       padding: '0.75rem 1.25rem',
                       position: 'relative',
-                      fontFamily: '"Poppins", sans-serif',
+                      fontFamily: '"Roboto", sans-serif',
                       fontWeight: 500,
                       fontSize: '14px',
                       color: currentTab == i + 1 ? '#4ECDC4' : '#64748b',
@@ -70,7 +70,7 @@ export default function ShopDetailsTab({ product }) {
                 >
                   <div className="">
                     {product.description && (
-                      <Typography variant="body2" className="text-neutral-700 mb-3">
+                      <Typography variant="body2" className="text-neutral-700 mb-3" style={{ fontFamily: '"Roboto", sans-serif' }}>
                         {product.description}
                       </Typography>
                     )}
@@ -78,7 +78,9 @@ export default function ShopDetailsTab({ product }) {
                     {/* Specifications Table */}
                     {product?.specifications && Object.values(product.specifications).some(value => value) && (
                       <div className="border-top mt-4 pt-3 specifications-section">
-                        <Typography variant="subtitle1" className="font-medium fs-16 mb-2">Product Specifications</Typography>
+                        <Typography variant="subtitle1" className="font-medium fs-16 mb-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                          Thông số sản phẩm
+                        </Typography>
                         
                         <div className="specifications-table">
                           <table className="border-collapse w-100">
@@ -86,15 +88,51 @@ export default function ShopDetailsTab({ product }) {
                               {Object.entries(product.specifications).map(([key, value]) => {
                                 if (!value) return null;
                                 
-                                // Format the key for display
-                                const formattedKey = key.replace(/([A-Z])/g, ' $1')
-                                  .replace(/^./, str => str.toUpperCase())
-                                  .replace(/([a-z])([A-Z])/g, '$1 $2');
+                                // Dịch các trường thông số sang tiếng Việt
+                                let translatedKey = key;
+                                switch(key) {
+                                  case "detailedIngredients":
+                                    translatedKey = "Thành phần chi tiết";
+                                    break;
+                                  case "mainFunction":
+                                    translatedKey = "Công dụng chính";
+                                    break;
+                                  case "texture":
+                                    translatedKey = "Kết cấu";
+                                    break;
+                                  case "englishName":
+                                    translatedKey = "Tên tiếng Anh";
+                                    break;
+                                  case "keyActiveIngredients":
+                                    translatedKey = "Thành phần hoạt chất chính";
+                                    break;
+                                  case "storageInstruction":
+                                    translatedKey = "Hướng dẫn bảo quản";
+                                    break;
+                                  case "usageInstruction":
+                                    translatedKey = "Hướng dẫn sử dụng";
+                                    break;
+                                  case "expiryDate":
+                                    translatedKey = "Hạn sử dụng";
+                                    break;
+                                  case "skinIssues":
+                                    translatedKey = "Vấn đề về da";
+                                    break;
+                                  default:
+                                    // Nếu không phải các trường đã định nghĩa, vẫn format theo cách cũ
+                                    translatedKey = key.replace(/([A-Z])/g, ' $1')
+                                      .replace(/^./, str => str.toUpperCase())
+                                      .replace(/([a-z])([A-Z])/g, '$1 $2');
+                                }
                                 
                                 return (
                                   <tr key={key} className="border-bottom" style={{ borderBottom: '1px solid #f0f0f0' }}>
-                                    <td className="bg-gray-50 text-gray-600 fs-14 px-3 py-2" style={{ width: '40%' }}>{formattedKey}</td>
-                                    <td className="text-gray-800 fs-14 px-3 py-2">{value}</td>
+                                    <td className="bg-gray-50 text-gray-600 fs-14 px-3 py-2" style={{ width: '40%', fontFamily: '"Roboto", sans-serif' }}>
+                                      {translatedKey}
+                                    </td>
+                                    <td className="text-gray-800 fs-14 px-3 py-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                                      {value}
+                                    </td>
                                   </tr>
                                 );
                               })}
@@ -103,38 +141,6 @@ export default function ShopDetailsTab({ product }) {
                         </div>
                       </div>
                     )}
-
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                      <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center' }}>
-                        <span style={{ marginRight: '8px', fontWeight: 500 }}>Rating:</span> 
-                        <span>{product.ratingDisplay}</span>
-                        <Box sx={{ display: 'flex', ml: 1 }}>
-                          {/* Stars */}
-                          <i className="icon-start" />
-                          <i className="icon-start" />
-                          <i className="icon-start" />
-                          <i className="icon-start" />
-                          <i className="icon-start" />
-                        </Box>
-                      </Typography>
-                      
-                      <Box component="span" sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        color: '#666',
-                        '&::before': {
-                          content: '""',
-                          display: 'inline-block',
-                          width: '4px',
-                          height: '4px',
-                          borderRadius: '50%',
-                          backgroundColor: '#999',
-                          margin: '0 8px'
-                        }
-                      }}>
-                        Đã bán: <span style={{ color: '#ff0000', fontWeight: 500, marginLeft: '4px' }}>{product.soldCount?.toLocaleString('vi-VN')}</span>
-                      </Box>
-                    </Box>
                   </div>
                 </div>
                 
@@ -145,18 +151,18 @@ export default function ShopDetailsTab({ product }) {
                   } `}
                 >
                   <div className="tf-page-privacy-policy">
-                    <Typography variant="subtitle1" component="div" className="text-primary-800 font-serif mb-3">
-                      Shipping Policy
+                    <Typography variant="subtitle1" component="div" className="text-primary-800 font-serif mb-3" style={{ fontFamily: '"Playfair Display", serif' }}>
+                      Chính sách vận chuyển
                     </Typography>
-                    <Typography variant="body2" className="text-neutral-700 mb-2">
-                      We strive to deliver your skincare products as quickly and safely as possible. All orders are processed within 1-2 business days.
+                    <Typography variant="body2" className="text-neutral-700 mb-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                      Chúng tôi cố gắng giao sản phẩm chăm sóc da của bạn nhanh chóng và an toàn nhất có thể. Tất cả đơn hàng được xử lý trong vòng 1-2 ngày làm việc.
                     </Typography>
-                    <Typography variant="body2" className="text-neutral-700 mb-2">
-                      Shipping times:
+                    <Typography variant="body2" className="text-neutral-700 mb-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                      Thời gian vận chuyển:
                     </Typography>
                     <ul className="list-disc text-neutral-700 mb-3 pl-4">
-                      <li className="fs-14 mb-1">Domestic (Vietnam): 1-3 business days</li>
-                      <li className="fs-14 mb-1">International: 7-14 business days</li>
+                      <li className="fs-14 mb-1" style={{ fontFamily: '"Roboto", sans-serif' }}>Nội địa (Việt Nam): 1-3 ngày làm việc</li>
+                      <li className="fs-14 mb-1" style={{ fontFamily: '"Roboto", sans-serif' }}>Quốc tế: 7-14 ngày làm việc</li>
                     </ul>
                   </div>
                 </div>
@@ -168,19 +174,19 @@ export default function ShopDetailsTab({ product }) {
                   } `}
                 >
                   <div className="tf-page-privacy-policy">
-                    <Typography variant="subtitle1" component="div" className="text-primary-800 font-serif mb-3">
-                      Return Policy
+                    <Typography variant="subtitle1" component="div" className="text-primary-800 font-serif mb-3" style={{ fontFamily: '"Playfair Display", serif' }}>
+                      Chính sách đổi trả
                     </Typography>
-                    <Typography variant="body2" className="text-neutral-700 mb-2">
-                      We accept returns within 30 days of delivery for a full refund or exchange.
+                    <Typography variant="body2" className="text-neutral-700 mb-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                      Chúng tôi chấp nhận đổi trả trong vòng 30 ngày kể từ ngày giao hàng để hoàn tiền đầy đủ hoặc đổi sản phẩm.
                     </Typography>
-                    <Typography variant="body2" className="text-neutral-700 mb-2">
-                      To be eligible for a return, your item must be:
+                    <Typography variant="body2" className="text-neutral-700 mb-2" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                      Để đủ điều kiện đổi trả, sản phẩm của bạn phải:
                     </Typography>
                     <ul className="list-disc text-neutral-700 mb-3 pl-4">
-                      <li className="fs-14 mb-1">Unused and in the same condition</li>
-                      <li className="fs-14 mb-1">In the original packaging</li>
-                      <li className="fs-14 mb-1">With receipt or proof of purchase</li>
+                      <li className="fs-14 mb-1" style={{ fontFamily: '"Roboto", sans-serif' }}>Chưa sử dụng và trong tình trạng như ban đầu</li>
+                      <li className="fs-14 mb-1" style={{ fontFamily: '"Roboto", sans-serif' }}>Còn nguyên bao bì gốc</li>
+                      <li className="fs-14 mb-1" style={{ fontFamily: '"Roboto", sans-serif' }}>Có hóa đơn hoặc bằng chứng mua hàng</li>
                     </ul>
                   </div>
                 </div>

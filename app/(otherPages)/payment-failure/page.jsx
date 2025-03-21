@@ -1,13 +1,10 @@
 "use client";
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
 import PaymentFailure from "@/components/othersPages/PaymentFailure";
 import React, { Suspense } from "react";
 
 export default function PaymentFailurePage() {
   return (
     <>
-      <Header2 />
       <div className="tf-page-title">
         <div className="container-full">
           <div className="heading text-center">Thanh toán thất bại</div>
@@ -22,8 +19,6 @@ export default function PaymentFailurePage() {
       }>
         <PaymentFailure />
       </Suspense>
-      
-      <Footer1 />
     </>
   );
 }

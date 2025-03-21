@@ -1,8 +1,4 @@
 import dynamic from 'next/dynamic';
-import Overlay from "@/components/common/Overlay";
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
-
 export const metadata = {
   title: "Skincare Shop",
   description: "Skincare Shop",

@@ -1,5 +1,3 @@
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -7,7 +5,6 @@ import React from "react";
 export default function NotFound() {
   return (
     <>
-      <Header2 />
       <section className="page-404-wrap">
         <div className="container">
           <div className="row">
@@ -37,7 +34,6 @@ export default function NotFound() {
           </div>
         </div>
       </section>
-      <Footer1 />
     </>
   );
 }
