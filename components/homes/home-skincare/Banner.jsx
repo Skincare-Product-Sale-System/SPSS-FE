@@ -1,6 +1,6 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
+
 export default function Banner() {
   return (
     <section className="tf-slideshow slider-video position-relative">
@@ -17,16 +17,11 @@ export default function Banner() {
             backgroundColor: "rgba(0, 0, 0, 0.5)",
           }}
         ></div>
-        <Image
-          className="lazyload"
+        <img
+          className="lazyload w-full h-full object-cover"
           src="https://images.pexels.com/photos/2442898/pexels-photo-2442898.jpeg"
-          data-src="https://images.pexels.com/photos/2442898/pexels-photo-2442898.jpeg"
           alt="image-collection"
-          width={1800}
-          height={893}
           style={{
-            objectFit: "cover",
-            objectPosition: "center",
             aspectRatio: "16/8",
           }}
         />
