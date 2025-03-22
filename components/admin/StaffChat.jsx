@@ -46,7 +46,7 @@ export default function StaffChat() {
     console.log("Attempting to connect to SignalR hub");
     
     const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`https://localhost:44358/chathub`, {
+      .withUrl(`${process.env.API_URL}/chathub`, {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets
       })
