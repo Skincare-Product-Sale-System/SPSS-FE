@@ -75,7 +75,7 @@ export default function OrderDetails() {
   const handlePayNow = async () => {
     try {
       const vnpayRes = await request.get(
-        `/VNPAY/get-transaction-status-vnpay?orderId=${order.id}&userId=${Id}&urlReturn=https%3A%2F%2Flocalhost%3A44358`
+        `/VNPAY/get-transaction-status-vnpay?orderId=${order.id}&userId=${Id}&urlReturn=https%3A%2F%2Fspssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net`
       );
       if (vnpayRes.status === 200) {
         location.href = vnpayRes.data.data;
