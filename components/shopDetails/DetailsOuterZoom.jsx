@@ -185,6 +185,55 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
     })();
   }, [productId, variations]);
 
+  // Hàm kiểm tra trạng thái sản phẩm có khả dụng không
+  const isProductAvailable = (status) => {
+    return status === "Available";
+  };
+
+  // Hàm lấy tên hiển thị cho trạng thái
+  const getStatusDisplay = (status) => {
+    switch (status) {
+      case "Available":
+        return "Còn hàng";
+      case "Unavailable":
+        return "Không khả dụng";
+      case "Pre-Order":
+        return "Đặt trước";
+      case "Back-Order":
+        return "Chờ hàng";
+      case "Coming Soon":
+        return "Sắp ra mắt";
+      case "Discontinued":
+        return "Ngừng kinh doanh";
+      case "Out of Stock":
+        return "Hết hàng";
+      case "Archived":
+        return "Đã lưu trữ";
+      default:
+        return "Không xác định";
+    }
+  };
+
+  // Hàm lấy màu hiển thị cho trạng thái
+  const getStatusColor = (status, theme) => {
+    switch (status) {
+      case "Available":
+        return theme.palette.success.main;
+      case "Unavailable":
+      case "Discontinued":
+      case "Archived":
+        return theme.palette.error.main;
+      case "Pre-Order":
+      case "Back-Order":
+      case "Coming Soon":
+        return theme.palette.warning.main;
+      case "Out of Stock":
+        return theme.palette.grey[500];
+      default:
+        return theme.palette.grey[500];
+    }
+  };
+
   return (
     <section
       className="bg-neutral-50 flat-spacing-4 pt_0"
@@ -302,10 +351,18 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       <div className="d-flex align-items-center mb-2">
                         <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Trạng thái:</Typography>
                         <Chip 
-                          label={product?.status === "Đang hoạt động" ? "Còn hàng" : "Hết hàng"} 
-                          color={product?.status === "Đang hoạt động" ? "success" : "default"}
+                          label={getStatusDisplay(product?.status)} 
+                          color={product?.status === "Available" ? "success" : 
+                                 product?.status === "Out of Stock" ? "default" :
+                                 product?.status === "Pre-Order" || product?.status === "Coming Soon" ? "warning" : "error"}
                           size="small"
-                          sx={{ height: '20px', fontSize: '12px' }}
+                          sx={{ 
+                            height: '20px', 
+                            fontSize: '12px',
+                            backgroundColor: `${getStatusColor(product?.status, theme)}20`,
+                            color: getStatusColor(product?.status, theme),
+                            borderColor: getStatusColor(product?.status, theme)
+                          }}
                         />
                       </div>
                     </div>
@@ -542,8 +599,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                     <form onSubmit={(e) => e.preventDefault()} className="d-flex gap-2">
                       <a
                         onClick={() => {
-                          if (product?.status !== "Đang hoạt động") {
-                            toast.error("Sản phẩm này hiện không khả dụng");
+                          if (!isProductAvailable(product?.status)) {
+                            toast.error(`Sản phẩm này hiện ${getStatusDisplay(product?.status).toLowerCase()}`);
                             return;
                           }
                           if (!currentProductItem) {
@@ -574,32 +631,32 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               toast.error("Không thể thêm vào giỏ hàng");
                             });
                         }}
-                        className={`tf-btn ${product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 ? 'btn-disabled' : 'btn-fill'} justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn`}
+                        className={`tf-btn ${!isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 ? 'btn-disabled' : 'btn-fill'} justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn`}
                         style={{ 
-                          backgroundColor: product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 
+                          backgroundColor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 
                             ? theme.palette.grey[400] 
                             : theme.palette.primary.main,
                           color: '#fff',
                           padding: '10px 15px',
-                          cursor: product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 
+                          cursor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 
                             ? 'not-allowed' 
                             : 'pointer'
                         }}
                         onMouseOver={(e) => {
-                          if (product?.status === "Đang hoạt động" && currentProductItem?.quantityInStock > 0) {
+                          if (isProductAvailable(product?.status) && currentProductItem?.quantityInStock > 0) {
                             e.currentTarget.style.backgroundColor = theme.palette.primary.dark;
                           }
                         }}
                         onMouseOut={(e) => {
-                          if (product?.status === "Đang hoạt động" && currentProductItem?.quantityInStock > 0) {
+                          if (isProductAvailable(product?.status) && currentProductItem?.quantityInStock > 0) {
                             e.currentTarget.style.backgroundColor = theme.palette.primary.main;
                           }
                         }}
                       >
                         <ShoppingCart className="mr-2" fontSize="small" />
                         <span>
-                          {product?.status !== "Đang hoạt động" 
-                            ? 'Không khả dụng' 
+                          {!isProductAvailable(product?.status) 
+                            ? getStatusDisplay(product?.status)
                             : currentProductItem?.quantityInStock <= 0 
                               ? 'Hết hàng' 
                               : 'Thêm vào giỏ'}
@@ -609,8 +666,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       <a 
                         onClick={(e) => {
                           e.preventDefault();
-                          if (product?.status !== "Đang hoạt động") {
-                            toast.error("Sản phẩm này hiện không khả dụng");
+                          if (!isProductAvailable(product?.status)) {
+                            toast.error(`Sản phẩm này hiện ${getStatusDisplay(product?.status).toLowerCase()}`);
                             return;
                           }
                           if (!currentProductItem) {
@@ -644,24 +701,24 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               toast.error("Không thể thêm vào giỏ hàng");
                             });
                         }}
-                        className={`btns-full fs-14 ${product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 ? 'disabled' : ''}`}
+                        className={`btns-full fs-14 ${!isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 ? 'disabled' : ''}`}
                         style={{ 
-                          backgroundColor: product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 
+                          backgroundColor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 
                             ? theme.palette.grey[400] 
                             : theme.palette.error.main,
                           color: '#fff',
                           padding: '10px 15px',
-                          cursor: product?.status !== "Đang hoạt động" || currentProductItem?.quantityInStock <= 0 
+                          cursor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 
                             ? 'not-allowed' 
                             : 'pointer'
                         }}
                         onMouseOver={(e) => {
-                          if (product?.status === "Đang hoạt động" && currentProductItem?.quantityInStock > 0) {
+                          if (isProductAvailable(product?.status) && currentProductItem?.quantityInStock > 0) {
                             e.currentTarget.style.backgroundColor = theme.palette.error.dark;
                           }
                         }}
                         onMouseOut={(e) => {
-                          if (product?.status === "Đang hoạt động" && currentProductItem?.quantityInStock > 0) {
+                          if (isProductAvailable(product?.status) && currentProductItem?.quantityInStock > 0) {
                             e.currentTarget.style.backgroundColor = theme.palette.error.main;
                           }
                         }}
