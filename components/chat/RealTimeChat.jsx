@@ -65,7 +65,7 @@ export default function RealTimeChat() {
     if (!connection) {
       console.log("Creating new connection");
       const newConnection = new signalR.HubConnectionBuilder()
-        .withUrl(`https://localhost:44358/chathub`, {
+        .withUrl(`${process.env.NEXT_PUBLIC_API_URL}/chathub`, {
           skipNegotiation: true,
           transport: signalR.HttpTransportType.WebSockets
         })
