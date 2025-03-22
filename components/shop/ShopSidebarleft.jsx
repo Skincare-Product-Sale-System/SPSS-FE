@@ -81,7 +81,8 @@ function InnerShopSidebar() {
     const queryParams = new URLSearchParams();
     queryParams.append("pageNumber", page);
     queryParams.append("pageSize", "20");
-
+    
+    
     if (newFilters.brandId) queryParams.append("brandId", newFilters.brandId);
     if (newFilters.categoryId) queryParams.append("categoryId", newFilters.categoryId);
     if (newFilters.skinTypeId) queryParams.append("skinTypeId", newFilters.skinTypeId);
@@ -91,6 +92,8 @@ function InnerShopSidebar() {
 
     try {
       const { data } = await request.get(`/products?${queryParams.toString()}`);
+      console.log("Ahihi",queryParams.toString());
+      
       setProducts(data.data);
     } catch (error) {
       console.error("Error fetching products:", error);
