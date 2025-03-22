@@ -111,14 +111,14 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       <ul className={level === 0 ? "menu-list" : "submenu-list"}>
         {categoryList.map((category, index) => (
           <li key={index} className={category.children?.length > 0 ? "menu-item-2" : ""}>
-            <Link
+            <a
               href={`/products?categoryId=${category.id}`}
               className={`menu-link-text link position-relative ${
                 isMenuActive({ href: `/products?categoryId=${category.id}` }) ? "activeMenu" : ""
               }`}
             >
               {category.categoryName}
-            </Link>
+            </a>
             
             {category.children?.length > 0 && (
               <div className="sub-menu submenu-default">
@@ -285,14 +285,14 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                     {Array.isArray(skinTypes) && skinTypes.length > 0 ? (
                       skinTypes.map((skinType, index) => (
                         <li key={`skin-${index}`}>
-                          <Link
+                          <a
                             href={`/products?skinTypeId=${skinType.id}`}
                             className={`menu-link-text link position-relative ${
                               isMenuActive({ href: `/products?skinTypeId=${skinType.id}` }) ? "activeMenu" : ""
                             }`}
                           >
                             {skinType.name}
-                          </Link>
+                          </a>
                         </li>
                       ))
                     ) : (

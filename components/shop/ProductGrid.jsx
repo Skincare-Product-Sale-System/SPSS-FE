@@ -33,7 +33,7 @@ export default function ProductGrid({
         >
           {allproducts.map((elm, i) => (
             <div 
-              key={i}
+              key={elm?.id}
               style={{
                 transition: "all 0.3s ease",
                 transform: "translateY(0)",
@@ -48,14 +48,14 @@ export default function ProductGrid({
         </div>
       ) : (
         <div
-          className="grid-layout wrapper-shop"
+          className="grid-layout wrapper-shop gap-2"
           data-grid={`grid-${gridItems}`}
           style={{
             transition: "all 0.3s ease-in-out"
           }}
         >
           {allproducts.map((elm, i) => (
-            <ProductCard product={elm} key={i} />
+            <ProductCard product={elm} key={elm?.id}/>
           ))}
         </div>
       )}
