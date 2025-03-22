@@ -748,6 +748,19 @@ export default function Checkout() {
                   <button
                     className="btn-fill btn-icon justify-content-center animate-hover-btn radius-3 tf-btn"
                     onClick={async () => {
+                      // Kiểm tra đã chọn phương thức thanh toán chưa
+                      if (!paymentMethod) {
+                        toast.error("Vui lòng chọn phương thức thanh toán");
+                        return;
+                      }
+
+                      // Kiểm tra đã đồng ý điều khoản chưa 
+                      const agreeCheckbox = document.getElementById("check-agree");
+                      if (!agreeCheckbox.checked) {
+                        toast.error("Vui lòng đồng ý với điều khoản và điều kiện");
+                        return;
+                      }
+
                       if (!selectedAddress?.id) {
                         toast.error("Vui lòng chọn địa chỉ giao hàng");
                         return;
@@ -758,10 +771,16 @@ export default function Checkout() {
                         return;
                       }
 
-                      // Validate cart products
+                      // Kiểm tra sản phẩm có hợp lệ không
                       const invalidProducts = cartProducts.filter(elm => !elm.productItemId);
                       if (invalidProducts.length > 0) {
                         toast.error("Có sản phẩm không hợp lệ trong giỏ hàng");
+                        return;
+                      }
+
+                      // Kiểm tra tổng tiền đơn hàng phải lớn hơn 0
+                      if (totalPrice <= 0) {
+                        toast.error("Tổng tiền đơn hàng phải lớn hơn 0");
                         return;
                       }
 
@@ -789,7 +808,7 @@ export default function Checkout() {
 
                           if (paymentMethods.find(m => m.id === paymentMethod)?.paymentType === "VNPAY") {
                             const vnpayRes = await request.get(
-                              `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=https%3A%2F%2Flocalhost%3A44358`
+                              `/VNPAY/get-transaction-status-vnpay?orderId=${orderId}&userId=${Id}&urlReturn=https%3A%2F%2Fspssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net`
                             );
                             if (vnpayRes.status === 200) {
                               location.href = vnpayRes.data.data;
