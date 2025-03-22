@@ -4,6 +4,7 @@ import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
 import CloseIcon from '@mui/icons-material/Close';
+import request from "@/utils/axios";
 
 export default function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +19,7 @@ export default function ChatAssistant() {
   const [inputMessage, setInputMessage] = useState("");
   const notificationSoundRef = useRef(null);
   const popupSoundRef = useRef(null);
+  const [products, setProducts] = useState([]);
 
   // Refs cho âm thanh
   useEffect(() => {
@@ -195,6 +197,55 @@ export default function ChatAssistant() {
     }
   };
 
+  useEffect(() => {
+  request.get(`/products?pageNumber=1&pageSize=100`).then(({ data }) => {
+     setProducts(data.data.items);
+  });
+  }, []);
+
+  console.log(products);
+  
+  
+  // Modify the getAnswer function to handle stream response
+  const getAnswer = async (messages) => {
+    
+    console.log("products", products);
+    const prompt = `Hiện tại chúng tôi có các sản phẩm sau: ${products?.map((p) => p?.name).join(", ")}. Bạn có thể xem chi tiết tại https://spss-fe-tuannguyen333s-projects.
+    vercel.app/products.`;
+    console.log(prompt);
+    
+    const body = {
+      system_instruction: {
+        parts: {
+          // text: `Xin chào, tôi có thể giúp gì cho bạn?`,
+          text: `Web của tôi tên là Skincede, Hiện tại chúng tôi có các sản phẩm sau: ${products?.map((p) => p?.name +" "+ p?.description).join(", ")}. Bạn có thể xem chi tiết tại https://spss-fe-tuannguyen333s-projects.vercel.app/products.`,
+        },
+      },
+      contents: messages.map((item) => ({
+        role: item?.sender === "me" ? "user" : "model",
+        parts: [
+          {
+            text: item?.content,
+          },
+        ],
+      })),
+    };
+
+    // Make the request to the model API
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBDX1bPxSJl5U3riYSjS9JCs1pyfb3B4AE`,
+      {
+        body: JSON.stringify(body),
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return (await response.json()).candidates[0].content?.parts[0].text;
+  };
+
   return isOpen ? (
     <div className="bg-white border p-4 rounded-lg shadow-lg w-[500px] fixed right-5 z-[1001]" 
       style={{
@@ -304,35 +355,3 @@ const MessageItem = ({ data }) => {
   );
 };
 
-// Modify the getAnswer function to handle stream response
-const getAnswer = async (messages) => {
-  const body = {
-    system_instruction: {
-      parts: {
-        text: `Bạn là nhân viên hỗ trợ bán hàng cho cửa hàng kinh doanh chuỗi sản phẩm chăm sóc da Skincede`,
-      },
-    },
-    contents: messages.map((item) => ({
-      role: item?.sender === "me" ? "user" : "model",
-      parts: [
-        {
-          text: item?.content,
-        },
-      ],
-    })),
-  };
-
-  // Make the request to the model API
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBDX1bPxSJl5U3riYSjS9JCs1pyfb3B4AE`,
-    {
-      body: JSON.stringify(body),
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
-  return (await response.json()).candidates[0].content?.parts[0].text;
-};

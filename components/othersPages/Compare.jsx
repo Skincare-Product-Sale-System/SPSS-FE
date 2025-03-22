@@ -198,6 +198,29 @@ export default function Compare() {
                 </div>              
               ))}
             </div>
+
+            <div className="grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4 tf-compare-row">
+              <div className="d-md-block d-none tf-compare-col tf-compare-field"
+                style={{ 
+                  position: 'sticky', 
+                  left: 0, 
+                  zIndex: 2,
+                  backgroundColor: '#fff',
+                  boxShadow: '4px 0 8px rgba(0,0,0,0.05)'
+                }}
+              >
+                <h6>Đã bán</h6>
+              </div>
+              {items.map((elm, i) => (
+                <div
+                  className="text-center tf-compare-col tf-compare-value"
+                  style={{ flex: 1 }}
+                >
+                  {elm?.soldCount || 0} sản phẩm
+                </div>              
+              ))}
+            </div>
+
             <div className="grid grid-cols-[auto_repeat(items.length,_minmax(0,_1fr))] gap-4 tf-compare-row">
               <div className="d-md-block d-none tf-compare-col tf-compare-field"
                 style={{ 

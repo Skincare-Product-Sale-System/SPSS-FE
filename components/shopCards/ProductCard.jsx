@@ -19,7 +19,7 @@ export const ProductCard = ({ product }) => {
   }, [product]);
 
   return (
-    <div className="card-product fl-item" key={product.id}>
+    <div className="card-product fl-item border p-2 rounded-md shadow-lg" key={product.id}>
       <div className="card-product-wrapper">
         <Link href={`/product-detail/${product.id}`} className="product-img">
           <Image
