@@ -1,7 +1,5 @@
 "use client";
 import dynamic from 'next/dynamic';
-import Header2 from "@/components/headers/Header2";
-import Footer1 from "@/components/footers/Footer1";
 import Overlay from "@/components/common/Overlay";
 
 const ClientShopWrapper = dynamic(
@@ -9,9 +7,17 @@ const ClientShopWrapper = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="container text-center py-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
-        <div className="mt-4">Đang tải sản phẩm...</div>
+      <div className="container py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="rounded-lg bg-gray-100 p-4 animate-pulse">
+              <div className="h-48 bg-gray-200 rounded-md mb-3"></div>
+              <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-8 bg-gray-200 rounded w-1/3 mt-4"></div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
@@ -20,7 +26,6 @@ const ClientShopWrapper = dynamic(
 export default function ProductsContent() {
   return (
     <>
-      <Header2 />
       <div className="tf-page-title" style={{ position: "relative" }}>
         <Overlay />
         <div className="container-full">
@@ -37,7 +42,6 @@ export default function ProductsContent() {
         </div>
       </div>
       <ClientShopWrapper />
-      <Footer1 />
     </>
   );
 } 

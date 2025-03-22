@@ -13,4 +13,13 @@ export function ClientComponent({ children, LoadingComponent = DefaultLoading })
       {children}
     </Suspense>
   );
+}
+
+// Specific component for wrapping useSearchParams consumers
+export function SearchParamsComponent({ children, LoadingComponent = DefaultLoading }) {
+  return (
+    <Suspense fallback={<LoadingComponent />}>
+      {children}
+    </Suspense>
+  );
 } 

@@ -26,4 +26,15 @@ export function withClientSide(Component, LoadingComponent = DefaultLoading) {
       </Suspense>
     );
   };
+}
+
+// Special HOC specifically for components that use useSearchParams
+export function withSearchParams(Component, LoadingComponent = DefaultLoading) {
+  return function SearchParamsComponent(props) {
+    return (
+      <Suspense fallback={<LoadingComponent />}>
+        <Component {...props} />
+      </Suspense>
+    );
+  };
 } 

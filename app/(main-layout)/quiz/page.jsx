@@ -1,5 +1,6 @@
 import Quiz from "./_partials/Quiz";
 import Overlay from "@/components/common/Overlay";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Quiz",
@@ -35,7 +36,9 @@ export default function QuizPage() {
           </div>
         </div>
       </div>
-      <Quiz />
+      <Suspense fallback={<div className="flex justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>
+        <Quiz />
+      </Suspense>
     </>
   );
 }

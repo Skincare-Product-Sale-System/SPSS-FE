@@ -1,11 +1,40 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-export default function PaymentFailure() {
-  const orderId = useSearchParams().get("id");
+// Loading component for Order ID
+const OrderIdLoading = () => (
+  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-500 mx-auto my-2"></div>
+);
+
+// Component that safely uses searchParams
+const OrderIdComponent = () => {
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("id");
   
+  return (
+    <>
+      <a
+        href={`/my-account-orders-details?id=${orderId}`}
+        className="btn-fill justify-content-center w-100 animate-hover-btn mt-2 radius-3 tf-btn"
+        style={{ fontFamily: '"Roboto", sans-serif' }}
+      >
+        <span>Theo dõi đơn hàng</span>
+      </a>
+
+      <Link
+        href={`/products`}
+        className="btn-outline justify-content-center rounded-0 w-100 animate-hover-btn mt-2 tf-btn"
+        style={{ fontFamily: '"Roboto", sans-serif' }}
+      >
+        <span>Tiếp tục mua sắm</span>
+      </Link>
+    </>
+  );
+};
+
+export default function PaymentFailure() {
   return (
     <section className="flat-spacing-11">
       <div className="container">
@@ -35,21 +64,9 @@ export default function PaymentFailure() {
                 Chúng tôi không thể xử lý thanh toán của bạn. Vui lòng thử lại hoặc sử dụng phương thức thanh toán khác.
               </div>
 
-              <a
-                href={`/my-account-orders-details?id=${orderId}`}
-                className="btn-fill justify-content-center w-100 animate-hover-btn mt-2 radius-3 tf-btn"
-                style={{ fontFamily: '"Roboto", sans-serif' }}
-              >
-                <span>Theo dõi đơn hàng</span>
-              </a>
-
-              <Link
-                href={`/products`}
-                className="btn-outline justify-content-center rounded-0 w-100 animate-hover-btn mt-2 tf-btn"
-                style={{ fontFamily: '"Roboto", sans-serif' }}
-              >
-                <span>Tiếp tục mua sắm</span>
-              </Link>
+              <Suspense fallback={<OrderIdLoading />}>
+                <OrderIdComponent />
+              </Suspense>
 
               <p className="mt-4" style={{ fontFamily: '"Roboto", sans-serif' }}>
                 Bạn cần hỗ trợ?{" "}
@@ -63,4 +80,4 @@ export default function PaymentFailure() {
       </div>
     </section>
   );
-}
+} 

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { ThemeProvider } from '@/context/ThemeContext';
 import { MuiThemeProvider } from '@/context/MuiThemeProvider';
 import Providers from './providers';
@@ -15,16 +15,32 @@ import ShopCart from "@/components/modals/ShopCart";
 // Modal imports
 import QuickView from "@/components/modals/QuickView";
 import MobileMenu from "@/components/modals/MobileMenu";
+import LoginModal from "@/components/modals/Login";
+import ShoppingCartModal from "@/components/modals/ShopCart";
 // Import styles
 import "../public/scss/main.scss";
 import "photoswipe/dist/photoswipe.css";
 import "rc-slider/assets/index.css";
 
 import { usePathname } from "next/navigation";
+import { Inter } from 'next/font/google';
+import Header2 from "@/components/headers/Header2";
+import Footer1 from "@/components/footers/Footer1";
+import '@/styles/globals.css';
+import { RouterEventsProvider } from './RouterEventsProvider';
+import StaffHeaderWrapper from '@/components/StaffHeaderWrapper';
+
+// Các providers và fonts
+const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   const [scrollDirection, setScrollDirection] = useState("down");
+  const [loading, setLoading] = useState(true);
+  
+  // Check if the current user is a staff member (client-side only)
+  const [isStaff, setIsStaff] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   // Bootstrap initialization
   useEffect(() => {
@@ -166,35 +182,102 @@ export default function RootLayout({ children }) {
     initializeDirection();
   }, []);
 
+  useEffect(() => {
+    // Đánh dấu đã tải xong khi component được mount
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js').then(
+          (registration) => {
+            console.log('ServiceWorker registration successful');
+          },
+          (error) => {
+            console.log('ServiceWorker registration failed:', error);
+          }
+        );
+      });
+    }
+  }, []);
+
+  // Kiểm tra role và cập nhật state
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      try {
+        const userRole = localStorage.getItem('userRole');
+        console.log("Layout - User role from localStorage:", userRole);
+        setIsStaff(userRole === 'Staff');
+      } catch (error) {
+        console.error("Error reading role from localStorage:", error);
+      }
+    }
+  }, []);
+
+  // Tạo component ChatComponents để có thể điều kiện render
+  const ChatComponents = () => {
+    if (!mounted) return null;
+    if (isStaff) return null;
+    
+    return (
+      <>
+        <ChatAssistant />
+        <RealTimeChat />
+      </>
+    );
+  };
+
   return (
     <html lang="en">
-      <body className="preload-wrapper" suppressHydrationWarning>
-        <div className="preload preload-container" id="preloader">
-          <div className="preload-logo">
-            <div className="spinner"></div>
-          </div>
-        </div>
-        <ThemeProvider>
-          <MuiThemeProvider>
-            <Providers>
-              <Context>
-                <ClientProvider>
-                  <NextTopLoader />
-                  <div id="wrapper">{children}</div>
-                  {/* Modals */}
-                  <Compare />
-                  <QuickView />
-                  <ShopCart />
-                  <MobileMenu />
-                  {/* Chat components */}
-                  <ChatAssistant />
-                  <RealTimeChat />
-                </ClientProvider>
-              </Context>
-            </Providers>
-          </MuiThemeProvider>
-        </ThemeProvider>
-        <ScrollTop />
+      <body className={inter.className}>
+        <MuiThemeProvider>
+          <RouterEventsProvider>
+            <ThemeProvider>
+              <Providers>
+                <Context>
+                  <ClientProvider>
+                    <NextTopLoader />
+                    <div id="wrapper">
+                      {/* Header cố định - load immediately */}
+                      <StaffHeaderWrapper />
+                      
+                      {/* Mobile Menu */}
+                      <MobileMenu />
+                      
+                      {/* Phần nội dung thay đổi */}
+                      <Suspense fallback={
+                        <div className="flex justify-center items-center min-h-screen">
+                          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+                        </div>
+                      }>
+                        {children}
+                      </Suspense>
+                      
+                      {/* Footer cố định */}
+                      <Footer1 />
+                    </div>
+                    {/* Modals and deferred components */}
+                    <Suspense fallback={null}>
+                      <Compare />
+                      <QuickView />
+                      <ShopCart />
+                      <LoginModal />
+                      <ShoppingCartModal />
+                    </Suspense>
+                    {/* Chat components - chỉ hiển thị khi không phải staff */}
+                    <Suspense fallback={null}>
+                      <ChatComponents />
+                      <ScrollTop />
+                    </Suspense>
+                  </ClientProvider>
+                </Context>
+              </Providers>
+            </ThemeProvider>
+          </RouterEventsProvider>
+        </MuiThemeProvider>
         <Toaster />
       </body>
     </html>

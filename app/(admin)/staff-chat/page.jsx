@@ -789,7 +789,7 @@ export default function StaffChat() {
                     {selectedChat.username}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Online
+                    Trực tuyến
                   </Typography>
                 </Box>
               </Toolbar>

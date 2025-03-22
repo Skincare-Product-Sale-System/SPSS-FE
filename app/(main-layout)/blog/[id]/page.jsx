@@ -28,7 +28,7 @@ export default function Page() {
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ py: 8, textAlign: 'center' }}>
-        <Typography variant="h5">Loading blog content...</Typography>
+        <Typography variant="h5">Đang tải nội dung bài viết...</Typography>
       </Container>
     );
   }
@@ -36,9 +36,9 @@ export default function Page() {
   if (!blog) {
     return (
       <Container maxWidth="lg" sx={{ py: 8, textAlign: 'center' }}>
-        <Typography variant="h5">Blog not found</Typography>
+        <Typography variant="h5">Không tìm thấy bài viết</Typography>
         <Link href="/blog" className="btn-fill mt-4 tf-btn">
-          Return to Blogs
+          Quay lại Trang Bài Viết
         </Link>
       </Container>
     );
@@ -64,11 +64,11 @@ export default function Page() {
         
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, mb: 4 }}>
           <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ fontWeight: 500, marginRight: '4px' }}>By</span> {blog.author}
+            <span style={{ fontWeight: 500, marginRight: '4px' }}>Tác giả:</span> {blog.author}
           </Typography>
           
           <Typography variant="body2" color="text.secondary">
-            {new Date(blog.lastUpdatedAt).toLocaleDateString('en-US', {
+            {new Date(blog.lastUpdatedAt).toLocaleDateString('vi-VN', {
               year: 'numeric',
               month: 'long',
               day: 'numeric'
@@ -145,7 +145,7 @@ export default function Page() {
               >
                 <Image
                   src={section.content}
-                  alt="Blog image"
+                  alt="Hình ảnh bài viết"
                   fill
                   style={{ objectFit: 'cover' }}
                 />

@@ -1,5 +1,3 @@
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
 import Cart from "@/components/othersPages/Cart";
 import React from "react";
 import Products from "@/components/shopDetails/Products";
@@ -13,7 +11,6 @@ export const metadata = {
 export default function page() {
   return (
     <>
-      <Header2 />
       <div
         className="tf-page-title"
         style={{
@@ -40,7 +37,6 @@ export default function page() {
 
       <Cart />
       <Products />
-      <Footer1 />
     </>
   );
 }

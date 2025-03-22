@@ -14,11 +14,29 @@ export default function Header2({
   isArrow = true,
   Linkfs = "",
 }) {
-  const { isLoggedIn, setLoggedOut } = useAuthStore();
+  const { isLoggedIn, setLoggedOut, Role } = useAuthStore();
   const { switcher, revalidate } = useQueryStore();
   const [cartProducts, setCartProducts] = useState([]);
+  const [isStaff, setIsStaff] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Kiểm tra xem người dùng có phải là staff hay không sử dụng localStorage
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      try {
+        const userRole = localStorage.getItem("userRole");
+        console.log("Header2 - User role from localStorage:", userRole);
+        setIsStaff(userRole === 'Staff');
+      } catch (error) {
+        console.error("Error reading role from localStorage:", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
+    if (!isLoggedIn || isStaff) return;
+    
     //> fetch data from server
     request
       .get("/cart-items/user/cart")
@@ -27,7 +45,12 @@ export default function Header2({
         setCartProducts(res?.data?.data?.items);
       })
       .catch((e) => setCartProducts([]));
-  }, [switcher]);
+  }, [switcher, isLoggedIn, isStaff]);
+
+  // Nếu chưa mount hoặc người dùng là staff, không hiển thị header
+  if (!mounted || isStaff) {
+    return null;
+  }
 
   return (
     <header
@@ -90,15 +113,24 @@ export default function Header2({
           <div className="col-xl-6 tf-md-hidden">
             <nav className="text-center box-navigation">
               <ul className="d-flex align-items-center justify-content-center box-nav-ul gap-30">
-                <Nav isArrow={isArrow} Linkfs={Linkfs} />
-                {/* <li className={`menu-item`}>
-                  <a
-                    href="https://themeforest.net/item/ecomus-ultimate-html5-template/53417990?s_rank=3"
-                    className={`item-link  ${Linkfs}`}
-                  >
-                    Buy now
-                  </a>
-                </li> */}
+                {isStaff ? (
+                  // Staff Menu
+                  <>
+                    <li className="menu-item">
+                      <Link href="/staff-chat" className={`item-link ${Linkfs}`}>
+                        Chăm sóc khách hàng
+                      </Link>
+                    </li>
+                    <li className="menu-item">
+                      <Link href="/blog-management" className={`item-link ${Linkfs}`}>
+                        Quản lý bài viết
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  // Regular Nav menu
+                  <Nav isArrow={isArrow} Linkfs={Linkfs} />
+                )}
               </ul>
             </nav>
           </div>
@@ -132,28 +164,31 @@ export default function Header2({
                   </span>
                 </Link>
               </li> */}
-              <li className="nav-cart">
-                <a
-                  href="#shoppingCart"
-                  data-bs-toggle="modal"
-                  className="nav-icon-item"
-                  onClick={() => revalidate()}
-                >
-                  <i className="icon icon-bag" />
-                  <span className={`count-box ${bgColor} ${textClass}`}>
-                    {cartProducts.length}
-                  </span>
-                </a>
-              </li>
+              {!isStaff && (
+                <li className="nav-cart">
+                  <a
+                    href="#shoppingCart"
+                    data-bs-toggle="modal"
+                    className="nav-icon-item"
+                    onClick={() => revalidate()}
+                  >
+                    <i className="icon icon-bag" />
+                    <span className={`count-box ${bgColor} ${textClass}`}>
+                      {cartProducts.length}
+                    </span>
+                  </a>
+                </li>
+              )}
               {isLoggedIn && (
                 <li className="nav-cart">
                   <a
                     className="nav-icon-item"
                     onClick={() => {
                       setLoggedOut();
-                      location.reload();
                       localStorage.removeItem("accessToken");
                       localStorage.removeItem("refreshToken");
+                      localStorage.removeItem("userRole");
+                      window.location.href = '/';
                     }}
                   >
                     <MdLogout size={20} />

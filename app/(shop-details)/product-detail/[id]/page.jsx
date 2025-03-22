@@ -1,15 +1,10 @@
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
 import ShopDetailsTab from "@/components/shopDetails/ShopDetailsTab";
 import ProductReviews from "@/components/shopDetails/ProductReviews";
 import React from "react";
 import Link from "next/link";
 import DetailsOuterZoom from "@/components/shopDetails/DetailsOuterZoom";
-import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";
 import request from "@/utils/axios";
 import { formatPrice } from "@/utils/priceFormatter";
-import { Box, Chip, Typography, Grid, Paper, Divider } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 
 export const metadata = {
   title: "Product Details | Skincare Store",
@@ -73,13 +68,11 @@ export default async function page({ params }) {
 
     return (
       <>
-        <Header2 />
         <div className="md:pt-8 pt-6">
           <DetailsOuterZoom product={formattedProduct} />
           <ShopDetailsTab product={formattedProduct} />
           <ProductReviews productId={product.id} />
         </div>
-        <Footer1 />
       </>
     );
   } catch (error) {
@@ -88,7 +81,6 @@ export default async function page({ params }) {
     // Hiển thị trang lỗi thân thiện
     return (
       <>
-        <Header2 />
         <div className="container text-center my-12 py-8">
           <h2 className="text-2xl font-medium mb-4">Unable to load product information</h2>
           <p className="mb-6">An error occurred while loading product information. Please try again later.</p>
@@ -97,7 +89,6 @@ export default async function page({ params }) {
             Back to shop
           </Link>
         </div>
-        <Footer1 />
       </>
     );
   }

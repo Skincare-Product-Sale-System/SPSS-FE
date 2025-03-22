@@ -1,6 +1,4 @@
 import Overlay from "@/components/common/Overlay";
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
 
 import Compare from "@/components/othersPages/Compare";
 import React from "react";
@@ -13,7 +11,6 @@ export default function page() {
   return (
     <>
       {/* <Topbar1 /> */}
-      <Header2 />
       <div
         className="tf-page-title"
         style={{
@@ -39,7 +36,6 @@ export default function page() {
       </div>
 
       <Compare />
-      <Footer1 />
     </>
   );
 }

@@ -1,6 +1,3 @@
-import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
-import AccountSideBar from "@/components/othersPages/dashboard/AccountSideBar";
 import Orders from "@/components/othersPages/dashboard/Orders";
 import React from "react";
 
