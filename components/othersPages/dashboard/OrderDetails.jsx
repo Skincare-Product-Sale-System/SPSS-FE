@@ -136,23 +136,31 @@ export default function OrderDetails() {
 
   const getPaymentMethodName = (paymentMethodId) => {
     const method = paymentMethods.find(m => m.id === paymentMethodId);
-    return method ? method.name : (
-      order.paymentMethodId === "354EDA95-5BE5-41BE-ACC3-CFD70188118A".toLowerCase()
-        ? "VNPay"
-        : "Thanh toán khi nhận hàng"
-    );
+    return method ? method.paymentType : "Chưa xác định";
+  };
+
+  const getPaymentMethodImage = (paymentMethodId) => {
+    const method = paymentMethods.find(m => m.id === paymentMethodId);
+    return method?.imageUrl || "";
   };
 
   const handlePayNow = async () => {
     try {
+      const method = paymentMethods.find(m => m.id === order.paymentMethodId);
+      
+      if (method && method.paymentType === "VNPAY") {
       const vnpayRes = await request.get(
         `/VNPAY/get-transaction-status-vnpay?orderId=${order.id}&userId=${Id}&urlReturn=https%3A%2F%2Fspssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net`
       );
       if (vnpayRes.status === 200) {
         location.href = vnpayRes.data.data;
+        }
+      } else {
+        toast.info(`Đã chọn thanh toán qua ${method?.paymentType || "phương thức không xác định"}`);
       }
     } catch (error) {
       console.error("Payment error:", error);
+      toast.error("Không thể thực hiện thanh toán, vui lòng thử lại sau");
     }
   };
 
@@ -451,7 +459,16 @@ export default function OrderDetails() {
                     </Tooltip>
                   )}
                 </p>
-                <p className="font-medium">
+                <p className="font-medium flex items-center gap-1">
+                  {order.paymentMethodId && getPaymentMethodImage(order.paymentMethodId) && (
+                    <Image
+                      src={getPaymentMethodImage(order.paymentMethodId)}
+                      alt={getPaymentMethodName(order.paymentMethodId)}
+                      width={20}
+                      height={20}
+                      className="object-contain rounded"
+                    />
+                  )}
                   {order.paymentMethodId 
                     ? getPaymentMethodName(order.paymentMethodId)
                     : "Chưa xác định"}
@@ -866,7 +883,16 @@ export default function OrderDetails() {
             >
               {paymentMethods.map((method) => (
                 <MenuItem key={method.id} value={method.id}>
-                  {method.name}
+                  <div className="flex items-center gap-2">
+                    <Image 
+                      src={method.imageUrl} 
+                      alt={method.paymentType}
+                      width={24} 
+                      height={24}
+                      className="object-contain rounded"
+                    />
+                    <span>{method.paymentType}</span>
+                  </div>
                 </MenuItem>
               ))}
             </Select>
