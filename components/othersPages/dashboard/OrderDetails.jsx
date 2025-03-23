@@ -15,9 +15,16 @@ import {
   DialogTitle,
   Select,
   MenuItem,
+  FormControl,
+  InputLabel,
+  FormHelperText,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import Link from "next/link";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EditIcon from '@mui/icons-material/Edit';
+import PaymentIcon from '@mui/icons-material/Payment';
 import useAuthStore from "@/context/authStore";
 import ProductReviewModal from "../ProductReviewModal";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -26,6 +33,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PendingIcon from '@mui/icons-material/Pending';
 import PaymentsIcon from '@mui/icons-material/Payments';
+import toast from "react-hot-toast";
 
 export default function OrderDetails() {
   const [order, setOrder] = useState(null);
@@ -41,6 +49,11 @@ export default function OrderDetails() {
   const { Id } = useAuthStore();
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [paymentMethodError, setPaymentMethodError] = useState("");
+  const [updatingPayment, setUpdatingPayment] = useState(false);
 
   useEffect(() => {
     if (orderId) {
@@ -60,16 +73,74 @@ export default function OrderDetails() {
     });
   }, []);
 
+  useEffect(() => {
+    if (openPaymentDialog) {
+      fetchPaymentMethods();
+    }
+  }, [openPaymentDialog]);
+
+  const fetchPaymentMethods = async () => {
+    try {
+      const response = await request.get("/payment-methods");
+      if (response.data && response.data.data) {
+        setPaymentMethods(response.data.data.items || []);
+        if (order && order.paymentMethodId) {
+          setSelectedPaymentMethod(order.paymentMethodId);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching payment methods:", error);
+      toast.error("Không thể lấy danh sách phương thức thanh toán");
+    }
+  };
+
   const fetchOrderDetails = async () => {
     try {
       setLoading(true);
       const response = await request.get(`/orders/${orderId}`);
       setOrder(response.data.data);
+      if (response.data.data.paymentMethodId) {
+        setSelectedPaymentMethod(response.data.data.paymentMethodId);
+      }
     } catch (error) {
       console.error("Error fetching order details:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUpdatePaymentMethod = async () => {
+    if (!selectedPaymentMethod) {
+      setPaymentMethodError("Vui lòng chọn phương thức thanh toán");
+      return;
+    }
+
+    try {
+      setUpdatingPayment(true);
+      const response = await request.patch(
+        `/orders/${order.id}/payment-method?paymentMethodId=${selectedPaymentMethod}`
+      );
+      
+      if (response.status === 200) {
+        toast.success("Cập nhật phương thức thanh toán thành công");
+        setOpenPaymentDialog(false);
+        fetchOrderDetails();
+      }
+    } catch (error) {
+      console.error("Error updating payment method:", error);
+      toast.error("Không thể cập nhật phương thức thanh toán");
+    } finally {
+      setUpdatingPayment(false);
+    }
+  };
+
+  const getPaymentMethodName = (paymentMethodId) => {
+    const method = paymentMethods.find(m => m.id === paymentMethodId);
+    return method ? method.name : (
+      order.paymentMethodId === "354EDA95-5BE5-41BE-ACC3-CFD70188118A".toLowerCase()
+        ? "VNPay"
+        : "Thanh toán khi nhận hàng"
+    );
   };
 
   const handlePayNow = async () => {
@@ -89,7 +160,7 @@ export default function OrderDetails() {
     try {
       await request.patch(`/orders/${order.id}/status?newStatus=Cancelled&cancelReasonId=${selectedReason}`);
       setOpenCancelDialog(false);
-      fetchOrderDetails(); // Refresh order details
+      fetchOrderDetails();
     } catch (error) {
       console.error("Error cancelling order:", error);
       setOpenCancelDialog(false);
@@ -135,7 +206,6 @@ export default function OrderDetails() {
       case "completed":
         return { currentStep: 4, lastValidStep: 4 };
       case "cancelled":
-        // Xác định bước cuối cùng trước khi hủy
         const lastStatus = order.statusChanges?.[order.statusChanges.length - 2]?.status.toLowerCase();
         let lastValidStep = 1;
         if (lastStatus === "processing") lastValidStep = 2;
@@ -279,11 +349,9 @@ export default function OrderDetails() {
           </span>
         </div>
 
-        {/* Order Progress Tracker */}
         <div className="mb-4">
           <div className="relative">
             <div className="flex justify-between items-center mb-2">
-              {/* Progress Line Background */}
               <div 
                 className="h-1 rounded-full -z-5 absolute left-12 right-12 top-4"
                 style={{
@@ -300,19 +368,17 @@ export default function OrderDetails() {
                 }}
               />
 
-              {/* Step Circles */}
               <div className="flex justify-between w-full items-center relative z-10">
                 {currentStep === -1 ? (
-                  // Hiển thị 3 bước khi cancelled
                   ['Đặt hàng', 'Xử lý', 'Đã hủy'].map((label, index) => (
                     <div key={index} className="flex flex-col items-center">
                       <div
                         className={`w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ${
                           index === 2 
-                            ? "bg-red-500 text-white shadow-lg shadow-red-200" // Circle Cancelled luôn đỏ
+                            ? "bg-red-500 text-white shadow-lg shadow-red-200"
                             : index + 1 <= lastValidStep
-                              ? "bg-teal-500 text-white shadow-lg shadow-teal-200" // Circle hoàn thành
-                              : "bg-gray-200" // Circle chưa hoàn thành
+                              ? "bg-teal-500 text-white shadow-lg shadow-teal-200"
+                              : "bg-gray-200"
                         }`}
                       >
                         <span className="text-xs">{(index + 1).toString().padStart(2, '0')}</span>
@@ -321,8 +387,6 @@ export default function OrderDetails() {
                     </div>
                   ))
                 ) : (
-                  // Hiển thị 4 bước bình thường
-                  // Hiển thị 4 bước bình thường: Order > Processing > Delivering > Delivered
                   ['Đặt hàng', 'Xử lý', 'Đang giao', 'Đã giao'].map((label, index) => (
                     <div key={index} className="flex flex-col items-center">
                       <div
@@ -373,14 +437,24 @@ export default function OrderDetails() {
                 <p className="font-medium">#{order.id.substring(0, 8)}</p>
               </div>
               <div>
-                <p className="text-gray-700 text-xs font-semibold mb-1">
+                <p className="text-gray-700 text-xs font-semibold mb-1 flex items-center">
                   THANH TOÁN:
+                  {order.status === "Awaiting Payment" && (
+                    <Tooltip title="Thay đổi phương thức thanh toán">
+                      <IconButton 
+                        size="small" 
+                        onClick={() => setOpenPaymentDialog(true)}
+                        sx={{ ml: 0.5, p: 0.5 }}
+                      >
+                        <EditIcon fontSize="small" sx={{ width: 14, height: 14, color: mainColor.primary }} />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </p>
                 <p className="font-medium">
-                  {order.paymentMethodId ===
-                  "354EDA95-5BE5-41BE-ACC3-CFD70188118A".toLowerCase()
-                    ? "VNPay"
-                    : "Thanh toán khi nhận hàng"}
+                  {order.paymentMethodId 
+                    ? getPaymentMethodName(order.paymentMethodId)
+                    : "Chưa xác định"}
                 </p>
               </div>
             </div>
@@ -405,7 +479,6 @@ export default function OrderDetails() {
           </div>
         </div>
 
-        {/* Order Items - More compact */}
         <div className="mt-4">
           <h4 className="border-b text-gray-700 text-xs font-semibold mb-2 pb-1 uppercase">
             SẢN PHẨM
@@ -494,7 +567,6 @@ export default function OrderDetails() {
                         disabled={order.status?.toLowerCase() !== "delivered" || !item.isReviewable}
                         onClick={() => {
                           if (order.status?.toLowerCase() === "delivered" && item.isReviewable) {
-                            // Open review modal instead of navigation
                             setSelectedProduct(item);
                             setReviewModalOpen(true);
                           }
@@ -512,7 +584,6 @@ export default function OrderDetails() {
           </div>
         </div>
 
-        {/* Status Timeline */}
         {order.statusChanges && order.statusChanges.length > 0 && (
           <div className="border-t mt-4 pt-3">
             <h4 className="text-gray-700 text-xs font-semibold mb-2 uppercase">
@@ -534,22 +605,17 @@ export default function OrderDetails() {
                           <span
                             className={`h-8 w-8 rounded-full flex items-center justify-center ring-4 ring-white
                               ${
-                                // Kiểm tra nếu là status cuối
                                 ["Delivered", "Completed", "Cancelled"].includes(statusChange.status) || 
-                                // HOẶC nếu là status đã qua
                                 isStatusBefore(statusChange.status, order.status)
                                   ? `${getStatusCircleColor(statusChange.status)} text-white`
                                   
-                                  // Nếu là status hiện tại nhưng không phải cuối
                                   : statusChange.status === order.status
                                     ? `bg-white border-2 border-dashed ${getStatusBorderColor(statusChange.status)}`
                                     
-                                    // Còn lại là các status sắp tới
                                     : "bg-gray-200"
                               }
                             `}
                           >
-                            {/* Đảm bảo icon trắng khi status là cuối cùng hoặc đã qua */}
                             <div className={
                               ["Delivered", "Completed", "Cancelled"].includes(statusChange.status) || 
                               isStatusBefore(statusChange.status, order.status)
@@ -585,24 +651,41 @@ export default function OrderDetails() {
           </div>
         )}
 
-        {/* Action Buttons - Only show for appropriate statuses */}
         {(order.status === "Processing" ||
           order.status === "Awaiting Payment") && (
           <div className="flex justify-end gap-3 mt-4">
             {order.status === "Awaiting Payment" && (
-              <Button
-                variant="contained"
-                size="small"
-                onClick={handlePayNow}
-                sx={{
-                  backgroundColor: mainColor,
-                  "&:hover": {
-                    backgroundColor: `${mainColor}dd`,
-                  },
-                }}
-              >
-                Thanh Toán Ngay
-              </Button>
+              <>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<PaymentIcon />}
+                  onClick={() => setOpenPaymentDialog(true)}
+                  sx={{
+                    borderColor: mainColor,
+                    color: mainColor,
+                    "&:hover": {
+                      borderColor: mainColor,
+                      backgroundColor: `${mainColor}15`,
+                    },
+                  }}
+                >
+                  Đổi phương thức
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handlePayNow}
+                  sx={{
+                    backgroundColor: mainColor,
+                    "&:hover": {
+                      backgroundColor: `${mainColor}dd`,
+                    },
+                  }}
+                >
+                  Thanh Toán Ngay
+                </Button>
+              </>
             )}
             <Button
               onClick={() => setOpenCancelDialog(true)}
@@ -622,7 +705,6 @@ export default function OrderDetails() {
         )}
       </div>
 
-      {/* Cancel Confirmation Dialog */}
       <Dialog
         open={openCancelDialog}
         onClose={() => setOpenCancelDialog(false)}
@@ -644,9 +726,7 @@ export default function OrderDetails() {
           className="mx-8"
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          // value={cancelReason}
           onChange={(e) => setCancelReason(e.target.value)}
-          // fullWidth
           size="small"
           sx={{ mb: 2 }}
         >
@@ -689,27 +769,152 @@ export default function OrderDetails() {
         </DialogActions>
       </Dialog>
 
-      {/* Add review modal */}
-      {selectedProduct && (
-        <ProductReviewModal
-          open={reviewModalOpen}
-          onClose={() => {
-            setReviewModalOpen(false);
-            setSelectedProduct(null);
-          }}
-          productInfo={selectedProduct}
-          orderId={order.id}
-          onSubmitSuccess={() => {
-            // Refetch order details after successful review submission
-            fetchOrderDetails();
-          }}
-        />
-      )}
+      <Dialog
+        open={reviewModalOpen}
+        onClose={() => {
+          setReviewModalOpen(false);
+          setSelectedProduct(null);
+        }}
+        aria-labelledby="review-modal-title"
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle id="review-modal-title" sx={{ fontSize: "1.1rem", pb: 1 }}>
+          Đánh giá sản phẩm
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ fontSize: "0.9rem", mb: 2 }}>
+            Hãy đánh giá sản phẩm này để giúp chúng tôi cải thiện chất lượng dịch vụ.
+          </DialogContentText>
+          <ProductReviewModal
+            productInfo={selectedProduct}
+            orderId={order.id}
+            onSubmitSuccess={() => {
+              fetchOrderDetails();
+            }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ padding: "8px 16px" }}>
+          <Button
+            onClick={() => setReviewModalOpen(false)}
+            variant="outlined"
+            size="small"
+            sx={{
+              borderColor: "#9e9e9e",
+              color: "#757575",
+              "&:hover": {
+                borderColor: "#757575",
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+              },
+            }}
+          >
+            Hủy
+          </Button>
+          <Button
+            onClick={() => {
+              setReviewModalOpen(false);
+              setSelectedProduct(null);
+            }}
+            variant="contained"
+            size="small"
+            sx={{
+              backgroundColor: mainColor,
+              color: "white",
+              "&:hover": {
+                backgroundColor: `${mainColor}dd`,
+              },
+            }}
+          >
+            Đánh giá
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openPaymentDialog}
+        onClose={() => !updatingPayment && setOpenPaymentDialog(false)}
+        aria-labelledby="payment-dialog-title"
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle id="payment-dialog-title" sx={{ fontSize: "1.1rem", pb: 1 }}>
+          Thay đổi phương thức thanh toán
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ fontSize: "0.9rem", mb: 2 }}>
+            Chọn phương thức thanh toán bạn muốn sử dụng cho đơn hàng này.
+          </DialogContentText>
+          
+          <FormControl 
+            fullWidth 
+            error={!!paymentMethodError}
+            variant="outlined"
+            size="small"
+            sx={{ mt: 1 }}
+          >
+            <InputLabel id="payment-method-label">Phương thức thanh toán</InputLabel>
+            <Select
+              labelId="payment-method-label"
+              id="payment-method-select"
+              value={selectedPaymentMethod}
+              onChange={(e) => {
+                setSelectedPaymentMethod(e.target.value);
+                setPaymentMethodError("");
+              }}
+              label="Phương thức thanh toán"
+              disabled={updatingPayment}
+            >
+              {paymentMethods.map((method) => (
+                <MenuItem key={method.id} value={method.id}>
+                  {method.name}
+                </MenuItem>
+              ))}
+            </Select>
+            {paymentMethodError && <FormHelperText>{paymentMethodError}</FormHelperText>}
+          </FormControl>
+        </DialogContent>
+        <DialogActions sx={{ padding: "8px 16px" }}>
+          <Button
+            onClick={() => setOpenPaymentDialog(false)}
+            variant="outlined"
+            size="small"
+            disabled={updatingPayment}
+            sx={{
+              borderColor: "#9e9e9e",
+              color: "#757575",
+              "&:hover": {
+                borderColor: "#757575",
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+              },
+            }}
+          >
+            Hủy
+          </Button>
+          <Button
+            onClick={handleUpdatePaymentMethod}
+            variant="contained"
+            size="small"
+            disabled={updatingPayment}
+            sx={{
+              backgroundColor: mainColor,
+              color: "white",
+              "&:hover": {
+                backgroundColor: `${mainColor}dd`,
+              },
+            }}
+          >
+            {updatingPayment ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              "Cập nhật"
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
 
-// Hàm hỗ trợ dịch trạng thái
 function translateStatus(status) {
   const statusMap = {
     "Pending": "Chờ xử lý",
