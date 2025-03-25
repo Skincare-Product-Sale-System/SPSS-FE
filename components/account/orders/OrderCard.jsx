@@ -4,17 +4,88 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import { useThemeColors } from "@/context/ThemeContext";
 import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
+import useAuthStore from "@/context/authStore";
+import toast from "react-hot-toast";
+import request from "@/utils/axios";
+import { CircularProgress } from "@mui/material";
 
 export default function OrderCard({ 
   order, 
   onReviewClick, 
   formatCurrency, 
-  getStatusColor 
+  getStatusColor,
+  onPayNow
 }) {
   const mainColor = useThemeColors();
+  const { isLoggedIn, Id } = useAuthStore();
+  const [loading, setLoading] = React.useState(false);
+  const [paymentMethods, setPaymentMethods] = React.useState([]);
+
+  // Tải phương thức thanh toán nếu trạng thái là Awaiting Payment
+  React.useEffect(() => {
+    if (order.status?.toLowerCase() === "awaiting payment") {
+      fetchPaymentMethods();
+    }
+  }, [order.status]);
+
+  const fetchPaymentMethods = async () => {
+    try {
+      const response = await request.get("/payment-methods");
+      if (response.data && response.data.data) {
+        setPaymentMethods(response.data.data.items || []);
+      }
+    } catch (error) {
+      console.error("Error fetching payment methods:", error);
+    }
+  };
+
+  const handlePayNowClick = async () => {
+    if (!isLoggedIn) {
+      toast.error("Bạn cần đăng nhập để thanh toán");
+      return;
+    }
+
+    if (!Id) {
+      toast.error("Không tìm thấy thông tin người dùng, vui lòng đăng nhập lại");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Kiểm tra xem phương thức thanh toán có phải COD không
+      const paymentMethod = paymentMethods.find(m => m.id === order.paymentMethodId);
+      const isCOD = paymentMethod?.paymentType === "COD";
+
+      if (isCOD) {
+        toast.info("Đơn hàng này sử dụng phương thức COD, không cần thanh toán online");
+        return;
+      }
+
+      if (paymentMethod?.paymentType === "VNPAY") {
+        const vnpayRes = await request.get(
+          `/VNPAY/get-transaction-status-vnpay?orderId=${order.id}&userId=${Id}&urlReturn=https%3A%2F%2Fspssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net`
+        );
+        
+        if (vnpayRes.status === 200) {
+          window.location.href = vnpayRes.data.data;
+        } else {
+          toast.error("Không thể khởi tạo thanh toán");
+        }
+      } else {
+        toast.info(`Đã chọn thanh toán qua ${paymentMethod?.paymentType || "phương thức chưa xác định"}`);
+        // Chuyển đến trang chi tiết để có thêm tùy chọn
+        window.location.href = `/order-details?id=${order.id}`;
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error("Không thể thực hiện thanh toán, vui lòng thử lại sau");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="border rounded-lg shadow-sm mb-6 overflow-hidden">
+    <div className="border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 mb-6 overflow-hidden">
       <div className="flex bg-gray-50 border-b justify-between p-4 items-center">
         <div className="flex items-center">
           <span className="font-medium mr-2">Đơn hàng #{order.id.substring(0, 8)}</span>
@@ -94,17 +165,51 @@ export default function OrderCard({
         </div>
         
         <div className="flex justify-end gap-3">
+          {order.status?.toLowerCase() === "awaiting payment" && (
+            <button
+              onClick={handlePayNowClick}
+              disabled={loading}
+              className="bg-white border rounded-md hover:opacity-90 px-6 py-2.5 transition-all flex items-center gap-2 shadow-sm hover:shadow-md disabled:shadow-none"
+              style={{ 
+                color: mainColor.primary || mainColor, 
+                borderColor: mainColor.primary || mainColor,
+                backgroundColor: `${mainColor.primary || mainColor}10`,
+                fontFamily: '"Roboto", sans-serif',
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1,
+                fontWeight: "500"
+              }}
+            >
+              {loading ? (
+                <>
+                  <CircularProgress size={16} sx={{ color: mainColor.primary || mainColor }} />
+                  <span>Đang xử lý...</span>
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                  </svg>
+                  <span>Thanh Toán Ngay</span>
+                </>
+              )}
+            </button>
+          )}
           <Link
             href={`/order-details?id=${order.id}`}
-            className="bg-white border rounded-md hover:opacity-80 px-4 py-2 transition-colors"
+            className="bg-white border rounded-md hover:opacity-90 px-6 py-2.5 transition-all flex items-center gap-2 shadow-sm hover:shadow-md"
             style={{ 
-              color: mainColor, 
-              borderColor: mainColor,
-              backgroundColor: `${mainColor}10`,
-              fontFamily: '"Roboto", sans-serif'
+              color: mainColor.primary || mainColor, 
+              borderColor: mainColor.primary || mainColor,
+              backgroundColor: `${mainColor.primary || mainColor}10`,
+              fontFamily: '"Roboto", sans-serif',
+              fontWeight: "500"
             }}
           >
-            Xem chi tiết
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+            </svg>
+            <span>Xem chi tiết</span>
           </Link>
         </div>
       </div>

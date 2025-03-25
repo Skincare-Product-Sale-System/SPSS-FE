@@ -23,7 +23,7 @@ const OrderIdComponent = () => {
     <Box sx={{ mt: 3 }}>
       <Button
         component="a"
-        href={`/my-account-orders-details?id=${orderId}`}
+        href={`/order-details?id=${orderId}`}
         variant="contained"
         fullWidth
         sx={{ 

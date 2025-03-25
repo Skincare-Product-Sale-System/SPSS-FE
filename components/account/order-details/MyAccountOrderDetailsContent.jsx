@@ -34,12 +34,13 @@ export default function MyAccountOrderDetailsContent() {
   const [openCancelDialog, setOpenCancelDialog] = useState(false);
   const searchParams = useSearchParams();
   const orderId = searchParams.get("id");
+  const userIdFromUrl = searchParams.get("userId");
   const mainColor = useThemeColors();
   const [reasons, setReasons] = useState([]);
   const [reason, setReason] = useState();
   const [selectedReason, setCancelReason] = useState("");
   const router = useRouter();
-  const { Id } = useAuthStore();
+  const { Id, isLoggedIn } = useAuthStore();
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [paymentMethods, setPaymentMethods] = useState([]);
@@ -49,10 +50,17 @@ export default function MyAccountOrderDetailsContent() {
   const [updatingPayment, setUpdatingPayment] = useState(false);
 
   useEffect(() => {
+    if (!isLoggedIn) {
+      toast.error("Bạn cần đăng nhập để xem chi tiết đơn hàng");
+      router.push("/login");
+      return;
+    }
+
     if (orderId) {
       fetchOrderDetails();
+      fetchPaymentMethods();
     }
-  }, [orderId]);
+  }, [orderId, isLoggedIn]);
 
   useEffect(() => {
     if (order?.cancelReasonId) {
@@ -67,12 +75,6 @@ export default function MyAccountOrderDetailsContent() {
       setReasons(data.data.items);
     });
   }, []);
-
-  useEffect(() => {
-    if (openPaymentDialog) {
-      fetchPaymentMethods();
-    }
-  }, [openPaymentDialog]);
 
   const fetchPaymentMethods = async () => {
     try {
@@ -93,9 +95,18 @@ export default function MyAccountOrderDetailsContent() {
     try {
       setLoading(true);
       const response = await request.get(`/orders/${orderId}`);
+      
+      // Cập nhật order
       setOrder(response.data.data);
+      
+      // Cập nhật phương thức thanh toán đã chọn
       if (response.data.data.paymentMethodId) {
         setSelectedPaymentMethod(response.data.data.paymentMethodId);
+      }
+      
+      // Tải thông tin payment method nếu cần
+      if (paymentMethods.length === 0) {
+        await fetchPaymentMethods();
       }
     } catch (error) {
       console.error("Error fetching order details:", error);
@@ -130,11 +141,13 @@ export default function MyAccountOrderDetailsContent() {
   };
 
   const getPaymentMethodName = (paymentMethodId) => {
+    if (!paymentMethodId) return "Chưa xác định";
     const method = paymentMethods.find(m => m.id === paymentMethodId);
     return method ? method.paymentType : "Chưa xác định";
   };
 
   const getPaymentMethodImage = (paymentMethodId) => {
+    if (!paymentMethodId) return "";
     const method = paymentMethods.find(m => m.id === paymentMethodId);
     return method?.imageUrl || "";
   };
@@ -143,12 +156,23 @@ export default function MyAccountOrderDetailsContent() {
     try {
       const method = paymentMethods.find(m => m.id === order.paymentMethodId);
       
+      const effectiveUserId = Id || userIdFromUrl;
+      
+      if (!effectiveUserId) {
+        toast.error("Bạn cần đăng nhập để thực hiện thanh toán");
+        router.push("/login");
+        return;
+      }
+      
       if (method && method.paymentType === "VNPAY") {
-      const vnpayRes = await request.get(
-        `/VNPAY/get-transaction-status-vnpay?orderId=${order.id}&userId=${Id}&urlReturn=https%3A%2F%2Fspssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net`
-      );
-      if (vnpayRes.status === 200) {
-        location.href = vnpayRes.data.data;
+        const vnpayRes = await request.get(
+          `/VNPAY/get-transaction-status-vnpay?orderId=${order.id}&userId=${effectiveUserId}&urlReturn=https%3A%2F%2Fspssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net`
+        );
+        
+        if (vnpayRes.status === 200) {
+          window.location.href = vnpayRes.data.data;
+        } else {
+          toast.error("Không thể khởi tạo thanh toán");
         }
       } else {
         toast.info(`Đã chọn thanh toán qua ${method?.paymentType || "phương thức không xác định"}`);
@@ -293,6 +317,8 @@ export default function MyAccountOrderDetailsContent() {
           handleOpenCancelDialog={handleOpenCancelDialog}
           handleOpenPaymentDialog={handleOpenPaymentDialog}
           handlePayNow={handlePayNow}
+          paymentMethods={paymentMethods}
+          paymentMethodId={order.paymentMethodId}
         />
       </div>
 

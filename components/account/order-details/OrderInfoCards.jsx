@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from "next/image";
-import { Tooltip, IconButton } from "@mui/material";
+import { Tooltip, IconButton, Skeleton } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
 export default function OrderInfoCards({ 
@@ -11,6 +11,14 @@ export default function OrderInfoCards({
   getPaymentMethodImage,
   handleOpenPaymentDialog
 }) {
+  const paymentMethodName = order.paymentMethodId 
+    ? getPaymentMethodName(order.paymentMethodId)
+    : "Chưa xác định";
+    
+  const paymentMethodImage = order.paymentMethodId 
+    ? getPaymentMethodImage(order.paymentMethodId)
+    : "";
+
   return (
     <div className="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
       <div className="bg-gray-50 p-3 rounded-lg text-sm">
@@ -57,18 +65,16 @@ export default function OrderInfoCards({
               )}
             </p>
             <p className="font-medium flex items-center gap-1">
-              {order.paymentMethodId && getPaymentMethodImage(order.paymentMethodId) && (
+              {paymentMethodImage ? (
                 <Image
-                  src={getPaymentMethodImage(order.paymentMethodId)}
-                  alt={getPaymentMethodName(order.paymentMethodId)}
+                  src={paymentMethodImage}
+                  alt={paymentMethodName}
                   width={20}
                   height={20}
                   className="object-contain rounded"
                 />
-              )}
-              {order.paymentMethodId 
-                ? getPaymentMethodName(order.paymentMethodId)
-                : "Chưa xác định"}
+              ) : null}
+              {paymentMethodName}
             </p>
           </div>
         </div>

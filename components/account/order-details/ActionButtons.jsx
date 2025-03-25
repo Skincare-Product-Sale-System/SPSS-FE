@@ -7,11 +7,17 @@ export default function ActionButtons({
   mainColor, 
   handleOpenCancelDialog, 
   handleOpenPaymentDialog,
-  handlePayNow 
+  handlePayNow,
+  paymentMethods,
+  paymentMethodId
 }) {
   if (!(order.status === "Processing" || order.status === "Awaiting Payment")) {
     return null;
   }
+
+  // Tìm phương thức thanh toán để kiểm tra xem có phải COD không
+  const paymentMethod = paymentMethods?.find(m => m.id === order.paymentMethodId);
+  const isCOD = paymentMethod?.paymentType === "COD";
 
   return (
     <div className="flex justify-end gap-3 mt-4">
@@ -33,19 +39,21 @@ export default function ActionButtons({
           >
             Đổi phương thức
           </Button>
-          <Button
-            variant="contained"
-            size="small"
-            onClick={handlePayNow}
-            sx={{
-              backgroundColor: mainColor,
-              "&:hover": {
-                backgroundColor: `${mainColor}dd`,
-              },
-            }}
-          >
-            Thanh Toán Ngay
-          </Button>
+          {!isCOD && (
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handlePayNow}
+              sx={{
+                backgroundColor: mainColor,
+                "&:hover": {
+                  backgroundColor: `${mainColor}dd`,
+                },
+              }}
+            >
+              Thanh Toán Ngay
+            </Button>
+          )}
         </>
       )}
       <Button
