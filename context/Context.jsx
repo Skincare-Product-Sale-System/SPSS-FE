@@ -1,5 +1,6 @@
 "use client";
 import { openCartModal } from "@/utils/openCartModal";
+import { openCompareModal } from "@/utils/openCompareModal";
 // import { openCart } from "@/utils/toggleCart";
 import React, { useEffect } from "react";
 import { useContext, useState } from "react";

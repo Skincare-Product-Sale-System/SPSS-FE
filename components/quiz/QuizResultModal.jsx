@@ -1,6 +1,6 @@
 "use client";
 import { useQuiz } from '@/context/QuizContext';
-import QuizResult from './QuizResult';
+import QuizResult from '@/components/quiz/result/QuizResult';
 
 export default function QuizResultModal() {
   const { quizState, closeQuizResult } = useQuiz();

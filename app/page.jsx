@@ -1,33 +1,28 @@
-// import Features from "@/components/common/Features";
-// import ShopGram from "@/components/common/ShopGram";
-// import Testimonials from "@/components/common/Testimonials";
-// import Footer1 from "@/components/footers/Footer1";
-// import Header1 from "@/components/headers/Header1";
-// import Topbar1 from "@/components/headers/Topbar1";
-// import Brands from "@/components/homes/home-1/Brands";
-// import Hero from "@/components/homes/home-1/Hero";
-// import Lookbook from "@/components/homes/home-1/Lookbook";
-// import Products from "@/components/homes/home-1/Products";
-// import Marquee from "@/components/homes/home-1/Marquee";
+"use client";
+import { Suspense, lazy } from 'react';
+import { useRouterEvents } from './RouterEventsProvider';
 
-// import Header8 from "@/components/headers/Header8";
-import Hero from "@/components/homes/home-skincare/Hero";
-import Products from "@/components/homes/home-skincare/Products";
-import React from "react";
-import Features from "@/components/homes/home-skincare/Features";
-import '@fontsource/roboto';
-
-export const metadata = {
-  title: "Skincare Shop",
-  description: "Skincare Shop",
-};
+// Lazy load HomePage component
+const HomePage = lazy(() => import('@/pages/HomePage'));
 
 export default function Home() {
+  const { isPageLoading } = useRouterEvents();
+
   return (
     <>
-      <Hero />
-      <Products />
-      <Features />
+      {isPageLoading ? (
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      ) : (
+        <Suspense fallback={
+          <div className="flex justify-center items-center min-h-screen">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+          </div>
+        }>
+          <HomePage />
+        </Suspense>
+      )}
     </>
   );
 }

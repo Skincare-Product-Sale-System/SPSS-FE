@@ -1,42 +1,62 @@
 "use client";
-import { useEffect, useState, useRef, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense, lazy } from "react";
 import { ThemeProvider } from '@/context/ThemeContext';
 import { MuiThemeProvider } from '@/context/MuiThemeProvider';
 import Providers from './providers';
-import ChatAssistant from '@/components/othersPages/ChatAssistant';
-import RealTimeChat from '@/components/chat/RealTimeChat';
 import Context from '@/context/Context';
 import NextTopLoader from 'nextjs-toploader';
-import ScrollTop from "@/components/common/ScrollTop";
 import { Toaster } from "react-hot-toast";
 import { ClientProvider } from '@/providers/ClientProvider';
-import Compare from "@/components/modals/Compare";
-import ShopCart from "@/components/modals/ShopCart";
-// Modal imports
-import QuickView from "@/components/modals/QuickView";
-import MobileMenu from "@/components/modals/MobileMenu";
-import LoginModal from "@/components/modals/Login";
-import ShoppingCartModal from "@/components/modals/ShopCart";
 // Import styles
 import "../public/scss/main.scss";
 import "photoswipe/dist/photoswipe.css";
 import "rc-slider/assets/index.css";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Inter } from 'next/font/google';
-import Header2 from "@/components/headers/Header2";
-import Footer1 from "@/components/footers/Footer1";
 import '@/styles/globals.css';
 import { RouterEventsProvider } from './RouterEventsProvider';
-import StaffHeaderWrapper from '@/components/StaffHeaderWrapper';
 
 // Các providers và fonts
 const inter = Inter({ subsets: ['latin'] });
 
+// Lazy load components
+const Header = lazy(() => import('@/components/ui/headers/Header'));
+const Footer = lazy(() => import('@/components/ui/footers/Footer'));
+const StaffHeaderWrapper = lazy(() => import('@/components/staff/StaffHeaderWrapper'));
+const MobileMenu = lazy(() => import('@/components/ui/modals/MobileMenu'));
+const Compare = lazy(() => import('@/components/ui/modals/Compare'));
+const QuickView = lazy(() => import('@/components/ui/modals/QuickView'));
+const ShopCart = lazy(() => import('@/components/ui/modals/ShopCart'));
+const LoginModal = lazy(() => import('@/components/ui/modals/Login'));
+const RegisterModal = lazy(() => import('@/components/ui/modals/Register'));
+const ChatAssistant = lazy(() => import('@/components/chat/ChatAssistant'));
+const RealTimeChat = lazy(() => import('@/components/chat/RealTimeChat'));
+const ScrollTop = lazy(() => import('@/components/ui/common/ScrollTop'));
+
+const navigation = [
+  { name: "Home", href: "/" },
+  { name: "Shop", href: "/shop" },
+  { name: "Blog", href: "/blog" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
+];
+
+const accountNavigation = [
+  { name: "Profile", href: "/my-account" },
+  { name: "Orders", href: "/my-account-orders" },
+  { name: "Addresses", href: "/my-account-address" },
+  { name: "Reviews", href: "/my-account-reviews" },
+  { name: "Wishlist", href: "/my-account-wishlist" },
+  { name: "Logout", href: "/logout" },
+];
+
 export default function RootLayout({ children }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [scrollDirection, setScrollDirection] = useState("down");
   const [loading, setLoading] = useState(true);
+  const [currentPath, setCurrentPath] = useState("");
   
   // Check if the current user is a staff member (client-side only)
   const [isStaff, setIsStaff] = useState(false);
@@ -47,9 +67,59 @@ export default function RootLayout({ children }) {
     if (typeof window !== "undefined") {
       import("bootstrap/dist/js/bootstrap.esm").then(() => {
         // Bootstrap initialized
+        
+        // Prevent scrolling when modals are opened - Enhanced with better handling for both modals and offcanvas
+        const preventScrollReset = (event) => {
+          // Store current scroll position when opening a modal or offcanvas
+          const scrollY = window.scrollY;
+          document.body.style.position = 'fixed';
+          document.body.style.top = `-${scrollY}px`;
+          document.body.style.width = '100%';
+          
+          // Function to restore scroll position after modal is fully shown
+          const restoreScroll = () => {
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            window.scrollTo(0, scrollY);
+            event.target.removeEventListener('shown.bs.modal', restoreScroll);
+            event.target.removeEventListener('shown.bs.offcanvas', restoreScroll);
+          };
+          
+          // Add appropriate event listeners based on element type
+          if (event.target.classList.contains('modal')) {
+            event.target.addEventListener('shown.bs.modal', restoreScroll);
+          } else if (event.target.classList.contains('offcanvas')) {
+            event.target.addEventListener('shown.bs.offcanvas', restoreScroll);
+          }
+        };
+        
+        // Add event listeners for both modal and offcanvas
+        document.addEventListener('show.bs.modal', preventScrollReset);
+        document.addEventListener('show.bs.offcanvas', preventScrollReset);
+        
+        // Cleanup function
+        return () => {
+          document.removeEventListener('show.bs.modal', preventScrollReset);
+          document.removeEventListener('show.bs.offcanvas', preventScrollReset);
+        };
       });
     }
   }, []);
+  
+  // Track current path for SPA navigation
+  useEffect(() => {
+    if (currentPath !== pathname && pathname) {
+      setCurrentPath(pathname);
+      
+      // Only scroll to top when coming from a different page, not when opening modals
+      const hasOpenModal = document.querySelector('.modal.show, .offcanvas.show') !== null;
+      if (!hasOpenModal) {
+        // Check if this is an actual navigation, not a modal open
+        window.scrollTo(0, 0);
+      }
+    }
+  }, [pathname, currentPath]);
   
   // Header background effect
   useEffect(() => {
@@ -241,35 +311,57 @@ export default function RootLayout({ children }) {
                   <ClientProvider>
                     <NextTopLoader />
                     <div id="wrapper">
-                      {/* Header cố định - load immediately */}
-                      <StaffHeaderWrapper />
-                      
-                      {/* Mobile Menu */}
-                      <MobileMenu />
-                      
-                      {/* Phần nội dung thay đổi */}
+                      {/* Header - lazy loaded */}
                       <Suspense fallback={
-                        <div className="flex justify-center items-center min-h-screen">
-                          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+                        <div className="h-24 bg-white shadow-sm">
+                          <div className="flex justify-center items-center h-full">
+                            <div className="animate-pulse h-8 w-32 bg-gray-200 rounded"></div>
+                          </div>
                         </div>
                       }>
-                        {children}
+                        {isStaff ? <StaffHeaderWrapper /> : <Header />}
                       </Suspense>
                       
-                      {/* Footer cố định */}
-                      <Footer1 />
+                      {/* Mobile Menu - lazy loaded */}
+                      <Suspense fallback={null}>
+                        <MobileMenu />
+                      </Suspense>
+                      
+                      {/* Main content - only this will be rerendered on route change */}
+                      <main key={pathname} className="flex-grow">
+                        <Suspense fallback={
+                          <div className="flex justify-center items-center min-h-screen">
+                            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+                          </div>
+                        }>
+                          {children}
+                        </Suspense>
+                      </main>
+                      
+                      {/* Footer - lazy loaded */}
+                      <Suspense fallback={
+                        <div className="h-32 bg-gray-100">
+                          <div className="flex justify-center items-center h-full">
+                            <div className="animate-pulse h-8 w-32 bg-gray-200 rounded"></div>
+                          </div>
+                        </div>
+                      }>
+                        <Footer />
+                      </Suspense>
                     </div>
-                    {/* Modals and deferred components */}
+                    
+                    {/* Modals and deferred components - lazy loaded */}
                     <Suspense fallback={null}>
                       <Compare />
                       <QuickView />
                       <ShopCart />
                       <LoginModal />
-                      <ShoppingCartModal />
+                      <RegisterModal />
                     </Suspense>
+                    
                     {/* Chat components - chỉ hiển thị khi không phải staff */}
                     <Suspense fallback={null}>
-                      <ChatComponents />
+                      {mounted && <ChatComponents />}
                       <ScrollTop />
                     </Suspense>
                   </ClientProvider>
@@ -282,4 +374,4 @@ export default function RootLayout({ children }) {
       </body>
     </html>
   );
-} 
+}
