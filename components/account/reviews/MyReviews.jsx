@@ -30,7 +30,9 @@ import {
   FormControl,
   Select,
   MenuItem,
-  InputLabel
+  InputLabel,
+  Tabs,
+  Tab
 } from '@mui/material';
 import { 
   Close as CloseIcon, 
@@ -45,6 +47,47 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import getStar from "@/utils/getStar";
+
+// Tương tự như trong ProductReviewModal, tạo một component chọn rating thay thế
+const CustomRatingSelector = ({ value, onChange }) => {
+  const ratings = [1, 2, 3, 4, 5];
+  
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+      <Box sx={{ display: 'flex', mb: 1 }}>
+        {/* Show current rating with getStar */}
+        {getStar({ rating: value })}
+      </Box>
+      <Box sx={{ display: 'flex', gap: 1 }}>
+        {ratings.map((ratingValue) => (
+          <Button
+            key={ratingValue}
+            onClick={() => onChange(ratingValue)}
+            variant={value === ratingValue ? "contained" : "outlined"}
+            sx={{
+              minWidth: '36px',
+              height: '36px',
+              padding: '0',
+              color: value >= ratingValue ? '#FFB800' : '#666',
+              borderColor: value >= ratingValue ? '#FFB800' : '#ccc',
+              backgroundColor: value === ratingValue ? 'rgba(255, 184, 0, 0.1)' : 'transparent',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 184, 0, 0.1)',
+                borderColor: '#FFB800'
+              }
+            }}
+          >
+            {ratingValue}
+          </Button>
+        ))}
+      </Box>
+      <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+        {value ? `Bạn đã đánh giá ${value} sao` : 'Chọn số sao đánh giá'}
+      </Typography>
+    </Box>
+  );
+};
 
 export default function MyReviews() {
   const mainColor = useThemeColors();
@@ -490,16 +533,9 @@ export default function MyReviews() {
 
                   <Box sx={{ mt: 3 }}>
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                      <MuiRating 
-                        value={review.ratingValue} 
-                        readOnly 
-                        precision={1}
-                        sx={{
-                          '& .MuiRating-iconFilled': {
-                            color: mainColor.primary,
-                          }
-                        }}
-                      />
+                      <Box>
+                        {getStar({ rating: review.ratingValue })}
+                      </Box>
                       {review.isEditble !== false ? (
                         <Button 
                           variant="outlined" 
@@ -835,17 +871,12 @@ export default function MyReviews() {
                 >
                   Đánh giá
                 </Typography>
-                <MuiRating 
-                  value={editRating} 
-                  onChange={handleRatingChange}
-                  size="large"
-                  precision={1}
-                  sx={{
-                    '& .MuiRating-iconFilled': {
-                      color: mainColor.primary,
-                    }
-                  }}
-                />
+                <Box className="d-flex justify-content-center mb-3">
+                  <CustomRatingSelector
+                    value={editRating}
+                    onChange={(value) => setEditRating(value)}
+                  />
+                </Box>
               </Box>
               
               <Box>

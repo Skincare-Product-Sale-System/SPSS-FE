@@ -6,7 +6,6 @@ import {
   DialogActions, 
   Button, 
   TextField, 
-  Rating, 
   Box, 
   IconButton,
   Typography,
@@ -18,6 +17,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import DeleteIcon from '@mui/icons-material/Delete';
 import toast from "react-hot-toast";
+import getStar from "@/utils/getStar";
 
 export default function ProductReviewModal({ 
   open, 
@@ -156,6 +156,46 @@ export default function ProductReviewModal({
     }
   };
 
+  // Create a custom rating component with 5 clickable stars
+  const CustomRating = () => {
+    const ratings = [1, 2, 3, 4, 5];
+    
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+        <Box sx={{ display: 'flex', mb: 1 }}>
+          {/* Show current rating with getStar */}
+          {getStar({ rating })}
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          {ratings.map((value) => (
+            <Button
+              key={value}
+              onClick={() => setRating(value)}
+              variant={rating === value ? "contained" : "outlined"}
+              sx={{
+                minWidth: '36px',
+                height: '36px',
+                padding: '0',
+                color: rating >= value ? '#FFB800' : '#666',
+                borderColor: rating >= value ? '#FFB800' : '#ccc',
+                backgroundColor: rating === value ? 'rgba(255, 184, 0, 0.1)' : 'transparent',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 184, 0, 0.1)',
+                  borderColor: '#FFB800'
+                }
+              }}
+            >
+              {value}
+            </Button>
+          ))}
+        </Box>
+        <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+          {rating ? `Bạn đã đánh giá ${rating} sao` : 'Chọn số sao đánh giá'}
+        </Typography>
+      </Box>
+    );
+  };
+
   return (
     <Dialog 
       open={open} 
@@ -204,19 +244,8 @@ export default function ProductReviewModal({
           </Box>
         </Box>
 
-        <Box sx={{ mb: 3 }}>
-          <Rating 
-            name="product-rating"
-            value={rating}
-            onChange={(event, newValue) => {
-              setRating(newValue);
-            }}
-            size="large"
-            sx={{ 
-              color: mainColor.primary || 'orange',
-              fontSize: '2rem'
-            }}
-          />
+        <Box sx={{ mb: 3, display: 'flex', justifyContent: 'center' }}>
+          <CustomRating />
         </Box>
 
         <Box sx={{ mb: 3 }}>

@@ -6,10 +6,11 @@ import Link from "next/link";
 import React from "react";
 import { formatPrice } from "@/utils/priceFormatter";
 import { defaultProductImage } from "@/utils/default";
+import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
 
 export default function CompareProductsList({ items, onRemoveItem }) {
   const contextData = useContextElement() || {};
-  const { setQuickViewItem } = contextData;
+  const { setQuickViewItem, removeFromCompareItem } = contextData;
   
   const handleQuickView = (product) => {
     if (setQuickViewItem) {
@@ -29,7 +30,7 @@ export default function CompareProductsList({ items, onRemoveItem }) {
         <Link 
           href="/products" 
           className="btn btn-primary"
-          style={{ fontFamily: '"Roboto", sans-serif' }}
+          style={{ fontFamily: 'var(--font-primary, "Roboto"), sans-serif' }}
         >
           Tiếp tục mua sắm
         </Link>
@@ -77,7 +78,7 @@ export default function CompareProductsList({ items, onRemoveItem }) {
             </Link>
             <div className="price">
               <span className="price-on-sale">
-                ₫{product?.price?.toLocaleString()}
+                <PriceFormatter price={product?.price} />
               </span>
             </div>
             <div className="d-flex justify-center gap-2 tf-compare-group-btns">
@@ -91,7 +92,7 @@ export default function CompareProductsList({ items, onRemoveItem }) {
                 <span>XEM NHANH</span>
               </a>
               <button
-                onClick={() => onRemoveItem(product?.id)}
+                onClick={() => onRemoveItem ? onRemoveItem(product?.id) : removeFromCompareItem(product?.id)}
                 className="flex btn-outline-danger justify-center w-12 items-center radius-3 tf-btn"
                 style={{
                   border: '1px solid #dc3545',

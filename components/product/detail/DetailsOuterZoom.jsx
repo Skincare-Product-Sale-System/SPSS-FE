@@ -273,19 +273,19 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                 <div className="tf-zoom-main" />
                 <div className="bg-white p-4 rounded-lg shadow-sm other-image-zoom tf-product-info-list">
                   <div className="mb-2 tf-product-info-title">
-                    <h5 className="text-primary-800 fs-40">{product?.name || 'Tên sản phẩm'}</h5>
+                    <h3 className="text-primary-800 fs-60">{product?.name || 'Tên sản phẩm'}</h3>
                     <div className="d-flex gap-3 items-center product-rating">
                       <div className="flex items-center rating">
                         <span className="mr-2 rating-value">{product.ratingDisplay}</span>
                         <MuiRating
                           value={product.rating || 0}
-                          precision={0.5}
+                          precision={0.1}
                           readOnly
                           size="small"
                           sx={{
-                            color: theme.palette.warning.main,
+                            color: '#FFB800',
                             '& .MuiRating-iconEmpty': {
-                              color: '#d1d5db'
+                              color: 'rgba(255, 184, 0, 0.25)'
                             }
                           }}
                         />

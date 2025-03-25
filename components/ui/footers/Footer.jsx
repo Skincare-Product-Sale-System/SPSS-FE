@@ -111,12 +111,12 @@ export default function Footer1({ bgColor = "" }) {
                     </li>
                     <li>
                       <p>
-                        Email: <a href="#">info@Skincede.com</a>
+                        Email: <Link href="mailto:info@Skincede.com">info@Skincede.com</Link>
                       </p>
                     </li>
                     <li>
                       <p>
-                        Điện thoại: <a href="#">(024) 5555-1234</a>
+                        Điện thoại: <Link href="tel:(024) 5555-1234">(024) 5555-1234</Link>
                       </p>
                     </li>
                   </ul>

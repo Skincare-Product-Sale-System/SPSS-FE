@@ -5,7 +5,8 @@
  * @returns {string} - Formatted price string
  */
 export const formatPrice = (price) => {
-  return `${(price || 0).toLocaleString()}₫`;
+  if (!price && price !== 0) return "0₫";
+  return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫`;
 };
 
 /**

@@ -13,12 +13,17 @@ import "photoswipe/dist/photoswipe.css";
 import "rc-slider/assets/index.css";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Inter } from 'next/font/google';
+import { Roboto } from 'next/font/google';
 import '@/styles/globals.css';
 import { RouterEventsProvider } from './RouterEventsProvider';
 
-// Các providers và fonts
-const inter = Inter({ subsets: ['latin'] });
+// Fonts configuration
+const roboto = Roboto({ 
+  subsets: ['latin', 'vietnamese'],
+  variable: '--font-roboto',
+  weight: ['300', '400', '500', '700'],
+  display: 'swap',
+});
 
 // Lazy load components
 const Header = lazy(() => import('@/components/ui/headers/Header'));
@@ -296,20 +301,39 @@ export default function RootLayout({ children }) {
       <>
         <ChatAssistant />
         <RealTimeChat />
+        <ScrollTop />
       </>
     );
   };
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={`${roboto.variable}`}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style jsx global>{`
+          :root {
+            --font-primary: ${roboto.style.fontFamily};
+          }
+        `}</style>
+      </head>
+      <body className={roboto.className}>
         <MuiThemeProvider>
           <RouterEventsProvider>
             <ThemeProvider>
               <Providers>
                 <Context>
                   <ClientProvider>
-                    <NextTopLoader />
+                    <NextTopLoader
+                      color="#4ECDC4"
+                      initialPosition={0.08}
+                      crawlSpeed={200}
+                      height={3}
+                      crawl={true}
+                      showSpinner={false}
+                      easing="ease"
+                      speed={200}
+                      shadow="0 0 10px #4ECDC4,0 0 5px #4ECDC4"
+                    />
                     <div id="wrapper">
                       {/* Header - lazy loaded */}
                       <Suspense fallback={
@@ -362,7 +386,6 @@ export default function RootLayout({ children }) {
                     {/* Chat components - chỉ hiển thị khi không phải staff */}
                     <Suspense fallback={null}>
                       {mounted && <ChatComponents />}
-                      <ScrollTop />
                     </Suspense>
                   </ClientProvider>
                 </Context>

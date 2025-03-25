@@ -26,24 +26,52 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Poppins", "Playfair Display", sans-serif',
+    fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+    fontSize: 16,
     h1: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+      fontWeight: 500,
     },
     h2: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+      fontWeight: 500,
     },
     h3: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+      fontWeight: 500,
     },
     h4: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+      fontWeight: 500,
     },
     h5: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+      fontWeight: 500,
     },
     h6: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+      fontWeight: 500,
+    },
+    body1: {
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+      fontSize: '1rem',
+      fontWeight: 400,
+      lineHeight: 1.5,
+    },
+    body2: {
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+      fontSize: '0.875rem',
+      fontWeight: 400,
+      lineHeight: 1.43,
+    },
+    button: {
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+      fontWeight: 500,
+      textTransform: 'none',
+    },
+    caption: {
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+      fontSize: '0.75rem',
     },
   },
   shape: {
@@ -55,6 +83,7 @@ const theme = createTheme({
         root: {
           borderRadius: 24,
           textTransform: 'none',
+          fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
         },
       },
     },
@@ -64,6 +93,50 @@ const theme = createTheme({
           borderRadius: 12,
         },
       },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        h1: {
+          fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+        },
+        h2: {
+          fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+        },
+        h3: {
+          fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+        },
+        h4: {
+          fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+        },
+        h5: {
+          fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+        },
+        h6: {
+          fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+        },
+      }
+    },
+    MuiChip: {
+      variants: [
+        {
+          props: { variant: 'price' },
+          style: {
+            fontFamily: 'var(--font-mono, var(--font-roboto-mono)), monospace',
+            fontWeight: 500,
+          },
+        },
+      ],
+    },
+    MuiTableCell: {
+      variants: [
+        {
+          props: { className: 'price-cell' },
+          style: {
+            fontFamily: 'var(--font-mono, var(--font-roboto-mono)), monospace',
+            textAlign: 'right',
+          },
+        },
+      ],
     },
   },
 });

@@ -9,6 +9,7 @@ import AddressSection from "./AddressSection";
 import PaymentMethodsSection from "./PaymentMethodsSection";
 import OrderSummarySection from "./OrderSummarySection";
 import { useTheme } from "@mui/material/styles";
+import Link from "next/link";
 
 export default function CheckoutContent() {
   const theme = useTheme();
@@ -47,12 +48,12 @@ export default function CheckoutContent() {
 
       // Redirect to cart page if cart is empty
       if (items.length === 0) {
-        window.location.href = "/view-cart";
+        window.location.href = "/cart";
       }
     } catch (e) {
       setCartProducts([]);
       // Redirect to cart page if there's an error fetching cart
-      window.location.href = "/view-cart";
+      window.location.href = "/cart";
     }
   };
 
@@ -319,9 +320,9 @@ export default function CheckoutContent() {
                 />
                 <label className="form-check-label fs-14" htmlFor="check-agree">
                   Tôi đã đọc và đồng ý với
-                  <a href="/terms-conditions" className="text-decoration-underline ms-1">
+                  <Link href="/terms-conditions" className="text-decoration-underline ms-1">
                     điều khoản và điều kiện
-                  </a>
+                  </Link>
                   của website.
                 </label>
               </div>
@@ -340,9 +341,9 @@ export default function CheckoutContent() {
               {/* Privacy policy note */}
               <div className="mt-3 fs-14 text-muted">
                 Thông tin cá nhân của bạn sẽ được sử dụng để xử lý đơn hàng và hỗ trợ trải nghiệm của bạn trên website này. 
-                <a href="/privacy-policy" className="text-decoration-underline ms-1">
+                <Link href="/privacy-policy" className="text-decoration-underline ms-1">
                   Xem thêm trong chính sách bảo mật
-                </a>.
+                </Link>.
               </div>
             </div>
           </div>

@@ -11,53 +11,7 @@ import { useThemeColors } from "@/context/ThemeContext";
 import CloseIcon from '@mui/icons-material/Close';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-
-// Thêm một component Rating mới thay thế cho component Rating hiện tại
-const AccurateStarRating = ({ value, size = 'medium' }) => {
-  const fullStars = Math.floor(value);
-  const partialStar = value - fullStars;
-  const emptyStars = 5 - fullStars - (partialStar > 0 ? 1 : 0);
-  
-  const starSizes = {
-    small: { fontSize: '16px' },
-    medium: { fontSize: '20px' },
-    large: { fontSize: '24px' }
-  };
-  
-  const sizeStyle = starSizes[size] || starSizes.medium;
-  
-  return (
-    <div className="d-flex align-items-center">
-      {/* Hiển thị các sao đầy đủ */}
-      {[...Array(fullStars)].map((_, index) => (
-        <StarIcon key={`full-${index}`} sx={{ color: '#FFD700', ...sizeStyle }} />
-      ))}
-      
-      {/* Hiển thị sao một phần nếu có */}
-      {partialStar > 0 && (
-        <div style={{ position: 'relative', height: sizeStyle.fontSize, width: sizeStyle.fontSize }}>
-          {/* Sao nền xám */}
-          <StarIcon sx={{ color: '#e0e0e0', position: 'absolute', ...sizeStyle }} />
-          
-          {/* Sao vàng phủ một phần */}
-          <div style={{ 
-            overflow: 'hidden', 
-            position: 'absolute', 
-            width: `${partialStar * 100}%`,
-            height: '100%'
-          }}>
-            <StarIcon sx={{ color: '#FFD700', ...sizeStyle }} />
-          </div>
-        </div>
-      )}
-      
-      {/* Hiển thị các sao còn lại */}
-      {[...Array(emptyStars)].map((_, index) => (
-        <StarIcon key={`empty-${index}`} sx={{ color: '#e0e0e0', ...sizeStyle }} />
-      ))}
-    </div>
-  );
-};
+import getStar from "@/utils/getStar";
 
 export default function ProductReviews({ productId }) {
   const mainColor = useThemeColors();
@@ -270,7 +224,7 @@ export default function ProductReviews({ productId }) {
               </Typography>
               <div className="d-flex flex-column">
                 <div className="d-flex mb-1">
-                  <AccurateStarRating value={parseFloat(stats.average)} size="medium" />
+                  {getStar({ rating: parseFloat(stats.average) })}
                 </div>
                 <Typography variant="body2" component="div" className="text-neutral-600">
                   trên 5
@@ -383,7 +337,7 @@ export default function ProductReviews({ productId }) {
                         {review.userName}
                       </div>
                       <div className="d-flex align-items-center">
-                        <AccurateStarRating value={review.ratingValue} size="small" />
+                        {getStar({ rating: review.ratingValue })}
                         <span className="text-muted text-neutral-500 fs-13 ml-2">
                           {dayjs(review.lastUpdatedTime).format("YYYY-MM-DD HH:mm")}
                         </span>

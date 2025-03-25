@@ -1,0 +1,121 @@
+/* 
+  Font styling for SPSS Skincare Store 
+  Using Roboto for all text elements
+*/
+
+/* Typography base styles */
+body {
+  font-family: var(--font-primary, 'Roboto'), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--black);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-primary, 'Roboto'), system-ui, sans-serif;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+h1, .h1 {
+  font-size: 2.5rem;
+}
+
+h2, .h2 {
+  font-size: 2rem;
+}
+
+h3, .h3 {
+  font-size: 1.75rem;
+}
+
+h4, .h4 {
+  font-size: 1.5rem;
+}
+
+h5, .h5 {
+  font-size: 1.25rem;
+}
+
+h6, .h6 {
+  font-size: 1rem;
+}
+
+/* For product titles, pricing etc. */
+.product-title {
+  font-family: var(--font-primary, 'Roboto'), system-ui, sans-serif;
+  font-weight: 500;
+}
+
+/* Price styling with consistent font for better number alignment and readability */
+.price,
+.product-price,
+.item-price,
+.total-price,
+.discount-price,
+[class*="price"],
+.amount {
+  font-family: var(--font-primary, 'Roboto'), system-ui, sans-serif;
+  font-weight: 500;
+}
+
+/* Currency symbol styling */
+.price .currency,
+.product-price .currency,
+.item-price .currency,
+.total-price .currency,
+[class*="price"] .currency {
+  font-family: var(--font-primary, 'Roboto'), system-ui, sans-serif;
+  font-weight: 500;
+}
+
+/* Button text */
+button, 
+.btn,
+a.btn {
+  font-family: var(--font-primary, 'Roboto'), system-ui, sans-serif;
+  font-weight: 500;
+}
+
+/* Navigation */
+.nav-link,
+.navbar-nav,
+.menu-item {
+  font-family: var(--font-primary, 'Roboto'), system-ui, sans-serif;
+  font-weight: 500;
+}
+
+/* Utility classes */
+.font-base {
+  font-family: var(--font-primary, 'Roboto'), system-ui, sans-serif !important;
+}
+
+/* Vietnamese font optimization */
+.vietnamese {
+  font-feature-settings: "locl";
+  text-rendering: optimizeLegibility;
+}
+
+.fw-light {
+  font-weight: 300 !important;
+}
+
+.fw-normal {
+  font-weight: 400 !important;
+}
+
+.fw-medium {
+  font-weight: 500 !important;
+}
+
+.fw-semibold {
+  font-weight: 500 !important;
+}
+
+.fw-bold {
+  font-weight: 700 !important;
+} 

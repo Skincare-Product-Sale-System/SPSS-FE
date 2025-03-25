@@ -3,6 +3,7 @@ import React from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { useThemeColors } from "@/context/ThemeContext";
+import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
 
 export default function OrderCard({ 
   order, 
@@ -52,7 +53,7 @@ export default function OrderCard({
               </div>
             </Link>
             <div className="flex flex-row text-right gap-2 items-end">
-              <p className="font-medium">{formatCurrency(item.price)}</p>
+              <PriceFormatter price={item.price} className="font-medium" />
               <button
                 className={`px-3 py-1.5 text-xs rounded-md transition-all ${
                   order.status?.toLowerCase() === "delivered" && item.isReviewable
@@ -89,12 +90,12 @@ export default function OrderCard({
       <div className="bg-gray-50 border-t p-4">
         <div className="flex justify-between items-center mb-4">
           <span className="font-medium">Tổng số tiền ({order.orderDetails.length} sản phẩm):</span>
-          <span className="text-lg font-bold">{formatCurrency(order.orderTotal)}</span>
+          <PriceFormatter price={order.orderTotal} variant="h6" sx={{ fontWeight: 'bold' }} />
         </div>
         
         <div className="flex justify-end gap-3">
           <Link
-            href={`/my-account-orders-details?id=${order.id}`}
+            href={`/order-details?id=${order.id}`}
             className="bg-white border rounded-md hover:opacity-80 px-4 py-2 transition-colors"
             style={{ 
               color: mainColor, 
@@ -109,4 +110,4 @@ export default function OrderCard({
       </div>
     </div>
   );
-} 
+}

@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
 
 export default function ShopCart() {
   const contextData = useContextElement() || {};
@@ -122,17 +123,12 @@ export default function ShopCart() {
                           <div className="meta-variant" style={{ fontFamily: '"Roboto", sans-serif' }}>
                             {elm.variationOptionValues[0]}
                           </div>
-                          <div className="fw-6 price" style={{ fontFamily: '"Roboto", sans-serif' }}>
-                            <span
-                              style={{
-                                color: "#ff0000",
-                              }}
-                            >
-                              {formatPrice(elm?.price)} {" "}
-                            </span>
-                            <span className="compare-at-price ms-1 strikethrough">
-                              {elm.marketPrice && formatPrice(elm.marketPrice)}
-                            </span>
+                          <div className="fw-6 price" style={{ fontFamily: 'var(--font-mono, var(--font-roboto-mono)), monospace' }}>
+                            <PriceFormatter 
+                              price={elm?.price} 
+                              originalPrice={elm.marketPrice} 
+                              sx={{ fontWeight: 600 }}
+                            />
                           </div>
                           <div className="tf-mini-cart-btns">
                             <div className="small wg-quantity">
@@ -336,13 +332,14 @@ export default function ShopCart() {
                   <div className="tf-cart-totals-discounts">
                     <div className="tf-cart-total" style={{ fontFamily: '"Roboto", sans-serif' }}>Tạm tính</div>
                     
-                    <div className="fw-6 tf-totals-total-value">
-                      {formatPrice(totalPrice)}
+                    <div className="d-flex align-items-center justify-content-between">
+                      <span>Tổng cộng:</span>
+                      <PriceFormatter price={totalPrice} variant="h6" sx={{ fontWeight: 600 }} />
                     </div>
                   </div>
-                  {/* <div className="tf-cart-tax">
-                    Taxes and <a href="#">shipping</a> calculated at checkout
-                  </div> */}
+                  <div className="tf-cart-tax">
+                    Taxes and <Link href="/shipping-info">shipping</Link> calculated at checkout
+                  </div>
                   <div className="tf-mini-cart-line" />
                   <div className="tf-cart-checkbox">
                     <div className="tf-checkbox-wrapp">
@@ -369,7 +366,7 @@ export default function ShopCart() {
                   </div>
                   <div className="tf-mini-cart-view-checkout">
                     <Link
-                      href={`/view-cart`}
+                      href={`/cart`}
                       className="btn-outline justify-content-center w-100 link radius-3 tf-btn"
                     >
                       Xem Giỏ Hàng
@@ -425,7 +422,9 @@ export default function ShopCart() {
                       <div className="tf-gift-wrap-infos">
                         <p>Bạn có muốn gói quà không?</p>
                         Chỉ với
-                        <span className="fw-6 price">{formatPrice(5000)}</span>
+                        <span className="fw-6 price">
+                          <PriceFormatter price={5000} />
+                        </span>
                       </div>
                     </div>
                     <div className="tf-cart-tool-btns">

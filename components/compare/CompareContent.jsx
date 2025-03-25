@@ -4,6 +4,7 @@ import request from "@/utils/axios";
 import { useEffect, useState } from "react";
 import CompareProductsList from "./CompareProductsList";
 import CompareSpecifications from "./CompareSpecifications";
+import getStar from "@/utils/getStar";
 
 export default function CompareContent() {
   const contextData = useContextElement() || {};
@@ -96,21 +97,10 @@ export default function CompareContent() {
                 <div className="text-center tf-compare-col tf-compare-value" style={{ flex: 1 }}>
                   {item?.rating !== undefined && item?.rating !== null ? (
                     <div>
-                      <div className="d-flex justify-center mb-1">
-                        {[...Array(5)].map((_, i) => (
-                          <span 
-                            key={i} 
-                            style={{ 
-                              color: i < item.rating ? '#FFD700' : '#e0e0e0',
-                              fontSize: '18px',
-                              margin: '0 1px'
-                            }}
-                          >
-                            ★
-                          </span>
-                        ))}
+                      <div className="d-flex justify-content-center align-items-center mb-1" style={{ minHeight: '24px' }}>
+                        {getStar({ rating: item.rating })}
                       </div>
-                      <div className="fs-14 fw-medium">
+                      <div className="fs-14 fw-medium" style={{ color: '#333' }}>
                         {item.rating.toFixed(1)} / 5
                       </div>
                     </div>

@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import 'swiper/css';
 import 'swiper/css/navigation';
+import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
 
 export default function ProductCarousel({ products, index, mainColor }) {
   return (
@@ -105,17 +106,15 @@ export default function ProductCarousel({ products, index, mainColor }) {
                     {product.description}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography 
-                      variant="h6" 
-                      component="div"
+                    <PriceFormatter 
+                      price={product.price} 
+                      originalPrice={product.marketPrice}
                       sx={{ 
                         fontWeight: 700,
                         color: mainColor.primary,
                         fontSize: '1.1rem'
                       }}
-                    >
-                      {formatPrice(product.price)}
-                    </Typography>
+                    />
                     <Chip 
                       label="Xem chi tiết" 
                       size="small"

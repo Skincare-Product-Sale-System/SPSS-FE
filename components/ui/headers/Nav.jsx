@@ -127,14 +127,14 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       <ul className={level === 0 ? "menu-list" : "submenu-list"}>
         {categoryList.map((category, index) => (
           <li key={index} className={category.children?.length > 0 ? "menu-item-2" : ""}>
-            <a
+            <Link
               href={`/products?categoryId=${category.id}`}
               className={`menu-link-text link position-relative ${
                 isMenuActive({ href: `/products?categoryId=${category.id}` }) ? "activeMenu" : ""
               }`}
             >
               {category.categoryName}
-            </a>
+            </Link>
             
             {category.children?.length > 0 && (
               <div className="sub-menu submenu-default">
@@ -160,17 +160,17 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
     <>
       {" "}
       <li className="menu-item">
-        <a
+        <Link
           href="/"
           className={`item-link ${Linkfs} ${textColor} ${
             isMenuActive(allHomepages) ? "activeMenu" : ""
           } `}
         >
           Trang Chủ
-        </a>
+        </Link>
       </li>
       <li className="menu-item">
-        <a
+        <Link
           href="/quiz"
           className={`item-link ${Linkfs} ${textColor} ${
             isMenuActive([
@@ -183,7 +183,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
           } `}
         >
           Khảo Sát Da
-        </a>
+        </Link>
       </li>
       {/* <li className="menu-item">
         <a
@@ -280,14 +280,14 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
         </div>
       </li> */}
       <li className="menu-item">
-        <a
+        <Link
           href="/products"
           className={`item-link ${Linkfs} ${textColor} ${
             isMenuActive(productDetailPages) ? "activeMenu" : ""
           }`}
         >
           Sản Phẩm<i className="icon icon-arrow-down" style={{ display: 'inline-block', width: '12px', marginLeft: '1px' }}></i>
-        </a>
+        </Link>
         <div className="mega-menu sub-menu">
           <div className="container">
             <div className="row">
@@ -301,14 +301,14 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                     {Array.isArray(skinTypes) && skinTypes.length > 0 ? (
                       skinTypes.map((skinType, index) => (
                         <li key={`skin-${index}`}>
-                          <a
+                          <Link
                             href={`/products?skinTypeId=${skinType.id}`}
                             className={`menu-link-text link position-relative ${
                               isMenuActive({ href: `/products?skinTypeId=${skinType.id}` }) ? "activeMenu" : ""
                             }`}
                           >
                             {skinType.name}
-                          </a>
+                          </Link>
                         </li>
                       ))
                     ) : (
@@ -449,7 +449,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
         </div>
       </li> */}
       <li className="position-relative menu-item">
-        <a
+        <Link
           href="/blog"
           className={`item-link ${Linkfs} ${textColor}  ${
             isMenuActive(blogLinks) ? "activeMenu" : ""
@@ -472,7 +472,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
               ))}
             </ul>
           </div> */}
-        </a>
+        </Link>
       </li>
     </>
   );

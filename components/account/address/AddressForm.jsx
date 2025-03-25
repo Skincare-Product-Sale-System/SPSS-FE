@@ -10,6 +10,17 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
   const { Id } = useAuthStore();
   const [countries, setCountries] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState({
+    customerName: "",
+    phoneNumber: "",
+    streetNumber: "",
+    addressLine1: "",
+    city: "",
+    ward: "",
+    province: "",
+    postCode: "",
+    countryId: ""
+  });
   const [formData, setFormData] = useState({
     customerName: "",
     phoneNumber: "",
@@ -40,6 +51,18 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
         postCode: address.postCode || "",
         isDefault: address.isDefault || false
       });
+      // Clear errors when editing an existing address
+      setErrors({
+        customerName: "",
+        phoneNumber: "",
+        streetNumber: "",
+        addressLine1: "",
+        city: "",
+        ward: "",
+        province: "",
+        postCode: "",
+        countryId: ""
+      });
     }
   }, [address]);
 
@@ -53,51 +76,113 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
     }
   };
 
+  const validateField = (name, value) => {
+    let error = "";
+    
+    switch(name) {
+      case "customerName":
+        if (!value.trim()) {
+          error = "Tên khách hàng là bắt buộc";
+        } else if (value.trim().length < 2) {
+          error = "Tên khách hàng phải có ít nhất 2 ký tự";
+        }
+        break;
+      case "phoneNumber":
+        if (!value.trim()) {
+          error = "Số điện thoại là bắt buộc";
+        } else {
+          // Vietnamese phone number validation
+          const phoneRegex = /^(\+84|0)\d{9,10}$/;
+          if (!phoneRegex.test(value)) {
+            error = "Số điện thoại không hợp lệ (VD: 0912345678 hoặc +84912345678)";
+          }
+        }
+        break;
+      case "streetNumber":
+        if (!value.trim()) {
+          error = "Số nhà là bắt buộc";
+        }
+        break;
+      case "addressLine1":
+        if (!value.trim()) {
+          error = "Địa chỉ 1 là bắt buộc";
+        }
+        break;
+      case "city":
+        if (!value.trim()) {
+          error = "Thành phố là bắt buộc";
+        }
+        break;
+      case "ward":
+        if (!value.trim()) {
+          error = "Phường/Xã là bắt buộc";
+        }
+        break;
+      case "province":
+        if (!value.trim()) {
+          error = "Tỉnh/Thành phố là bắt buộc";
+        }
+        break;
+      case "postCode":
+        if (!value.trim()) {
+          error = "Mã bưu điện là bắt buộc";
+        } else if (!/^\d{5,6}$/.test(value)) {
+          error = "Mã bưu điện không hợp lệ (phải là 5-6 chữ số)";
+        }
+        break;
+      case "countryId":
+        if (!value) {
+          error = "Quốc gia là bắt buộc";
+        }
+        break;
+      default:
+        break;
+    }
+    
+    return error;
+  };
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const newValue = type === 'checkbox' ? checked : value;
+    
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: newValue
     });
+    
+    // Validate the field and update errors
+    if (name !== 'addressLine2' && name !== 'isDefault') { // Skip validation for optional fields
+      const error = validateField(name, newValue);
+      setErrors({
+        ...errors,
+        [name]: error
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.customerName) {
-      toast.error("Customer name is required");
-      return;
-    }
-    if (!formData.phoneNumber) {
-      toast.error("Phone number is required");
-      return;
-    }
-    if (!formData.streetNumber) {
-      toast.error("Street number is required");
-      return;
-    }
-    if (!formData.addressLine1) {
-      toast.error("Address Line 1 is required");
-      return;
-    }
-    if (!formData.city) {
-      toast.error("City is required");
-      return;
-    }
-    if (!formData.ward) {
-      toast.error("Ward is required");
-      return;
-    }
-    if (!formData.province) {
-      toast.error("Province is required");
-      return;
-    }
-    if (!formData.postCode) {
-      toast.error("Postal code is required");
-      return;
-    }
-    if (!formData.countryId) {
-      toast.error("Country is required");
+    // Validate all required fields before submission
+    const newErrors = {};
+    let isValid = true;
+    
+    // Validate each field
+    Object.keys(formData).forEach(key => {
+      if (key !== 'addressLine2' && key !== 'isDefault') { // Skip validation for optional fields
+        const error = validateField(key, formData[key]);
+        if (error) {
+          isValid = false;
+          newErrors[key] = error;
+        }
+      }
+    });
+    
+    setErrors(newErrors);
+    
+    // If validation fails, don't submit
+    if (!isValid) {
       return;
     }
     
@@ -110,10 +195,10 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
       
       if (address) {
         await request.patch(`/addresses/${address.id}`, payload);
-        toast.success("Address updated successfully");
+        toast.success("Địa chỉ đã được cập nhật thành công");
       } else {
         await request.post("/addresses", payload);
-        toast.success("Address added successfully");
+        toast.success("Địa chỉ đã được thêm thành công");
       }
       
       onSuccess();
@@ -121,7 +206,7 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
     } catch (err) {
       console.error("Error saving address:", err);
       toast.error(
-        address ? "Failed to update address" : "Failed to add address"
+        address ? "Cập nhật địa chỉ thất bại" : "Thêm địa chỉ thất bại"
       );
     } finally {
       setSaving(false);
@@ -149,12 +234,12 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-            Tên khách hàng
+            Tên khách hàng <span className="text-red-500">*</span>
           </label>
           <input
-            className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
+            className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.customerName ? 'border-red-500' : ''}`}
             style={{ 
-              borderColor: theme.palette.divider,
+              borderColor: errors.customerName ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
             type="text"
@@ -163,16 +248,19 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             value={formData.customerName}
             onChange={handleInputChange}
           />
+          {errors.customerName && (
+            <p className="text-xs text-red-500 mt-1">{errors.customerName}</p>
+          )}
         </div>
         
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-            Số điện thoại
+            Số điện thoại <span className="text-red-500">*</span>
           </label>
           <input
-            className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
+            className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.phoneNumber ? 'border-red-500' : ''}`}
             style={{ 
-              borderColor: theme.palette.divider,
+              borderColor: errors.phoneNumber ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
             type="text"
@@ -181,16 +269,19 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             value={formData.phoneNumber}
             onChange={handleInputChange}
           />
+          {errors.phoneNumber && (
+            <p className="text-xs text-red-500 mt-1">{errors.phoneNumber}</p>
+          )}
         </div>
         
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-            Số nhà
+            Số nhà <span className="text-red-500">*</span>
           </label>
           <input
-            className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
+            className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.streetNumber ? 'border-red-500' : ''}`}
             style={{ 
-              borderColor: theme.palette.divider,
+              borderColor: errors.streetNumber ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
             type="text"
@@ -199,16 +290,19 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             value={formData.streetNumber}
             onChange={handleInputChange}
           />
+          {errors.streetNumber && (
+            <p className="text-xs text-red-500 mt-1">{errors.streetNumber}</p>
+          )}
         </div>
         
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-            Địa chỉ 1
+            Địa chỉ 1 <span className="text-red-500">*</span>
           </label>
           <input
-            className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
+            className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.addressLine1 ? 'border-red-500' : ''}`}
             style={{ 
-              borderColor: theme.palette.divider,
+              borderColor: errors.addressLine1 ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
             type="text"
@@ -217,6 +311,9 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             value={formData.addressLine1}
             onChange={handleInputChange}
           />
+          {errors.addressLine1 && (
+            <p className="text-xs text-red-500 mt-1">{errors.addressLine1}</p>
+          )}
         </div>
         
         <div className="tf-field">
@@ -239,12 +336,12 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
         
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-            Thành phố
+            Thành phố <span className="text-red-500">*</span>
           </label>
           <input
-            className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
+            className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.city ? 'border-red-500' : ''}`}
             style={{ 
-              borderColor: theme.palette.divider,
+              borderColor: errors.city ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
             type="text"
@@ -253,16 +350,19 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             value={formData.city}
             onChange={handleInputChange}
           />
+          {errors.city && (
+            <p className="text-xs text-red-500 mt-1">{errors.city}</p>
+          )}
         </div>
         
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-            Phường/Xã
+            Phường/Xã <span className="text-red-500">*</span>
           </label>
           <input
-            className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
+            className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.ward ? 'border-red-500' : ''}`}
             style={{ 
-              borderColor: theme.palette.divider,
+              borderColor: errors.ward ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
             type="text"
@@ -271,16 +371,19 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             value={formData.ward}
             onChange={handleInputChange}
           />
+          {errors.ward && (
+            <p className="text-xs text-red-500 mt-1">{errors.ward}</p>
+          )}
         </div>
         
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-            Quận/Huyện
+            Quận/Huyện <span className="text-red-500">*</span>
           </label>
           <input
-            className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
+            className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.province ? 'border-red-500' : ''}`}
             style={{ 
-              borderColor: theme.palette.divider,
+              borderColor: errors.province ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
             type="text"
@@ -289,16 +392,19 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             value={formData.province}
             onChange={handleInputChange}
           />
+          {errors.province && (
+            <p className="text-xs text-red-500 mt-1">{errors.province}</p>
+          )}
         </div>
         
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-            Mã bưu điện
+            Mã bưu điện <span className="text-red-500">*</span>
           </label>
           <input
-            className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
+            className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.postCode ? 'border-red-500' : ''}`}
             style={{ 
-              borderColor: theme.palette.divider,
+              borderColor: errors.postCode ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
             type="text"
@@ -307,16 +413,19 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             value={formData.postCode}
             onChange={handleInputChange}
           />
+          {errors.postCode && (
+            <p className="text-xs text-red-500 mt-1">{errors.postCode}</p>
+          )}
         </div>
         
         <div className="md:col-span-2 tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-            Quốc gia
+            Quốc gia <span className="text-red-500">*</span>
           </label>
           <select
-            className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
+            className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.countryId ? 'border-red-500' : ''}`}
             style={{ 
-              borderColor: theme.palette.divider,
+              borderColor: errors.countryId ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
             id="countryId"
@@ -335,6 +444,9 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
               <option disabled>No countries available</option>
             )}
           </select>
+          {errors.countryId && (
+            <p className="text-xs text-red-500 mt-1">{errors.countryId}</p>
+          )}
         </div>
         
         <div className="flex items-center md:col-span-2 mt-2">

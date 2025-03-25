@@ -12,6 +12,7 @@ import request from "@/utils/axios";
 import toast from "react-hot-toast";
 import useQueryStore from "@/context/queryStore";
 import CloseIcon from '@mui/icons-material/Close';
+import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
 
 export default function QuickView() {
   const theme = useTheme();
@@ -205,14 +206,12 @@ export default function QuickView() {
               {productDetail.name}
             </Typography>
             <Box sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
-              <Typography variant="h6" component="span" sx={{ color: theme.palette.primary.main, fontWeight: 600, mr: 2 }}>
-                {formatPrice(currentProductItem?.price)}
-              </Typography>
-              {currentProductItem?.marketPrice && (
-                <Typography variant="body1" component="span" sx={{ textDecoration: 'line-through', mr: 2 }}>
-                  {formatPrice(currentProductItem.marketPrice)}
-                </Typography>
-              )}
+              <PriceFormatter 
+                price={currentProductItem?.price} 
+                originalPrice={currentProductItem?.marketPrice} 
+                variant="h6" 
+                sx={{ color: theme.palette.primary.main, fontWeight: 600, mr: 2 }} 
+              />
               {discountPercent > 0 && (
                 <Chip label={`-${discountPercent}%`} size="small" sx={{ backgroundColor: theme.palette.error.light }} />
               )}

@@ -7,6 +7,8 @@ import { allProducts } from "@/data/products";
 import request from "@/utils/axios";
 import { defaultProductImage } from "@/utils/default";
 import { formatPrice } from "@/utils/priceFormatter";
+import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
+import getStar from "@/utils/getStar";
 
 export default function Compare() {
   const { removeFromCompareItem, compareItem, setCompareItem } =
@@ -102,15 +104,11 @@ export default function Compare() {
                           </div>
                           <div className="text-start">
                             <span className="new-price">
-                              {formatPrice(elm?.price)}
+                              <PriceFormatter price={elm?.price} />
                             </span>
                           </div>
                           <div className="text-start tf-compare-item-rating">
-                            <span className="rating-star">
-                              <i className="icon-star" />
-                              <i className="icon-star" />
-                              <i className="icon-star" />
-                            </span>
+                            {getStar({ rating: elm?.rating || 0 })}
                           </div>
                         </div>
                       </div>

@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/utils/priceFormatter";
 import { defaultProductImage } from "@/utils/default";
 import { openCompareModal } from "@/utils/openCompareModal";
+import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
 
 export default function ProductCard({ 
   product, 
@@ -215,19 +216,10 @@ export default function ProductCard({
                 gap: 1
               }}
             >
-              {formatPrice(product.salePrice || product.price)}
-              {product.salePrice && (
-                <Typography 
-                  component="span" 
-                  sx={{ 
-                    textDecoration: 'line-through', 
-                    color: theme.palette.text.secondary,
-                    fontSize: '0.875rem'
-                  }}
-                >
-                  {formatPrice(product.price)}
-                </Typography>
-              )}
+              <PriceFormatter 
+                price={product.salePrice || product.price} 
+                originalPrice={product.salePrice ? product.price : null}
+              />
             </Typography>
           </Box>
           <Typography
