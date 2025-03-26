@@ -2,10 +2,6 @@
 import { Suspense } from 'react';
 import StaffPage from '@/pages/StaffPage';
 
-// Thêm cấu hình để tránh lỗi client reference manifest
-export const dynamic = 'force-static';
-export const dynamicParams = false;
-
 export default function Page() {
   return (
     <Suspense fallback={
