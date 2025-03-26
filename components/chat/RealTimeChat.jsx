@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as signalR from "@microsoft/signalr";
 import { useThemeColors } from "@/context/ThemeContext";
-import { CircularProgress, IconButton } from '@mui/material';
+import { CircularProgress, IconButton, Card, CardMedia, CardContent, Typography, CardActions, Button, Box, Rating } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonIcon from '@mui/icons-material/Person';
@@ -10,8 +10,10 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import InfoIcon from '@mui/icons-material/Info';
 import SendIcon from '@mui/icons-material/Send';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import StarIcon from '@mui/icons-material/Star';
 import useAuthStore from "@/context/authStore";
 import * as LocalStorage from '@/utils/localStorage';
+import { formatPrice } from "@/utils/priceFormatter";
 
 const MESSAGE_TYPES = {
   USER: 'user',      // Tin nhắn từ khách hàng
@@ -65,7 +67,7 @@ export default function RealTimeChat() {
     if (!connection) {
       console.log("Creating new connection");
       const newConnection = new signalR.HubConnectionBuilder()
-        .withUrl(`${process.env.NEXT_PUBLIC_API_URL}/chathub`, {
+        .withUrl(`https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/chathub`, {
           skipNegotiation: true,
           transport: signalR.HttpTransportType.WebSockets
         })
@@ -149,6 +151,16 @@ export default function RealTimeChat() {
       const normalizedUserType = userType === 'support' ? MESSAGE_TYPES.STAFF : MESSAGE_TYPES.USER;
       const uiSender = normalizedUserType === MESSAGE_TYPES.STAFF ? "support" : "me";
       
+      // Kiểm tra xem tin nhắn có phải là JSON không trước khi lưu
+      let messageContent = message;
+      try {
+        // Nếu là JSON (ví dụ: sản phẩm), vẫn giữ nguyên định dạng
+        JSON.parse(message);
+        // Không cần làm gì với messageContent - giữ nguyên string JSON
+      } catch (e) {
+        // Không phải JSON, là tin nhắn thông thường
+      }
+      
       // Lưu vào localStorage với định dạng thống nhất
       const storageKey = `chat_${userId}`;
       let existingMessages = [];
@@ -160,7 +172,7 @@ export default function RealTimeChat() {
       }
       
       existingMessages.push({
-        content: message,
+        content: messageContent,
         type: normalizedUserType,
         timestamp: new Date().toISOString()
       });
@@ -172,7 +184,7 @@ export default function RealTimeChat() {
         ...prev,
         {
           sender: uiSender,
-          content: message,
+          content: messageContent,
           timestamp: new Date()
         }
       ]);
@@ -436,6 +448,22 @@ function MessageItem({ data, mainColor, formatTime }) {
   
   const style = getMessageStyle();
   
+  // Render message content based on format
+  const renderMessageContent = () => {
+    try {
+      // Check if message is a product link (JSON format)
+      const parsedContent = JSON.parse(data.content);
+      if (parsedContent.type === 'product') {
+        return null; // Trả về null để không hiển thị gì trong message bubble
+      }
+    } catch (e) {
+      // Not JSON, render as regular text
+    }
+    
+    // Regular text message
+    return <div style={{ whiteSpace: 'pre-wrap' }}>{data.content}</div>;
+  };
+  
   return (
     <div className={`flex mb-4 items-end ${style.justify}`}>
       {(data.sender === 'support' || data.sender === 'staff') && (
@@ -444,33 +472,193 @@ function MessageItem({ data, mainColor, formatTime }) {
         </div>
       )}
 
-      <div 
-        className="shadow-sm max-w-[75%] px-4 py-2 relative"
-        style={{
-          backgroundColor: style.bg,
-          borderRadius: style.borderRadius,
-          color: style.textColor,
-          border: style.bg === 'white' ? '1px solid #e5e7eb' : 'none'
-        }}
-      >
-        {/* Format message preserving line breaks */}
-        <div style={{ whiteSpace: 'pre-wrap' }}>
-          {data.content}
-        </div>
-        
-        {/* Thêm timestamp */}
-        {data.timestamp && (
-          <div style={{ 
-            fontSize: '10px', 
-            opacity: 0.7, 
-            marginTop: '4px', 
-            textAlign: 'right',
-            color: style.textColor === 'white' ? 'rgba(255,255,255,0.8)' : 'inherit'
-          }}>
-            {formatTime(data.timestamp)}
-          </div>
-        )}
-      </div>
+      {/* Kiểm tra và xử lý nội dung tin nhắn */}
+      {(() => {
+        try {
+          // Nếu là JSON, thì parse và kiểm tra
+          const parsedContent = JSON.parse(data.content);
+          if (parsedContent.type === 'product') {
+            // Nếu là sản phẩm, hiển thị card sản phẩm
+            return (
+              <div className={`${data.sender === 'me' ? 'ml-auto' : 'mr-auto'} max-w-[400px] mb-1`}>
+                <a 
+                  href={parsedContent.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: 'none', display: 'block' }}
+                >
+                  <Card sx={{ 
+                    width: '100%',
+                    border: '1px solid',
+                    borderColor: mainColor.primary + '40',
+                    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
+                    backgroundColor: 'white',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                      borderColor: mainColor.primary
+                    }
+                  }}>
+                    <Box sx={{ display: 'flex', p: 1 }}>
+                      <Box sx={{ width: '80px', height: '80px', flexShrink: 0 }}>
+                        <CardMedia
+                          component="img"
+                          image={parsedContent.image || '/images/placeholder.jpg'}
+                          alt={parsedContent.name}
+                          sx={{ 
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover', 
+                            borderRadius: '6px'
+                          }}
+                        />
+                      </Box>
+                      <Box sx={{ ml: 1.5, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%' }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            fontWeight: 500, 
+                            mb: 0.5,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            color: 'rgba(0,0,0,0.87)',
+                            fontSize: '0.875rem',
+                            lineHeight: 1.2
+                          }}
+                        >
+                          {parsedContent.name}
+                        </Typography>
+                        
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                          <Typography 
+                            variant="caption" 
+                            sx={{ 
+                              fontWeight: 600, 
+                              color: 'text.secondary',
+                              fontSize: '0.75rem',
+                              display: 'flex',
+                              alignItems: 'center'
+                            }}
+                          >
+                            {parsedContent.rating || '4.5'}/5
+                            <Rating
+                              value={parsedContent.rating || 4.5}
+                              precision={0.5}
+                              readOnly
+                              size="small"
+                              sx={{ ml: 0.5, fontSize: '0.75rem' }}
+                            />
+                          </Typography>
+                          <Box 
+                            component="span" 
+                            sx={{ 
+                              mx: 0.5, 
+                              fontSize: '0.75rem', 
+                              color: 'text.disabled' 
+                            }}
+                          >
+                            |
+                          </Box>
+                          <Typography 
+                            variant="caption" 
+                            sx={{ color: 'text.secondary', fontSize: '0.75rem' }}
+                          >
+                            Đã bán: {parsedContent.soldCount || 0}
+                          </Typography>
+                        </Box>
+                        
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            fontWeight: 600, 
+                            color: mainColor.primary,
+                            fontSize: '0.875rem'
+                          }}
+                        >
+                          {formatPrice(parsedContent.price, '₫')}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Card>
+                </a>
+                <div style={{ 
+                  fontSize: '10px', 
+                  opacity: 0.7, 
+                  marginTop: '2px', 
+                  textAlign: data.sender === 'me' ? 'right' : 'left',
+                  color: 'rgba(0,0,0,0.6)',
+                  paddingLeft: '4px',
+                  paddingRight: '4px'
+                }}>
+                  {formatTime(data.timestamp)}
+                </div>
+              </div>
+            );
+          } else {
+            // Nếu là JSON nhưng không phải product, hiển thị như text thường
+            return (
+              <div 
+                className="shadow-sm px-4 py-2 relative max-w-[75%]"
+                style={{
+                  backgroundColor: style.bg,
+                  borderRadius: style.borderRadius,
+                  color: style.textColor,
+                  border: style.bg === 'white' ? '1px solid #e5e7eb' : 'none'
+                }}
+              >
+                <div style={{ whiteSpace: 'pre-wrap' }}>{data.content}</div>
+                
+                {/* Thêm timestamp */}
+                {data.timestamp && (
+                  <div style={{ 
+                    fontSize: '10px', 
+                    opacity: 0.7, 
+                    marginTop: '4px', 
+                    textAlign: 'right',
+                    color: style.textColor === 'white' ? 'rgba(255,255,255,0.8)' : 'inherit'
+                  }}>
+                    {formatTime(data.timestamp)}
+                  </div>
+                )}
+              </div>
+            );
+          }
+        } catch (e) {
+          // Nếu không phải JSON, hiển thị text thường
+          return (
+            <div 
+              className="shadow-sm px-4 py-2 relative max-w-[75%]"
+              style={{
+                backgroundColor: style.bg,
+                borderRadius: style.borderRadius,
+                color: style.textColor,
+                border: style.bg === 'white' ? '1px solid #e5e7eb' : 'none'
+              }}
+            >
+              <div style={{ whiteSpace: 'pre-wrap' }}>{data.content}</div>
+              
+              {/* Thêm timestamp */}
+              {data.timestamp && (
+                <div style={{ 
+                  fontSize: '10px', 
+                  opacity: 0.7, 
+                  marginTop: '4px', 
+                  textAlign: 'right',
+                  color: style.textColor === 'white' ? 'rgba(255,255,255,0.8)' : 'inherit'
+                }}>
+                  {formatTime(data.timestamp)}
+                </div>
+              )}
+            </div>
+          );
+        }
+      })()}
 
       {data.sender === 'me' && (
         <div className="flex bg-blue-100 h-8 justify-center rounded-full w-8 items-center ml-2">

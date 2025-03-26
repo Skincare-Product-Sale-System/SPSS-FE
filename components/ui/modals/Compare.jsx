@@ -9,6 +9,8 @@ import { defaultProductImage } from "@/utils/default";
 import { formatPrice } from "@/utils/priceFormatter";
 import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
 import getStar from "@/utils/getStar";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import Tooltip from '@mui/material/Tooltip';
 
 export default function Compare() {
   const { removeFromCompareItem, compareItem, setCompareItem } =
@@ -82,13 +84,27 @@ export default function Compare() {
                     {items.map((elm, i) => (
                       <div key={i} className="tf-compare-item">
                         <div className="position-relative">
-                          <div
-                            className="icon"
-                            style={{ cursor: "pointer" }}
-                            onClick={() => removeFromCompareItem(elm?.id)}
-                          >
-                            <i className="icon-close" />
-                          </div>
+                          <Tooltip title="Xóa khỏi danh sách so sánh" arrow placement="top">
+                            <div
+                              className="icon"
+                              style={{ 
+                                cursor: "pointer", 
+                                position: "absolute", 
+                                right: "5px", 
+                                top: "5px", 
+                                zIndex: 10,
+                                background: "rgba(255,255,255,0.8)",
+                                borderRadius: "50%",
+                                padding: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                              }}
+                              onClick={() => removeFromCompareItem(elm?.id)}
+                            >
+                              <DeleteOutlineIcon style={{ color: "#df3b3b", fontSize: "18px" }} />
+                            </div>
+                          </Tooltip>
                           <Link href={`/product-detail/${elm?.id}`}>
                             <Image
                               className="h-[120px] aspect-square radius-3"
@@ -99,16 +115,13 @@ export default function Compare() {
                               height={1005}
                             />
                           </Link>
-                          <div className="text-sm text-start line-clamp-1">
+                          <div className="text-sm text-start line-clamp-1 mt-2">
                             {elm?.name}
                           </div>
-                          <div className="text-start">
+                          <div className="text-start mt-1">
                             <span className="new-price">
                               <PriceFormatter price={elm?.price} />
                             </span>
-                          </div>
-                          <div className="text-start tf-compare-item-rating">
-                            {getStar({ rating: elm?.rating || 0 })}
                           </div>
                         </div>
                       </div>
