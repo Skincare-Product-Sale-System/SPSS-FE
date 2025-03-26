@@ -1,0 +1,8 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "next build",
+  "ignoreCommand": "echo no ignore command",
+  "env": {
+    "NEXT_SKIP_SERIALIZATION_CHECKS": "1"
+  }
+}
