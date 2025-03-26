@@ -7,15 +7,16 @@ import Context from '@/context/Context';
 import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from "react-hot-toast";
 import { ClientProvider } from '@/providers/ClientProvider';
-// Import styles
-import "../public/scss/main.scss";
-import "photoswipe/dist/photoswipe.css";
-import "rc-slider/assets/index.css";
-
 import { usePathname, useRouter } from "next/navigation";
 import { Roboto } from 'next/font/google';
 import '@/styles/globals.css';
 import { RouterEventsProvider } from './RouterEventsProvider';
+import Loading from './loading';
+
+// Import styles
+import "../public/scss/main.scss";
+import "photoswipe/dist/photoswipe.css";
+import "rc-slider/assets/index.css";
 
 // Fonts configuration
 const roboto = Roboto({ 
@@ -62,127 +63,46 @@ export default function RootLayout({ children }) {
   const [scrollDirection, setScrollDirection] = useState("down");
   const [loading, setLoading] = useState(true);
   const [currentPath, setCurrentPath] = useState("");
-  
-  // Check if the current user is a staff member (client-side only)
   const [isStaff, setIsStaff] = useState(false);
   const [mounted, setMounted] = useState(false);
-  
-  // Bootstrap initialization
+  const lastScrollY = useRef(0);
+
+  // Check if the current user is a staff member
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      import("bootstrap/dist/js/bootstrap.esm").then(() => {
-        // Bootstrap initialized
-        
-        // Prevent scrolling when modals are opened - Enhanced with better handling for both modals and offcanvas
-        const preventScrollReset = (event) => {
-          // Store current scroll position when opening a modal or offcanvas
-          const scrollY = window.scrollY;
-          document.body.style.position = 'fixed';
-          document.body.style.top = `-${scrollY}px`;
-          document.body.style.width = '100%';
-          
-          // Function to restore scroll position after modal is fully shown
-          const restoreScroll = () => {
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.width = '';
-            window.scrollTo(0, scrollY);
-            event.target.removeEventListener('shown.bs.modal', restoreScroll);
-            event.target.removeEventListener('shown.bs.offcanvas', restoreScroll);
-          };
-          
-          // Add appropriate event listeners based on element type
-          if (event.target.classList.contains('modal')) {
-            event.target.addEventListener('shown.bs.modal', restoreScroll);
-          } else if (event.target.classList.contains('offcanvas')) {
-            event.target.addEventListener('shown.bs.offcanvas', restoreScroll);
-          }
-        };
-        
-        // Add event listeners for both modal and offcanvas
-        document.addEventListener('show.bs.modal', preventScrollReset);
-        document.addEventListener('show.bs.offcanvas', preventScrollReset);
-        
-        // Cleanup function
-        return () => {
-          document.removeEventListener('show.bs.modal', preventScrollReset);
-          document.removeEventListener('show.bs.offcanvas', preventScrollReset);
-        };
-      });
-    }
-  }, []);
-  
-  // Track current path for SPA navigation
-  useEffect(() => {
-    if (currentPath !== pathname && pathname) {
-      setCurrentPath(pathname);
-      
-      // Only scroll to top when coming from a different page, not when opening modals
-      const hasOpenModal = document.querySelector('.modal.show, .offcanvas.show') !== null;
-      if (!hasOpenModal) {
-        // Check if this is an actual navigation, not a modal open
-        window.scrollTo(0, 0);
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      try {
+        const userRole = localStorage.getItem("userRole");
+        setIsStaff(userRole === 'Staff');
+      } catch (error) {
+        console.error("Error reading role from localStorage:", error);
       }
     }
-  }, [pathname, currentPath]);
-  
-  // Header background effect
-  useEffect(() => {
-    const handleScroll = () => {
-      const header = document.querySelector("header");
-      if (header) {
-        if (window.scrollY > 100) {
-          header.classList.add("header-bg");
-        } else {
-          header.classList.remove("header-bg");
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
   }, []);
 
-  // Scroll direction detection
+  // Handle scroll direction
   useEffect(() => {
-    setScrollDirection("up");
-    const lastScrollY = { current: window.scrollY };
-    
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
-      if (currentScrollY > 250) {
-        if (currentScrollY > lastScrollY.current) {
-          // Scrolling down
-          setScrollDirection("down");
-        } else {
-          // Scrolling up
-          setScrollDirection("up");
-        }
-      } else {
-        // Below 250px
-        setScrollDirection("down");
-      }
-
+      setScrollDirection(currentScrollY > lastScrollY.current ? "down" : "up");
       lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+  // Handle path changes
+  useEffect(() => {
+    setCurrentPath(pathname);
+    setLoading(true);
   }, [pathname]);
-  
+
   // Close modals on navigation
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
         const bootstrap = require("bootstrap");
-        
         const modalElements = document.querySelectorAll(".modal.show");
         modalElements.forEach((modal) => {
           const modalInstance = bootstrap.Modal.getInstance(modal);
@@ -203,7 +123,7 @@ export default function RootLayout({ children }) {
       }
     }
   }, [pathname]);
-  
+
   // Header scroll behavior
   useEffect(() => {
     const header = document.querySelector("header");
@@ -215,96 +135,6 @@ export default function RootLayout({ children }) {
       }
     }
   }, [scrollDirection]);
-  
-  // Initialize WOW.js
-  useEffect(() => {
-    try {
-      const WOW = require("@/utils/wow");
-      const wow = new WOW.default({
-        mobile: false,
-        live: false,
-      });
-      wow.init();
-    } catch (error) {
-      console.error("Error initializing WOW:", error);
-    }
-  }, [pathname]);
-  
-  // RTL direction setup
-  useEffect(() => {
-    const initializeDirection = () => {
-      const direction = localStorage.getItem("direction");
-
-      if (direction) {
-        try {
-          const parsedDirection = JSON.parse(direction);
-          document.documentElement.dir = parsedDirection.dir;
-          document.body.classList.add(parsedDirection.dir);
-        } catch (error) {
-          console.error("Error parsing direction:", error);
-          document.documentElement.dir = "ltr";
-        }
-      } else {
-        document.documentElement.dir = "ltr";
-      }
-
-      const preloader = document.getElementById("preloader");
-      if (preloader) {
-        preloader.classList.add("disabled");
-      }
-    };
-
-    initializeDirection();
-  }, []);
-
-  useEffect(() => {
-    // Đánh dấu đã tải xong khi component được mount
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js').then(
-          (registration) => {
-            console.log('ServiceWorker registration successful');
-          },
-          (error) => {
-            console.log('ServiceWorker registration failed:', error);
-          }
-        );
-      });
-    }
-  }, []);
-
-  // Kiểm tra role và cập nhật state
-  useEffect(() => {
-    setMounted(true);
-    if (typeof window !== 'undefined') {
-      try {
-        const userRole = localStorage.getItem('userRole');
-        console.log("Layout - User role from localStorage:", userRole);
-        setIsStaff(userRole === 'Staff');
-      } catch (error) {
-        console.error("Error reading role from localStorage:", error);
-      }
-    }
-  }, []);
-
-  // Tạo component ChatComponents để có thể điều kiện render
-  const ChatComponents = () => {
-    if (!mounted) return null;
-    if (isStaff) return null;
-    
-    return (
-      <>
-        <ChatAssistant />
-        <RealTimeChat />
-        <ScrollTop />
-      </>
-    );
-  };
 
   return (
     <html lang="en" className={`${roboto.variable}`}>
@@ -337,13 +167,7 @@ export default function RootLayout({ children }) {
                     />
                     <div id="wrapper">
                       {/* Header - lazy loaded */}
-                      <Suspense fallback={
-                        <div className="h-24 bg-white shadow-sm">
-                          <div className="flex justify-center items-center h-full">
-                            <div className="animate-pulse h-8 w-32 bg-gray-200 rounded"></div>
-                          </div>
-                        </div>
-                      }>
+                      <Suspense fallback={<Loading />}>
                         {isStaff ? <StaffHeaderWrapper /> : <Header />}
                       </Suspense>
                       
@@ -354,23 +178,13 @@ export default function RootLayout({ children }) {
                       
                       {/* Main content - only this will be rerendered on route change */}
                       <main key={pathname} className="flex-grow">
-                        <Suspense fallback={
-                          <div className="flex justify-center items-center min-h-screen">
-                            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
-                          </div>
-                        }>
+                        <Suspense fallback={<Loading />}>
                           {children}
                         </Suspense>
                       </main>
                       
                       {/* Footer - lazy loaded */}
-                      <Suspense fallback={
-                        <div className="h-32 bg-gray-100">
-                          <div className="flex justify-center items-center h-full">
-                            <div className="animate-pulse h-8 w-32 bg-gray-200 rounded"></div>
-                          </div>
-                        </div>
-                      }>
+                      <Suspense fallback={<Loading />}>
                         <Footer />
                       </Suspense>
                     </div>
@@ -382,19 +196,18 @@ export default function RootLayout({ children }) {
                       <ShopCart />
                       <LoginModal />
                       <RegisterModal />
+                      <ChatAssistant />
+                      <RealTimeChat />
+                      <ScrollTop />
                     </Suspense>
                     
-                    {/* Chat components - chỉ hiển thị khi không phải staff */}
-                    <Suspense fallback={null}>
-                      {mounted && <ChatComponents />}
-                    </Suspense>
+                    <Toaster position="top-right" />
                   </ClientProvider>
                 </Context>
               </Providers>
             </ThemeProvider>
           </RouterEventsProvider>
         </MuiThemeProvider>
-        <Toaster />
       </body>
     </html>
   );
