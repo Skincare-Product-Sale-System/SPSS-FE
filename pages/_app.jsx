@@ -2,7 +2,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 
 function App({ Component, pageProps }) {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider>
       <Component {...pageProps} />
     </ThemeProvider>
   );
