@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as signalR from "@microsoft/signalr";
 import { useThemeColors } from "@/context/ThemeContext";
-import { CircularProgress, IconButton, Card, CardMedia, CardContent, Typography, CardActions, Button, Box, Rating } from '@mui/material';
+import { CircularProgress, IconButton, Card, CardMedia, CardContent, Typography, CardActions, Button, Box, Rating, Modal, Backdrop } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonIcon from '@mui/icons-material/Person';
@@ -11,9 +11,11 @@ import InfoIcon from '@mui/icons-material/Info';
 import SendIcon from '@mui/icons-material/Send';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import StarIcon from '@mui/icons-material/Star';
+import ImageIcon from '@mui/icons-material/Image';
 import useAuthStore from "@/context/authStore";
 import * as LocalStorage from '@/utils/localStorage';
 import { formatPrice } from "@/utils/priceFormatter";
+import toast from "react-hot-toast";
 
 const MESSAGE_TYPES = {
   USER: 'user',      // Tin nhắn từ khách hàng
@@ -38,6 +40,14 @@ export default function RealTimeChat() {
   const mainColor = useThemeColors();
   const { Id } = useAuthStore();
   const [userId, setUserId] = useState(null);
+  
+  // Image upload states
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const imageInputRef = useRef(null);
+  
+  // Image preview states
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
 
   // Khởi tạo userId sử dụng utility
   useEffect(() => {
@@ -59,13 +69,67 @@ export default function RealTimeChat() {
     setUserId(newId);
   }, [Id]);
 
-  // Set up SignalR connection
+  // Add a function similar to loadChatHistory in StaffChat
+  const loadChatHistoryFromStorage = (userId) => {
+    if (!userId) return;
+    
+    setIsLoading(true);
+    
+    // Keep system messages
+    const systemMessages = messages.filter(msg => msg.sender === "system");
+    
+    // Load messages from localStorage
+    const storageKey = `chat_${userId}`;
+    const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    console.log("Loading stored messages:", storedMessages.length);
+    
+    if (storedMessages.length === 0) {
+      setIsLoading(false);
+      return;
+    }
+    
+    // Format messages for UI exactly like in StaffChat
+    const formattedMessages = storedMessages.map(msg => {
+      let senderType;
+      
+      if (msg.userType !== undefined) {
+        senderType = msg.userType === 'user' ? "me" : "support";
+      }
+      else if (msg.type !== undefined) {
+        senderType = msg.type === MESSAGE_TYPES.USER ? "me" : "support";
+      }
+      else {
+        senderType = msg.sender || "me";
+      }
+      
+      return {
+        content: msg.content,
+        sender: senderType,
+        timestamp: new Date(msg.timestamp || new Date())
+      };
+    });
+    
+    // Set all messages at once with proper formatting
+    setMessages([...systemMessages, ...formattedMessages]);
+    setIsLoading(false);
+  };
+
+  // Then in your useEffect
+  useEffect(() => {
+    if (isOpen && userId) {
+      // Load chat history using the same method as StaffChat
+      loadChatHistoryFromStorage(userId);
+    }
+  }, [isOpen, userId]);
+
+  // Then keep the connection setup in a separate useEffect, but don't load messages there
   useEffect(() => {
     if (!isOpen) return;
     
-    // Chỉ tạo kết nối mới nếu chưa có hoặc kết nối đã đóng
+    // Create SignalR connection only if needed
     if (!connection) {
       console.log("Creating new connection");
+      
       const newConnection = new signalR.HubConnectionBuilder()
         .withUrl(`https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/chathub`, {
           skipNegotiation: true,
@@ -75,34 +139,34 @@ export default function RealTimeChat() {
         .configureLogging(signalR.LogLevel.Debug)
         .build();
         
-        // Start the connection
-        newConnection.start()
-          .then(() => {
-            console.log("SignalR Connected");
-            setIsConnected(true);
-            setMessages(prev => [
-              ...prev,
-              {
-                sender: "system",
-                content: "Đã kết nối với hỗ trợ viên. Bạn có thể bắt đầu nhắn tin.",
-                timestamp: new Date()
-              }
-            ]);
-            
-            // Lưu kết nối mới
-            setConnection(newConnection);
-          })
-          .catch(err => {
-            console.error("SignalR Connection Error: ", err);
-            setMessages(prev => [
-              ...prev,
-              {
-                sender: "system",
-                content: "Không thể kết nối với hỗ trợ viên. Vui lòng thử lại sau.",
-                timestamp: new Date()
-              }
-            ]);
-          });
+      // Start the connection
+      newConnection.start()
+        .then(() => {
+          console.log("SignalR Connected");
+          setIsConnected(true);
+          setMessages(prev => [
+            ...prev,
+            {
+              sender: "system",
+              content: "Đã kết nối với hỗ trợ viên. Bạn có thể bắt đầu nhắn tin.",
+              timestamp: new Date()
+            }
+          ]);
+          
+          // Lưu kết nối mới
+          setConnection(newConnection);
+        })
+        .catch(err => {
+          console.error("SignalR Connection Error: ", err);
+          setMessages(prev => [
+            ...prev,
+            {
+              sender: "system",
+              content: "Không thể kết nối với hỗ trợ viên. Vui lòng thử lại sau.",
+              timestamp: new Date()
+            }
+          ]);
+        });
     }
     
     // Cleanup khi component unmount
@@ -112,7 +176,7 @@ export default function RealTimeChat() {
         connection.stop();
       }
     };
-  }, [isOpen]);  // Remove connection from dependencies
+  }, [isOpen]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -139,6 +203,38 @@ export default function RealTimeChat() {
       }
     }
   }, [connection, isConnected, userId]);
+
+  // Helper function to format message display text
+  const formatMessageDisplay = (messageContent) => {
+    try {
+      const parsedContent = JSON.parse(messageContent);
+      if (parsedContent.type === 'product') {
+        return "[Sản phẩm]";
+      } else if (parsedContent.type === 'image') {
+        return "[Hình ảnh]";
+      }
+      return messageContent;
+    } catch (e) {
+      // Not a JSON message, return as is
+      return messageContent;
+    }
+  };
+
+  // Helper function to format message content for display
+  const formatMessageForList = (messageContent) => {
+    try {
+      const parsedContent = JSON.parse(messageContent);
+      if (parsedContent.type === 'product') {
+        return "[Sản phẩm]";
+      } else if (parsedContent.type === 'image') {
+        return "[Hình ảnh]";
+      }
+      return messageContent;
+    } catch (e) {
+      // Not a JSON message, return as is
+      return messageContent;
+    }
+  };
 
   // Lưu tin nhắn vào localStorage
   useEffect(() => {
@@ -231,46 +327,73 @@ export default function RealTimeChat() {
       });
   };
 
-  // Khi mở chat, load tin nhắn từ localStorage
-  useEffect(() => {
-    if (isOpen) {
-      // Load tin nhắn từ localStorage
-      const storageKey = `chat_${userId}`;
-      const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+  // Handle image upload
+  const handleImageUpload = async (e) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    setUploadingImage(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append('files', files[0]);
       
-      if (storedMessages.length > 0) {
-        // Chuyển đổi sang định dạng messages UI
-        const formattedMessages = storedMessages.map(msg => {
-          // Kiểm tra định dạng cũ với userType
-          if (msg.userType !== undefined) {
-            return {
-              content: msg.content,
-              sender: msg.userType === 'user' ? "me" : "support",
-              timestamp: new Date(msg.timestamp || new Date())
-            };
-          }
-          
-          // Kiểm tra định dạng mới với type
-          if (msg.type !== undefined) {
-            return {
-              content: msg.content,
-              sender: msg.type === MESSAGE_TYPES.USER ? "me" : "support",
-              timestamp: new Date(msg.timestamp || new Date())
-            };
-          }
-          
-          // Nếu không xác định được, dựa vào sender
-          return {
-            content: msg.content,
-            sender: msg.sender || "me",
-            timestamp: new Date(msg.timestamp || new Date())
-          };
+      // Fetch API để tải lên hình ảnh
+      const response = await fetch('https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/api/images', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        // Tạo message object mới cho image
+        const imageUrl = data.data[0];
+        const imageMessage = JSON.stringify({
+          type: 'image',
+          url: imageUrl
         });
         
-        setMessages(formattedMessages);
+        // Save to localStorage
+        const storageKey = `chat_${userId}`;
+        const existingMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        
+        existingMessages.push({
+          content: imageMessage,
+          type: MESSAGE_TYPES.USER,
+          timestamp: new Date().toISOString()
+        });
+        
+        localStorage.setItem(storageKey, JSON.stringify(existingMessages));
+        
+        // Cập nhật UI với hình ảnh mới ngay lập tức
+        setMessages(prev => [
+          ...prev,
+          {
+            content: imageMessage,
+            sender: "me",
+            timestamp: new Date()
+          }
+        ]);
+        
+        // Gửi đến server
+        connection.invoke("SendMessage", userId, imageMessage, "user")
+          .catch(err => {
+            console.error("Error sending image message:", err);
+          });
+        
+        toast.success("Đã gửi hình ảnh");
+      } else {
+        toast.error("Không thể tải lên hình ảnh");
       }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Lỗi khi tải lên hình ảnh");
+    } finally {
+      setUploadingImage(false);
+      if (imageInputRef.current) imageInputRef.current.value = '';
     }
-  }, [isOpen, userId]);
+  };
 
   // Thay thế bằng hàm format thời gian đơn giản
   const formatMessageTime = (date) => {
@@ -281,6 +404,17 @@ export default function RealTimeChat() {
     const minutes = d.getMinutes().toString().padStart(2, '0');
     
     return `${hours}:${minutes}`;
+  };
+
+  // Open image preview
+  const handleImagePreview = (imageUrl) => {
+    setPreviewImage(imageUrl);
+    setPreviewOpen(true);
+  };
+
+  // Close image preview
+  const handleClosePreview = () => {
+    setPreviewOpen(false);
   };
 
   return (
@@ -342,6 +476,7 @@ export default function RealTimeChat() {
                 data={message} 
                 mainColor={mainColor}
                 formatTime={formatMessageTime}
+                onImageClick={handleImagePreview}
               />
             ))}
             
@@ -362,7 +497,32 @@ export default function RealTimeChat() {
           
           {/* Input area */}
           <div className="border-t p-3">
-            <div className="flex">
+            <div className="flex gap-2">
+              <input
+                type="file"
+                ref={imageInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploadingImage || !isConnected}
+              />
+              <button
+                onClick={() => imageInputRef.current?.click()}
+                className="flex justify-center rounded-lg items-center"
+                style={{ 
+                  border: `1px solid ${mainColor.secondary || '#85715e'}`,
+                  backgroundColor: 'white',
+                  color: mainColor.secondary || '#85715e',
+                  width: '48px',
+                  height: '56px'
+                }}
+                disabled={uploadingImage || !isConnected}
+              >
+                {uploadingImage ? 
+                  <CircularProgress size={20} sx={{ color: mainColor.secondary || '#85715e' }} /> : 
+                  <ImageIcon sx={{ color: mainColor.secondary || '#85715e' }} />
+                }
+              </button>
               <textarea
                 className="flex-1 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 px-3 py-2 resize-none"
                 style={{ 
@@ -406,12 +566,53 @@ export default function RealTimeChat() {
           </div>
         </div>
       )}
+      
+      {/* Image Preview Modal */}
+      <Modal
+        open={previewOpen}
+        onClose={handleClosePreview}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1500
+        }}
+      >
+        <div className="relative bg-transparent rounded-lg overflow-hidden max-w-[90vw] max-h-[90vh]">
+          <IconButton
+            onClick={handleClosePreview}
+            sx={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.7)',
+              }
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <img 
+            src={previewImage} 
+            alt="Preview" 
+            className="max-w-full max-h-[90vh] object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      </Modal>
     </>
   );
 }
 
 // Message component
-function MessageItem({ data, mainColor, formatTime }) {
+function MessageItem({ data, mainColor, formatTime, onImageClick }) {
   const getMessageStyle = () => {
     switch(data.sender) {
       case 'me':
@@ -448,22 +649,6 @@ function MessageItem({ data, mainColor, formatTime }) {
   
   const style = getMessageStyle();
   
-  // Render message content based on format
-  const renderMessageContent = () => {
-    try {
-      // Check if message is a product link (JSON format)
-      const parsedContent = JSON.parse(data.content);
-      if (parsedContent.type === 'product') {
-        return null; // Trả về null để không hiển thị gì trong message bubble
-      }
-    } catch (e) {
-      // Not JSON, render as regular text
-    }
-    
-    // Regular text message
-    return <div style={{ whiteSpace: 'pre-wrap' }}>{data.content}</div>;
-  };
-  
   return (
     <div className={`flex mb-4 items-end ${style.justify}`}>
       {(data.sender === 'support' || data.sender === 'staff') && (
@@ -477,6 +662,7 @@ function MessageItem({ data, mainColor, formatTime }) {
         try {
           // Nếu là JSON, thì parse và kiểm tra
           const parsedContent = JSON.parse(data.content);
+          
           if (parsedContent.type === 'product') {
             // Nếu là sản phẩm, hiển thị card sản phẩm
             return (
@@ -600,8 +786,43 @@ function MessageItem({ data, mainColor, formatTime }) {
                 </div>
               </div>
             );
+          } 
+          // Add image message handling
+          else if (parsedContent.type === 'image') {
+            return (
+              <div className={`${data.sender === 'me' ? 'ml-auto' : 'mr-auto'} max-w-[300px] mb-1`}>
+                <div
+                  className="rounded shadow-sm overflow-hidden"
+                  style={{
+                    padding: '4px',
+                    backgroundColor: 'white',
+                    borderRadius: data.sender === 'me' 
+                      ? '16px 4px 16px 16px' 
+                      : '4px 16px 16px 16px',
+                  }}
+                >
+                  <img
+                    src={parsedContent.url}
+                    alt="Shared image"
+                    className="w-full object-contain rounded max-h-[300px] cursor-pointer"
+                    onClick={() => onImageClick(parsedContent.url)}
+                  />
+                </div>
+                <div style={{ 
+                  fontSize: '10px', 
+                  opacity: 0.7, 
+                  marginTop: '2px', 
+                  textAlign: data.sender === 'me' ? 'right' : 'left',
+                  color: 'rgba(0,0,0,0.6)',
+                  paddingLeft: '4px',
+                  paddingRight: '4px'
+                }}>
+                  {formatTime(data.timestamp)}
+                </div>
+              </div>
+            );
           } else {
-            // Nếu là JSON nhưng không phải product, hiển thị như text thường
+            // Nếu là JSON nhưng không phải product hoặc image
             return (
               <div 
                 className="shadow-sm px-4 py-2 relative max-w-[75%]"
@@ -612,7 +833,7 @@ function MessageItem({ data, mainColor, formatTime }) {
                   border: style.bg === 'white' ? '1px solid #e5e7eb' : 'none'
                 }}
               >
-                <div style={{ whiteSpace: 'pre-wrap' }}>{data.content}</div>
+                <div style={{ whiteSpace: 'pre-wrap' }}>{formatMessageDisplay(data.content)}</div>
                 
                 {/* Thêm timestamp */}
                 {data.timestamp && (

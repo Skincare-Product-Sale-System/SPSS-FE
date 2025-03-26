@@ -5,9 +5,8 @@ import {
   Box, Typography, Paper, Grid, List, ListItem, 
   ListItemText, TextField, Button, CircularProgress, 
   Badge, Avatar, Container, AppBar, Toolbar, IconButton,
-  Dialog, DialogTitle, DialogContent, DialogActions, 
-  InputAdornment, Card, CardMedia, CardContent, CardActions,
-  Rating
+  Card, CardMedia, CardContent, CardActions,
+  Rating, InputAdornment, Modal, Backdrop
 } from '@mui/material';
 import { useThemeColors } from "@/context/ThemeContext";
 import SendIcon from '@mui/icons-material/Send';
@@ -18,9 +17,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import StarIcon from '@mui/icons-material/Star';
+import ImageIcon from '@mui/icons-material/Image';
+import CloseIcon from '@mui/icons-material/Close';
 import request from "@/utils/axios";
 import Image from "next/image";
 import { formatPrice } from "@/utils/priceFormatter";
+import ProductSelectorModal from './ProductSelectorModal';
+import toast from "react-hot-toast";
 
 const MESSAGE_TYPES = {
   USER: 'user',
@@ -48,6 +51,14 @@ export default function StaffChat() {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
+  
+  // Image upload states
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const imageInputRef = useRef(null);
+  
+  // Image preview states
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
   
   // Check if code is running in browser
   useEffect(() => {
@@ -97,54 +108,53 @@ export default function StaffChat() {
       console.log("Received active chats:", chats);
       
       if (Array.isArray(chats) && chats.length > 0) {
-        // Get existing chats we already loaded from localStorage
-        const existingChatIds = activeChats.map(chat => chat.userId);
-        
-        // Process new chats from server
-        const formattedChats = chats.map(userId => {
-          // Check if we already processed this chat
-          const existingChat = activeChats.find(chat => chat.userId === userId);
-          if (existingChat) {
-            return existingChat;
-          }
+        // Instead of building a new list, UPDATE the existing list
+        setActiveChats(prev => {
+          // Create a copy of existing chats
+          const updatedChats = [...prev];
           
-          // Get last message from localStorage for each chat
-          const storageKey = `chat_${userId}`;
-          const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-          const lastMsg = storedMessages.length > 0 
-            ? storedMessages[storedMessages.length - 1] 
-            : null;
+          // Update or add new chats from server
+          chats.forEach(userId => {
+            const existingIndex = updatedChats.findIndex(chat => chat.userId === userId);
+            
+            if (existingIndex !== -1) {
+              // Chat already exists, just update if needed
+              // (No need to change anything here usually)
+            } else {
+              // This is a new chat, add it to the list
+              const storageKey = `chat_${userId}`;
+              const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+              const lastMsg = storedMessages.length > 0 
+                ? storedMessages[storedMessages.length - 1] 
+                : null;
+              
+              updatedChats.push({
+                userId,
+                username: `Customer ${userId.substring(0, 6)}`,
+                unreadCount: 0,
+                lastMessage: lastMsg 
+                  ? formatMessageForList(lastMsg.content) 
+                  : "Started a conversation",
+                timestamp: lastMsg ? new Date(lastMsg.timestamp) : new Date(),
+                avatarColor: getRandomColor()
+              });
+            }
+          });
           
-          return {
-            userId,
-            username: `Customer ${userId.substring(0, 6)}`,
-            unreadCount: 0,
-            lastMessage: lastMsg 
-              ? lastMsg.content.substring(0, 30) + (lastMsg.content.length > 30 ? '...' : '') 
-              : "Started a conversation",
-            timestamp: lastMsg ? new Date(lastMsg.timestamp) : new Date(),
-            avatarColor: getRandomColor()
-          };
+          // Sort by most recent
+          updatedChats.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          
+          return updatedChats;
         });
-        
-        // Merge existing chats with new chats
-        const mergedChats = [...activeChats];
-        formattedChats.forEach(chat => {
-          if (!existingChatIds.includes(chat.userId)) {
-            mergedChats.push(chat);
-          }
-        });
-        
-        // Sort by most recent
-        mergedChats.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        
-        setActiveChats(mergedChats);
         
         // Auto-select first chat if none is selected
-        if (mergedChats.length > 0 && !selectedChat) {
-          setSelectedChat(mergedChats[0]);
-          loadChatHistory(mergedChats[0].userId);
-        }
+        setActiveChats(prev => {
+          if (prev.length > 0 && !selectedChat) {
+            setSelectedChat(prev[0]);
+            loadChatHistory(prev[0].userId);
+          }
+          return prev;
+        });
       }
     });
     
@@ -181,10 +191,11 @@ export default function StaffChat() {
     };
   }, [isBrowser]);
   
-  // Reset unread count when selecting chat
+  // Reset unread count when selecting chat and load chat history ONCE
   useEffect(() => {
     if (!isBrowser || !selectedChat) return;
     
+    // Only reset unread count here
     setActiveChats(prev =>
       prev.map(c =>
         c.userId === selectedChat.userId
@@ -193,7 +204,9 @@ export default function StaffChat() {
       )
     );
     
+    // Load chat history only once when selecting a chat
     loadChatHistory(selectedChat.userId);
+    
   }, [selectedChat, isBrowser]);
   
   // Thêm useEffect mới để tránh cuộn toàn bộ trang
@@ -231,45 +244,44 @@ export default function StaffChat() {
     
     setIsLoading(true);
     
+    // Clear existing messages first
+    setMessages([]);
+    
     const storageKey = `chat_${userId}`;
     const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
     
-    console.log("Loaded messages from localStorage:", storedMessages);
+    console.log("Loaded messages from localStorage:", storedMessages.length);
     
     if (storedMessages.length === 0) {
-      setMessages([]);
       setIsLoading(false);
       return;
     }
     
     // Convert message format if needed
     const formattedMessages = storedMessages.map(msg => {
+      let senderType;
+      
       // Check for old format with userType
       if (msg.userType !== undefined) {
-        return {
-          content: msg.content,
-          sender: msg.userType === 'user' ? MESSAGE_TYPES.USER : MESSAGE_TYPES.STAFF,
-          timestamp: new Date(msg.timestamp || new Date())
-        };
+        senderType = msg.userType === 'user' ? MESSAGE_TYPES.USER : MESSAGE_TYPES.STAFF;
       }
-      
       // Check for new format with type
-      if (msg.type !== undefined) {
-        return {
-          content: msg.content,
-          sender: msg.type,
-          timestamp: new Date(msg.timestamp || new Date())
-        };
+      else if (msg.type !== undefined) {
+        senderType = msg.type;
+      }
+      // If neither format is present, assume based on sender
+      else {
+        senderType = msg.sender || MESSAGE_TYPES.USER;
       }
       
-      // If neither format is present, assume based on sender
       return {
         content: msg.content,
-        sender: msg.sender || MESSAGE_TYPES.USER,
+        sender: senderType,
         timestamp: new Date(msg.timestamp || new Date())
       };
     });
     
+    // Set all messages at once with proper formatting
     setMessages(formattedMessages);
     setIsLoading(false);
     
@@ -281,7 +293,7 @@ export default function StaffChat() {
         prev.map(chat => 
           chat.userId === userId ? {
             ...chat,
-            lastMessage: lastMsg.content.substring(0, 30) + (lastMsg.content.length > 30 ? '...' : ''),
+            lastMessage: formatMessageForList(lastMsg.content),
             timestamp: new Date(lastMsg.timestamp || new Date())
           } : chat
         )
@@ -321,6 +333,49 @@ export default function StaffChat() {
     });
   };
   
+  // Handle image preview
+  const handleImagePreview = (imageUrl) => {
+    setPreviewImage(imageUrl);
+    setPreviewOpen(true);
+  };
+  
+  // Close image preview
+  const handleClosePreview = () => {
+    setPreviewOpen(false);
+  };
+  
+  // Helper function to format message display text
+  const formatMessageDisplay = (messageContent) => {
+    try {
+      const parsedContent = JSON.parse(messageContent);
+      if (parsedContent.type === 'product') {
+        return "[Sản phẩm]";
+      } else if (parsedContent.type === 'image') {
+        return "[Hình ảnh]";
+      }
+      return messageContent;
+    } catch (e) {
+      // Not a JSON message, return as is
+      return messageContent;
+    }
+  };
+  
+  // Helper function to format message content for display in chat list
+  const formatMessageForList = (messageContent) => {
+    try {
+      const parsedContent = JSON.parse(messageContent);
+      if (parsedContent.type === 'product') {
+        return "[Sản phẩm]";
+      } else if (parsedContent.type === 'image') {
+        return "[Hình ảnh]";
+      }
+      return messageContent.substring(0, 30) + (messageContent.length > 30 ? '...' : '');
+    } catch (e) {
+      // Not a JSON message, return as is
+      return messageContent.substring(0, 30) + (messageContent.length > 30 ? '...' : '');
+    }
+  };
+  
   // Handle ReceiveSupportMessage event
   useEffect(() => {
     if (!connection) return;
@@ -358,7 +413,7 @@ export default function StaffChat() {
           if (chatIndex !== -1) {
             updatedChats[chatIndex] = {
               ...updatedChats[chatIndex],
-              lastMessage: message.substring(0, 30) + (message.length > 30 ? '...' : ''),
+              lastMessage: formatMessageForList(message),
               timestamp: new Date(),
               unreadCount: selectedChat && selectedChat.userId === userId ? 0 : updatedChats[chatIndex].unreadCount + 1
             };
@@ -367,7 +422,7 @@ export default function StaffChat() {
               userId,
               username: `Customer ${userId.substring(0, 6)}`,
               unreadCount: 1,
-              lastMessage: message.substring(0, 30) + (message.length > 30 ? '...' : ''),
+              lastMessage: formatMessageForList(message),
               timestamp: new Date(),
               avatarColor: getRandomColor()
             });
@@ -498,7 +553,7 @@ export default function StaffChat() {
           username: `Customer ${userId.substring(0, 6)}`,
           unreadCount: 0,
           lastMessage: lastMsg 
-            ? lastMsg.content.substring(0, 30) + (lastMsg.content.length > 30 ? '...' : '') 
+            ? formatMessageForList(lastMsg.content)
             : "Started a conversation",
           timestamp: lastMsg ? new Date(lastMsg.timestamp) : new Date(),
           avatarColor: getRandomColor()
@@ -529,7 +584,7 @@ export default function StaffChat() {
       params.append('pageSize', '20');
       
       if (searchQuery) {
-        params.append('searchTerm', searchQuery);
+        params.append('name', searchQuery);
       }
       
       const { data } = await request.get(`/products?${params.toString()}`);
@@ -547,7 +602,7 @@ export default function StaffChat() {
     const value = e.target.value;
     setProductSearch(value);
     
-    // Debounce search
+    // Debounce search for better UX
     const timeoutId = setTimeout(() => {
       fetchProducts(value);
     }, 500);
@@ -631,6 +686,22 @@ export default function StaffChat() {
       }
     ]);
     
+    // Cập nhật active chats để hiển thị tin nhắn sản phẩm
+    setActiveChats(prev => {
+      const updatedChats = [...prev];
+      const chatIndex = updatedChats.findIndex(chat => chat.userId === selectedChat.userId);
+      
+      if (chatIndex !== -1) {
+        updatedChats[chatIndex] = {
+          ...updatedChats[chatIndex],
+          lastMessage: "[Sản phẩm]",
+          timestamp: new Date()
+        };
+      }
+      
+      return updatedChats;
+    });
+    
     // Send to server
     connection.invoke("SendSupportMessage", selectedChat.userId, productMessage)
       .catch(err => {
@@ -639,6 +710,88 @@ export default function StaffChat() {
     
     // Close dialog
     handleCloseProductDialog();
+  };
+
+  // Handle image upload
+  const handleImageUpload = async (e) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    setUploadingImage(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append('files', files[0]);
+      
+      const response = await request.post('/images', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      if (response.data.success && response.data.data) {
+        // Tạo message object mới cho image
+        const imageUrl = response.data.data[0];
+        const imageMessage = JSON.stringify({
+          type: 'image',
+          url: imageUrl
+        });
+        
+        // Save to localStorage
+        const storageKey = `chat_${selectedChat.userId}`;
+        const existingMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        
+        existingMessages.push({
+          content: imageMessage,
+          type: MESSAGE_TYPES.STAFF,
+          timestamp: new Date().toISOString()
+        });
+        
+        localStorage.setItem(storageKey, JSON.stringify(existingMessages));
+        
+        // Cập nhật UI với hình ảnh mới ngay lập tức
+        setMessages(prev => [
+          ...prev,
+          {
+            content: imageMessage,
+            sender: MESSAGE_TYPES.STAFF,
+            timestamp: new Date()
+          }
+        ]);
+        
+        // Cập nhật active chats để hiển thị thông báo đã gửi hình ảnh
+        setActiveChats(prev => {
+          const updatedChats = [...prev];
+          const chatIndex = updatedChats.findIndex(chat => chat.userId === selectedChat.userId);
+          
+          if (chatIndex !== -1) {
+            updatedChats[chatIndex] = {
+              ...updatedChats[chatIndex],
+              lastMessage: "[Hình ảnh]", 
+              timestamp: new Date()
+            };
+          }
+          
+          return updatedChats;
+        });
+        
+        // Send to server
+        connection.invoke("SendSupportMessage", selectedChat.userId, imageMessage)
+          .catch(err => {
+            console.error("Error sending image message: ", err);
+          });
+        
+        toast.success("Đã gửi hình ảnh");
+      } else {
+        toast.error("Không thể tải lên hình ảnh");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Lỗi khi tải lên hình ảnh");
+    } finally {
+      setUploadingImage(false);
+      if (imageInputRef.current) imageInputRef.current.value = '';
+    }
   };
 
   return (
@@ -658,7 +811,7 @@ export default function StaffChat() {
             
             <Box sx={{ mt: 1.5, position: 'relative' }}>
               <TextField
-                placeholder="Search..."
+                placeholder="Tìm kiếm..."
                 size="small"
                 fullWidth
                 value={searchTerm}
@@ -692,12 +845,12 @@ export default function StaffChat() {
                 <ListItemText 
                   primary={
                     <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                      No conversations
+                      Không có cuộc trò chuyện
                     </Typography>
                   }
                   secondary={
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Waiting for customers...
+                      Đang chờ khách hàng...
                     </Typography>
                   }
                 />
@@ -797,7 +950,7 @@ export default function StaffChat() {
                     {selectedChat.username}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Online
+                    Đang trực tuyến
                   </Typography>
                 </Box>
               </Toolbar>
@@ -829,10 +982,10 @@ export default function StaffChat() {
                 }}>
                   <MessageIcon sx={{ fontSize: 80, color: 'text.secondary', opacity: 0.3 }} />
                   <Typography variant="body1" color="text.secondary" mt={2}>
-                    No messages yet
+                    Chưa có tin nhắn
                   </Typography>
                   <Typography variant="body2" color="text.disabled">
-                    Start a conversation
+                    Bắt đầu cuộc trò chuyện
                   </Typography>
                 </Box>
               ) : (
@@ -865,8 +1018,9 @@ export default function StaffChat() {
                       try {
                         // Nếu là JSON, thì parse và kiểm tra
                         const parsedContent = JSON.parse(msg.content);
+                        
+                        // Xử lý tin nhắn sản phẩm
                         if (parsedContent.type === 'product') {
-                          // Nếu là sản phẩm, hiển thị card sản phẩm
                           return (
                             <Box 
                               sx={{
@@ -998,8 +1152,62 @@ export default function StaffChat() {
                               </Typography>
                             </Box>
                           );
-                        } else {
-                          // Nếu là JSON nhưng không phải product, hiển thị như text thường
+                        } 
+                        // Xử lý tin nhắn hình ảnh
+                        else if (parsedContent.type === 'image') {
+                          return (
+                            <Box 
+                              sx={{
+                                maxWidth: '300px',
+                                mb: 1,
+                                marginLeft: msg.sender === MESSAGE_TYPES.USER ? 0 : 'auto', 
+                                marginRight: msg.sender === MESSAGE_TYPES.STAFF ? 0 : 'auto',
+                              }}
+                            >
+                              <Paper
+                                elevation={0}
+                                sx={{
+                                  p: 1,
+                                  borderRadius: msg.sender === MESSAGE_TYPES.STAFF 
+                                    ? '16px 4px 16px 16px' 
+                                    : '4px 16px 16px 16px',
+                                  bgcolor: 'white',
+                                  overflow: 'hidden'
+                                }}
+                              >
+                                <Box
+                                  component="img"
+                                  src={parsedContent.url}
+                                  alt="Shared image"
+                                  sx={{ 
+                                    width: '100%',
+                                    maxHeight: '300px',
+                                    objectFit: 'contain',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
+                                  }}
+                                  onClick={() => handleImagePreview(parsedContent.url)}
+                                />
+                              </Paper>
+                              <Typography 
+                                variant="caption" 
+                                sx={{ 
+                                  opacity: 0.7, 
+                                  mt: 0.5, 
+                                  display: 'block', 
+                                  textAlign: msg.sender === MESSAGE_TYPES.STAFF ? 'right' : 'left',
+                                  fontSize: '0.7rem',
+                                  px: 0.5,
+                                  color: 'text.secondary'
+                                }}
+                              >
+                                {formatTime(msg.timestamp)}
+                              </Typography>
+                            </Box>
+                          );
+                        }
+                        else {
+                          // Nếu là JSON nhưng không phải product hoặc image
                           return (
                             <Paper
                               elevation={0}
@@ -1026,7 +1234,7 @@ export default function StaffChat() {
                                   lineHeight: 1.5
                                 }}
                               >
-                                {msg.content}
+                                {formatMessageDisplay(msg.content)}
                               </Typography>
                               <Typography 
                                 variant="caption" 
@@ -1114,7 +1322,7 @@ export default function StaffChat() {
                 <Grid item xs>
                   <TextField
                     fullWidth
-                    placeholder="Type a message..."
+                    placeholder="Nhập tin nhắn..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={(e) => {
@@ -1138,6 +1346,23 @@ export default function StaffChat() {
                 </Grid>
                 <Grid item>
                   <Box sx={{ display: 'flex', gap: 1, height: '100%' }}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      ref={imageInputRef}
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage || !isConnected}
+                    />
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      sx={{ height: '100%', minWidth: '50px', borderRadius: '12px' }}
+                      onClick={() => imageInputRef.current?.click()}
+                      disabled={uploadingImage || !isConnected}
+                    >
+                      {uploadingImage ? <CircularProgress size={24} /> : <ImageIcon />}
+                    </Button>
                     <Button
                       variant="outlined"
                       color="primary"
@@ -1173,113 +1398,66 @@ export default function StaffChat() {
           }}>
             <MessageIcon sx={{ fontSize: 100, color: 'text.disabled', mb: 2 }} />
             <Typography variant="h6" color="text.secondary" textAlign="center">
-              Select a conversation to start
+              Chọn một cuộc trò chuyện để bắt đầu
             </Typography>
           </Box>
         )}
       </Box>
 
-      {/* Product selector dialog */}
-      <Dialog 
-        open={openProductDialog} 
+      {/* Sử dụng component ProductSelectorModal */}
+      <ProductSelectorModal
+        open={openProductDialog}
         onClose={handleCloseProductDialog}
-        fullWidth
-        maxWidth="sm"
+        products={products}
+        loadingProducts={loadingProducts}
+        selectedProduct={selectedProduct}
+        onSelectProduct={handleSelectProduct}
+        onSearch={handleProductSearch}
+        searchValue={productSearch}
+        onSend={handleSendProduct}
+        mainColor={mainColor}
+      />
+      
+      {/* Image Preview Modal */}
+      <Modal
+        open={previewOpen}
+        onClose={handleClosePreview}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1500
+        }}
       >
-        <DialogTitle>Select a Product</DialogTitle>
-        <DialogContent dividers>
-          <TextField
-            fullWidth
-            placeholder="Search products..."
-            value={productSearch}
-            onChange={handleProductSearch}
-            margin="normal"
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
+        <div className="relative bg-transparent rounded-lg overflow-hidden max-w-[90vw] max-h-[90vh]">
+          <IconButton
+            onClick={handleClosePreview}
+            sx={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.7)',
+              }
             }}
-          />
-          
-          {loadingProducts ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <List sx={{ mt: 2 }}>
-              {products.length === 0 ? (
-                <Typography variant="body2" sx={{ textAlign: 'center', p: 2, color: 'text.secondary' }}>
-                  No products found
-                </Typography>
-              ) : (
-                products.map((product) => (
-                  <Paper
-                    key={product.id}
-                    elevation={0}
-                    onClick={() => handleSelectProduct(product)}
-                    sx={{
-                      mb: 2,
-                      border: '1px solid',
-                      borderColor: selectedProduct?.id === product.id 
-                        ? mainColor.primary 
-                        : 'divider',
-                      borderRadius: 2,
-                      overflow: 'hidden',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        borderColor: selectedProduct?.id === product.id 
-                          ? mainColor.primary 
-                          : mainColor.primary + '80',
-                        boxShadow: '0 4px 8px rgba(0,0,0,0.05)'
-                      }
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', p: 1 }}>
-                      <Box sx={{ width: 80, height: 80, position: 'relative', flexShrink: 0 }}>
-                        <img
-                          src={product.thumbnail || '/images/placeholder.jpg'}
-                          alt={product.name}
-                          style={{ 
-                            width: '100%', 
-                            height: '100%', 
-                            objectFit: 'cover',
-                            borderRadius: 8
-                          }}
-                        />
-                      </Box>
-                      <Box sx={{ ml: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%' }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 0.5 }}>
-                          {product.name}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                          {product.categoryName || 'Skincare'}
-                        </Typography>
-                        <Typography variant="subtitle2" sx={{ color: mainColor.primary, fontWeight: 600 }}>
-                          {formatPrice(product.salePrice || product.price, '₫')}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Paper>
-                ))
-              )}
-            </List>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseProductDialog}>Cancel</Button>
-          <Button 
-            onClick={handleSendProduct} 
-            variant="contained" 
-            disabled={!selectedProduct}
-            color="primary"
           >
-            Send Product
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <CloseIcon />
+          </IconButton>
+          <img 
+            src={previewImage} 
+            alt="Preview" 
+            className="max-w-full max-h-[90vh] object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      </Modal>
     </Container>
   );
 } 

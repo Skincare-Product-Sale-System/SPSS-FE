@@ -1,4 +1,4 @@
-import { AuthProvider } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 function App({ Component, pageProps }) {
   return (
