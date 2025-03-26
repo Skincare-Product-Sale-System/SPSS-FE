@@ -206,4 +206,16 @@
 
 .MuiRating-iconEmpty {
   color: rgba(255, 184, 0, 0.25) !important;
+}
+
+/* Thêm vào đầu file hoặc cuối file */
+* {
+  font-family: var(--font-primary, 'Roboto'), system-ui, sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6,
+.heading, .title, .subtitle,
+[style*="Playfair Display"] {
+  font-family: var(--font-primary, 'Roboto'), system-ui, sans-serif !important;
 } 

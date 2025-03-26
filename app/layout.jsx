@@ -313,6 +313,7 @@ export default function RootLayout({ children }) {
         <style jsx global>{`
           :root {
             --font-primary: ${roboto.style.fontFamily};
+            --font-heading: ${roboto.style.fontFamily};
           }
         `}</style>
       </head>

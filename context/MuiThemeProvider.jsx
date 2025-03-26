@@ -64,6 +64,12 @@ const theme = createTheme({
       fontWeight: 400,
       lineHeight: 1.43,
     },
+    subtitle1: {
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+    },
+    subtitle2: {
+      fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
+    },
     button: {
       fontFamily: 'var(--font-primary, "Roboto"), system-ui, sans-serif',
       fontWeight: 500,
