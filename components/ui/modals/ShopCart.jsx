@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 export default function ShopCart() {
   const contextData = useContextElement() || {};
@@ -183,14 +184,14 @@ export default function ShopCart() {
                             </div>
                             <div
                               className="tf-mini-cart-remove"
-                              style={{ cursor: "pointer" }}
+                              style={{ cursor: "pointer", display: "flex", alignItems: "center", color: "#df3b3b" }}
                               onClick={() => {
                                 request
                                   .delete(`/cart-items/${elm.id}`)
                                   .then((res) => revalidate());
                               }}
                             >
-                              Xóa
+                              <DeleteOutlineIcon fontSize="small" />
                             </div>
                           </div>
                         </div>
@@ -336,9 +337,6 @@ export default function ShopCart() {
                       <span>Tổng cộng:</span>
                       <PriceFormatter price={totalPrice} variant="h6" sx={{ fontWeight: 600 }} />
                     </div>
-                  </div>
-                  <div className="tf-cart-tax">
-                    Taxes and <Link href="/shipping-info">shipping</Link> calculated at checkout
                   </div>
                   <div className="tf-mini-cart-line" />
                   <div className="tf-cart-checkbox">
