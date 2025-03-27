@@ -7,7 +7,14 @@ import { useThemeColors } from "@/context/ThemeContext";
 
 const ProductDetail = dynamic(
   () => import("@/components/product/detail/ProductDetail"),
-  { ssr: false }
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex justify-center items-center h-60">
+        <CircularProgress />
+      </div>
+    )
+  }
 );
 
 export default function ProductDetailPage({ product }) {

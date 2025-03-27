@@ -7,7 +7,14 @@ import { useThemeColors } from "@/context/ThemeContext";
 
 const BlogDetailContent = dynamic(
   () => import("@/components/blog/BlogDetailContent"),
-  { ssr: false }
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex justify-center items-center h-60">
+        <CircularProgress />
+      </div>
+    )
+  }
 );
 
 export default function BlogDetailPage({ blog }) {
