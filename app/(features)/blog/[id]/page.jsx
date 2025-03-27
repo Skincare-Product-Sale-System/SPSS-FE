@@ -1,10 +1,17 @@
 import BlogDetailPage from "@/pages/BlogDetailPage";
 import request from "@/utils/axios";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Blog Details | Skincare Store",
   description: "Read our latest skincare tips and news",
 };
+
+const BlogLoading = () => (
+  <div className="flex justify-center items-center py-8">
+    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+  </div>
+);
 
 export default async function BlogPage({ params }) {
   const { id } = params;
@@ -13,7 +20,11 @@ export default async function BlogPage({ params }) {
     const response = await request.get(`/blogs/${id}`);
     const blog = response.data.data;
     
-    return <BlogDetailPage blog={blog} />;
+    return (
+      <Suspense fallback={<BlogLoading />}>
+        <BlogDetailPage blog={blog} />
+      </Suspense>
+    );
   } catch (error) {
     console.error("Error fetching blog:", error);
     return (

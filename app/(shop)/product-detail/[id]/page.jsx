@@ -1,11 +1,18 @@
 import ProductDetailPage from "@/pages/ProductDetailPage";
 import request from "@/utils/axios";
 import { formatPrice } from "@/utils/priceFormatter";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Product Details | Skincare Store",
   description: "Discover high-quality skincare products",
 };
+
+const ProductLoading = () => (
+  <div className="flex justify-center items-center py-8">
+    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+  </div>
+);
 
 export default async function ProductPage({ params }) {
   const { id } = params;
@@ -54,7 +61,11 @@ export default async function ProductPage({ params }) {
       description: product.description
     };
 
-    return <ProductDetailPage product={formattedProduct} />;
+    return (
+      <Suspense fallback={<ProductLoading />}>
+        <ProductDetailPage product={formattedProduct} />
+      </Suspense>
+    );
   } catch (error) {
     console.error("Error fetching product:", error);
     return (
