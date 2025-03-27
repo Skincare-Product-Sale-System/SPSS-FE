@@ -466,7 +466,7 @@ export default function MyReviews() {
                     
                     <Grid item xs={12} md={6}>
                       <Link
-                        href={`/product-detail/${review.productId}`}
+                        href={`/product-detail?id=${review.productId}`}
                         style={{ textDecoration: 'none' }}
                       >
                         <Box 

@@ -40,7 +40,7 @@ export default function OrderProductList({
                 <td className="px-3 py-2">
                   <div className="flex items-center">
                     <Link
-                      href={`/product-detail/${item.productId}`}
+                      href={`/product-detail?id=${item.productId}`}
                       className="flex-shrink-0 h-12 w-12 hover:opacity-80 mr-3 transition-opacity"
                     >
                       <Image
@@ -56,7 +56,7 @@ export default function OrderProductList({
                     </Link>
                     <div>
                       <Link
-                        href={`/product-detail/${item.productId}`}
+                        href={`/product-detail?id=${item.productId}`}
                         className="text-gray-900 text-sm font-medium hover:text-[color:var(--mainColor)] transition-colors"
                       >
                         {item.productName}

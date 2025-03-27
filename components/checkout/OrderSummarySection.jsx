@@ -28,7 +28,7 @@ export default function OrderSummarySection({ cartProducts }) {
                 <td>
                   <div className="d-flex align-items-center">
                     <div className="me-3">
-                      <Link href={`/product-detail/${item.productId}`}>
+                      <Link href={`/product-detail?id=${item.productId}`}>
                         <Image
                           src={item.productImageUrl || defaultProductImage}
                           alt={item.productName}
@@ -40,7 +40,7 @@ export default function OrderSummarySection({ cartProducts }) {
                     </div>
                     <div>
                       <Link 
-                        href={`/product-detail/${item.productId}`}
+                        href={`/product-detail?id=${item.productId}`}
                         className="text-decoration-none fw-medium text-dark mb-1 d-block fs-14 hover-primary"
                       >
                         {item.productName}

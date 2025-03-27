@@ -114,7 +114,7 @@ export default function CartItems({ cartProducts, revalidate }) {
           <tr key={i} className="file-delete tf-cart-item">
             <td className="tf-cart-item_product">
               <Link
-                href={`/product-detail/${elm.productId}`}
+                href={`/product-detail?id=${elm.productId}`}
                 className="img-box"
               >
                 <Image
@@ -126,7 +126,7 @@ export default function CartItems({ cartProducts, revalidate }) {
               </Link>
               <div className="cart-info">
                 <Link
-                  href={`/product-detail/${elm.productId}`}
+                  href={`/product-detail?id=${elm.productId}`}
                   className="cart-title link"
                 >
                   {elm.productName}
