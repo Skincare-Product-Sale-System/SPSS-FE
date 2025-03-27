@@ -100,7 +100,7 @@ export default function OrderCard({
         {order.orderDetails.map((item, index) => (
           <div key={index} className="flex justify-between items-start mb-4 last:mb-0">
             <Link 
-              href={`/product-detail/${item.productId}`}
+              href={`/product-detail?id=${item.productId}`}
               className="flex flex-1 p-2 rounded-lg hover:bg-gray-50 items-center transition-all"
               style={{ textDecoration: 'none' }}
             >

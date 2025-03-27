@@ -6,7 +6,7 @@ import { useContextElement } from "@/context/Context";
 import { openCartModal } from "@/utils/openCartModal";
 import { openCompareModal } from "@/utils/openCompareModal";
 import { defaultProductImage } from "@/utils/default";
-import { usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import request from "@/utils/axios";
 import toast from "react-hot-toast";
 import useQueryStore from "@/context/queryStore";
@@ -17,8 +17,8 @@ import { formatPrice, calculateDiscount } from "@/utils/priceFormatter";
 
 export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const theme = useTheme();
-  const router = usePathname();
-  const productId = router.split("/")[2];
+  const searchParams = useSearchParams();
+  const productId = searchParams.get("id");
   const { switcher, revalidate } = useQueryStore();
   const [currentPrice, setCurrentPrice] = useState({
     price: product?.price || 0,
@@ -236,7 +236,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
     }
   };
 
-  return (product &&
+  return (
     <section
       className="bg-neutral-50 flat-spacing-4 pt_0"
       style={{ maxWidth: "100vw", overflow: "clip" }}

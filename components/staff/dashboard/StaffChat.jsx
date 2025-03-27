@@ -639,7 +639,7 @@ export default function StaffChat() {
       name: selectedProduct.name,
       price: selectedProduct.salePrice || selectedProduct.price,
       image: selectedProduct.thumbnail,
-      url: `/product-detail/${selectedProduct.id}`,
+      url: `/product-detail?id=${selectedProduct.id}`,
       rating: selectedProduct.rating || 4.5,
       soldCount: selectedProduct.soldCount || 0
     });

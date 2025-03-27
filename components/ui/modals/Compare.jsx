@@ -105,7 +105,7 @@ export default function Compare() {
                               <DeleteOutlineIcon style={{ color: "#df3b3b", fontSize: "18px" }} />
                             </div>
                           </Tooltip>
-                          <Link href={`/product-detail/${elm?.id}`}>
+                          <Link href={`/product-detail?id=${elm?.id}`}>
                             <Image
                               className="h-[120px] aspect-square radius-3"
                               alt="image"

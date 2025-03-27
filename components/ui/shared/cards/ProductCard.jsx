@@ -34,7 +34,7 @@ export default function ProductCard({
     >
       <Box sx={{ position: 'relative' }}>
         <Link
-          href={`/product-detail/${product.id}`}
+          href={`/product-detail?id=${product.id}`}
           style={{ display: 'block', aspectRatio: '1/1' }}
         >
           <Image
@@ -169,7 +169,7 @@ export default function ProductCard({
         </Box>
       </Box>
       <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-        <Link href={`/product-detail/${product.id}`}>
+        <Link href={`/product-detail?id=${product.id}`}>
           <Box 
             component="h3" 
             sx={{ 

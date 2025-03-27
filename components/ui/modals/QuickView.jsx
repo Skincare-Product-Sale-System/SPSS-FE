@@ -353,7 +353,7 @@ export default function QuickView() {
             </Box>
             <Box sx={{ mt: 3 }}>
               <Link 
-                href={`/product-detail/${productDetail.id}`}
+                href={`/product-detail?id=${productDetail.id}`}
                 style={{
                   color: theme.palette.primary.main,
                   textDecoration: 'none',

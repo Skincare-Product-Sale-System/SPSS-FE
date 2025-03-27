@@ -103,7 +103,7 @@ export default function ShopCart() {
                     {cartProducts?.map((elm, i) => (
                       <div key={i} className="tf-mini-cart-item">
                         <div className="tf-mini-cart-image">
-                          <Link href={`/product-detail/${elm.productId}`}>
+                          <Link href={`/product-detail?id=${elm.productId}`}>
                             <Image
                               alt="image"
                               src={elm.productImageUrl || defaultProductImage}
@@ -116,7 +116,7 @@ export default function ShopCart() {
                         <div className="tf-mini-cart-info">
                           <Link
                             className="link title"
-                            href={`/product-detail/${elm.productId}`}
+                            href={`/product-detail?id=${elm.productId}`}
                             style={{ fontFamily: '"Roboto", sans-serif' }}
                           >
                             {elm.productName}

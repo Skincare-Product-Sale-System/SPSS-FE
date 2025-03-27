@@ -21,7 +21,7 @@ export default function FeaturedBlog({ blog }) {
         {/* White box on the left side */}
         <div className="-translate-y-1/2 absolute left-16 max-w-md top-1/2">
           <div className="bg-white p-8 rounded-lg shadow-xl">
-            <Link href={`/blog/${blog?.id}`}>
+            <Link href={`/blog/detail?id=${blog?.id}`}>
               <h2 className="text-3xl text-gray-900 font-bold hover:text-primary mb-5 transition-colors" style={{ fontFamily: 'Playfair Display, serif' }}>
                 {blog?.title}
               </h2>

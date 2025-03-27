@@ -39,7 +39,7 @@ export default function ProductCarousel({ products, index, mainColor }) {
         {products.map((product, idx) => (
           <SwiperSlide key={idx} className="swiper-slide">
             <Link 
-              href={`/product-detail/${product.id}`}
+              href={`/product-detail?id=${product.id}`}
               style={{ textDecoration: 'none' }}
             >
               <Card 

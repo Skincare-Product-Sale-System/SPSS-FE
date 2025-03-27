@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function BlogItem({ blog, index }) {
   return (
     <div className="rounded-lg shadow-sm duration-300 hover:shadow-md overflow-hidden transition-all">
-      <Link href={`/blog/${blog?.id}`} className="block">
+      <Link href={`/blog/detail?id=${blog?.id}`} className="block">
         <div className="h-56 relative">
           <Image
             className="h-full w-full object-cover"
@@ -25,7 +25,7 @@ export default function BlogItem({ blog, index }) {
         </div>
       </Link>
       <div className="p-4">
-        <Link href={`/blog/${blog?.id}`} className="block">
+        <Link href={`/blog/detail?id=${blog?.id}`} className="block">
           <h3 className="text-lg font-bold hover:text-primary line-clamp-2 mb-2 transition-colors" style={{ fontFamily: 'Playfair Display, serif' }}>
             {blog?.title}
           </h3>

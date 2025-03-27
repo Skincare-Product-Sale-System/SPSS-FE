@@ -6,24 +6,33 @@ import { CircularProgress } from "@mui/material";
 import { useThemeColors } from "@/context/ThemeContext";
 import request from "@/utils/axios";
 import { formatPrice } from "@/utils/priceFormatter";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const ProductDetail = dynamic(
   () => import("@/components/product/detail/ProductDetail"),
   { ssr: false }
 );
 
-export default function ProductDetailPage({ id }) {
+export default function ProductDetailPage() {
   const mainColor = useThemeColors();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const productId = searchParams.get("id");
 
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!id) return;
-      
+      if (!productId) {
+        router.push("/products");
+        return;
+      }
+
       try {
-        const response = await request.get(`/products/${id}`);
+        const response = await request.get(`/products/${productId}`);
         const productData = response.data.data;
         
         // Format product data
@@ -76,7 +85,7 @@ export default function ProductDetailPage({ id }) {
     };
 
     fetchProduct();
-  }, [id]);
+  }, [productId, router]);
 
   if (error) {
     return (
@@ -93,12 +102,6 @@ export default function ProductDetailPage({ id }) {
 
   return (
     <>
-      <div className="tf-page-title">
-        <div className="container-full">
-          <div className="heading text-center">Product Details</div>
-        </div>
-      </div>
-      
       <div className="container-full lg:w-11/12 mx-auto px-4 py-6">
         <Suspense
           fallback={

@@ -59,7 +59,7 @@ export default function CompareProductsList({ items, onRemoveItem }) {
           <div className="tf-compare-item">
             <Link
               className="tf-compare-image"
-              href={`/product-detail/${product?.id}`}
+              href={`/product-detail?id=${product?.id}`}
             >
               <Image
                 className="w-full aspect-square lazyload"
@@ -72,7 +72,7 @@ export default function CompareProductsList({ items, onRemoveItem }) {
             </Link>
             <Link
               className="tf-compare-title"
-              href={`/product-detail/${product?.id}`}
+              href={`/product-detail?id=${product?.id}`}
             >
               {product?.name}
             </Link>
