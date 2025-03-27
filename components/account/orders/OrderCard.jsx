@@ -7,7 +7,8 @@ import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
 import useAuthStore from "@/context/authStore";
 import toast from "react-hot-toast";
 import request from "@/utils/axios";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Chip } from "@mui/material";
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
 export default function OrderCard({ 
   order, 
@@ -20,6 +21,11 @@ export default function OrderCard({
   const { isLoggedIn, Id } = useAuthStore();
   const [loading, setLoading] = React.useState(false);
   const [paymentMethods, setPaymentMethods] = React.useState([]);
+
+  // Calculate discount percentage if both originalOrderTotal and discountAmount exist
+  const discountPercentage = order.originalOrderTotal && order.discountAmount
+    ? Math.round((order.discountAmount / order.originalOrderTotal) * 100)
+    : null;
 
   // Tải phương thức thanh toán nếu trạng thái là Awaiting Payment
   React.useEffect(() => {
@@ -159,9 +165,56 @@ export default function OrderCard({
       </div>
       
       <div className="bg-gray-50 border-t p-4">
-        <div className="flex justify-between items-center mb-4">
-          <span className="font-medium">Tổng số tiền ({order.orderDetails.length} sản phẩm):</span>
-          <PriceFormatter price={order.orderTotal} variant="h6" sx={{ fontWeight: 'bold' }} />
+        <div className="flex flex-col mb-4">
+          {/* Voucher information */}
+          {order.voucherCode && (
+            <div className="flex items-center mb-2">
+              <LocalOfferIcon sx={{ fontSize: 16, color: mainColor.primary, mr: 0.5 }} />
+              <span className="text-gray-600 text-sm mr-2">Voucher:</span>
+              <Chip 
+                label={order.voucherCode}
+                size="small"
+                sx={{ 
+                  bgcolor: `${mainColor.primary}15`, 
+                  color: mainColor.primary,
+                  fontWeight: 'medium',
+                  fontSize: '0.75rem',
+                  height: '22px'
+                }}
+              />
+              {discountPercentage && (
+                <span className="ml-2 bg-red-100 text-red-700 rounded px-1 py-0.5 text-xs font-medium">
+                  -{discountPercentage}%
+                </span>
+              )}
+            </div>
+          )}
+          
+          {/* Original price */}
+          <div className="flex justify-between items-center">
+            <span className="font-medium">Tổng tiền ({order.orderDetails.length} sản phẩm):</span>
+            <div className="text-right">
+              {/* If there's a discount, show the original price with strikethrough and discounted price */}
+              {order.originalOrderTotal && order.discountedOrderTotal && order.originalOrderTotal !== order.discountedOrderTotal ? (
+                <>
+                  <div className="line-through text-gray-500 text-sm">
+                    <PriceFormatter price={order.originalOrderTotal} />
+                  </div>
+                  <PriceFormatter 
+                    price={order.discountedOrderTotal} 
+                    variant="h6" 
+                    sx={{ fontWeight: 'bold', color: mainColor.primary }} 
+                  />
+                </>
+              ) : (
+                <PriceFormatter 
+                  price={order.orderTotal} 
+                  variant="h6" 
+                  sx={{ fontWeight: 'bold' }} 
+                />
+              )}
+            </div>
+          </div>
         </div>
         
         <div className="flex justify-end gap-3">

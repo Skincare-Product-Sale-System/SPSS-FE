@@ -247,7 +247,7 @@ export default function MyAccountOrderDetailsContent() {
         <Button
           variant="outlined"
           startIcon={<ArrowBackIcon />}
-          href="/my-account-orders"
+          href="/orders"
           size="small"
           sx={{
             borderColor: mainColor,

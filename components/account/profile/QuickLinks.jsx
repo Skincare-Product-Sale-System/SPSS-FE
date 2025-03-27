@@ -16,12 +16,12 @@ export default function QuickLinks() {
         Quản lý tài khoản
       </h4>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
-        <Link href="/my-account-orders" className="flex items-center p-3 border rounded-lg gap-3 hover:border-primary transition-colors">
+        <Link href="/orders" className="flex items-center p-3 border rounded-lg gap-3 hover:border-primary transition-colors">
           <ShoppingBagOutlinedIcon sx={{ color: theme.palette.primary.main }} />
           <span style={{ fontFamily: 'Roboto, sans-serif' }}>Đơn hàng của tôi</span>
         </Link>
         
-        <Link href="/my-account-address" className="flex items-center p-3 border rounded-lg gap-3 hover:border-primary transition-colors">
+        <Link href="/address" className="flex items-center p-3 border rounded-lg gap-3 hover:border-primary transition-colors">
           <HomeOutlinedIcon sx={{ color: theme.palette.primary.main }} />
           <span style={{ fontFamily: 'Roboto, sans-serif' }}>Địa chỉ của tôi</span>
         </Link>

@@ -1,7 +1,8 @@
 import React from 'react';
 import Image from "next/image";
-import { Tooltip, IconButton, Skeleton } from "@mui/material";
+import { Tooltip, IconButton, Skeleton, Chip } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
 export default function OrderInfoCards({ 
   order, 
@@ -18,6 +19,11 @@ export default function OrderInfoCards({
   const paymentMethodImage = order.paymentMethodId 
     ? getPaymentMethodImage(order.paymentMethodId)
     : "";
+
+  // Calculate discount percentage if both originalOrderTotal and discountAmount exist
+  const discountPercentage = order.originalOrderTotal && order.discountAmount
+    ? Math.round((order.discountAmount / order.originalOrderTotal) * 100)
+    : null;
 
   return (
     <div className="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
@@ -78,21 +84,61 @@ export default function OrderInfoCards({
             </p>
           </div>
         </div>
+        
+        {/* Voucher section if voucher code exists */}
+        {order.voucherCode && (
+          <div className="border-gray-200 border-t mt-2 pt-2 mb-2">
+            <div className="flex items-center mb-1">
+              <LocalOfferIcon sx={{ fontSize: 16, color: mainColor.primary, mr: 0.5 }} />
+              <span className="text-gray-700 text-xs font-semibold">VOUCHER ĐÃ ÁP DỤNG:</span>
+            </div>
+            <div className="flex items-center">
+              <Chip 
+                label={order.voucherCode}
+                size="small"
+                sx={{ 
+                  bgcolor: `${mainColor.primary}15`, 
+                  color: mainColor.primary,
+                  fontWeight: 'medium',
+                  fontSize: '0.75rem',
+                  height: '22px'
+                }}
+              />
+              {discountPercentage && (
+                <span className="ml-2 bg-red-100 text-red-700 rounded px-1 py-0.5 text-xs font-medium">
+                  -{discountPercentage}%
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+        
         <div className="border-gray-200 border-t mt-2 pt-2">
           <div className="flex justify-between text-sm mb-1">
             <span className="text-gray-600">Tạm tính:</span>
             <span className="font-medium">
-              {formatCurrency(order.orderTotal)}
+              {formatCurrency(order.originalOrderTotal || order.orderTotal)}
             </span>
           </div>
+          
+          {order.discountAmount > 0 && (
+            <div className="flex justify-between text-sm mb-1">
+              <span className="text-gray-600">Giảm giá:</span>
+              <span className="font-medium text-red-600">
+                -{formatCurrency(order.discountAmount)}
+              </span>
+            </div>
+          )}
+          
           <div className="flex justify-between text-sm mb-1">
             <span className="text-gray-600">Phí vận chuyển:</span>
             <span className="font-medium">{formatCurrency(0)}</span>
           </div>
+          
           <div className="flex border-gray-200 border-t justify-between font-bold pt-1">
             <span>Tổng cộng</span>
             <span style={{ color: mainColor }}>
-              {formatCurrency(order.orderTotal)}
+              {formatCurrency(order.discountedOrderTotal || order.orderTotal)}
             </span>
           </div>
         </div>

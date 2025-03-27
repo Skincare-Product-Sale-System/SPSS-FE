@@ -50,9 +50,9 @@ const navigation = [
 
 const accountNavigation = [
   { name: "Profile", href: "/my-account" },
-  { name: "Orders", href: "/my-account-orders" },
-  { name: "Addresses", href: "/my-account-address" },
-  { name: "Reviews", href: "/my-account-reviews" },
+  { name: "Orders", href: "/orders" },
+  { name: "Addresses", href: "/address" },
+  { name: "Reviews", href: "reviews" },
   { name: "Wishlist", href: "/my-account-wishlist" },
   { name: "Logout", href: "/logout" },
 ];
