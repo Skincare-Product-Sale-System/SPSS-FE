@@ -1,8 +1,8 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const baseURL = "https://localhost:44358/api";
-// const baseURL = "https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/api";
+// const baseURL = "https://localhost:44358/api";
+const baseURL = "https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/api";
 
 // Create an Axios instance
 const request = axios.create({

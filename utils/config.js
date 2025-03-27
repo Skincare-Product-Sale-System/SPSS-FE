@@ -5,8 +5,8 @@ const config = {
   },
   vnpay: {
     returnUrls: {
-      orderDetails: (orderId) => `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/my-account-orders`,
-      orderList: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/my-account-orders`
+      orderDetails: (orderId) => `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/orders`,
+      orderList: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/orders`
     }
   }
 };
