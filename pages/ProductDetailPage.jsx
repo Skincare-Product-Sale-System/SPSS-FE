@@ -7,22 +7,21 @@ import { useThemeColors } from "@/context/ThemeContext";
 
 const ProductDetail = dynamic(
   () => import("@/components/product/detail/ProductDetail"),
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="flex justify-center items-center h-60">
-        <CircularProgress />
-      </div>
-    )
-  }
+  { ssr: false }
 );
 
 export default function ProductDetailPage({ product }) {
   const mainColor = useThemeColors();
 
   return (
-    <section className="flat-spacing-2">
-      <div className="container">
+    <>
+      <div className="tf-page-title">
+        <div className="container-full">
+          <div className="heading text-center">Product Details</div>
+        </div>
+      </div>
+      
+      <div className="container-full lg:w-11/12 mx-auto px-4 py-6">
         <Suspense
           fallback={
             <div className="flex justify-center items-center h-60">
@@ -33,6 +32,6 @@ export default function ProductDetailPage({ product }) {
           <ProductDetail product={product} />
         </Suspense>
       </div>
-    </section>
+    </>
   );
 } 
