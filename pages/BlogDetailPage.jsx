@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { CircularProgress } from "@mui/material";
 import { useThemeColors } from "@/context/ThemeContext";
 import request from "@/utils/axios";
-import { usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const BlogDetailContent = dynamic(
   () => import("@/components/blog/BlogDetailContent"),
@@ -14,7 +14,7 @@ const BlogDetailContent = dynamic(
 
 export default function BlogDetailPage() {
   const mainColor = useThemeColors();
-  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,7 +22,7 @@ export default function BlogDetailPage() {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const id = pathname.split('blog/')[1];
+        const id = searchParams.get("id");
         if (!id) {
           throw new Error('Invalid blog ID');
         }
@@ -38,10 +38,11 @@ export default function BlogDetailPage() {
       }
     };
 
-    if (pathname.includes('blog/')) {
+    const id = searchParams.get("id");
+    if (id) {
       fetchBlog();
     }
-  }, [pathname]);
+  }, [searchParams]);
 
   if (error) {
     return (

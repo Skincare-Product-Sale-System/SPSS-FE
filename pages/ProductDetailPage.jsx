@@ -6,7 +6,7 @@ import { CircularProgress } from "@mui/material";
 import { useThemeColors } from "@/context/ThemeContext";
 import request from "@/utils/axios";
 import { formatPrice } from "@/utils/priceFormatter";
-import { usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const ProductDetail = dynamic(
   () => import("@/components/product/detail/ProductDetail"),
@@ -15,7 +15,7 @@ const ProductDetail = dynamic(
 
 export default function ProductDetailPage() {
   const mainColor = useThemeColors();
-  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,7 +23,7 @@ export default function ProductDetailPage() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const id = pathname.split('product-detail/')[1];
+        const id = searchParams.get("id");
         if (!id) {
           throw new Error('Invalid product ID');
         }
@@ -80,10 +80,11 @@ export default function ProductDetailPage() {
       }
     };
 
-    if (pathname.includes('product-detail/')) {
+    const id = searchParams.get("id");
+    if (id) {
       fetchProduct();
     }
-  }, [pathname]);
+  }, [searchParams]);
 
   if (error) {
     return (
@@ -100,6 +101,11 @@ export default function ProductDetailPage() {
 
   return (
     <>
+      <div className="tf-page-title">
+        <div className="container-full">
+          <div className="heading text-center">Product Details</div>
+        </div>
+      </div>
       
       <div className="container-full lg:w-11/12 mx-auto px-4 py-6">
         <Suspense
