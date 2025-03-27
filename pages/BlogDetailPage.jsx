@@ -22,7 +22,11 @@ export default function BlogDetailPage() {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const id = pathname.split('/').pop();
+        const id = pathname.split('blog/')[1];
+        if (!id) {
+          throw new Error('Invalid blog ID');
+        }
+
         const response = await request.get(`/blogs/${id}`);
         const blogData = response.data.data;
         setBlog(blogData);
@@ -34,7 +38,9 @@ export default function BlogDetailPage() {
       }
     };
 
-    fetchBlog();
+    if (pathname.includes('blog/')) {
+      fetchBlog();
+    }
   }, [pathname]);
 
   if (error) {
@@ -51,20 +57,30 @@ export default function BlogDetailPage() {
   }
 
   return (
-    <Suspense
-      fallback={
-        <div className="flex justify-center items-center h-60">
-          <CircularProgress sx={{ color: mainColor }} />
+    <>
+      <div className="tf-page-title">
+        <div className="container-full">
+          <div className="heading text-center">Blog Details</div>
         </div>
-      }
-    >
-      {loading ? (
-        <div className="flex justify-center items-center h-60">
-          <CircularProgress sx={{ color: mainColor }} />
-        </div>
-      ) : (
-        <BlogDetailContent blog={blog} />
-      )}
-    </Suspense>
+      </div>
+
+      <div className="container-full lg:w-11/12 mx-auto px-4 py-6">
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center h-60">
+              <CircularProgress sx={{ color: mainColor }} />
+            </div>
+          }
+        >
+          {loading ? (
+            <div className="flex justify-center items-center h-60">
+              <CircularProgress sx={{ color: mainColor }} />
+            </div>
+          ) : (
+            <BlogDetailContent blog={blog} />
+          )}
+        </Suspense>
+      </div>
+    </>
   );
 } 

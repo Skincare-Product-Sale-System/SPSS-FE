@@ -23,7 +23,11 @@ export default function ProductDetailPage() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const id = pathname.split('/').pop();
+        const id = pathname.split('product-detail/')[1];
+        if (!id) {
+          throw new Error('Invalid product ID');
+        }
+
         const response = await request.get(`/products/${id}`);
         const productData = response.data.data;
         
@@ -76,7 +80,9 @@ export default function ProductDetailPage() {
       }
     };
 
-    fetchProduct();
+    if (pathname.includes('product-detail/')) {
+      fetchProduct();
+    }
   }, [pathname]);
 
   if (error) {
