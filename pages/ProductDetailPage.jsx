@@ -13,7 +13,7 @@ const ProductDetail = dynamic(
 export default function ProductDetailPage({ product }) {
   const mainColor = useThemeColors();
 
-  return (
+  return ( product &&
     <>
       <div className="tf-page-title">
         <div className="container-full">
