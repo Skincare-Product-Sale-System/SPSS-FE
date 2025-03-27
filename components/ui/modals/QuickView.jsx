@@ -150,13 +150,13 @@ export default function QuickView() {
       });
 
       if (response.status === 200) {
-        toast.success("Added to cart");
+        toast.success("Đã thêm vào giỏ hàng");
         addProductToCart(productDetail.id, quantity);
         revalidate();
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
-      toast.error("Failed to add to cart");
+      toast.error("Thêm vào giỏ hàng thất bại");
     }
   };
 
