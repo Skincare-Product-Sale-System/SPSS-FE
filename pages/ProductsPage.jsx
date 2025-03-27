@@ -15,16 +15,6 @@ export default function ProductsPage() {
 
   return (
     <>
-      <div className="tf-page-title">
-        <div className="container-full">
-          <div 
-            className="heading text-center"
-            style={{
-              fontFamily: '"Roboto", sans-serif'
-            }}
-          >Products</div>
-        </div>
-      </div>
       <section className="flat-spacing-2">
         <div className="container">
           <Suspense

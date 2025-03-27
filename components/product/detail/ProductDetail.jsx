@@ -17,7 +17,7 @@ export default function ProductDetail({ product }) {
     );
   }
 
-  return (
+  return (product &&
     <div className="md:pt-8 pt-6">
       <DetailsOuterZoom product={product} />
       <ShopDetailsTab product={product} />

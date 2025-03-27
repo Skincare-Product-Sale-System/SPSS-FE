@@ -29,7 +29,6 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const [variations, setVariations] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState({});
   const [currentProductItem, setCurrentProductItem] = useState(null);
-  
   useEffect(() => {
     if (!product?.productItems) return;
     
@@ -237,7 +236,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
     }
   };
 
-  return (
+  return (product &&
     <section
       className="bg-neutral-50 flat-spacing-4 pt_0"
       style={{ maxWidth: "100vw", overflow: "clip" }}
