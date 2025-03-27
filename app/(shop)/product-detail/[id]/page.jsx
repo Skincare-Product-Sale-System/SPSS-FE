@@ -7,6 +7,6 @@ export const metadata = {
   description: "Discover high-quality skincare products",
 };
 
-export default function ProductPage() {
-  return <ProductDetailPage />;
+export default function ProductPage({ params }) {
+  return <ProductDetailPage id={params.id} />;
 }

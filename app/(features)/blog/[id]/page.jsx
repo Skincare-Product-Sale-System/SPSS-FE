@@ -5,6 +5,6 @@ export const metadata = {
   description: "Read our latest skincare tips and news",
 };
 
-export default function BlogPage() {
-  return <BlogDetailPage />;
+export default function BlogPage({ params }) {
+  return <BlogDetailPage id={params.id} />;
 }

@@ -5,28 +5,23 @@ import dynamic from "next/dynamic";
 import { CircularProgress } from "@mui/material";
 import { useThemeColors } from "@/context/ThemeContext";
 import request from "@/utils/axios";
-import { useSearchParams } from "next/navigation";
 
 const BlogDetailContent = dynamic(
   () => import("@/components/blog/BlogDetailContent"),
   { ssr: false }
 );
 
-export default function BlogDetailPage() {
+export default function BlogDetailPage({ id }) {
   const mainColor = useThemeColors();
-  const searchParams = useSearchParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchBlog = async () => {
+      if (!id) return;
+      
       try {
-        const id = searchParams.get("id");
-        if (!id) {
-          throw new Error('Invalid blog ID');
-        }
-
         const response = await request.get(`/blogs/${id}`);
         const blogData = response.data.data;
         setBlog(blogData);
@@ -38,11 +33,8 @@ export default function BlogDetailPage() {
       }
     };
 
-    const id = searchParams.get("id");
-    if (id) {
-      fetchBlog();
-    }
-  }, [searchParams]);
+    fetchBlog();
+  }, [id]);
 
   if (error) {
     return (

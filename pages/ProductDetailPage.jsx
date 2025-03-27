@@ -6,28 +6,23 @@ import { CircularProgress } from "@mui/material";
 import { useThemeColors } from "@/context/ThemeContext";
 import request from "@/utils/axios";
 import { formatPrice } from "@/utils/priceFormatter";
-import { useSearchParams } from "next/navigation";
 
 const ProductDetail = dynamic(
   () => import("@/components/product/detail/ProductDetail"),
   { ssr: false }
 );
 
-export default function ProductDetailPage() {
+export default function ProductDetailPage({ id }) {
   const mainColor = useThemeColors();
-  const searchParams = useSearchParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
+      if (!id) return;
+      
       try {
-        const id = searchParams.get("id");
-        if (!id) {
-          throw new Error('Invalid product ID');
-        }
-
         const response = await request.get(`/products/${id}`);
         const productData = response.data.data;
         
@@ -80,11 +75,8 @@ export default function ProductDetailPage() {
       }
     };
 
-    const id = searchParams.get("id");
-    if (id) {
-      fetchProduct();
-    }
-  }, [searchParams]);
+    fetchProduct();
+  }, [id]);
 
   if (error) {
     return (
