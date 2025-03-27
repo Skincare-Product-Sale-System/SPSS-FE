@@ -1,18 +1,28 @@
 "use client";
-import ProductDetail from "@/components/product/detail/ProductDetail";
-import { Suspense } from "react";
 
-const ProductLoading = () => (
-  <div className="flex justify-center items-center py-8">
-    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
-  </div>
+import React, { Suspense } from "react";
+import dynamic from "next/dynamic";
+import { CircularProgress } from "@mui/material";
+import { useThemeColors } from "@/context/ThemeContext";
+
+const ProductDetail = dynamic(
+  () => import("@/components/product/detail/ProductDetail"),
+  { ssr: false }
 );
 
 export default function ProductDetailPage({ product }) {
+  const mainColor = useThemeColors();
+
   return (
     <section className="flat-spacing-2">
       <div className="container">
-        <Suspense fallback={<ProductLoading />}>
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center h-60">
+              <CircularProgress sx={{ color: mainColor }} />
+            </div>
+          }
+        >
           <ProductDetail product={product} />
         </Suspense>
       </div>
