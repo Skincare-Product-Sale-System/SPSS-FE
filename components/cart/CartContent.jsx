@@ -37,7 +37,10 @@ export default function CartContent() {
               {!cartProducts.length && (
                 <>
                   <div className="row align-items-center mb-5">
-                    <div className="col-6 fs-18" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                    <div
+                      className="col-6 fs-18"
+                      style={{ fontFamily: '"Roboto", sans-serif' }}
+                    >
                       Giỏ hàng của bạn đang trống
                     </div>
                     <div className="col-6">
@@ -60,4 +63,4 @@ export default function CartContent() {
       <Products />
     </section>
   );
-} 
+}

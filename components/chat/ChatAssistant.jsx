@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import SmartToyIcon from '@mui/icons-material/SmartToy';
-import PersonIcon from '@mui/icons-material/Person';
-import SendIcon from '@mui/icons-material/Send';
-import CloseIcon from '@mui/icons-material/Close';
+import SmartToyIcon from "@mui/icons-material/SmartToy";
+import PersonIcon from "@mui/icons-material/Person";
+import SendIcon from "@mui/icons-material/Send";
+import CloseIcon from "@mui/icons-material/Close";
 import request from "@/utils/axios";
 
 export default function ChatAssistant() {
@@ -24,13 +24,20 @@ export default function ChatAssistant() {
   // Refs cho âm thanh
   useEffect(() => {
     // Thêm log để xác nhận đường dẫn
-    console.log("Đường dẫn file notification:", '/sound/message-notification.mp3');
-    console.log("Đường dẫn file popup:", '/sound/message-popup.mp3');
-    
+    console.log(
+      "Đường dẫn file notification:",
+      "/sound/message-notification.mp3"
+    );
+    console.log("Đường dẫn file popup:", "/sound/message-popup.mp3");
+
     // Tạo audio elements với đường dẫn tuyệt đối
-    notificationSoundRef.current = new Audio(`${window.location.origin}/sound/message-notification.mp3`);
-    popupSoundRef.current = new Audio(`${window.location.origin}/sound/message-popup.mp3`);
-    
+    notificationSoundRef.current = new Audio(
+      `${window.location.origin}/sound/message-notification.mp3`
+    );
+    popupSoundRef.current = new Audio(
+      `${window.location.origin}/sound/message-popup.mp3`
+    );
+
     // Preload audio
     if (notificationSoundRef.current) {
       notificationSoundRef.current.load();
@@ -38,34 +45,34 @@ export default function ChatAssistant() {
     if (popupSoundRef.current) {
       popupSoundRef.current.load();
     }
-    
+
     // Thêm event listener để kiểm tra lỗi
     if (notificationSoundRef.current) {
-      notificationSoundRef.current.addEventListener('error', (e) => {
+      notificationSoundRef.current.addEventListener("error", (e) => {
         console.error("Lỗi khi tải file notification:", e);
       });
     }
-    
+
     if (popupSoundRef.current) {
-      popupSoundRef.current.addEventListener('error', (e) => {
+      popupSoundRef.current.addEventListener("error", (e) => {
         console.error("Lỗi khi tải file popup:", e);
       });
     }
-    
+
     // Điều chỉnh âm lượng
     if (notificationSoundRef.current) notificationSoundRef.current.volume = 0.5;
     if (popupSoundRef.current) popupSoundRef.current.volume = 0.3;
-    
+
     // Cleanup
     return () => {
       // Loại bỏ event listeners
       if (notificationSoundRef.current) {
-        notificationSoundRef.current.removeEventListener('error', () => {});
+        notificationSoundRef.current.removeEventListener("error", () => {});
         notificationSoundRef.current.pause();
         notificationSoundRef.current = null;
       }
       if (popupSoundRef.current) {
-        popupSoundRef.current.removeEventListener('error', () => {});
+        popupSoundRef.current.removeEventListener("error", () => {});
         popupSoundRef.current.pause();
         popupSoundRef.current = null;
       }
@@ -77,23 +84,27 @@ export default function ChatAssistant() {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    
+
     // Phát âm thanh khi có tin nhắn mới (trừ tin nhắn đầu tiên)
     if (messages.length > 1) {
       const lastMessage = messages[messages.length - 1];
-      
+
       // Nếu là tin nhắn từ model và chat đang mở, phát âm thanh popup
       if (lastMessage.sender === "model" && isOpen) {
         if (popupSoundRef.current) {
           popupSoundRef.current.currentTime = 0;
-          popupSoundRef.current.play().catch(err => console.log("Không thể phát âm thanh:", err));
+          popupSoundRef.current
+            .play()
+            .catch((err) => console.log("Không thể phát âm thanh:", err));
         }
-      } 
+      }
       // Nếu tin nhắn từ model và chat đang đóng, phát âm thanh thông báo
       else if (lastMessage.sender === "model" && !isOpen) {
         if (notificationSoundRef.current) {
           notificationSoundRef.current.currentTime = 0;
-          notificationSoundRef.current.play().catch(err => console.log("Không thể phát âm thanh:", err));
+          notificationSoundRef.current
+            .play()
+            .catch((err) => console.log("Không thể phát âm thanh:", err));
         }
       }
     }
@@ -101,7 +112,7 @@ export default function ChatAssistant() {
 
   const handleSend = async () => {
     if (inputMessage.trim() === "") return;
-    
+
     const messageContent = inputMessage;
     setInputMessage("");
 
@@ -113,13 +124,15 @@ export default function ChatAssistant() {
         sender: "me",
       },
     ]);
-    
+
     // Phát âm thanh tin nhắn popup khi người dùng gửi
     if (popupSoundRef.current) {
       popupSoundRef.current.currentTime = 0;
-      popupSoundRef.current.play().catch(err => console.log("Không thể phát âm thanh:", err));
+      popupSoundRef.current
+        .play()
+        .catch((err) => console.log("Không thể phát âm thanh:", err));
     }
-    
+
     setIsLoading(true);
 
     try {
@@ -130,7 +143,7 @@ export default function ChatAssistant() {
           sender: "me",
         },
       ]);
-      
+
       // Thêm tin nhắn từ model (âm thanh sẽ được xử lý trong useEffect)
       setMessages((prev) => [
         ...prev,
@@ -147,21 +160,22 @@ export default function ChatAssistant() {
 
     // Tạo beep sound thay vì dùng file
     const createBeepSound = () => {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
-      oscillator.type = 'sine';
+
+      oscillator.type = "sine";
       oscillator.frequency.value = 800; // Hz
       gainNode.gain.value = 0.1; // volume
-      
+
       oscillator.start();
       setTimeout(() => oscillator.stop(), 200); // ms
     };
-    
+
     // Trong hàm handleSend hoặc khi nhận tin nhắn mới
     createBeepSound();
   };
@@ -170,20 +184,20 @@ export default function ChatAssistant() {
   const playSound = (audioRef) => {
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
-      
+
       // Thêm một Promise để xử lý lỗi một cách tốt hơn
       const playPromise = audioRef.current.play();
-      
+
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
             // Phát thành công
             console.log("Âm thanh đang phát");
           })
-          .catch(err => {
+          .catch((err) => {
             // Xử lý lỗi
             console.error("Không thể phát âm thanh:", err);
-            
+
             // Có thể là do chính sách autoplay, thử lại với muted
             if (err.name === "NotAllowedError") {
               audioRef.current.muted = true;
@@ -198,27 +212,33 @@ export default function ChatAssistant() {
   };
 
   useEffect(() => {
-  request.get(`/products?pageNumber=1&pageSize=100`).then(({ data }) => {
-     setProducts(data.data.items);
-  });
+    request.get(`/products?pageNumber=1&pageSize=100`).then(({ data }) => {
+      setProducts(data.data.items);
+    });
   }, []);
 
   console.log(products);
-  
-  
+
   // Modify the getAnswer function to handle stream response
   const getAnswer = async (messages) => {
-    
     console.log("products", products);
-    const prompt = `Hiện tại chúng tôi có các sản phẩm sau: ${products?.map((p) => p?.name).join(", ")}. Bạn có thể xem chi tiết tại https://spss-fe-tuannguyen333s-projects.
+    const prompt = `Hiện tại chúng tôi có các sản phẩm sau: ${products
+      ?.map((p) => p?.name)
+      .join(
+        ", "
+      )}. Bạn có thể xem chi tiết tại https://spss-fe-tuannguyen333s-projects.
     vercel.app/products.`;
     console.log(prompt);
-    
+
     const body = {
       system_instruction: {
         parts: {
           // text: `Xin chào, tôi có thể giúp gì cho bạn?`,
-          text: `Web của tôi tên là Skincede, Hiện tại chúng tôi có các sản phẩm sau: ${products?.map((p) => p?.name +" "+ p?.description).join(", ")}. Bạn có thể xem chi tiết tại https://spss-fe-tuannguyen333s-projects.vercel.app/products.`,
+          text: `Web của tôi tên là Skincede, Hiện tại chúng tôi có các sản phẩm sau: ${products
+            ?.map((p) => p?.name + " " + p?.description)
+            .join(
+              ", "
+            )}. Bạn có thể xem chi tiết tại https://spss-fe-tuannguyen333s-projects.vercel.app/products.`,
         },
       },
       contents: messages.map((item) => ({
@@ -247,13 +267,10 @@ export default function ChatAssistant() {
   };
 
   return isOpen ? (
-    <div className="bg-white border p-4 rounded-lg shadow-lg w-[500px] fixed right-5 z-[1001]" 
-      style={{
-        bottom: 'calc(4rem + 40px)' // 4rem (64px) là chiều cao của nav mobile + 40px spacing
-      }}>
+    <div className="bg-white border p-4 rounded-lg shadow-lg w-[500px] fixed right-5 z-[1001] bottom-4">
       <div className="flex border-b justify-between items-center pb-2">
         <div className="flex gap-2 items-center">
-          <SmartToyIcon sx={{ color: '#3b82f6' }} />
+          <SmartToyIcon sx={{ color: "#3b82f6" }} />
           <span className="font-bold">Trợ lý ảo Skincede</span>
         </div>
         <button onClick={() => setIsOpen(false)} className="text-red-500">
@@ -271,7 +288,7 @@ export default function ChatAssistant() {
         )}
         <div className="" ref={messageEndRef}></div>
       </div>
-      
+
       <div className="flex gap-2 mt-3">
         <textarea
           className="flex-grow border h-16 rounded-lg text-black px-2 py-2"
@@ -285,18 +302,20 @@ export default function ChatAssistant() {
             }
           }}
         />
-        <button 
+        <button
           onClick={handleSend}
           className="flex bg-blue-600 h-16 justify-center rounded-lg text-white items-center px-3"
         >
           <SendIcon />
         </button>
       </div>
-      <button 
+      <button
         onClick={() => {
           if (popupSoundRef.current) {
             popupSoundRef.current.currentTime = 0;
-            popupSoundRef.current.play().catch(err => console.error("Lỗi khi phát:", err));
+            popupSoundRef.current
+              .play()
+              .catch((err) => console.error("Lỗi khi phát:", err));
           }
         }}
         className="text-gray-500 text-xs mt-1"
@@ -306,11 +325,8 @@ export default function ChatAssistant() {
     </div>
   ) : (
     <button
-      className="flex bg-blue-600 h-14 justify-center rounded-full shadow-lg text-white w-14 fixed hover:bg-blue-700 items-center right-5 transition-colors z-[1001]"
+      className="flex bg-blue-600 h-14 justify-center rounded-full shadow-lg text-white w-14 fixed hover:bg-blue-700 items-center right-5 transition-colors z-[1001] bottom-4"
       onClick={() => setIsOpen(true)}
-      style={{
-        bottom: 'calc(4rem + 20px)' // 4rem (64px) là chiều cao của nav mobile + 20px spacing
-      }}
     >
       <SmartToyIcon sx={{ fontSize: 28 }} />
     </button>
@@ -326,7 +342,7 @@ const MessageItem = ({ data }) => {
     >
       {data.sender !== "me" && (
         <div className="flex bg-blue-100 h-8 justify-center rounded-full w-8 items-center">
-          <SmartToyIcon sx={{ fontSize: 18, color: '#3b82f6' }} />
+          <SmartToyIcon sx={{ fontSize: 18, color: "#3b82f6" }} />
         </div>
       )}
 
@@ -341,17 +357,16 @@ const MessageItem = ({ data }) => {
           maxWidth: "75%",
         }}
       >
-        <div className="text-[15px]" style={{ whiteSpace: 'pre-wrap' }}>
+        <div className="text-[15px]" style={{ whiteSpace: "pre-wrap" }}>
           {data.content}
         </div>
       </div>
 
       {data.sender === "me" && (
         <div className="flex bg-blue-100 h-8 justify-center rounded-full w-8 items-center">
-          <PersonIcon sx={{ fontSize: 18, color: '#3b82f6' }} />
+          <PersonIcon sx={{ fontSize: 18, color: "#3b82f6" }} />
         </div>
       )}
     </div>
   );
 };
-
