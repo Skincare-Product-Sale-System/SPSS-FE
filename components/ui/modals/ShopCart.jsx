@@ -11,8 +11,8 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import PriceFormatter from "@/components/ui/helpers/PriceFormatter";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 export default function ShopCart() {
   const contextData = useContextElement() || {};
@@ -57,11 +57,17 @@ export default function ShopCart() {
   };
 
   return (
-    <div className="modal modal-shopping-cart fade fullRight" id="shoppingCart">
+    <div
+      className="modal modal-shopping-cart fade fullRight text-[#2A7A73]"
+      id="shoppingCart"
+    >
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="header">
-            <div className="fw-5 title" style={{ fontFamily: '"Roboto", sans-serif' }}>
+            <div
+              className="fw-5 title"
+              style={{ fontFamily: '"Roboto", sans-serif' }}
+            >
               Giỏ Hàng
             </div>
             <span
@@ -121,13 +127,22 @@ export default function ShopCart() {
                           >
                             {elm.productName}
                           </Link>
-                          <div className="meta-variant" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                          <div
+                            className="meta-variant"
+                            style={{ fontFamily: '"Roboto", sans-serif' }}
+                          >
                             {elm.variationOptionValues[0]}
                           </div>
-                          <div className="fw-6 price" style={{ fontFamily: 'var(--font-mono, var(--font-roboto-mono)), monospace' }}>
-                            <PriceFormatter 
-                              price={elm?.price} 
-                              originalPrice={elm.marketPrice} 
+                          <div
+                            className="fw-6 price"
+                            style={{
+                              fontFamily:
+                                "var(--font-mono, var(--font-roboto-mono)), monospace",
+                            }}
+                          >
+                            <PriceFormatter
+                              price={elm?.price}
+                              originalPrice={elm.marketPrice}
                               sx={{ fontWeight: 600 }}
                             />
                           </div>
@@ -184,7 +199,12 @@ export default function ShopCart() {
                             </div>
                             <div
                               className="tf-mini-cart-remove"
-                              style={{ cursor: "pointer", display: "flex", alignItems: "center", color: "#df3b3b" }}
+                              style={{
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                color: "#df3b3b",
+                              }}
                               onClick={() => {
                                 request
                                   .delete(`/cart-items/${elm.id}`)
@@ -201,14 +221,20 @@ export default function ShopCart() {
                     {!cartProducts?.length && (
                       <div className="container">
                         <div className="row align-items-center mb-5 mt-5">
-                          <div className="col-12 fs-18" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                          <div
+                            className="col-12 fs-18"
+                            style={{ fontFamily: '"Roboto", sans-serif' }}
+                          >
                             Giỏ hàng của bạn đang trống
                           </div>
                           <div className="col-12 mt-3">
                             <Link
                               href={`/products`}
-                              className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
-                              style={{ width: "fit-content", fontFamily: '"Roboto", sans-serif' }}
+                              className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn !bg-[#2A7A73]"
+                              style={{
+                                width: "fit-content",
+                                fontFamily: '"Roboto", sans-serif',
+                              }}
                             >
                               Khám Phá Sản Phẩm!
                             </Link>
@@ -331,11 +357,20 @@ export default function ShopCart() {
                 </div> */}
                 <div className="tf-mini-cart-bottom-wrap">
                   <div className="tf-cart-totals-discounts">
-                    <div className="tf-cart-total" style={{ fontFamily: '"Roboto", sans-serif' }}>Tạm tính</div>
-                    
+                    <div
+                      className="tf-cart-total"
+                      style={{ fontFamily: '"Roboto", sans-serif' }}
+                    >
+                      Tạm tính
+                    </div>
+
                     <div className="d-flex align-items-center justify-content-between">
-                      <span>Tổng cộng:</span>
-                      <PriceFormatter price={totalPrice} variant="h6" sx={{ fontWeight: 600 }} />
+                      <span className="mr-4 text-base">Tổng cộng:</span>
+                      <PriceFormatter
+                        price={totalPrice}
+                        variant="h6"
+                        sx={{ fontWeight: 600 }}
+                      />
                     </div>
                   </div>
                   <div className="tf-mini-cart-line" />
@@ -353,10 +388,10 @@ export default function ShopCart() {
                     </div>
                     <label htmlFor="CartDrawer-Form_agree">
                       Tôi đồng ý với
-                      <a 
-                        href="#" 
-                        title="Điều khoản dịch vụ" 
-                        className="ps-1"
+                      <a
+                        href="#"
+                        title="Điều khoản dịch vụ"
+                        className="ps-1 !text-[#2A7A73]"
                       >
                         điều khoản và điều kiện
                       </a>
@@ -365,7 +400,7 @@ export default function ShopCart() {
                   <div className="tf-mini-cart-view-checkout">
                     <Link
                       href={`/cart`}
-                      className="btn-outline justify-content-center w-100 link radius-3 tf-btn"
+                      className="border border-[#2A7A73] justify-content-center w-100 link radius-3 tf-btn !text-[#2A7A73]"
                     >
                       Xem Giỏ Hàng
                     </Link>
@@ -373,14 +408,19 @@ export default function ShopCart() {
                       <Link
                         href="/checkout"
                         className="justify-content-center w-100 radius-3 tf-btn"
-                        style={{ backgroundColor: '#000000', color: '#ffffff' }}
+                        style={{ backgroundColor: "#2A7A73", color: "#ffffff" }}
                       >
                         <span>Thanh Toán</span>
                       </Link>
                     ) : (
                       <div
                         className="justify-content-center w-100 radius-3 tf-btn"
-                        style={{ backgroundColor: '#757575', color: '#e0e0e0', cursor: 'not-allowed', pointerEvents: 'none' }}
+                        style={{
+                          backgroundColor: "#2A7A73",
+                          color: "#e0e0e0",
+                          cursor: "not-allowed",
+                          pointerEvents: "none",
+                        }}
                       >
                         <span>Thanh Toán</span>
                       </div>
@@ -616,10 +656,10 @@ export default function ShopCart() {
                   </div>
                   <div className="field">
                     <p>Mã bưu điện</p>
-                    <input 
-                      type="text" 
-                      name="text" 
-                      placeholder="Nhập mã bưu điện" 
+                    <input
+                      type="text"
+                      name="text"
+                      placeholder="Nhập mã bưu điện"
                     />
                   </div>
                   <div className="tf-cart-tool-btns">

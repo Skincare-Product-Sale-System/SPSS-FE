@@ -1,16 +1,26 @@
 "use client";
-import { Box, Card, CardMedia, CardContent, Typography, Chip } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Chip,
+} from "@mui/material";
 import Link from "next/link";
 import { formatPrice } from "@/utils/priceFormatter";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import 'swiper/css';
-import 'swiper/css/navigation';
-import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
+import "swiper/css";
+import "swiper/css/navigation";
+import PriceFormatter from "@/components/ui/helpers/PriceFormatter";
 
 export default function ProductCarousel({ products, index, mainColor }) {
   return (
-    <Box className="hover-sw-2 hover-sw-nav" sx={{ mt: 3, position: 'relative' }}>
+    <Box
+      className="hover-sw-2 hover-sw-nav"
+      sx={{ mt: 3, position: "relative" }}
+    >
       <Swiper
         dir="ltr"
         modules={[Navigation]}
@@ -32,100 +42,111 @@ export default function ProductCarousel({ products, index, mainColor }) {
           992: {
             slidesPerView: 3,
             spaceBetween: 20,
-          }
+          },
         }}
         className="swiper tf-product-header wrap-sw-over"
       >
         {products.map((product, idx) => (
           <SwiperSlide key={idx} className="swiper-slide">
-            <Link 
+            <Link
               href={`/product-detail?id=${product.id}`}
-              style={{ textDecoration: 'none' }}
+              style={{ textDecoration: "none" }}
             >
-              <Card 
-                sx={{ 
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  boxShadow: '0 3px 15px rgba(0,0,0,0.05)',
+              <Card
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  boxShadow: "0 3px 15px rgba(0,0,0,0.05)",
                   borderRadius: 3,
-                  overflow: 'hidden',
-                  transition: 'all 0.3s ease',
+                  overflow: "hidden",
+                  transition: "all 0.3s ease",
                   border: `1px solid ${mainColor.lightGrey}`,
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
-                  }
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                  },
                 }}
               >
                 <CardMedia
                   component="img"
                   height="160"
-                  image={product.thumbnail || "/images/products/placeholder.jpg"}
+                  image={
+                    product.thumbnail || "/images/products/placeholder.jpg"
+                  }
                   alt={product.name}
-                  sx={{ 
-                    objectFit: 'contain', 
+                  sx={{
+                    objectFit: "contain",
                     p: 2,
-                    backgroundColor: 'white'
+                    backgroundColor: "white",
                   }}
                 />
-                <CardContent sx={{ 
-                  flexGrow: 1, 
-                  p: 2.5,
-                  backgroundColor: 'white'
-                }}>
-                  <Typography 
-                    variant="subtitle1" 
+                <CardContent
+                  sx={{
+                    flexGrow: 1,
+                    p: 2.5,
+                    backgroundColor: "white",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
                     component="div"
-                    sx={{ 
+                    sx={{
+                      fontSize: "18px",
                       fontWeight: 600,
                       mb: 1,
-                      height: 48,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: '-webkit-box',
+                      // height: 48,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
                       WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
+                      WebkitBoxOrient: "vertical",
                     }}
                   >
                     {product.name}
                   </Typography>
-                  <Typography 
-                    variant="body2" 
+                  <Typography
+                    variant="body2"
                     color="text.secondary"
-                    sx={{ 
+                    sx={{
                       mb: 2,
                       height: 60,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: '-webkit-box',
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
                       WebkitLineClamp: 3,
-                      WebkitBoxOrient: 'vertical',
+                      WebkitBoxOrient: "vertical",
                     }}
                   >
                     {product.description}
                   </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <PriceFormatter 
-                      price={product.price} 
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <PriceFormatter
+                      price={product.price}
                       originalPrice={product.marketPrice}
-                      sx={{ 
+                      sx={{
                         fontWeight: 700,
                         color: mainColor.primary,
-                        fontSize: '1.1rem'
+                        fontSize: "1.1rem",
                       }}
                     />
-                    <Chip 
-                      label="Xem chi tiết" 
+                    <Chip
+                      label="Xem chi tiết"
                       size="small"
-                      sx={{ 
-                        backgroundColor: 'white',
+                      sx={{
+                        backgroundColor: "white",
                         border: `1px solid ${mainColor.primary}`,
                         color: mainColor.primary,
-                        '&:hover': {
+                        "&:hover": {
                           backgroundColor: mainColor.primary,
-                          color: 'white'
-                        }
+                          color: "white",
+                        },
                       }}
                     />
                   </Box>
@@ -135,73 +156,73 @@ export default function ProductCarousel({ products, index, mainColor }) {
           </SwiperSlide>
         ))}
       </Swiper>
-      
-      <div 
+
+      <div
         className={`nav-next-slider nav-sw box-icon round snmpn-${index} w_46`}
         style={{
-          position: 'absolute',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          left: '-15px',
-          width: '46px',
-          height: '46px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: '50%',
-          backgroundColor: 'white',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          position: "absolute",
+          top: "50%",
+          transform: "translateY(-50%)",
+          left: "-15px",
+          width: "46px",
+          height: "46px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "50%",
+          backgroundColor: "white",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
           border: `1px solid ${mainColor.lightGrey}`,
           color: mainColor.darkGrey,
-          cursor: 'pointer',
+          cursor: "pointer",
           zIndex: 9,
-          transition: 'all 0.3s ease'
+          transition: "all 0.3s ease",
         }}
       >
-        <span 
-          className="icon icon-arrow-left" 
-          style={{ 
-            fontSize: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center' 
-          }} 
+        <span
+          className="icon icon-arrow-left"
+          style={{
+            fontSize: "12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         />
       </div>
-      
-      <div 
+
+      <div
         className={`nav-prev-slider nav-sw box-icon round snmnn-${index} w_46`}
         style={{
-          position: 'absolute',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          right: '-15px',
-          width: '46px',
-          height: '46px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: '50%',
-          backgroundColor: 'white',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          position: "absolute",
+          top: "50%",
+          transform: "translateY(-50%)",
+          right: "-15px",
+          width: "46px",
+          height: "46px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "50%",
+          backgroundColor: "white",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
           border: `1px solid ${mainColor.lightGrey}`,
           color: mainColor.darkGrey,
-          cursor: 'pointer',
+          cursor: "pointer",
           zIndex: 9,
-          transition: 'all 0.3s ease'
+          transition: "all 0.3s ease",
         }}
       >
-        <span 
-          className="icon icon-arrow-right" 
-          style={{ 
-            fontSize: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }} 
+        <span
+          className="icon icon-arrow-right"
+          style={{
+            fontSize: "12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         />
       </div>
-      
+
       <style jsx global>{`
         .snmpn-${index}:hover, .snmnn-${index}:hover {
           background-color: ${mainColor.primary} !important;
@@ -211,4 +232,4 @@ export default function ProductCarousel({ products, index, mainColor }) {
       `}</style>
     </Box>
   );
-} 
+}

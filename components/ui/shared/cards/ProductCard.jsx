@@ -7,35 +7,35 @@ import Link from "next/link";
 import { formatPrice } from "@/utils/priceFormatter";
 import { defaultProductImage } from "@/utils/default";
 import { openCompareModal } from "@/utils/openCompareModal";
-import PriceFormatter from '@/components/ui/helpers/PriceFormatter';
+import PriceFormatter from "@/components/ui/helpers/PriceFormatter";
 
-export default function ProductCard({ 
-  product, 
-  handleOpen, 
-  addToCompareItem, 
-  isAddedtoCompareItem, 
-  theme 
+export default function ProductCard({
+  product,
+  handleOpen,
+  addToCompareItem,
+  isAddedtoCompareItem,
+  theme,
 }) {
   return (
     <Box
       sx={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        bgcolor: 'background.paper',
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        bgcolor: "background.paper",
         borderRadius: 3,
-        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-        transition: 'box-shadow 0.3s ease',
-        '&:hover': {
-          boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+        boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+        transition: "box-shadow 0.3s ease",
+        "&:hover": {
+          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
         },
-        overflow: 'hidden'
+        overflow: "hidden",
       }}
     >
-      <Box sx={{ position: 'relative' }}>
+      <Box sx={{ position: "relative" }}>
         <Link
           href={`/product-detail?id=${product.id}`}
-          style={{ display: 'block', aspectRatio: '1/1' }}
+          style={{ display: "block", aspectRatio: "1/1" }}
         >
           <Image
             className="duration-500 hover:scale-105 object-cover transition-transform"
@@ -48,12 +48,12 @@ export default function ProductCard({
         </Link>
         <Box
           sx={{
-            position: 'absolute',
+            position: "absolute",
             top: 12,
             right: 12,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
           }}
         >
           <Box
@@ -66,29 +66,29 @@ export default function ProductCard({
             sx={{
               width: 40,
               height: 40,
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: isAddedtoCompareItem(product.id) 
-                ? theme.palette.primary.main 
-                : '#fff',
-              color: isAddedtoCompareItem(product.id) 
-                ? '#fff' 
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: isAddedtoCompareItem(product.id)
+                ? theme.palette.primary.main
+                : "#fff",
+              color: isAddedtoCompareItem(product.id)
+                ? "#fff"
                 : theme.palette.text.secondary,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              position: 'relative',
-              '&:hover': {
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              position: "relative",
+              "&:hover": {
                 backgroundColor: isAddedtoCompareItem(product.id)
                   ? theme.palette.primary.dark
-                  : theme.palette.grey[100]
+                  : theme.palette.grey[100],
               },
-              '&:hover .tooltip': {
+              "&:hover .tooltip": {
                 opacity: 1,
-                visibility: 'visible'
-              }
+                visibility: "visible",
+              },
             }}
           >
             {isAddedtoCompareItem(product.id) ? (
@@ -96,71 +96,71 @@ export default function ProductCard({
             ) : (
               <span className="icon icon-compare" />
             )}
-            
+
             <Box
               className="tooltip"
               sx={{
-                position: 'absolute',
-                top: '-30px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(0,0,0,0.7)',
-                color: '#fff',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                fontSize: '12px',
-                whiteSpace: 'nowrap',
+                position: "absolute",
+                top: "-30px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                backgroundColor: "rgba(0,0,0,0.7)",
+                color: "#fff",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "12px",
+                whiteSpace: "nowrap",
                 opacity: 0,
-                visibility: 'hidden',
-                transition: 'all 0.3s ease'
+                visibility: "hidden",
+                transition: "all 0.3s ease",
               }}
             >
-              {isAddedtoCompareItem(product.id) ? "Xóa khỏi So Sánh" : "Thêm vào So Sánh"}
+              {isAddedtoCompareItem(product.id) ? "Bỏ so sánh" : "So Sánh"}
             </Box>
           </Box>
-          
+
           <Box
             component="a"
             onClick={() => handleOpen(product)}
             sx={{
               width: 40,
               height: 40,
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: '#fff',
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#fff",
               color: theme.palette.text.secondary,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              position: 'relative',
-              '&:hover': {
-                backgroundColor: theme.palette.grey[100]
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              position: "relative",
+              "&:hover": {
+                backgroundColor: theme.palette.grey[100],
               },
-              '&:hover .tooltip': {
+              "&:hover .tooltip": {
                 opacity: 1,
-                visibility: 'visible'
-              }
+                visibility: "visible",
+              },
             }}
           >
             <span className="icon icon-view" />
             <Box
               className="tooltip"
               sx={{
-                position: 'absolute',
-                top: '-30px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(0,0,0,0.7)',
-                color: '#fff',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                fontSize: '12px',
-                whiteSpace: 'nowrap',
+                position: "absolute",
+                top: "-30px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                backgroundColor: "rgba(0,0,0,0.7)",
+                color: "#fff",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "12px",
+                whiteSpace: "nowrap",
                 opacity: 0,
-                visibility: 'hidden',
-                transition: 'all 0.3s ease'
+                visibility: "hidden",
+                transition: "all 0.3s ease",
               }}
             >
               Xem Nhanh
@@ -168,56 +168,62 @@ export default function ProductCard({
           </Box>
         </Box>
       </Box>
-      <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+      <Box sx={{ p: 3, display: "flex", flexDirection: "column", flexGrow: 1 }}>
         <Link href={`/product-detail?id=${product.id}`}>
-          <Box 
-            component="h3" 
-            sx={{ 
-              fontSize: '1rem', 
-              fontWeight: 500, 
+          <Box
+            component="h3"
+            sx={{
+              fontSize: "1rem",
+              fontWeight: 500,
               mb: 1,
               lineHeight: 1.3,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              display: '-webkit-box',
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
               WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              height: '2.6rem',
+              WebkitBoxOrient: "vertical",
+              height: "2.6rem",
               color: theme.palette.text.primary,
-              fontFamily: '"Roboto", sans-serif'
+              fontFamily: '"Roboto", sans-serif',
             }}
           >
             {product.name}
           </Box>
         </Link>
-        
-        <Box sx={{ fontSize: '0.875rem', color: theme.palette.text.secondary, mb: 0.5 }}>
+
+        <Box
+          sx={{
+            fontSize: "0.875rem",
+            color: theme.palette.text.secondary,
+            mb: 0.5,
+          }}
+        >
           {product.categoryName || "Chăm sóc da"}
         </Box>
-        
-        <Box 
+
+        <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            mt: 'auto',
-            pt: 2
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            mt: "auto",
+            pt: 2,
           }}
         >
           <Box>
             <Typography
               component="div"
-              sx={{ 
-                fontWeight: 600, 
-                fontSize: '1.125rem', 
+              sx={{
+                fontWeight: 600,
+                fontSize: "1.125rem",
                 color: theme.palette.primary.main,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
               }}
             >
-              <PriceFormatter 
-                price={product.salePrice || product.price} 
+              <PriceFormatter
+                price={product.salePrice || product.price}
                 originalPrice={product.salePrice ? product.price : null}
               />
             </Typography>
@@ -225,15 +231,15 @@ export default function ProductCard({
           <Typography
             component="span"
             sx={{
-              fontSize: '0.75rem',
+              fontSize: "0.75rem",
               color: theme.palette.text.secondary,
-              fontFamily: '"Roboto", sans-serif'
+              fontFamily: '"Roboto", sans-serif',
             }}
           >
-            Đã bán: {product.soldCount?.toLocaleString('vi-VN') || 0}
+            Đã bán: {product.soldCount?.toLocaleString("vi-VN") || 0}
           </Typography>
         </Box>
       </Box>
     </Box>
   );
-} 
+}
