@@ -174,7 +174,7 @@ export const slides5 = [
     imgSrc:
       "https://images.pexels.com/photos/6663368/pexels-photo-6663368.jpeg",
     imgAlt: "skincare-slideshow-01",
-    heading: "Chăm Sóc Da Được Tái Định Nghĩa.",
+    heading: "Chăm Sóc Da Đang Trở Thành Xu Hướng.",
     description: "Để mang lại hiệu quả tối đa, giảm thiểu lãng phí",
     fontFamily: '"Playfair Display", serif'
   },
