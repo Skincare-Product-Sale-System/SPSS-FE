@@ -143,10 +143,11 @@ export default function RealTimeChat() {
 
       const newConnection = new signalR.HubConnectionBuilder()
         .withUrl(
-          `https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/chathub`,
+          `https://localhost:44358/chathub`,
           {
             skipNegotiation: true,
             transport: signalR.HttpTransportType.WebSockets,
+            withCredentials: true
           }
         )
         .withAutomaticReconnect()
