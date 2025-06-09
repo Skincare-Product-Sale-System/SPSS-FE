@@ -143,7 +143,7 @@ export default function RealTimeChat() {
 
       const newConnection = new signalR.HubConnectionBuilder()
         .withUrl(
-          `https://localhost:44358/chathub`,
+          `http://localhost:5041/chathub`,
           {
             skipNegotiation: true,
             transport: signalR.HttpTransportType.WebSockets,
@@ -364,7 +364,7 @@ export default function RealTimeChat() {
 
       // Fetch API để tải lên hình ảnh
       const response = await fetch(
-        "https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/api/images",
+        "http://localhost:5041/api/images",
         {
           method: "POST",
           body: formData,

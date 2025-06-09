@@ -75,7 +75,7 @@ export default function StaffChat() {
     loadExistingChats();
     
     const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`https://localhost:44358/chathub`, {
+      .withUrl(`http://localhost:5041/chathub`, {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
         withCredentials: true
