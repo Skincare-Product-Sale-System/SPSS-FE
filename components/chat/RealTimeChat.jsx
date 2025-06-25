@@ -364,7 +364,7 @@ export default function RealTimeChat() {
 
       // Fetch API để tải lên hình ảnh
       const response = await fetch(
-        "http://localhost:5041/api/images",
+        "https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/api/images",
         {
           method: "POST",
           body: formData,
