@@ -55,9 +55,9 @@ export default function HeroSection() {
               </div>
               <div className="box-content text-center" style={{ zIndex: 2 }}>
                 <div className="container">
-                  <h1 className="fade-item fade-item-1 text-white heading" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                  <h2 className="fade-item fade-item-1 text-white heading" style={{ fontFamily: 'Roboto, sans-serif' }}>
                     {slide.heading}
-                  </h1>
+                  </h2>
                   <p className="fade-item fade-item-2 text-white" style={{ fontFamily: 'Roboto, sans-serif' }}>
                     {slide.description}
                   </p>
