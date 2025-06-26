@@ -143,7 +143,7 @@ export default function RealTimeChat() {
 
       const newConnection = new signalR.HubConnectionBuilder()
         .withUrl(
-          `http://localhost:5041/chathub`,
+          `https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/chathub`,
           {
             skipNegotiation: true,
             transport: signalR.HttpTransportType.WebSockets,
@@ -705,9 +705,8 @@ function MessageItem({ data, mainColor, formatTime, onImageClick }) {
             // Nếu là sản phẩm, hiển thị card sản phẩm
             return (
               <div
-                className={`${
-                  data.sender === "me" ? "ml-auto" : "mr-auto"
-                } max-w-[400px] mb-1`}
+                className={`${data.sender === "me" ? "ml-auto" : "mr-auto"
+                  } max-w-[400px] mb-1`}
               >
                 <a
                   href={parsedContent.url}
@@ -859,9 +858,8 @@ function MessageItem({ data, mainColor, formatTime, onImageClick }) {
           else if (parsedContent.type === "image") {
             return (
               <div
-                className={`${
-                  data.sender === "me" ? "ml-auto" : "mr-auto"
-                } max-w-[300px] mb-1`}
+                className={`${data.sender === "me" ? "ml-auto" : "mr-auto"
+                  } max-w-[300px] mb-1`}
               >
                 <div
                   className="rounded shadow-sm overflow-hidden"

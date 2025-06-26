@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import * as signalR from "@microsoft/signalr";
-import { 
-  Box, Typography, Paper, Grid, List, ListItem, 
-  ListItemText, TextField, Button, CircularProgress, 
+import {
+  Box, Typography, Paper, Grid, List, ListItem,
+  ListItemText, TextField, Button, CircularProgress,
   Badge, Avatar, Container, AppBar, Toolbar, IconButton,
   Card, CardMedia, CardContent, CardActions,
   Rating, InputAdornment, Modal, Backdrop
@@ -44,38 +44,38 @@ export default function StaffChat() {
   const mainColor = useThemeColors();
   const [isBrowser, setIsBrowser] = useState(false);
   const messagesContainerRef = useRef(null);
-  
+
   // Product selector states
   const [openProductDialog, setOpenProductDialog] = useState(false);
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
-  
+
   // Image upload states
   const [uploadingImage, setUploadingImage] = useState(false);
   const imageInputRef = useRef(null);
-  
+
   // Image preview states
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
-  
+
   // Check if code is running in browser
   useEffect(() => {
     setIsBrowser(true);
   }, []);
-  
+
   // Set up SignalR connection
   useEffect(() => {
     if (!isBrowser) return;
-    
+
     console.log("Attempting to connect to SignalR hub");
-    
+
     // Load all existing chat sessions from localStorage first
     loadExistingChats();
-    
+
     const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`http://localhost:5041/chathub`, {
+      .withUrl(`https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/chathub`, {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
         withCredentials: true
@@ -83,19 +83,19 @@ export default function StaffChat() {
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Debug)
       .build();
-    
+
     newConnection.start()
       .then(() => {
         console.log("SignalR Connected");
         setIsConnected(true);
         setIsLoading(false);
-        
+
         // Register as support staff
         return newConnection.invoke("RegisterAsSupport");
       })
       .then(() => {
         console.log("Registered as support staff");
-        
+
         // Get current active chats
         return newConnection.invoke("GetActiveChats");
       })
@@ -103,21 +103,21 @@ export default function StaffChat() {
         console.error("SignalR Connection Error: ", err);
         setIsLoading(false);
       });
-    
+
     // Handle active chats list
     newConnection.on("ActiveChats", (chats) => {
       console.log("Received active chats:", chats);
-      
+
       if (Array.isArray(chats) && chats.length > 0) {
         // Instead of building a new list, UPDATE the existing list
         setActiveChats(prev => {
           // Create a copy of existing chats
           const updatedChats = [...prev];
-          
+
           // Update or add new chats from server
           chats.forEach(userId => {
             const existingIndex = updatedChats.findIndex(chat => chat.userId === userId);
-            
+
             if (existingIndex !== -1) {
               // Chat already exists, just update if needed
               // (No need to change anything here usually)
@@ -125,29 +125,29 @@ export default function StaffChat() {
               // This is a new chat, add it to the list
               const storageKey = `chat_${userId}`;
               const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-              const lastMsg = storedMessages.length > 0 
-                ? storedMessages[storedMessages.length - 1] 
+              const lastMsg = storedMessages.length > 0
+                ? storedMessages[storedMessages.length - 1]
                 : null;
-              
+
               updatedChats.push({
                 userId,
                 username: `Customer ${userId.substring(0, 6)}`,
                 unreadCount: 0,
-                lastMessage: lastMsg 
-                  ? formatMessageForList(lastMsg.content) 
+                lastMessage: lastMsg
+                  ? formatMessageForList(lastMsg.content)
                   : "Started a conversation",
                 timestamp: lastMsg ? new Date(lastMsg.timestamp) : new Date(),
                 avatarColor: getRandomColor()
               });
             }
           });
-          
+
           // Sort by most recent
           updatedChats.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-          
+
           return updatedChats;
         });
-        
+
         // Auto-select first chat if none is selected
         setActiveChats(prev => {
           if (prev.length > 0 && !selectedChat) {
@@ -158,16 +158,16 @@ export default function StaffChat() {
         });
       }
     });
-    
+
     // Handle new chat session
     newConnection.on("NewChatSession", (userId, username) => {
       console.log("New chat session detected:", userId, username);
-      
+
       setActiveChats(prev => {
         if (prev.some(chat => chat.userId === userId)) {
           return prev;
         }
-        
+
         const newChat = {
           userId,
           username: username || `Customer ${userId.substring(0, 6)}`,
@@ -176,13 +176,13 @@ export default function StaffChat() {
           timestamp: new Date(),
           avatarColor: getRandomColor()
         };
-        
+
         return [newChat, ...prev];
       });
     });
-    
+
     setConnection(newConnection);
-    
+
     // Cleanup on unmount
     return () => {
       if (newConnection) {
@@ -191,11 +191,11 @@ export default function StaffChat() {
       }
     };
   }, [isBrowser]);
-  
+
   // Reset unread count when selecting chat and load chat history ONCE
   useEffect(() => {
     if (!isBrowser || !selectedChat) return;
-    
+
     // Only reset unread count here
     setActiveChats(prev =>
       prev.map(c =>
@@ -204,12 +204,12 @@ export default function StaffChat() {
           : c
       )
     );
-    
+
     // Load chat history only once when selecting a chat
     loadChatHistory(selectedChat.userId);
-    
+
   }, [selectedChat, isBrowser]);
-  
+
   // Thêm useEffect mới để tránh cuộn toàn bộ trang
   useEffect(() => {
     // Chỉ cuộn trong container tin nhắn thay vì toàn bộ trang
@@ -218,7 +218,7 @@ export default function StaffChat() {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
-  
+
   // Thêm useEffect mới để cuộn container tin nhắn khi chọn chat mới
   useEffect(() => {
     if (messagesContainerRef.current && !isLoading && selectedChat) {
@@ -228,7 +228,7 @@ export default function StaffChat() {
       }, 100);
     }
   }, [selectedChat, isLoading, messages.length]);
-  
+
   // Generate random avatar color
   const getRandomColor = () => {
     const colors = [
@@ -238,30 +238,30 @@ export default function StaffChat() {
     ];
     return colors[Math.floor(Math.random() * colors.length)];
   };
-  
+
   // Load chat history from localStorage
   const loadChatHistory = (userId) => {
     if (!isBrowser) return;
-    
+
     setIsLoading(true);
-    
+
     // Clear existing messages first
     setMessages([]);
-    
+
     const storageKey = `chat_${userId}`;
     const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-    
+
     console.log("Loaded messages from localStorage:", storedMessages.length);
-    
+
     if (storedMessages.length === 0) {
       setIsLoading(false);
       return;
     }
-    
+
     // Convert message format if needed
     const formattedMessages = storedMessages.map(msg => {
       let senderType;
-      
+
       // Check for old format with userType
       if (msg.userType !== undefined) {
         senderType = msg.userType === 'user' ? MESSAGE_TYPES.USER : MESSAGE_TYPES.STAFF;
@@ -274,24 +274,24 @@ export default function StaffChat() {
       else {
         senderType = msg.sender || MESSAGE_TYPES.USER;
       }
-      
+
       return {
         content: msg.content,
         sender: senderType,
         timestamp: new Date(msg.timestamp || new Date())
       };
     });
-    
+
     // Set all messages at once with proper formatting
     setMessages(formattedMessages);
     setIsLoading(false);
-    
+
     // Update chat in the list to show the latest message
     if (storedMessages.length > 0) {
       const lastMsg = storedMessages[storedMessages.length - 1];
-      
-      setActiveChats(prev => 
-        prev.map(chat => 
+
+      setActiveChats(prev =>
+        prev.map(chat =>
           chat.userId === userId ? {
             ...chat,
             lastMessage: formatMessageForList(lastMsg.content),
@@ -301,50 +301,50 @@ export default function StaffChat() {
       );
     }
   };
-  
+
   // Filter chats by search term
   const filteredChats = searchTerm.trim() === ''
     ? activeChats
-    : activeChats.filter(chat => 
-        chat.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        chat.lastMessage.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-  
+    : activeChats.filter(chat =>
+      chat.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      chat.lastMessage.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
   // Sort chats by timestamp
-  const sortedChats = [...filteredChats].sort((a, b) => 
+  const sortedChats = [...filteredChats].sort((a, b) =>
     new Date(b.timestamp) - new Date(a.timestamp)
   );
-  
+
   // Format time
   const formatTime = (date) => {
     if (!date) return "";
     const now = new Date();
     const messageDate = new Date(date);
-    
+
     if (messageDate.toDateString() === now.toDateString()) {
-      return messageDate.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
+      return messageDate.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit'
       });
     }
-    
+
     return messageDate.toLocaleDateString('en-US', {
       day: '2-digit',
       month: '2-digit'
     });
   };
-  
+
   // Handle image preview
   const handleImagePreview = (imageUrl) => {
     setPreviewImage(imageUrl);
     setPreviewOpen(true);
   };
-  
+
   // Close image preview
   const handleClosePreview = () => {
     setPreviewOpen(false);
   };
-  
+
   // Helper function to format message display text
   const formatMessageDisplay = (messageContent) => {
     try {
@@ -360,7 +360,7 @@ export default function StaffChat() {
       return messageContent;
     }
   };
-  
+
   // Helper function to format message content for display in chat list
   const formatMessageForList = (messageContent) => {
     try {
@@ -376,26 +376,26 @@ export default function StaffChat() {
       return messageContent.substring(0, 30) + (messageContent.length > 30 ? '...' : '');
     }
   };
-  
+
   // Handle ReceiveSupportMessage event
   useEffect(() => {
     if (!connection) return;
-    
+
     connection.on("ReceiveSupportMessage", (userId, message, userType) => {
       console.log("Support message received:", userId, message, userType);
-      
+
       const normalizedUserType = userType === 'user' ? MESSAGE_TYPES.USER : MESSAGE_TYPES.STAFF;
-      
+
       // Save to localStorage
       const storageKey = `chat_${userId}`;
       const existingMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      
+
       // Kiểm tra xem tin nhắn tương tự đã tồn tại chưa để tránh duplicate
-      const isDuplicate = existingMessages.some(msg => 
-        msg.content === message && 
+      const isDuplicate = existingMessages.some(msg =>
+        msg.content === message &&
         new Date(msg.timestamp).getTime() > new Date().getTime() - 5000 // Trong vòng 5 giây
       );
-      
+
       if (!isDuplicate) {
         const newMessageObj = {
           content: message,
@@ -403,14 +403,14 @@ export default function StaffChat() {
           timestamp: new Date().toISOString()
         };
         existingMessages.push(newMessageObj);
-        
+
         localStorage.setItem(storageKey, JSON.stringify(existingMessages));
-        
+
         // Update chat list
         setActiveChats(prev => {
           const updatedChats = [...prev];
           const chatIndex = updatedChats.findIndex(chat => chat.userId === userId);
-          
+
           if (chatIndex !== -1) {
             updatedChats[chatIndex] = {
               ...updatedChats[chatIndex],
@@ -428,10 +428,10 @@ export default function StaffChat() {
               avatarColor: getRandomColor()
             });
           }
-          
+
           return updatedChats;
         });
-        
+
         // Update messages if viewing this chat
         if (selectedChat && selectedChat.userId === userId) {
           setMessages(prev => [
@@ -447,16 +447,16 @@ export default function StaffChat() {
         console.log("Duplicate message detected, ignoring...");
       }
     });
-    
+
     return () => {
       connection.off("ReceiveSupportMessage");
     };
   }, [connection, selectedChat]);
-  
+
   // Handle chat selection
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
-    
+
     // Reset unread count
     setActiveChats(prev =>
       prev.map(c =>
@@ -465,32 +465,32 @@ export default function StaffChat() {
           : c
       )
     );
-    
+
     // Load messages from localStorage
     loadChatHistory(chat.userId);
   };
-  
+
   // Send message
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedChat || !isConnected) return;
-    
+
     const messageText = newMessage.trim();
     setNewMessage('');
-    
+
     // Save to localStorage
     const storageKey = `chat_${selectedChat.userId}`;
     const existingMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-    
+
     // Tạo message object mới
     const newMessageObj = {
       content: messageText,
       type: MESSAGE_TYPES.STAFF,
       timestamp: new Date().toISOString()
     };
-    
+
     existingMessages.push(newMessageObj);
     localStorage.setItem(storageKey, JSON.stringify(existingMessages));
-    
+
     // Cập nhật UI với tin nhắn mới ngay lập tức
     setMessages(prev => [
       ...prev,
@@ -500,12 +500,12 @@ export default function StaffChat() {
         timestamp: new Date()
       }
     ]);
-    
+
     // Cập nhật active chats để hiển thị tin nhắn mới nhất
     setActiveChats(prev => {
       const updatedChats = [...prev];
       const chatIndex = updatedChats.findIndex(chat => chat.userId === selectedChat.userId);
-      
+
       if (chatIndex !== -1) {
         updatedChats[chatIndex] = {
           ...updatedChats[chatIndex],
@@ -513,10 +513,10 @@ export default function StaffChat() {
           timestamp: new Date()
         };
       }
-      
+
       return updatedChats;
     });
-    
+
     // Send to server
     console.log("Sending message to server:", messageText);
     connection.invoke("SendSupportMessage", selectedChat.userId, messageText)
@@ -528,7 +528,7 @@ export default function StaffChat() {
   // Load all existing chats from localStorage
   const loadExistingChats = () => {
     if (!isBrowser) return;
-    
+
     // Look for chat keys in localStorage (format: chat_userId)
     const chatKeys = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -538,34 +538,34 @@ export default function StaffChat() {
         chatKeys.push(userId);
       }
     }
-    
+
     console.log("Found existing chat keys:", chatKeys);
-    
+
     if (chatKeys.length > 0) {
       const existingChats = chatKeys.map(userId => {
         const storageKey = `chat_${userId}`;
         const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-        const lastMsg = storedMessages.length > 0 
-          ? storedMessages[storedMessages.length - 1] 
+        const lastMsg = storedMessages.length > 0
+          ? storedMessages[storedMessages.length - 1]
           : null;
-        
+
         return {
           userId,
           username: `Customer ${userId.substring(0, 6)}`,
           unreadCount: 0,
-          lastMessage: lastMsg 
+          lastMessage: lastMsg
             ? formatMessageForList(lastMsg.content)
             : "Started a conversation",
           timestamp: lastMsg ? new Date(lastMsg.timestamp) : new Date(),
           avatarColor: getRandomColor()
         };
       });
-      
+
       // Sort by timestamp (newest first)
       existingChats.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      
+
       setActiveChats(existingChats);
-      
+
       // Auto-select first chat
       if (existingChats.length > 0) {
         setSelectedChat(existingChats[0]);
@@ -577,17 +577,17 @@ export default function StaffChat() {
   // Fetch products for product selector
   const fetchProducts = async (searchQuery = '') => {
     if (!isBrowser) return;
-    
+
     setLoadingProducts(true);
     try {
       const params = new URLSearchParams();
       params.append('pageNumber', '1');
       params.append('pageSize', '20');
-      
+
       if (searchQuery) {
         params.append('name', searchQuery);
       }
-      
+
       const { data } = await request.get(`/products?${params.toString()}`);
       setProducts(data.data?.items || []);
     } catch (error) {
@@ -597,42 +597,42 @@ export default function StaffChat() {
       setLoadingProducts(false);
     }
   };
-  
+
   // Handle product search
   const handleProductSearch = (e) => {
     const value = e.target.value;
     setProductSearch(value);
-    
+
     // Debounce search for better UX
     const timeoutId = setTimeout(() => {
       fetchProducts(value);
     }, 500);
-    
+
     return () => clearTimeout(timeoutId);
   };
-  
+
   // Handle product selection
   const handleSelectProduct = (product) => {
     setSelectedProduct(product);
   };
-  
+
   // Open product selector dialog
   const handleOpenProductDialog = () => {
     setOpenProductDialog(true);
     fetchProducts();
   };
-  
+
   // Close product selector dialog
   const handleCloseProductDialog = () => {
     setOpenProductDialog(false);
     setProductSearch('');
     setSelectedProduct(null);
   };
-  
+
   // Send product as a message
   const handleSendProduct = () => {
     if (!selectedProduct || !selectedChat || !isConnected) return;
-    
+
     // Format product data as a rich message
     const productMessage = JSON.stringify({
       type: 'product',
@@ -644,39 +644,39 @@ export default function StaffChat() {
       rating: selectedProduct.rating || 4.5,
       soldCount: selectedProduct.soldCount || 0
     });
-    
+
     // Save to localStorage
     const storageKey = `chat_${selectedChat.userId}`;
     const existingMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-    
+
     // Kiểm tra xem sản phẩm này đã được gửi gần đây chưa
     const isDuplicate = existingMessages.some(msg => {
       try {
         // Nếu là tin nhắn sản phẩm, kiểm tra productId
         const content = JSON.parse(msg.content);
-        return content.type === 'product' && 
-               content.productId === selectedProduct.id &&
-               new Date(msg.timestamp).getTime() > new Date().getTime() - 10000; // Trong vòng 10 giây
+        return content.type === 'product' &&
+          content.productId === selectedProduct.id &&
+          new Date(msg.timestamp).getTime() > new Date().getTime() - 10000; // Trong vòng 10 giây
       } catch (e) {
         return false;
       }
     });
-    
+
     if (isDuplicate) {
       console.log("Duplicate product message detected, ignoring...");
       // Thông báo hoặc chỉ đóng dialog
       handleCloseProductDialog();
       return;
     }
-    
+
     existingMessages.push({
       content: productMessage,
       type: MESSAGE_TYPES.STAFF,
       timestamp: new Date().toISOString()
     });
-    
+
     localStorage.setItem(storageKey, JSON.stringify(existingMessages));
-    
+
     // Add to messages state
     setMessages(prev => [
       ...prev,
@@ -686,12 +686,12 @@ export default function StaffChat() {
         timestamp: new Date()
       }
     ]);
-    
+
     // Cập nhật active chats để hiển thị tin nhắn sản phẩm
     setActiveChats(prev => {
       const updatedChats = [...prev];
       const chatIndex = updatedChats.findIndex(chat => chat.userId === selectedChat.userId);
-      
+
       if (chatIndex !== -1) {
         updatedChats[chatIndex] = {
           ...updatedChats[chatIndex],
@@ -699,16 +699,16 @@ export default function StaffChat() {
           timestamp: new Date()
         };
       }
-      
+
       return updatedChats;
     });
-    
+
     // Send to server
     connection.invoke("SendSupportMessage", selectedChat.userId, productMessage)
       .catch(err => {
         console.error("Error sending product message: ", err);
       });
-    
+
     // Close dialog
     handleCloseProductDialog();
   };
@@ -717,19 +717,19 @@ export default function StaffChat() {
   const handleImageUpload = async (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    
+
     setUploadingImage(true);
-    
+
     try {
       const formData = new FormData();
       formData.append('files', files[0]);
-      
+
       const response = await request.post('/images', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      
+
       if (response.data.success && response.data.data) {
         // Tạo message object mới cho image
         const imageUrl = response.data.data[0];
@@ -737,19 +737,19 @@ export default function StaffChat() {
           type: 'image',
           url: imageUrl
         });
-        
+
         // Save to localStorage
         const storageKey = `chat_${selectedChat.userId}`;
         const existingMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-        
+
         existingMessages.push({
           content: imageMessage,
           type: MESSAGE_TYPES.STAFF,
           timestamp: new Date().toISOString()
         });
-        
+
         localStorage.setItem(storageKey, JSON.stringify(existingMessages));
-        
+
         // Cập nhật UI với hình ảnh mới ngay lập tức
         setMessages(prev => [
           ...prev,
@@ -759,29 +759,29 @@ export default function StaffChat() {
             timestamp: new Date()
           }
         ]);
-        
+
         // Cập nhật active chats để hiển thị thông báo đã gửi hình ảnh
         setActiveChats(prev => {
           const updatedChats = [...prev];
           const chatIndex = updatedChats.findIndex(chat => chat.userId === selectedChat.userId);
-          
+
           if (chatIndex !== -1) {
             updatedChats[chatIndex] = {
               ...updatedChats[chatIndex],
-              lastMessage: "[Hình ảnh]", 
+              lastMessage: "[Hình ảnh]",
               timestamp: new Date()
             };
           }
-          
+
           return updatedChats;
         });
-        
+
         // Send to server
         connection.invoke("SendSupportMessage", selectedChat.userId, imageMessage)
           .catch(err => {
             console.error("Error sending image message: ", err);
           });
-        
+
         toast.success("Đã gửi hình ảnh");
       } else {
         toast.error("Không thể tải lên hình ảnh");
@@ -799,9 +799,9 @@ export default function StaffChat() {
     <Container maxWidth="xl" sx={{ mt: 1, mb: 4, minHeight: 'calc(100vh - 200px)' }}>
       <Box sx={{ display: 'flex', height: 'calc(100vh - 200px)', bgcolor: '#f5f5f5', borderRadius: 2, overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
         {/* Chat list */}
-        <Paper sx={{ 
-          width: 320, 
-          borderRadius: 0, 
+        <Paper sx={{
+          width: 320,
+          borderRadius: 0,
           display: { xs: selectedChat ? 'none' : 'block', md: 'block' },
           borderRight: '1px solid #e0e0e0'
         }}>
@@ -809,7 +809,7 @@ export default function StaffChat() {
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>
               Phiên chat
             </Typography>
-            
+
             <Box sx={{ mt: 1.5, position: 'relative' }}>
               <TextField
                 placeholder="Tìm kiếm..."
@@ -817,8 +817,8 @@ export default function StaffChat() {
                 fullWidth
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ 
-                  bgcolor: 'white', 
+                sx={{
+                  bgcolor: 'white',
                   borderRadius: 1,
                   '& .MuiOutlinedInput-root': {
                     '& fieldset': {
@@ -839,11 +839,11 @@ export default function StaffChat() {
               />
             </Box>
           </Box>
-          
+
           <List sx={{ overflow: 'auto', height: 'calc(100% - 136px)', px: 0 }}>
             {sortedChats.length === 0 ? (
               <ListItem>
-                <ListItemText 
+                <ListItemText
                   primary={
                     <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
                       Không có cuộc trò chuyện
@@ -883,10 +883,10 @@ export default function StaffChat() {
                   </Badge>
                   <ListItemText
                     primary={
-                      <Typography 
-                        variant="subtitle1" 
-                        noWrap 
-                        sx={{ 
+                      <Typography
+                        variant="subtitle1"
+                        noWrap
+                        sx={{
                           fontWeight: chat.unreadCount > 0 ? 700 : 500,
                           fontSize: '0.95rem',
                           mb: 0.5
@@ -896,10 +896,10 @@ export default function StaffChat() {
                       </Typography>
                     }
                     secondary={
-                      <Typography 
-                        variant="body2" 
-                        noWrap 
-                        sx={{ 
+                      <Typography
+                        variant="body2"
+                        noWrap
+                        sx={{
                           color: chat.unreadCount > 0 ? 'text.primary' : 'text.secondary',
                           fontSize: '0.82rem'
                         }}
@@ -909,9 +909,9 @@ export default function StaffChat() {
                     }
                     secondaryTypographyProps={{ noWrap: true }}
                   />
-                  <Typography 
-                    variant="caption" 
-                    sx={{ 
+                  <Typography
+                    variant="caption"
+                    sx={{
                       color: 'text.secondary',
                       fontSize: '0.7rem',
                       ml: 1
@@ -924,20 +924,20 @@ export default function StaffChat() {
             )}
           </List>
         </Paper>
-        
+
         {/* Chat area */}
         {selectedChat ? (
-          <Box sx={{ 
-            flexGrow: 1, 
-            display: 'flex', 
-            flexDirection: 'column', 
+          <Box sx={{
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
             backgroundColor: '#f9f9f9',
             position: 'relative'
           }}>
             <AppBar position="static" color="default" elevation={1} sx={{ backgroundColor: 'white' }}>
               <Toolbar variant="dense" sx={{ minHeight: '64px' }}>
-                <IconButton 
-                  edge="start" 
+                <IconButton
+                  edge="start"
                   sx={{ mr: 1, display: { xs: 'inline-flex', md: 'none' } }}
                   onClick={() => setSelectedChat(null)}
                 >
@@ -956,14 +956,14 @@ export default function StaffChat() {
                 </Box>
               </Toolbar>
             </AppBar>
-            
-            <Box 
+
+            <Box
               ref={messagesContainerRef}
-              sx={{ 
-                flexGrow: 1, 
-                overflow: 'auto', 
-                p: 2, 
-                display: 'flex', 
+              sx={{
+                flexGrow: 1,
+                overflow: 'auto',
+                p: 2,
+                display: 'flex',
                 flexDirection: 'column',
                 backgroundColor: '#f5f5f5'
               }}
@@ -973,11 +973,11 @@ export default function StaffChat() {
                   <CircularProgress />
                 </Box>
               ) : messages.length === 0 ? (
-                <Box sx={{ 
-                  display: 'flex', 
+                <Box sx={{
+                  display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'center', 
-                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   height: '100%',
                   opacity: 0.7
                 }}>
@@ -1000,10 +1000,10 @@ export default function StaffChat() {
                     }}
                   >
                     {msg.sender === MESSAGE_TYPES.USER && (
-                      <Avatar 
-                        sx={{ 
-                          width: 32, 
-                          height: 32, 
+                      <Avatar
+                        sx={{
+                          width: 32,
+                          height: 32,
                           mr: 1,
                           bgcolor: selectedChat.avatarColor,
                           alignSelf: 'flex-end',
@@ -1013,31 +1013,31 @@ export default function StaffChat() {
                         <PersonIcon fontSize="small" />
                       </Avatar>
                     )}
-                    
+
                     {/* Kiểm tra và xử lý message content */}
                     {(() => {
                       try {
                         // Nếu là JSON, thì parse và kiểm tra
                         const parsedContent = JSON.parse(msg.content);
-                        
+
                         // Xử lý tin nhắn sản phẩm
                         if (parsedContent.type === 'product') {
                           return (
-                            <Box 
+                            <Box
                               sx={{
                                 maxWidth: '300px',
                                 mb: 1,
-                                marginLeft: msg.sender === MESSAGE_TYPES.USER ? 0 : 'auto', 
+                                marginLeft: msg.sender === MESSAGE_TYPES.USER ? 0 : 'auto',
                                 marginRight: msg.sender === MESSAGE_TYPES.STAFF ? 0 : 'auto',
                               }}
                             >
-                              <a 
-                                href={parsedContent.url} 
-                                target="_blank" 
+                              <a
+                                href={parsedContent.url}
+                                target="_blank"
                                 rel="noopener noreferrer"
                                 style={{ textDecoration: 'none', display: 'block' }}
                               >
-                                <Card sx={{ 
+                                <Card sx={{
                                   width: '100%',
                                   border: '1px solid',
                                   borderColor: mainColor.primary + '40',
@@ -1058,19 +1058,19 @@ export default function StaffChat() {
                                         component="img"
                                         image={parsedContent.image || '/images/placeholder.jpg'}
                                         alt={parsedContent.name}
-                                        sx={{ 
+                                        sx={{
                                           width: '100%',
                                           height: '100%',
-                                          objectFit: 'cover', 
+                                          objectFit: 'cover',
                                           borderRadius: '6px'
                                         }}
                                       />
                                     </Box>
                                     <Box sx={{ ml: 1.5, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%' }}>
-                                      <Typography 
-                                        variant="body2" 
-                                        sx={{ 
-                                          fontWeight: 500, 
+                                      <Typography
+                                        variant="body2"
+                                        sx={{
+                                          fontWeight: 500,
                                           mb: 0.5,
                                           overflow: 'hidden',
                                           textOverflow: 'ellipsis',
@@ -1084,12 +1084,12 @@ export default function StaffChat() {
                                       >
                                         {parsedContent.name}
                                       </Typography>
-                                      
+
                                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                                        <Typography 
-                                          variant="caption" 
-                                          sx={{ 
-                                            fontWeight: 600, 
+                                        <Typography
+                                          variant="caption"
+                                          sx={{
+                                            fontWeight: 600,
                                             color: 'text.secondary',
                                             fontSize: '0.75rem',
                                             display: 'flex',
@@ -1105,28 +1105,28 @@ export default function StaffChat() {
                                             sx={{ ml: 0.5, fontSize: '0.75rem' }}
                                           />
                                         </Typography>
-                                        <Box 
-                                          component="span" 
-                                          sx={{ 
-                                            mx: 0.5, 
-                                            fontSize: '0.75rem', 
-                                            color: 'text.disabled' 
+                                        <Box
+                                          component="span"
+                                          sx={{
+                                            mx: 0.5,
+                                            fontSize: '0.75rem',
+                                            color: 'text.disabled'
                                           }}
                                         >
                                           |
                                         </Box>
-                                        <Typography 
-                                          variant="caption" 
+                                        <Typography
+                                          variant="caption"
                                           sx={{ color: 'text.secondary', fontSize: '0.75rem' }}
                                         >
                                           Đã bán: {parsedContent.soldCount || 0}
                                         </Typography>
                                       </Box>
-                                      
-                                      <Typography 
-                                        variant="body2" 
-                                        sx={{ 
-                                          fontWeight: 600, 
+
+                                      <Typography
+                                        variant="body2"
+                                        sx={{
+                                          fontWeight: 600,
                                           color: mainColor.primary,
                                           fontSize: '0.875rem'
                                         }}
@@ -1137,12 +1137,12 @@ export default function StaffChat() {
                                   </Box>
                                 </Card>
                               </a>
-                              <Typography 
-                                variant="caption" 
-                                sx={{ 
-                                  opacity: 0.7, 
-                                  mt: 0.5, 
-                                  display: 'block', 
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  opacity: 0.7,
+                                  mt: 0.5,
+                                  display: 'block',
                                   textAlign: msg.sender === MESSAGE_TYPES.STAFF ? 'right' : 'left',
                                   fontSize: '0.7rem',
                                   px: 0.5,
@@ -1153,15 +1153,15 @@ export default function StaffChat() {
                               </Typography>
                             </Box>
                           );
-                        } 
+                        }
                         // Xử lý tin nhắn hình ảnh
                         else if (parsedContent.type === 'image') {
                           return (
-                            <Box 
+                            <Box
                               sx={{
                                 maxWidth: '300px',
                                 mb: 1,
-                                marginLeft: msg.sender === MESSAGE_TYPES.USER ? 0 : 'auto', 
+                                marginLeft: msg.sender === MESSAGE_TYPES.USER ? 0 : 'auto',
                                 marginRight: msg.sender === MESSAGE_TYPES.STAFF ? 0 : 'auto',
                               }}
                             >
@@ -1169,8 +1169,8 @@ export default function StaffChat() {
                                 elevation={0}
                                 sx={{
                                   p: 1,
-                                  borderRadius: msg.sender === MESSAGE_TYPES.STAFF 
-                                    ? '16px 4px 16px 16px' 
+                                  borderRadius: msg.sender === MESSAGE_TYPES.STAFF
+                                    ? '16px 4px 16px 16px'
                                     : '4px 16px 16px 16px',
                                   bgcolor: 'white',
                                   overflow: 'hidden'
@@ -1180,7 +1180,7 @@ export default function StaffChat() {
                                   component="img"
                                   src={parsedContent.url}
                                   alt="Shared image"
-                                  sx={{ 
+                                  sx={{
                                     width: '100%',
                                     maxHeight: '300px',
                                     objectFit: 'contain',
@@ -1190,12 +1190,12 @@ export default function StaffChat() {
                                   onClick={() => handleImagePreview(parsedContent.url)}
                                 />
                               </Paper>
-                              <Typography 
-                                variant="caption" 
-                                sx={{ 
-                                  opacity: 0.7, 
-                                  mt: 0.5, 
-                                  display: 'block', 
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  opacity: 0.7,
+                                  mt: 0.5,
+                                  display: 'block',
                                   textAlign: msg.sender === MESSAGE_TYPES.STAFF ? 'right' : 'left',
                                   fontSize: '0.7rem',
                                   px: 0.5,
@@ -1215,34 +1215,34 @@ export default function StaffChat() {
                               sx={{
                                 p: 1.5,
                                 maxWidth: '75%',
-                                borderRadius: msg.sender === MESSAGE_TYPES.STAFF 
-                                  ? '16px 4px 16px 16px' 
+                                borderRadius: msg.sender === MESSAGE_TYPES.STAFF
+                                  ? '16px 4px 16px 16px'
                                   : '4px 16px 16px 16px',
-                                bgcolor: msg.sender === MESSAGE_TYPES.STAFF 
-                                  ? mainColor.primary 
+                                bgcolor: msg.sender === MESSAGE_TYPES.STAFF
+                                  ? mainColor.primary
                                   : 'white',
-                                color: msg.sender === MESSAGE_TYPES.STAFF 
-                                  ? 'white' 
+                                color: msg.sender === MESSAGE_TYPES.STAFF
+                                  ? 'white'
                                   : 'text.primary',
                                 boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
                               }}
                             >
-                              <Typography 
-                                variant="body1" 
-                                sx={{ 
-                                  whiteSpace: 'pre-wrap', 
+                              <Typography
+                                variant="body1"
+                                sx={{
+                                  whiteSpace: 'pre-wrap',
                                   wordBreak: 'break-word',
                                   lineHeight: 1.5
                                 }}
                               >
                                 {formatMessageDisplay(msg.content)}
                               </Typography>
-                              <Typography 
-                                variant="caption" 
-                                sx={{ 
-                                  opacity: msg.sender === MESSAGE_TYPES.STAFF ? 0.8 : 0.6, 
-                                  mt: 0.5, 
-                                  display: 'block', 
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  opacity: msg.sender === MESSAGE_TYPES.STAFF ? 0.8 : 0.6,
+                                  mt: 0.5,
+                                  display: 'block',
                                   textAlign: 'right',
                                   fontSize: '0.7rem'
                                 }}
@@ -1260,34 +1260,34 @@ export default function StaffChat() {
                             sx={{
                               p: 1.5,
                               maxWidth: '75%',
-                              borderRadius: msg.sender === MESSAGE_TYPES.STAFF 
-                                ? '16px 4px 16px 16px' 
+                              borderRadius: msg.sender === MESSAGE_TYPES.STAFF
+                                ? '16px 4px 16px 16px'
                                 : '4px 16px 16px 16px',
-                              bgcolor: msg.sender === MESSAGE_TYPES.STAFF 
-                                ? mainColor.primary 
+                              bgcolor: msg.sender === MESSAGE_TYPES.STAFF
+                                ? mainColor.primary
                                 : 'white',
-                              color: msg.sender === MESSAGE_TYPES.STAFF 
-                                ? 'white' 
+                              color: msg.sender === MESSAGE_TYPES.STAFF
+                                ? 'white'
                                 : 'text.primary',
                               boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
                             }}
                           >
-                            <Typography 
-                              variant="body1" 
-                              sx={{ 
-                                whiteSpace: 'pre-wrap', 
+                            <Typography
+                              variant="body1"
+                              sx={{
+                                whiteSpace: 'pre-wrap',
                                 wordBreak: 'break-word',
                                 lineHeight: 1.5
                               }}
                             >
                               {msg.content}
                             </Typography>
-                            <Typography 
-                              variant="caption" 
-                              sx={{ 
-                                opacity: msg.sender === MESSAGE_TYPES.STAFF ? 0.8 : 0.6, 
-                                mt: 0.5, 
-                                display: 'block', 
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                opacity: msg.sender === MESSAGE_TYPES.STAFF ? 0.8 : 0.6,
+                                mt: 0.5,
+                                display: 'block',
                                 textAlign: 'right',
                                 fontSize: '0.7rem'
                               }}
@@ -1298,12 +1298,12 @@ export default function StaffChat() {
                         );
                       }
                     })()}
-                    
+
                     {msg.sender === MESSAGE_TYPES.STAFF && (
-                      <Avatar 
-                        sx={{ 
-                          width: 32, 
-                          height: 32, 
+                      <Avatar
+                        sx={{
+                          width: 32,
+                          height: 32,
                           ml: 1,
                           bgcolor: mainColor.primary,
                           alignSelf: 'flex-end',
@@ -1317,7 +1317,7 @@ export default function StaffChat() {
                 ))
               )}
             </Box>
-            
+
             <Box sx={{ p: 2, bgcolor: '#fff', borderTop: '1px solid #eee' }}>
               <Grid container spacing={1}>
                 <Grid item xs>
@@ -1388,10 +1388,10 @@ export default function StaffChat() {
             </Box>
           </Box>
         ) : (
-          <Box sx={{ 
-            flexGrow: 1, 
-            display: { xs: 'none', md: 'flex' }, 
-            justifyContent: 'center', 
+          <Box sx={{
+            flexGrow: 1,
+            display: { xs: 'none', md: 'flex' },
+            justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'column',
             p: 4,
@@ -1418,7 +1418,7 @@ export default function StaffChat() {
         onSend={handleSendProduct}
         mainColor={mainColor}
       />
-      
+
       {/* Image Preview Modal */}
       <Modal
         open={previewOpen}
@@ -1451,9 +1451,9 @@ export default function StaffChat() {
           >
             <CloseIcon />
           </IconButton>
-          <img 
-            src={previewImage} 
-            alt="Preview" 
+          <img
+            src={previewImage}
+            alt="Preview"
             className="max-w-full max-h-[90vh] object-contain"
             onClick={(e) => e.stopPropagation()}
           />
