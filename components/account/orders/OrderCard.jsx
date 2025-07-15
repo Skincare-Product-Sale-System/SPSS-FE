@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import request from "@/utils/axios";
 import { CircularProgress, Chip } from "@mui/material";
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import BankPaymentModal from "@/components/payment/BankPaymentModal";
 
 export default function OrderCard({ 
   order, 
@@ -21,6 +22,9 @@ export default function OrderCard({
   const { isLoggedIn, Id } = useAuthStore();
   const [loading, setLoading] = React.useState(false);
   const [paymentMethods, setPaymentMethods] = React.useState([]);
+  const [openBankModal, setOpenBankModal] = React.useState(false);
+  const [qrImageUrl, setQrImageUrl] = React.useState("");
+  const [orderBankModal, setOrderBankModal] = React.useState(null);
 
   // Calculate discount percentage if both originalOrderTotal and discountAmount exist
   const discountPercentage = order.originalOrderTotal && order.discountAmount
@@ -77,6 +81,17 @@ export default function OrderCard({
         } else {
           toast.error("Không thể khởi tạo thanh toán");
         }
+      } else if (paymentMethod?.paymentType === "BANK") {
+        const bankId = "970422";
+        const accountNo = "0352314340";
+        const template = "print";
+        const amount = (order.discountedOrderTotal ?? order.orderTotal)?.toFixed(0) || (order.discountedOrderTotal ?? order.orderTotal);
+        const description = encodeURIComponent(order.id);
+        const accountName = encodeURIComponent("DANG HO TUAN CUONG");
+        const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${description}&accountName=${accountName}`;
+        setOrderBankModal(order);
+        setQrImageUrl(qrUrl);
+        setOpenBankModal(true);
       } else {
         toast.info(`Đã chọn thanh toán qua ${paymentMethod?.paymentType || "phương thức chưa xác định"}`);
         // Chuyển đến trang chi tiết để có thêm tùy chọn
@@ -89,6 +104,21 @@ export default function OrderCard({
       setLoading(false);
     }
   };
+
+  React.useEffect(() => {
+    if (!openBankModal || !orderBankModal?.id) return;
+    const timer = setInterval(async () => {
+      try {
+        const resp = await request.get(`/orders/${orderBankModal.id}`);
+        const status = resp.data.data?.status || resp.data.status;
+        if (status && status.toLowerCase().trim() === "processing") {
+          setOpenBankModal(false);
+          window.location.href = `/payment-success?id=${orderBankModal.id}`;
+        }
+      } catch {}
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [openBankModal, orderBankModal]);
 
   return (
     <div className="border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 mb-6 overflow-hidden">
@@ -266,6 +296,12 @@ export default function OrderCard({
           </Link>
         </div>
       </div>
+      <BankPaymentModal
+        open={openBankModal}
+        onClose={() => setOpenBankModal(false)}
+        order={orderBankModal}
+        qrImageUrl={qrImageUrl}
+      />
     </div>
   );
 }

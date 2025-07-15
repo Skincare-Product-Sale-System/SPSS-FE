@@ -16,6 +16,7 @@ import OrderInfoCards from "./OrderInfoCards";
 import OrderProductList from "./OrderProductList";
 import ActionButtons from "./ActionButtons";
 import OrderDialogs from "./OrderDialogs";
+import BankPaymentModal from "@/components/payment/BankPaymentModal";
 
 // Import các utility function
 import { 
@@ -48,6 +49,9 @@ export default function MyAccountOrderDetailsContent() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [paymentMethodError, setPaymentMethodError] = useState("");
   const [updatingPayment, setUpdatingPayment] = useState(false);
+  const [openBankModal, setOpenBankModal] = useState(false);
+  const [qrImageUrl, setQrImageUrl] = useState("");
+  const [orderBankModal, setOrderBankModal] = useState(null);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -174,6 +178,17 @@ export default function MyAccountOrderDetailsContent() {
         } else {
           toast.error("Không thể khởi tạo thanh toán");
         }
+      } else if (method && method.paymentType === "BANK") {
+        const bankId = "970422";
+        const accountNo = "0352314340";
+        const template = "print";
+        const amount = (order.discountedOrderTotal ?? order.orderTotal)?.toFixed(0) || (order.discountedOrderTotal ?? order.orderTotal);
+        const description = encodeURIComponent(order.id);
+        const accountName = encodeURIComponent("DANG HO TUAN CUONG");
+        const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${description}&accountName=${accountName}`;
+        setOrderBankModal(order);
+        setQrImageUrl(qrUrl);
+        setOpenBankModal(true);
       } else {
         toast.info(`Đã chọn thanh toán qua ${method?.paymentType || "phương thức không xác định"}`);
       }
@@ -226,6 +241,21 @@ export default function MyAccountOrderDetailsContent() {
   const handleClosePaymentDialog = () => {
     setOpenPaymentDialog(false);
   };
+
+  useEffect(() => {
+    if (!openBankModal || !orderBankModal?.id) return;
+    const timer = setInterval(async () => {
+      try {
+        const resp = await request.get(`/orders/${orderBankModal.id}`);
+        const status = resp.data.data?.status || resp.data.status;
+        if (status && status.toLowerCase().trim() === "processing") {
+          setOpenBankModal(false);
+          window.location.href = `/payment-success?id=${orderBankModal.id}`;
+        }
+      } catch {}
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [openBankModal, orderBankModal]);
 
   if (loading) {
     return (
@@ -318,7 +348,7 @@ export default function MyAccountOrderDetailsContent() {
           handleOpenPaymentDialog={handleOpenPaymentDialog}
           handlePayNow={handlePayNow}
           paymentMethods={paymentMethods}
-          paymentMethodId={order.paymentMethodId}
+          paymentMethodId={order?.paymentMethodId}
         />
       </div>
 
@@ -346,6 +376,12 @@ export default function MyAccountOrderDetailsContent() {
         paymentMethods={paymentMethods}
         updatingPayment={updatingPayment}
         handleUpdatePaymentMethod={handleUpdatePaymentMethod}
+      />
+      <BankPaymentModal
+        open={openBankModal}
+        onClose={() => setOpenBankModal(false)}
+        order={orderBankModal}
+        qrImageUrl={qrImageUrl}
       />
     </div>
   );
