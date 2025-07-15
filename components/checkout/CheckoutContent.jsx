@@ -10,8 +10,11 @@ import PaymentMethodsSection from "./PaymentMethodsSection";
 import OrderSummarySection from "./OrderSummarySection";
 import { useTheme } from "@mui/material/styles";
 import Link from "next/link";
+import BankPaymentModal from "@/components/payment/BankPaymentModal";
+import { useRouter } from "next/navigation";
 
 export default function CheckoutContent() {
+  const router = useRouter();
   const theme = useTheme();
   const [cartProducts, setCartProducts] = useState([]);
   const [addresses, setAddresses] = useState([]);
@@ -26,6 +29,9 @@ export default function CheckoutContent() {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [openBankModal, setOpenBankModal] = useState(false);
+  const [orderBankModal, setOrderBankModal] = useState(null);
+  const [qrImageUrl, setQrImageUrl] = useState("");
 
   const totalPrice = cartProducts.reduce((a, b) => {
     return a + b.quantity * b.price;
@@ -196,6 +202,7 @@ export default function CheckoutContent() {
 
       if (res.status === 201) {
         const orderId = res.data.data.id;
+        const orderDataFull = res.data.data;
 
         // Handle VNPay redirects if needed
         if (paymentMethods.find(m => m.id === paymentMethod)?.paymentType === "VNPAY") {
@@ -207,6 +214,18 @@ export default function CheckoutContent() {
           } else {
             toast.error("Không thể khởi tạo thanh toán VNPay");
           }
+        } else if (paymentMethods.find(m => m.id === paymentMethod)?.paymentType === "BANK") {
+          // Hiển thị modal QR code
+          const bankId = "970422";
+          const accountNo = "0352314340";
+          const template = "print";
+          const amount = (orderDataFull.discountedOrderTotal ?? orderDataFull.orderTotal)?.toFixed(0) || (orderDataFull.discountedOrderTotal ?? orderDataFull.orderTotal);
+          const description = encodeURIComponent(orderDataFull.id);
+          const accountName = encodeURIComponent("DANG HO TUAN CUONG");
+          const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${description}&accountName=${accountName}`;
+          setOrderBankModal(orderDataFull);
+          setQrImageUrl(qrUrl);
+          setOpenBankModal(true);
         } else {
           // Redirect to success page
           location.href = `/payment-success?id=${orderId}`;
@@ -219,136 +238,155 @@ export default function CheckoutContent() {
     }
   };
 
+  // Theo dõi trạng thái đơn hàng khi modal mở
+  useEffect(() => {
+    if (!openBankModal || !orderBankModal?.id) return;
+    const timer = setInterval(async () => {
+      try {
+        const resp = await request.get(`/orders/${orderBankModal.id}`);
+        const status = resp.data.data?.status || resp.data.status;
+        if (status && status.toLowerCase().trim() === "processing") {
+          setOpenBankModal(false);
+          window.location.href = `/payment-success?id=${orderBankModal.id}`;
+        }
+      } catch {}
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [openBankModal, orderBankModal, router]);
+
   return (
-    <section className="py-4">
-      <div className="container">
-        <div className="row g-4">
-          {/* Left column - Address and Order Info */}
-          <div className="col-lg-7">
-            {/* Address Section */}
-            <AddressSection 
-              addresses={addresses}
-              selectedAddress={selectedAddress}
-              setSelectedAddress={setSelectedAddress}
-              countries={countries}
-              onAddressAdded={(newAddress) => {
-                setAddresses([...addresses, newAddress]);
-                setSelectedAddress(newAddress);
-              }}
-            />
-
-            {/* Order Information Section */}
-            <OrderSummarySection cartProducts={cartProducts} />
-          </div>
-
-          {/* Right column - Payment Methods & Checkout */}
-          <div className="col-lg-5">
-            <div className="bg-white p-4 rounded-lg shadow-sm sticky-top" style={{ top: '20px' }}>
-              {/* Payment Methods Section */}
-              <PaymentMethodsSection 
-                paymentMethods={paymentMethods}
-                selectedPaymentMethod={paymentMethod}
-                onSelectPaymentMethod={setPaymentMethod}
+    <>
+      <section className="py-4">
+        <div className="container">
+          <div className="row g-4">
+            {/* Left column - Address and Order Info */}
+            <div className="col-lg-7">
+              {/* Address Section */}
+              <AddressSection 
+                addresses={addresses}
+                selectedAddress={selectedAddress}
+                setSelectedAddress={setSelectedAddress}
+                countries={countries}
+                onAddressAdded={(newAddress) => {
+                  setAddresses([...addresses, newAddress]);
+                  setSelectedAddress(newAddress);
+                }}
               />
-              
-              {/* Coupon Section */}
-              <div className="mb-3">
-                <h5 className="fw-5 mb-3" style={{ fontFamily: '"Roboto", sans-serif' }}>
-                  Mã Giảm Giá
-                </h5>
-                <div className="input-group">
-                  <input
-                    id="voucherId"
-                    type="text"
-                    className="form-control"
-                    placeholder="Mã giảm giá"
-                  />
-                  <button
-                    className="btn text-white"
-                    style={{ backgroundColor: theme.palette.primary.main }}
-                    onClick={() => {
-                      const voucherElem = document.getElementById("voucherId");
-                      handleApplyVoucher(voucherElem.value);
-                    }}
-                  >
-                    Áp dụng
-                  </button>
-                </div>
-                
-                {voucher.code !== "" && (
-                  <div
-                    className={`mt-2 ${
-                      voucher.code !== "invalid"
-                        ? "text-success fw-medium"
-                        : "text-danger"
-                    }`}
-                  >
-                    {voucher.code !== "invalid" && voucher.code
-                      ? `Áp dụng mã: ${voucher.code} với giảm giá ${voucher.discountRate}%`
-                      : "Mã giảm giá không hợp lệ"}
-                  </div>
-                )}
-              </div>
-              
-              {/* Order Total */}
-              <div className="border-top border-bottom py-3 mb-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <span>Tạm tính:</span>
-                  <span>{formatPrice(totalPrice)}</span>
-                </div>
-                
-                {voucher.code !== "invalid" && voucher.code && (
-                  <div className="d-flex justify-content-between mb-2 text-success">
-                    <span>Giảm giá ({voucher.discountRate}%):</span>
-                    <span>-{formatPrice(totalPrice * voucher.discountRate/100)}</span>
-                  </div>
-                )}
 
-                <div className="d-flex justify-content-between fw-bold fs-5 mt-2">
-                  <span>Tổng tiền:</span>
-                  <span>{formatPrice(discountedTotal)}</span>
-                </div>
-              </div>
-              
-              {/* Terms and conditions agreement */}
-              <div className="form-check mb-3">
-                <input
-                  required
-                  type="checkbox"
-                  id="check-agree"
-                  className="form-check-input"
+              {/* Order Information Section */}
+              <OrderSummarySection cartProducts={cartProducts} />
+            </div>
+
+            {/* Right column - Payment Methods & Checkout */}
+            <div className="col-lg-5">
+              <div className="bg-white p-4 rounded-lg shadow-sm sticky-top" style={{ top: '20px' }}>
+                {/* Payment Methods Section */}
+                <PaymentMethodsSection 
+                  paymentMethods={paymentMethods}
+                  selectedPaymentMethod={paymentMethod}
+                  onSelectPaymentMethod={setPaymentMethod}
                 />
-                <label className="form-check-label fs-14" htmlFor="check-agree">
-                  Tôi đã đọc và đồng ý với
-                  <Link href="/terms-conditions" className="text-decoration-underline ms-1">
-                    điều khoản và điều kiện
-                  </Link>
-                  của website.
-                </label>
-              </div>
-              
-              {/* Place order button */}
-              {cartProducts.length > 0 && (
-                <button
-                  className="btn text-white w-100 py-2"
-                  style={{ backgroundColor: theme.palette.primary.main }}
-                  onClick={handlePlaceOrder}
-                >
-                  Đặt hàng
-                </button>
-              )}
-              
-              {/* Privacy policy note */}
-              <div className="mt-3 fs-14 text-muted">
-                Thông tin cá nhân của bạn sẽ được sử dụng để xử lý đơn hàng và hỗ trợ trải nghiệm của bạn trên website này. 
-                <Link href="/privacy-policy" className="text-decoration-underline ms-1">
-                  Xem thêm trong chính sách bảo mật
-                </Link>.
+                
+                {/* Coupon Section */}
+                <div className="mb-3">
+                  <h5 className="fw-5 mb-3" style={{ fontFamily: '"Roboto", sans-serif' }}>
+                    Mã Giảm Giá
+                  </h5>
+                  <div className="input-group">
+                    <input
+                      id="voucherId"
+                      type="text"
+                      className="form-control"
+                      placeholder="Mã giảm giá"
+                    />
+                    <button
+                      className="btn text-white"
+                      style={{ backgroundColor: theme.palette.primary.main }}
+                      onClick={() => {
+                        const voucherElem = document.getElementById("voucherId");
+                        handleApplyVoucher(voucherElem.value);
+                      }}
+                    >
+                      Áp dụng
+                    </button>
+                  </div>
+                  
+                  {voucher.code !== "" && (
+                    <div
+                      className={`mt-2 ${
+                        voucher.code !== "invalid"
+                          ? "text-success fw-medium"
+                          : "text-danger"
+                      }`}
+                    >
+                      {voucher.code !== "invalid" && voucher.code
+                        ? `Áp dụng mã: ${voucher.code} với giảm giá ${voucher.discountRate}%`
+                        : "Mã giảm giá không hợp lệ"}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Order Total */}
+                <div className="border-top border-bottom py-3 mb-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Tạm tính:</span>
+                    <span>{formatPrice(totalPrice)}</span>
+                  </div>
+                  
+                  {voucher.code !== "invalid" && voucher.code && (
+                    <div className="d-flex justify-content-between mb-2 text-success">
+                      <span>Giảm giá ({voucher.discountRate}%):</span>
+                      <span>-{formatPrice(totalPrice * voucher.discountRate/100)}</span>
+                    </div>
+                  )}
+
+                  <div className="d-flex justify-content-between fw-bold fs-5 mt-2">
+                    <span>Tổng tiền:</span>
+                    <span>{formatPrice(discountedTotal)}</span>
+                  </div>
+                </div>
+                
+                {/* Terms and conditions agreement */}
+                <div className="form-check mb-3">
+                  <input
+                    required
+                    type="checkbox"
+                    id="check-agree"
+                    className="form-check-input"
+                  />
+                  <label className="form-check-label fs-14" htmlFor="check-agree">
+                    Tôi đã đọc và đồng ý với
+                    <Link href="/terms-conditions" className="text-decoration-underline ms-1">
+                      điều khoản và điều kiện
+                    </Link>
+                    của website.
+                  </label>
+                </div>
+                
+                {/* Place order button */}
+                {cartProducts.length > 0 && (
+                  <button
+                    className="btn text-white w-100 py-2"
+                    style={{ backgroundColor: theme.palette.primary.main }}
+                    onClick={handlePlaceOrder}
+                  >
+                    Đặt hàng
+                  </button>
+                )}
+                
+                {/* Privacy policy note */}
+                <div className="mt-3 fs-14 text-muted">
+                  Thông tin cá nhân của bạn sẽ được sử dụng để xử lý đơn hàng và hỗ trợ trải nghiệm của bạn trên website này. 
+                  <Link href="/privacy-policy" className="text-decoration-underline ms-1">
+                    Xem thêm trong chính sách bảo mật
+                  </Link>.
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <BankPaymentModal open={openBankModal} onClose={() => setOpenBankModal(false)} order={orderBankModal} qrImageUrl={qrImageUrl} />
+    </>
   );
 } 
