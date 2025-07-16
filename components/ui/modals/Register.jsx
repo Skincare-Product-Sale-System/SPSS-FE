@@ -28,6 +28,24 @@ export default function Register({ isStandalone = false }) {
     confirmPassword: "",
   });
 
+  // Function to close the modal
+  const closeModal = () => {
+    if (!isStandalone && typeof window !== 'undefined') {
+      try {
+        const bootstrap = require("bootstrap");
+        const modalElement = document.getElementById("register");
+        if (modalElement) {
+          const modalInstance = bootstrap.Modal.getInstance(modalElement);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        }
+      } catch (error) {
+        console.error("Error closing modal:", error);
+      }
+    }
+  };
+
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -182,6 +200,11 @@ export default function Register({ isStandalone = false }) {
       .then((res) => {
         if (res.status == 200) {
           toast.success("Đăng ký thành công");
+
+          // Close the modal if in modal mode
+          if (!isStandalone) {
+            closeModal();
+          }
 
           // Add a small delay before redirecting to ensure the toast is visible
           setTimeout(() => {

@@ -21,6 +21,24 @@ export default function Login({ isStandalone = false }) {
     password: ''
   });
 
+  // Function to close the modal
+  const closeModal = () => {
+    if (!isStandalone && typeof window !== 'undefined') {
+      try {
+        const bootstrap = require("bootstrap");
+        const modalElement = document.getElementById("login");
+        if (modalElement) {
+          const modalInstance = bootstrap.Modal.getInstance(modalElement);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        }
+      } catch (error) {
+        console.error("Error closing modal:", error);
+      }
+    }
+  };
+
   const validateUsernameOrEmail = (value) => {
     // Check if it's a valid email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -125,6 +143,11 @@ export default function Login({ isStandalone = false }) {
             "refreshToken",
             res.data.refreshToken
           );
+
+          // Close the modal if in modal mode
+          if (!isStandalone) {
+            closeModal();
+          }
 
           // Redirect based on user role using Next.js router
           setTimeout(() => {
