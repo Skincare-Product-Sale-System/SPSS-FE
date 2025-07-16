@@ -12,6 +12,7 @@ import { Roboto } from 'next/font/google';
 import '@/styles/globals.css';
 import { RouterEventsProvider } from './RouterEventsProvider';
 import Loading from './loading';
+import Head from 'next/head';
 
 // Import styles
 import "../public/scss/main.scss";
@@ -19,7 +20,7 @@ import "photoswipe/dist/photoswipe.css";
 import "rc-slider/assets/index.css";
 
 // Fonts configuration
-const roboto = Roboto({ 
+const roboto = Roboto({
   subsets: ['latin', 'vietnamese'],
   variable: '--font-roboto',
   weight: ['300', '400', '500', '700'],
@@ -140,6 +141,10 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${roboto.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/images/logo/logo-icon.png" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/images/logo/logo-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#4ECDC4" />
         <style jsx global>{`
           :root {
             --font-primary: ${roboto.style.fontFamily};
@@ -170,25 +175,25 @@ export default function RootLayout({ children }) {
                       <Suspense fallback={<Loading />}>
                         {isStaff ? <StaffHeaderWrapper /> : <Header />}
                       </Suspense>
-                      
+
                       {/* Mobile Menu - lazy loaded */}
                       <Suspense fallback={null}>
                         <MobileMenu />
                       </Suspense>
-                      
+
                       {/* Main content - only this will be rerendered on route change */}
                       <main key={pathname} className="flex-grow">
                         <Suspense fallback={<Loading />}>
                           {children}
                         </Suspense>
                       </main>
-                      
+
                       {/* Footer - lazy loaded */}
                       <Suspense fallback={<Loading />}>
                         <Footer />
                       </Suspense>
                     </div>
-                    
+
                     {/* Modals and deferred components - lazy loaded */}
                     <Suspense fallback={null}>
                       <Compare />
@@ -200,7 +205,7 @@ export default function RootLayout({ children }) {
                       <RealTimeChat />
                       <ScrollTop />
                     </Suspense>
-                    
+
                     <Toaster position="top-right" />
                   </ClientProvider>
                 </Context>

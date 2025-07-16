@@ -1,0 +1,22 @@
+{
+    "name": "Skincede - Chăm sóc da mặt",
+    "short_name": "Skincede",
+    "description": "Chăm sóc da mặt chuyên nghiệp",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4ECDC4",
+    "icons": [
+        {
+            "src": "/images/logo/logo-icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo/logo-icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

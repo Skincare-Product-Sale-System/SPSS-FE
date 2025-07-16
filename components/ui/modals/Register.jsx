@@ -4,8 +4,10 @@ import Link from "next/link";
 import request from "@/utils/axios";
 import toast from "react-hot-toast";
 import { openLoginModal } from "@/utils/openLoginModal";
+import { useRouter } from "next/navigation";
 
-export default function Register() {
+export default function Register({ isStandalone = false }) {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     surName: "",
@@ -180,8 +182,16 @@ export default function Register() {
       .then((res) => {
         if (res.status == 200) {
           toast.success("Đăng ký thành công");
-          // Open login modal
-          openLoginModal();
+
+          // Add a small delay before redirecting to ensure the toast is visible
+          setTimeout(() => {
+            // Redirect to login page after successful registration
+            if (isStandalone) {
+              router.push('/login');
+            } else {
+              openLoginModal();
+            }
+          }, 1500);
         }
       })
       .catch((e) => {
@@ -189,6 +199,183 @@ export default function Register() {
       });
   };
 
+  // Render the form content that will be used in both modal and standalone versions
+  const renderFormContent = () => (
+    <form onSubmit={handleSubmit} acceptCharset="utf-8">
+      <div className="style-1 tf-field mb-3">
+        <input
+          className={`tf-field-input tf-input ${errors.username ? 'border-danger' : ''}`}
+          placeholder=" "
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+        />
+        <label className="tf-field-label" htmlFor="">
+          Tên tài khoản *
+        </label>
+        {errors.username && (
+          <div className="text-danger mt-1 small">{errors.username}</div>
+        )}
+      </div>
+      <div className="style-1 tf-field mb-3">
+        <input
+          className={`tf-field-input tf-input ${errors.surName ? 'border-danger' : ''}`}
+          placeholder=" "
+          type="text"
+          name="surName"
+          value={formData.surName}
+          onChange={handleChange}
+          required
+        />
+        <label className="tf-field-label" htmlFor="">
+          Họ *
+        </label>
+        {errors.surName && (
+          <div className="text-danger mt-1 small">{errors.surName}</div>
+        )}
+      </div>
+      <div className="style-1 tf-field mb-3">
+        <input
+          className={`tf-field-input tf-input ${errors.lastName ? 'border-danger' : ''}`}
+          placeholder=" "
+          type="text"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          required
+        />
+        <label className="tf-field-label" htmlFor="">
+          Tên *
+        </label>
+        {errors.lastName && (
+          <div className="text-danger mt-1 small">{errors.lastName}</div>
+        )}
+      </div>
+      <div className="style-1 tf-field mb-3">
+        <input
+          className={`tf-field-input tf-input ${errors.emailAddress ? 'border-danger' : ''}`}
+          placeholder=" "
+          type="email"
+          name="emailAddress"
+          value={formData.emailAddress}
+          onChange={handleChange}
+          required
+        />
+        <label className="tf-field-label" htmlFor="">
+          Email *
+        </label>
+        {errors.emailAddress && (
+          <div className="text-danger mt-1 small">{errors.emailAddress}</div>
+        )}
+      </div>
+      <div className="style-1 tf-field mb-3">
+        <input
+          className={`tf-field-input tf-input ${errors.phoneNumber ? 'border-danger' : ''}`}
+          placeholder=" "
+          type="tel"
+          name="phoneNumber"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+          required
+        />
+        <label className="tf-field-label" htmlFor="">
+          Số điện thoại *
+        </label>
+        {errors.phoneNumber && (
+          <div className="text-danger mt-1 small">{errors.phoneNumber}</div>
+        )}
+      </div>
+      <div className="style-1 tf-field mb-3">
+        <input
+          className={`tf-field-input tf-input ${errors.password ? 'border-danger' : ''}`}
+          placeholder=" "
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+        <label className="tf-field-label" htmlFor="">
+          Mật khẩu *
+        </label>
+        {errors.password && (
+          <div className="text-danger mt-1 small">{errors.password}</div>
+        )}
+      </div>
+      <div className="style-1 tf-field mb-4">
+        <input
+          className={`tf-field-input tf-input ${errors.confirmPassword ? 'border-danger' : ''}`}
+          placeholder=" "
+          type="password"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          required
+        />
+        <label className="tf-field-label" htmlFor="">
+          Xác nhận mật khẩu *
+        </label>
+        {errors.confirmPassword && (
+          <div className="text-danger mt-1 small">{errors.confirmPassword}</div>
+        )}
+      </div>
+      <div className="bottom">
+        <div className="w-100 mb-3">
+          <button
+            type="submit"
+            className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
+            style={{ padding: '12px 0', fontSize: '16px' }}
+          >
+            <span>Đăng ký</span>
+          </button>
+        </div>
+        <div className="w-100 text-center">
+          {isStandalone ? (
+            <Link
+              href="/login"
+              className="btn-link fw-6 link text-primary"
+            >
+              Đã có tài khoản? Đăng nhập
+              <i className="icon icon-arrow1-top-left ms-2" />
+            </Link>
+          ) : (
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                openLoginModal();
+              }}
+              className="btn-link fw-6 link text-primary"
+            >
+              Đã có tài khoản? Đăng nhập
+              <i className="icon icon-arrow1-top-left ms-2" />
+            </a>
+          )}
+        </div>
+      </div>
+    </form>
+  );
+
+  // If used as a standalone page (not in a modal)
+  if (isStandalone) {
+    return (
+      <div className="container py-5">
+        <div className="row justify-content-center">
+          <div className="col-md-5">
+            <div className="card shadow border-0 rounded-3">
+              <div className="card-body p-4 p-md-5">
+                {renderFormContent()}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If used as a modal
   return (
     <div
       className="form-sign-in modal modal-part-content modalCentered fade"
@@ -198,184 +385,10 @@ export default function Register() {
         <div className="modal-content">
           <div className="header">
             <div className="demo-title">Đăng ký</div>
-            <span
-              className="icon-close icon-close-popup"
-              data-bs-dismiss="modal"
-            />
+            <span className="icon-close icon-close-popup" data-bs-dismiss="modal" />
           </div>
           <div className="tf-login-form">
-            <form onSubmit={handleSubmit}>
-              <div className="style-1 tf-field">
-                <input
-                  className={`tf-field-input tf-input ${
-                    errors.username ? "border-danger" : ""
-                  }`}
-                  placeholder=" "
-                  type="text"
-                  required
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label" htmlFor="">
-                  Tên tài khoản *
-                </label>
-                {errors.username && (
-                  <div className="text-danger mt-1 small">
-                    {errors.username}
-                  </div>
-                )}
-              </div>
-              <div className="style-1 tf-field">
-                <input
-                  className={`tf-field-input tf-input ${
-                    errors.surName ? "border-danger" : ""
-                  }`}
-                  placeholder=" "
-                  type="text"
-                  required
-                  name="surName"
-                  value={formData.surName}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label" htmlFor="">
-                  Họ *
-                </label>
-                {errors.surName && (
-                  <div className="text-danger mt-1 small">{errors.surName}</div>
-                )}
-              </div>
-              <div className="style-1 tf-field">
-                <input
-                  className={`tf-field-input tf-input ${
-                    errors.lastName ? "border-danger" : ""
-                  }`}
-                  placeholder=" "
-                  type="text"
-                  required
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label" htmlFor="">
-                  Tên *
-                </label>
-                {errors.lastName && (
-                  <div className="text-danger mt-1 small">
-                    {errors.lastName}
-                  </div>
-                )}
-              </div>
-              <div className="style-1 tf-field">
-                <input
-                  className={`tf-field-input tf-input ${
-                    errors.emailAddress ? "border-danger" : ""
-                  }`}
-                  placeholder=" "
-                  type="email"
-                  autoComplete="email"
-                  required
-                  name="emailAddress"
-                  value={formData.emailAddress}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label" htmlFor="">
-                  Email *
-                </label>
-                {errors.emailAddress && (
-                  <div className="text-danger mt-1 small">
-                    {errors.emailAddress}
-                  </div>
-                )}
-              </div>
-
-              <div className="style-1 tf-field">
-                <input
-                  className={`tf-field-input tf-input ${
-                    errors.phoneNumber ? "border-danger" : ""
-                  }`}
-                  placeholder=" "
-                  type="tel"
-                  required
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label" htmlFor="">
-                  Số điện thoại *
-                </label>
-                {errors.phoneNumber && (
-                  <div className="text-danger mt-1 small">
-                    {errors.phoneNumber}
-                  </div>
-                )}
-              </div>
-              <div className="style-1 tf-field">
-                <input
-                  className={`tf-field-input tf-input ${
-                    errors.password ? "border-danger" : ""
-                  }`}
-                  placeholder=" "
-                  type="password"
-                  required
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  autoComplete="new-password"
-                />
-                <label className="tf-field-label" htmlFor="">
-                  Mật khẩu *
-                </label>
-                {errors.password && (
-                  <div className="text-danger mt-1 small">
-                    {errors.password}
-                  </div>
-                )}
-              </div>
-              <div className="style-1 tf-field">
-                <input
-                  className={`tf-field-input tf-input ${
-                    errors.confirmPassword ? "border-danger" : ""
-                  }`}
-                  placeholder=" "
-                  type="password"
-                  required
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  autoComplete="new-password"
-                />
-                <label className="tf-field-label" htmlFor="">
-                  Nhập lại mật khẩu *
-                </label>
-                {errors.confirmPassword && (
-                  <div className="text-danger mt-1 small">
-                    {errors.confirmPassword}
-                  </div>
-                )}
-              </div>
-              <div className="bottom">
-                <div className="w-100">
-                  <button
-                    type="submit"
-                    className="btn-fill justify-content-center w-100 animate-hover-btn radius-3 tf-btn"
-                  >
-                    <span>Đăng ký</span>
-                  </button>
-                </div>
-                <div className="w-100">
-                  <a
-                    id="login"
-                    href="#login"
-                    data-bs-toggle="modal"
-                    className="btn-link w-100 fw-6 link"
-                  >
-                    Đã có tài khoản? Đăng nhập tại đây
-                    <i className="icon icon-arrow1-top-left" />
-                  </a>
-                </div>
-              </div>
-            </form>
+            {renderFormContent()}
           </div>
         </div>
       </div>
