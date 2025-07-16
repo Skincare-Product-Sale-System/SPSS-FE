@@ -31,23 +31,23 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
   const [currentProductItem, setCurrentProductItem] = useState(null);
   useEffect(() => {
     if (!product?.productItems) return;
-    
+
     // Extract all unique variations
     const allVariations = {};
-    
+
     product.productItems.forEach(item => {
       if (!item.configurations) return;
-      
+
       item.configurations.forEach(config => {
         if (!allVariations[config.variationName]) {
           allVariations[config.variationName] = [];
         }
-        
+
         // Add option if not already in the list
         const existingOption = allVariations[config.variationName].find(
           opt => opt.optionId === config.optionId
         );
-        
+
         if (!existingOption) {
           allVariations[config.variationName].push({
             variationName: config.variationName,
@@ -57,15 +57,15 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
         }
       });
     });
-    
+
     // Convert to array format for rendering
     const variationsArray = Object.keys(allVariations).map(variationName => ({
       name: variationName,
       options: allVariations[variationName]
     }));
-    
+
     setVariations(variationsArray);
-    
+
     // Initialize selected options with first option of each variation
     const initialSelectedOptions = {};
     variationsArray.forEach(variation => {
@@ -73,9 +73,9 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
         initialSelectedOptions[variation.name] = variation.options[0].optionId;
       }
     });
-    
+
     setSelectedOptions(initialSelectedOptions);
-    
+
     // Find matching product item for initial selection
     const matchingItem = findMatchingProductItem(initialSelectedOptions);
     if (matchingItem) {
@@ -86,14 +86,14 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
       });
     }
   }, [product]);
-  
+
   // Find product item that matches all selected options
   const findMatchingProductItem = (options) => {
     if (!product?.productItems) return null;
-    
+
     const matchingItem = product.productItems.find(item => {
       if (!item.configurations) return false;
-      
+
       // Check if this item matches all selected options
       const allOptionsMatch = Object.keys(options).every(variationName => {
         const selectedOptionId = options[variationName];
@@ -101,23 +101,23 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
           config => config.variationName === variationName && config.optionId === selectedOptionId
         );
       });
-      
+
       return allOptionsMatch;
     });
-    
+
     return matchingItem;
   };
-  
+
   // Handle option selection
   const handleOptionSelect = (variationName, optionId) => {
     const newSelectedOptions = {
       ...selectedOptions,
       [variationName]: optionId
     };
-    
+
     setSelectedOptions(newSelectedOptions);
     const matchingItem = findMatchingProductItem(newSelectedOptions);
-    
+
     if (matchingItem) {
       setCurrentProductItem(matchingItem);
       setCurrentPrice({
@@ -137,10 +137,10 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
   } = useContextElement();
 
   const [productImages, setProductImages] = useState([]);
-  
+
   useEffect(() => {
     if (!productId) return;
-    
+
     (async () => {
       try {
         const { data } = await request.get(`/product-images/${productId}`);
@@ -152,22 +152,22 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
           height: 1152,
           dataValue: item.id,
         }));
-        
+
         // Track unique image URLs to avoid duplicates
         const uniqueUrls = new Set(images.map(img => img.src));
-        
+
         const length = images.length;
         if (product?.productItems) {
           product.productItems.forEach((item, index) => {
             if (item.imageUrl && !uniqueUrls.has(item.imageUrl)) {
               // Only add if this URL hasn't been seen before
               uniqueUrls.add(item.imageUrl);
-              
+
               // Find the variation option ID to associate with this image
               const optionId = item.configurations?.find(
                 config => config.variationName === variations[0]?.name
               )?.optionId;
-              
+
               images.push({
                 id: index + length + 1,
                 src: item.imageUrl,
@@ -272,7 +272,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                 <div className="tf-zoom-main" />
                 <div className="bg-white p-4 rounded-lg shadow-sm other-image-zoom tf-product-info-list">
                   <div className="mb-2 tf-product-info-title">
-                    <h3 className="text-primary-800 fs-60">{product?.name || 'Tên sản phẩm'}</h3>
+                    <h3 className="text-primary-800 text-xl md:text-2xl lg:text-3xl mb-2" style={{ fontFamily: 'Playfair Display, serif', lineHeight: '1.2' }}>{product?.name || 'Tên sản phẩm'}</h3>
                     <div className="d-flex gap-3 items-center product-rating">
                       <div className="flex items-center rating">
                         <span className="mr-2 rating-value">{product.ratingDisplay}</span>
@@ -289,11 +289,11 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                           }}
                         />
                       </div>
-                      <Box component="span" sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
+                      <Box component="span" sx={{
+                        display: 'flex',
+                        alignItems: 'center',
                         color: '#666',
-                        fontSize: '14px',
+                        fontSize: { xs: '12px', sm: '14px' },
                         '&::before': {
                           content: '""',
                           display: 'inline-block',
@@ -308,16 +308,16 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       </Box>
                     </div>
                   </div>
-                  
+
                   <div className="bg-rose-50 p-3 rounded mb-3 tf-product-info-price">
-                    <div className="d-flex align-items-center">
-                      <div className="text-rose-600 font-medium fs-24 mr-2 price-on-sale">
+                    <div className="d-flex align-items-center flex-wrap">
+                      <div className="text-rose-600 font-medium text-lg md:text-xl lg:text-2xl mr-2 price-on-sale">
                         {formatPrice(currentPrice?.price)}
                       </div>
-                      <div className="text-decoration-line-through text-neutral-500 compare-at-price fs-16">
+                      <div className="text-decoration-line-through text-neutral-500 compare-at-price text-sm md:text-base">
                         {formatPrice(currentPrice?.marketPrice)}
                       </div>
-                      <div className="badges-on-sale bg-rose-100 rounded text-rose-700 ml-2 px-2 py-1">
+                      <div className="badges-on-sale bg-rose-100 rounded text-rose-700 ml-2 px-2 py-1 text-xs md:text-sm">
                         <span>
                           {calculateDiscount(currentPrice?.marketPrice, currentPrice?.price)}
                         </span>
@@ -325,7 +325,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Compact Product Information */}
                   <div className="mb-3 product-info-compact">
                     <div className="d-flex flex-wrap">
@@ -338,7 +338,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                           </Link>
                         </div>
                       )}
-                      
+
                       {/* Category */}
                       {product?.category && (
                         <div className="d-flex align-items-center mb-2 mr-4">
@@ -348,18 +348,18 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                           </Link>
                         </div>
                       )}
-                      
+
                       {/* Status */}
                       <div className="d-flex align-items-center mb-2">
                         <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-1">Trạng thái:</Typography>
-                        <Chip 
-                          label={getStatusDisplay(product?.status)} 
-                          color={product?.status === "Available" ? "success" : 
-                                 product?.status === "Out of Stock" ? "default" :
-                                 product?.status === "Pre-Order" || product?.status === "Coming Soon" ? "warning" : "error"}
+                        <Chip
+                          label={getStatusDisplay(product?.status)}
+                          color={product?.status === "Available" ? "success" :
+                            product?.status === "Out of Stock" ? "default" :
+                              product?.status === "Pre-Order" || product?.status === "Coming Soon" ? "warning" : "error"}
                           size="small"
-                          sx={{ 
-                            height: '20px', 
+                          sx={{
+                            height: '20px',
                             fontSize: '12px',
                             backgroundColor: `${getStatusColor(product?.status, theme)}20`,
                             color: getStatusColor(product?.status, theme),
@@ -368,7 +368,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         />
                       </div>
                     </div>
-                    
+
                     {/* Skin Types */}
                     {product?.skinTypes && product.skinTypes.length > 0 && (
                       <div className="mb-2">
@@ -376,11 +376,11 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                           <Typography variant="subtitle2" className="text-gray-600 fs-14 mr-2">Loại da:</Typography>
                           {product.skinTypes.map(skinType => (
                             <Link key={skinType.id} href={`/products?skinTypeId=${skinType.id}`}>
-                              <Chip 
-                                label={skinType.name} 
-                                size="small" 
+                              <Chip
+                                label={skinType.name}
+                                size="small"
                                 className="cursor-pointer hover:bg-primary-light"
-                                style={{ 
+                                style={{
                                   backgroundColor: `${theme.palette.primary.main}15`,
                                   borderColor: theme.palette.primary.main,
                                   marginRight: '4px',
@@ -395,34 +395,34 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="tf-product-info-variant-picker">
                     {variations.map((variation, index) => (
                       <div className="mb-3 variant-picker-item" key={variation.name}>
                         <div className="d-flex align-items-center justify-content-between">
                           <div className="text-neutral-700 font-medium fs-14 variant-picker-label">
                             {/* Translate common variation names */}
-                            {variation.name === "Capacity" ? "Dung tích" : 
-                             variation.name === "Color" ? "Màu sắc" : 
-                             variation.name === "Size" ? "Kích thước" :
-                             variation.name === "Weight" ? "Trọng lượng" :
-                             variation.name === "Material" ? "Chất liệu" :
-                             variation.name === "Volume" ? "Thể tích" :
-                             variation.name === "Fragrance" ? "Hương thơm" :
-                             variation.name === "Type" ? "Loại" :
-                             variation.name === "Concentration" ? "Nồng độ" :
-                             variation.name}:
+                            {variation.name === "Capacity" ? "Dung tích" :
+                              variation.name === "Color" ? "Màu sắc" :
+                                variation.name === "Size" ? "Kích thước" :
+                                  variation.name === "Weight" ? "Trọng lượng" :
+                                    variation.name === "Material" ? "Chất liệu" :
+                                      variation.name === "Volume" ? "Thể tích" :
+                                        variation.name === "Fragrance" ? "Hương thơm" :
+                                          variation.name === "Type" ? "Loại" :
+                                            variation.name === "Concentration" ? "Nồng độ" :
+                                              variation.name}:
                           </div>
                         </div>
                         <div className="mt-1 variant-picker-options">
                           {variation.options.map((option) => {
                             // Tìm product item có option này
-                            const productItemWithOption = product.productItems.find(item => 
+                            const productItemWithOption = product.productItems.find(item =>
                               item.configurations?.some(
                                 config => config.optionId === option.optionId
                               )
                             );
-                            
+
                             // Kiểm tra số lượng tồn kho
                             const isOutOfStock = productItemWithOption?.quantityInStock === 0;
 
@@ -433,19 +433,19 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                                 onClick={() => !isOutOfStock && handleOptionSelect(variation.name, option.optionId)}
                                 disabled={isOutOfStock}
                                 className="border rounded-md fs-14 mb-2 mr-2 px-3 py-1 transition-all variant-picker-option"
-                                style={{ 
-                                  borderColor: selectedOptions[variation.name] === option.optionId 
-                                    ? theme.palette.primary.main 
+                                style={{
+                                  borderColor: selectedOptions[variation.name] === option.optionId
+                                    ? theme.palette.primary.main
                                     : theme.palette.grey[300],
-                                  backgroundColor: isOutOfStock 
+                                  backgroundColor: isOutOfStock
                                     ? theme.palette.grey[100]
-                                    : selectedOptions[variation.name] === option.optionId 
-                                      ? theme.palette.primary.main 
+                                    : selectedOptions[variation.name] === option.optionId
+                                      ? theme.palette.primary.main
                                       : '#fff',
                                   color: isOutOfStock
                                     ? theme.palette.grey[400]
-                                    : selectedOptions[variation.name] === option.optionId 
-                                      ? '#fff' 
+                                    : selectedOptions[variation.name] === option.optionId
+                                      ? '#fff'
                                       : theme.palette.text.primary,
                                   cursor: isOutOfStock ? 'not-allowed' : 'pointer',
                                   position: 'relative'
@@ -453,8 +453,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                               >
                                 {option.optionName}
                                 {isOutOfStock && (
-                                  <div 
-                                    className="position-absolute" 
+                                  <div
+                                    className="position-absolute"
                                     style={{
                                       top: '50%',
                                       left: 0,
@@ -472,7 +472,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="mb-3 tf-product-info-quantity">
                     {currentProductItem && (
                       <div className="mb-3 variant-picker-item">
@@ -481,8 +481,8 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         </div>
                         <div className="mt-1">
                           <div className="border rounded-md fs-14 px-3 py-1" style={{
-                            borderColor: currentProductItem.quantityInStock > 0 
-                              ? theme.palette.success.light 
+                            borderColor: currentProductItem.quantityInStock > 0
+                              ? theme.palette.success.light
                               : theme.palette.error.light,
                             backgroundColor: currentProductItem.quantityInStock > 0
                               ? `${theme.palette.success.main}15`
@@ -501,9 +501,9 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                             )}
                           </div>
                           {currentProductItem.quantityInStock < 10 && currentProductItem.quantityInStock > 0 && (
-                            <Typography 
-                              variant="caption" 
-                              sx={{ 
+                            <Typography
+                              variant="caption"
+                              sx={{
                                 color: theme.palette.warning.main,
                                 ml: 1,
                                 fontWeight: 500,
@@ -516,7 +516,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         </div>
                       </div>
                     )}
-                    
+
                     <div className="d-flex align-items-center">
                       <div className="fs-14 fw-6 mr-3 quantity-title">Số lượng</div>
                       <div className="quantity-input-container" style={{
@@ -549,7 +549,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         >
                           <span style={{ fontSize: '18px', fontWeight: 'bold' }}>−</span>
                         </button>
-                        
+
                         <input
                           type="text"
                           value={quantity}
@@ -569,7 +569,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                             color: theme.palette.text.primary
                           }}
                         />
-                        
+
                         <button
                           type="button"
                           onClick={() => {
@@ -596,7 +596,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="mb-3 tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()} className="d-flex gap-2">
                       <a
@@ -634,14 +634,14 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                             });
                         }}
                         className={`tf-btn ${!isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 ? 'btn-disabled' : 'btn-fill'} justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn`}
-                        style={{ 
-                          backgroundColor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 
-                            ? theme.palette.grey[400] 
+                        style={{
+                          backgroundColor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0
+                            ? theme.palette.grey[400]
                             : theme.palette.primary.main,
                           color: '#fff',
                           padding: '10px 15px',
-                          cursor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 
-                            ? 'not-allowed' 
+                          cursor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0
+                            ? 'not-allowed'
                             : 'pointer'
                         }}
                         onMouseOver={(e) => {
@@ -657,15 +657,15 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       >
                         <ShoppingCart className="mr-2" fontSize="small" />
                         <span>
-                          {!isProductAvailable(product?.status) 
+                          {!isProductAvailable(product?.status)
                             ? getStatusDisplay(product?.status)
-                            : currentProductItem?.quantityInStock <= 0 
-                              ? 'Hết hàng' 
+                            : currentProductItem?.quantityInStock <= 0
+                              ? 'Hết hàng'
                               : 'Thêm vào giỏ'}
                         </span>
                       </a>
-                      
-                      <a 
+
+                      <a
                         onClick={(e) => {
                           e.preventDefault();
                           if (!isProductAvailable(product?.status)) {
@@ -680,7 +680,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                             toast.error("Sản phẩm này hiện đã hết hàng");
                             return;
                           }
-                          
+
                           // Thêm vào giỏ hàng trước
                           openCartModal();
                           request
@@ -704,14 +704,14 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                             });
                         }}
                         className={`btns-full fs-14 ${!isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 ? 'disabled' : ''}`}
-                        style={{ 
-                          backgroundColor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 
-                            ? theme.palette.grey[400] 
+                        style={{
+                          backgroundColor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0
+                            ? theme.palette.grey[400]
                             : theme.palette.error.main,
                           color: '#fff',
                           padding: '10px 15px',
-                          cursor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0 
-                            ? 'not-allowed' 
+                          cursor: !isProductAvailable(product?.status) || currentProductItem?.quantityInStock <= 0
+                            ? 'not-allowed'
                             : 'pointer'
                         }}
                         onMouseOver={(e) => {
@@ -729,7 +729,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       </a>
                     </form>
                   </div>
-                  
+
                   <div className="d-flex gap-3 mb-3 tf-product-info-extra-link">
                     <a
                       href="#ask_question"
@@ -752,7 +752,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       <div className="text-neutral-700 fs-14 fw-6 text">Chia sẻ</div>
                     </a>
                   </div>
-                  
+
                   {/* Compare Button */}
                   <div className="mb-3">
                     <Button
@@ -763,7 +763,7 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                       onClick={() => {
                         // Kiểm tra xem sản phẩm đã được thêm vào danh sách so sánh chưa
                         const isInCompare = compareItem.includes(product?.id);
-                        
+
                         if (isInCompare) {
                           // Nếu đã thêm rồi, mở modal so sánh
                           openCompareModal();
@@ -781,19 +781,19 @@ export default function DetailsOuterZoom({ product = allProducts[0] }) {
                         color: compareItem.includes(product?.id) ? '#ffffff' : theme.palette.primary.main,
                         '&:hover': {
                           borderWidth: '2px',
-                          backgroundColor: compareItem.includes(product?.id) 
-                            ? theme.palette.primary.dark 
+                          backgroundColor: compareItem.includes(product?.id)
+                            ? theme.palette.primary.dark
                             : `${theme.palette.primary.main}15`,
                           color: compareItem.includes(product?.id) ? '#ffffff' : theme.palette.primary.dark
                         }
                       }}
                     >
-                      {compareItem.includes(product?.id) 
-                        ? "Xem sản phẩm so sánh" 
+                      {compareItem.includes(product?.id)
+                        ? "Xem sản phẩm so sánh"
                         : "Thêm vào danh sách so sánh"}
                     </Button>
                   </div>
-                  
+
                   <div className="bg-neutral-50 p-3 rounded-md tf-product-info-delivery-return">
                     <div className="row">
                       <div className="col-12 col-xl-6">

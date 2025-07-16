@@ -67,12 +67,12 @@ export default function ChatAssistant() {
     return () => {
       // Loại bỏ event listeners
       if (notificationSoundRef.current) {
-        notificationSoundRef.current.removeEventListener("error", () => {});
+        notificationSoundRef.current.removeEventListener("error", () => { });
         notificationSoundRef.current.pause();
         notificationSoundRef.current = null;
       }
       if (popupSoundRef.current) {
-        popupSoundRef.current.removeEventListener("error", () => {});
+        popupSoundRef.current.removeEventListener("error", () => { });
         popupSoundRef.current.pause();
         popupSoundRef.current = null;
       }
@@ -266,79 +266,122 @@ export default function ChatAssistant() {
     return (await response.json()).candidates[0].content?.parts[0].text;
   };
 
-  return isOpen ? (
-    <div className="bg-white border p-4 rounded-lg shadow-lg w-[500px] fixed right-5 z-[1001] bottom-4">
-      <div className="flex border-b justify-between items-center pb-2">
-        <div className="flex gap-2 items-center">
-          <SmartToyIcon sx={{ color: "#3b82f6" }} />
-          <span className="font-bold">Trợ lý ảo Skincede</span>
-        </div>
-        <button onClick={() => setIsOpen(false)} className="text-red-500">
-          <CloseIcon fontSize="small" />
-        </button>
-      </div>
-      <div className="h-96 rounded-xl grow mt-4 overflow-y-scroll py-1 relative small-scrollbar">
-        {messages.map((message, index) => (
-          <MessageItem key={index} data={message} />
-        ))}
-        {isLoading && (
-          <div className="flex flex-col justify-center items-center mt-4">
-            <span className="text-zinc-500 pb-8">Trợ lý đang suy nghĩ ...</span>
-          </div>
-        )}
-        <div className="" ref={messageEndRef}></div>
-      </div>
+  // Adjust the chat icon position and z-index
+  // Find the style for the chat button and update it
 
-      <div className="flex gap-2 mt-3">
-        <textarea
-          className="flex-grow border h-16 rounded-lg text-black px-2 py-2"
-          placeholder="Nhập tin nhắn của bạn..."
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
-        />
-        <button
-          onClick={handleSend}
-          className="flex bg-blue-600 h-16 justify-center rounded-lg text-white items-center px-3"
-        >
-          <SendIcon />
-        </button>
-      </div>
+  const toggleChat = () => {
+    setIsOpen(!isOpen);
+    // Phát âm thanh khi mở/đóng chat
+    if (!isOpen && popupSoundRef.current) {
+      popupSoundRef.current.currentTime = 0;
+      popupSoundRef.current
+        .play()
+        .catch((err) => console.log("Không thể phát âm thanh:", err));
+    }
+  };
+
+  return (
+    <div className="fixed">
+      {/* Chat button */}
       <button
-        onClick={() => {
-          if (popupSoundRef.current) {
-            popupSoundRef.current.currentTime = 0;
-            popupSoundRef.current
-              .play()
-              .catch((err) => console.error("Lỗi khi phát:", err));
-          }
+        onClick={toggleChat}
+        className="fixed bottom-24 right-4 md:bottom-8 md:right-8 bg-primary text-white rounded-full p-3 shadow-lg hover:bg-primary-dark transition-all z-[901]"
+        style={{
+          background: "linear-gradient(135deg, #4ECDC4, #556270)",
         }}
-        className="text-gray-500 text-xs mt-1"
+        aria-label="Chat with assistant"
       >
-        Test Sound
+        <SmartToyIcon fontSize="medium" />
       </button>
+
+      {/* Chat window */}
+      {isOpen && (
+        <div
+          className="fixed bottom-36 right-4 md:bottom-24 md:right-8 bg-white rounded-lg shadow-xl z-[901] flex flex-col"
+          style={{
+            width: "350px",
+            maxWidth: "90vw",
+            height: "500px",
+            maxHeight: "60vh",
+            border: "1px solid #e0e0e0",
+          }}
+        >
+          {/* Chat header */}
+          <div
+            className="p-3 flex justify-between items-center rounded-t-lg"
+            style={{
+              background: "linear-gradient(135deg, #4ECDC4, #556270)",
+              color: "white",
+            }}
+          >
+            <div className="flex items-center">
+              <SmartToyIcon fontSize="small" className="mr-2" />
+              <h3 className="text-lg font-medium">Trợ lý ảo</h3>
+            </div>
+            <button
+              onClick={toggleChat}
+              className="text-white hover:text-gray-200"
+              aria-label="Close chat"
+            >
+              <CloseIcon fontSize="small" />
+            </button>
+          </div>
+          <div className="h-96 rounded-xl grow mt-4 overflow-y-scroll py-1 relative small-scrollbar">
+            {messages.map((message, index) => (
+              <MessageItem key={index} data={message} />
+            ))}
+            {isLoading && (
+              <div className="flex flex-col justify-center items-center mt-4">
+                <span className="text-zinc-500 pb-8">Trợ lý đang suy nghĩ ...</span>
+              </div>
+            )}
+            <div className="" ref={messageEndRef}></div>
+          </div>
+
+          <div className="flex gap-2 mt-3">
+            <textarea
+              className="flex-grow border h-16 rounded-lg text-black px-2 py-2"
+              placeholder="Nhập tin nhắn của bạn..."
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+            />
+            <button
+              onClick={handleSend}
+              className="flex bg-blue-600 h-16 justify-center rounded-lg text-white items-center px-3"
+            >
+              <SendIcon />
+            </button>
+          </div>
+          <button
+            onClick={() => {
+              if (popupSoundRef.current) {
+                popupSoundRef.current.currentTime = 0;
+                popupSoundRef.current
+                  .play()
+                  .catch((err) => console.error("Lỗi khi phát:", err));
+              }
+            }}
+            className="text-gray-500 text-xs mt-1"
+          >
+            Test Sound
+          </button>
+        </div>
+      )}
     </div>
-  ) : (
-    <button
-      className="flex bg-blue-600 h-14 justify-center rounded-full shadow-lg text-white w-14 fixed hover:bg-blue-700 items-center right-5 transition-colors z-[1001] bottom-4"
-      onClick={() => setIsOpen(true)}
-    >
-      <SmartToyIcon sx={{ fontSize: 28 }} />
-    </button>
   );
 }
 
 const MessageItem = ({ data }) => {
   return (
     <div
-      className={`flex gap-2 items-end mb-3 ${
-        data.sender === "me" ? "justify-end" : "justify-start"
-      }`}
+      className={`flex gap-2 items-end mb-3 ${data.sender === "me" ? "justify-end" : "justify-start"
+        }`}
     >
       {data.sender !== "me" && (
         <div className="flex bg-blue-100 h-8 justify-center rounded-full w-8 items-center">
@@ -347,11 +390,10 @@ const MessageItem = ({ data }) => {
       )}
 
       <div
-        className={`py-2 px-3 rounded-2xl shadow-sm ${
-          data.sender === "me"
-            ? "bg-blue-600 text-white"
-            : "bg-white border border-gray-200"
-        }`}
+        className={`py-2 px-3 rounded-2xl shadow-sm ${data.sender === "me"
+          ? "bg-blue-600 text-white"
+          : "bg-white border border-gray-200"
+          }`}
         style={{
           wordWrap: "break-word",
           maxWidth: "75%",

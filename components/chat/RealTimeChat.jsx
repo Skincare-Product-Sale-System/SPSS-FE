@@ -448,55 +448,49 @@ export default function RealTimeChat() {
   };
 
   return (
-    <>
-      {/* Chat button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="flex justify-center p-3 rounded-full shadow-lg fixed hover:opacity-90 items-center left-5 transition-opacity z-[1001] bottom-4"
-        style={{
-          backgroundColor: mainColor.secondary || "#85715e",
-          width: "56px",
-          height: "56px",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        <ChatBubbleIcon sx={{ color: "white", fontSize: 24 }} />
-      </button>
-
-      {/* Chat window */}
-      {isOpen && (
-        <div
-          className="flex flex-col bg-white border rounded-lg shadow-lg w-[600px] fixed left-5 z-[1001] bottom-4"
+    <div className="fixed">
+      {/* Chat icon */}
+      {!isOpen ? (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-24 right-4 md:bottom-8 md:right-8 bg-blue-600 text-white rounded-full p-3 shadow-lg hover:bg-blue-700 transition-all z-[901]"
           style={{
-            maxHeight: "calc(100vh - 160px - 4rem)", // Trừ thêm chiều cao của nav mobile
+            background: mainColor.primary,
+          }}
+          aria-label="Chat with support"
+        >
+          <ChatIcon fontSize="medium" />
+        </button>
+      ) : (
+        <div
+          className="fixed bottom-36 right-4 md:bottom-24 md:right-8 bg-white rounded-lg shadow-xl z-[901] flex flex-col"
+          style={{
+            width: "350px",
+            maxWidth: "90vw",
+            height: "500px",
+            maxHeight: "60vh",
+            border: "1px solid #e0e0e0",
           }}
         >
-          {/* Header */}
+          {/* Chat header */}
           <div
-            className="flex border-b justify-between p-3 items-center"
+            className="p-3 flex justify-between items-center rounded-t-lg"
             style={{
-              backgroundColor: mainColor.secondary || "#85715e",
+              background: mainColor.primary,
               color: "white",
-              borderRadius: "8px 8px 0 0",
             }}
           >
-            <div className="flex gap-2 items-center">
-              <ChatIcon
-                sx={{
-                  fontSize: 22,
-                  filter: "drop-shadow(0px 1px 1px rgba(0,0,0,0.1))",
-                }}
-              />
-              <span className="font-medium">Chat với nhân viên Skincede</span>
+            <div className="flex items-center">
+              <SupportAgentIcon fontSize="small" className="mr-2" />
+              <h3 className="text-lg font-medium">Hỗ trợ trực tuyến</h3>
             </div>
-            <IconButton
+            <button
               onClick={() => setIsOpen(false)}
-              size="small"
-              sx={{ color: "white" }}
+              className="text-white hover:text-gray-200"
+              aria-label="Close chat"
             >
               <CloseIcon fontSize="small" />
-            </IconButton>
+            </button>
           </div>
 
           {/* Messages area */}
@@ -645,7 +639,7 @@ export default function RealTimeChat() {
           />
         </div>
       </Modal>
-    </>
+    </div>
   );
 }
 

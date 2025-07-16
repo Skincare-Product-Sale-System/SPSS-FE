@@ -1,15 +1,16 @@
 "use client"
 import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
-import { 
-  CircularProgress, 
-  Avatar, 
-  TextField, 
+import {
+  CircularProgress,
+  Avatar,
+  TextField,
   Button,
   IconButton
 } from "@mui/material";
 import { PhotoCamera } from '@mui/icons-material';
 import toast from "react-hot-toast";
+import request from "@/utils/axios";
 
 export default function ProfileSection({ userData, onUpdateUserData }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -62,11 +63,11 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
 
         const formDataFile = new FormData();
         formDataFile.append('avatarFiles', file);
-        
+
         toast.loading('Đang tải ảnh đại diện...');
-        
+
         const response = await request.post('/accounts/upload-avatar', formDataFile);
-        
+
         if (response.data && response.data.success) {
           await onUpdateUserData();
           toast.dismiss();
@@ -91,19 +92,19 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
     if (window.confirm('Bạn có chắc chắn muốn xóa ảnh đại diện?')) {
       try {
         toast.loading('Đang xóa ảnh đại diện...');
-        
+
         await request.delete(`/accounts/delete-avatar?imageUrl=${encodeURIComponent(formData.avatarUrl)}`);
-        
+
         setFormData(prev => ({
           ...prev,
           avatarUrl: ""
         }));
-        
+
         onUpdateUserData({
           ...userData,
           avatarUrl: ""
         });
-        
+
         toast.dismiss();
         toast.success('Xóa ảnh đại diện thành công');
       } catch (error) {
@@ -121,11 +122,11 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
         <div className="flex justify-center w-full md:w-auto">
           {!isEditing ? (
             <div className="relative">
-              <Avatar 
-                src={userData?.avatarUrl || "/images/default-avatar.png"} 
+              <Avatar
+                src={userData?.avatarUrl || "/images/default-avatar.png"}
                 alt={userData?.userName}
-                sx={{ 
-                  width: { xs: 100, sm: 120 }, 
+                sx={{
+                  width: { xs: 100, sm: 120 },
                   height: { xs: 100, sm: 120 },
                   border: `3px solid ${theme.palette.primary.main}`
                 }}
@@ -133,11 +134,11 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
             </div>
           ) : (
             <div className="relative">
-              <Avatar 
-                src={formData.avatarUrl || "/images/default-avatar.png"} 
+              <Avatar
+                src={formData.avatarUrl || "/images/default-avatar.png"}
                 alt={formData.userName}
-                sx={{ 
-                  width: 120, 
+                sx={{
+                  width: 120,
                   height: 120,
                   border: `3px solid ${theme.palette.primary.main}`,
                   filter: 'brightness(0.8)',
@@ -152,9 +153,9 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
                   onChange={handleFileUpload}
                 />
                 <label htmlFor="avatar-upload">
-                  <IconButton 
+                  <IconButton
                     component="span"
-                    sx={{ 
+                    sx={{
                       color: 'white',
                       backgroundColor: 'rgba(0,0,0,0.3)',
                       '&:hover': {
@@ -183,14 +184,14 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
             </div>
           )}
         </div>
-        
+
         {/* Form Section */}
         <div className="flex-1 text-center w-full md:text-left">
-          <h3 className="text-xl font-semibold mb-3 sm:text-2xl" 
+          <h3 className="text-xl font-semibold mb-3 sm:text-2xl"
             style={{ color: theme.palette.primary.dark, fontFamily: 'Playfair Display, serif' }}>
             {isEditing ? "Chỉnh Sửa Hồ Sơ" : `${userData?.surName} ${userData?.lastName}`}
           </h3>
-          
+
           <div className="mb-4 space-y-3">
             {/* Name Fields */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -235,7 +236,7 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
                 </div>
               )}
             </div>
-            
+
             {/* Username Field */}
             {isEditing ? (
               <TextField
@@ -258,7 +259,7 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
                 <span className="font-medium">Tên người dùng:</span> {userData?.userName}
               </p>
             )}
-            
+
             {/* Email Field */}
             {isEditing ? (
               <TextField
@@ -282,7 +283,7 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
                 <span className="font-medium">Email:</span> {userData?.emailAddress}
               </p>
             )}
-            
+
             {/* Phone Field */}
             {isEditing ? (
               <TextField
@@ -306,7 +307,7 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
               </p>
             )}
           </div>
-          
+
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-2 justify-center md:justify-start">
             {isEditing ? (
@@ -316,7 +317,7 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
                   color="primary"
                   onClick={handleSave}
                   disabled={saving}
-                  sx={{ 
+                  sx={{
                     fontFamily: 'Roboto, sans-serif',
                     minWidth: '120px'
                   }}
@@ -336,7 +337,7 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
                       avatarUrl: userData.avatarUrl || "",
                     });
                   }}
-                  sx={{ 
+                  sx={{
                     fontFamily: 'Roboto, sans-serif',
                     minWidth: '120px'
                   }}
@@ -349,7 +350,7 @@ export default function ProfileSection({ userData, onUpdateUserData }) {
                 variant="contained"
                 color="primary"
                 onClick={() => setIsEditing(true)}
-                sx={{ 
+                sx={{
                   fontFamily: 'Roboto, sans-serif',
                   minWidth: '120px'
                 }}
