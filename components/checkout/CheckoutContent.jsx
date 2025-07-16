@@ -37,7 +37,7 @@ export default function CheckoutContent() {
     return a + b.quantity * b.price;
   }, 0);
 
-  const discountedTotal = totalPrice * (1 - voucher.discountRate/100);
+  const discountedTotal = totalPrice * (1 - voucher.discountRate / 100);
 
   useEffect(() => {
     fetchCartItems();
@@ -96,7 +96,7 @@ export default function CheckoutContent() {
       const { data } = await request.get("/payment-methods");
       const methods = data?.data?.items || [];
       setPaymentMethods(methods);
-      
+
       // Set default payment method if available
       if (methods.length > 0) {
         setPaymentMethod(methods[0].id);
@@ -110,7 +110,7 @@ export default function CheckoutContent() {
   const handleApplyVoucher = async (voucherCode) => {
     try {
       const { data } = await request.get(`/voucher/code/${voucherCode}`);
-      
+
       // Validate voucher
       const currentDate = new Date();
       const startDate = new Date(data.data.startDate);
@@ -128,8 +128,8 @@ export default function CheckoutContent() {
       } else if (data.data.usageLimit <= 0) {
         toast.error("Voucher đã hết lượt sử dụng");
         return false;
-      } 
-      
+      }
+
       // Valid voucher
       setVoucher({
         id: data.data.id,
@@ -249,7 +249,7 @@ export default function CheckoutContent() {
           setOpenBankModal(false);
           window.location.href = `/payment-success?id=${orderBankModal.id}`;
         }
-      } catch {}
+      } catch { }
     }, 4000);
     return () => clearInterval(timer);
   }, [openBankModal, orderBankModal, router]);
@@ -262,7 +262,7 @@ export default function CheckoutContent() {
             {/* Left column - Address and Order Info */}
             <div className="col-lg-7">
               {/* Address Section */}
-              <AddressSection 
+              <AddressSection
                 addresses={addresses}
                 selectedAddress={selectedAddress}
                 setSelectedAddress={setSelectedAddress}
@@ -281,12 +281,12 @@ export default function CheckoutContent() {
             <div className="col-lg-5">
               <div className="bg-white p-4 rounded-lg shadow-sm sticky-top" style={{ top: '20px' }}>
                 {/* Payment Methods Section */}
-                <PaymentMethodsSection 
+                <PaymentMethodsSection
                   paymentMethods={paymentMethods}
                   selectedPaymentMethod={paymentMethod}
                   onSelectPaymentMethod={setPaymentMethod}
                 />
-                
+
                 {/* Coupon Section */}
                 <div className="mb-3">
                   <h5 className="fw-5 mb-3" style={{ fontFamily: '"Roboto", sans-serif' }}>
@@ -310,14 +310,13 @@ export default function CheckoutContent() {
                       Áp dụng
                     </button>
                   </div>
-                  
+
                   {voucher.code !== "" && (
                     <div
-                      className={`mt-2 ${
-                        voucher.code !== "invalid"
-                          ? "text-success fw-medium"
-                          : "text-danger"
-                      }`}
+                      className={`mt-2 ${voucher.code !== "invalid"
+                        ? "text-success fw-medium"
+                        : "text-danger"
+                        }`}
                     >
                       {voucher.code !== "invalid" && voucher.code
                         ? `Áp dụng mã: ${voucher.code} với giảm giá ${voucher.discountRate}%`
@@ -325,27 +324,32 @@ export default function CheckoutContent() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Order Total */}
                 <div className="border-top border-bottom py-3 mb-3">
                   <div className="d-flex justify-content-between mb-2">
                     <span>Tạm tính:</span>
                     <span>{formatPrice(totalPrice)}</span>
                   </div>
-                  
+
                   {voucher.code !== "invalid" && voucher.code && (
                     <div className="d-flex justify-content-between mb-2 text-success">
                       <span>Giảm giá ({voucher.discountRate}%):</span>
-                      <span>-{formatPrice(totalPrice * voucher.discountRate/100)}</span>
+                      <span>-{formatPrice(totalPrice * voucher.discountRate / 100)}</span>
                     </div>
                   )}
+
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Phí vận chuyển:</span>
+                    <span>{formatPrice(0)}</span>
+                  </div>
 
                   <div className="d-flex justify-content-between fw-bold fs-5 mt-2">
                     <span>Tổng tiền:</span>
                     <span>{formatPrice(discountedTotal)}</span>
                   </div>
                 </div>
-                
+
                 {/* Terms and conditions agreement */}
                 <div className="form-check mb-3">
                   <input
@@ -362,7 +366,7 @@ export default function CheckoutContent() {
                     của website.
                   </label>
                 </div>
-                
+
                 {/* Place order button */}
                 {cartProducts.length > 0 && (
                   <button
@@ -373,10 +377,10 @@ export default function CheckoutContent() {
                     Đặt hàng
                   </button>
                 )}
-                
+
                 {/* Privacy policy note */}
                 <div className="mt-3 fs-14 text-muted">
-                  Thông tin cá nhân của bạn sẽ được sử dụng để xử lý đơn hàng và hỗ trợ trải nghiệm của bạn trên website này. 
+                  Thông tin cá nhân của bạn sẽ được sử dụng để xử lý đơn hàng và hỗ trợ trải nghiệm của bạn trên website này.
                   <Link href="/privacy-policy" className="text-decoration-underline ms-1">
                     Xem thêm trong chính sách bảo mật
                   </Link>.
