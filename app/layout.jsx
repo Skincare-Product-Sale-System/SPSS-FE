@@ -150,6 +150,54 @@ export default function RootLayout({ children }) {
             --font-primary: ${roboto.style.fontFamily};
             --font-heading: ${roboto.style.fontFamily};
           }
+          
+          /* Ensure chat components are always visible with highest z-index */
+          button[aria-label="Chat with assistant"],
+          button[aria-label="Chat with support"] {
+            z-index: 9999 !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+          }
+          
+          /* Position chat buttons above the navigation bar */
+          button[aria-label="Chat with assistant"] {
+            bottom: 90px !important;
+            right: 10px !important;
+            transform: scale(0.85);
+          }
+          
+          button[aria-label="Chat with support"] {
+            bottom: 90px !important;
+            right: 70px !important;
+            transform: scale(0.85);
+          }
+          
+          /* Chat windows should also have highest z-index */
+          .fixed .z-\\[999\\] {
+            z-index: 9999 !important;
+            right: 10px !important;
+            bottom: 150px !important;
+          }
+          
+          /* Media query for mobile */
+          @media (max-width: 768px) {
+            button[aria-label="Chat with assistant"],
+            button[aria-label="Chat with support"] {
+              bottom: 70px !important;
+            }
+            
+            button[aria-label="Chat with assistant"] {
+              right: 5px !important;
+            }
+            
+            button[aria-label="Chat with support"] {
+              right: 60px !important;
+            }
+            
+            .fixed .z-\\[999\\] {
+              bottom: 130px !important;
+            }
+          }
         `}</style>
       </head>
       <body className={roboto.className}>

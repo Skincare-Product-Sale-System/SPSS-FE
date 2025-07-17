@@ -368,7 +368,55 @@ html[dir="rtl"] {
 
   /* Fix chat components positioning */
   .fixed [class*="z-[9"] {
-    bottom: 80px !important;
+    z-index: 9999 !important;
+  }
+
+  /* Ensure chat buttons are always visible */
+  button[aria-label="Chat with assistant"],
+  button[aria-label="Chat with support"] {
+    z-index: 9999 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Position chat buttons above the navigation bar */
+  button[aria-label="Chat with assistant"] {
+    bottom: 90px !important;
+    right: 10px !important;
+    transform: scale(0.85);
+  }
+
+  button[aria-label="Chat with support"] {
+    bottom: 90px !important;
+    right: 70px !important;
+    transform: scale(0.85);
+  }
+
+  /* Adjust chat windows position to match button position */
+  .fixed .z-\[999\] {
+    right: 10px !important;
+    bottom: 150px !important;
+  }
+
+  /* Media query for mobile */
+  @media (max-width: 768px) {
+
+    button[aria-label="Chat with assistant"],
+    button[aria-label="Chat with support"] {
+      bottom: 70px !important;
+    }
+
+    button[aria-label="Chat with assistant"] {
+      right: 5px !important;
+    }
+
+    button[aria-label="Chat with support"] {
+      right: 60px !important;
+    }
+
+    .fixed .z-\[999\] {
+      bottom: 130px !important;
+    }
   }
 
   /* Improve product detail page */

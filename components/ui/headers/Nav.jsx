@@ -53,10 +53,10 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       },
     ],
   });
-  
+
   // Thêm state và fetch cho skin types
   const [skinTypes, setSkinTypes] = useState([]);
-  
+
   useEffect(() => {
     const fetchSkinTypes = async () => {
       try {
@@ -73,7 +73,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
         setSkinTypes([]);
       }
     };
-    
+
     fetchSkinTypes();
   }, []);
 
@@ -118,24 +118,23 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
 
     return active;
   };
-  
+
   // Hàm đệ quy để hiển thị danh mục và danh mục con
   const renderCategories = (categoryList, level = 0) => {
     if (!categoryList || categoryList.length === 0) return null;
-    
+
     return (
       <ul className={level === 0 ? "menu-list" : "submenu-list"}>
         {categoryList.map((category, index) => (
           <li key={index} className={category.children?.length > 0 ? "menu-item-2" : ""}>
             <Link
               href={`/products?categoryId=${category.id}`}
-              className={`menu-link-text link position-relative ${
-                isMenuActive({ href: `/products?categoryId=${category.id}` }) ? "activeMenu" : ""
-              }`}
+              className={`menu-link-text link position-relative ${isMenuActive({ href: `/products?categoryId=${category.id}` }) ? "activeMenu" : ""
+                }`}
             >
               {category.categoryName}
             </Link>
-            
+
             {category.children?.length > 0 && (
               <div className="sub-menu submenu-default">
                 {renderCategories(category.children, level + 1)}
@@ -149,8 +148,8 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
 
   // Thêm component con để hiển thị mũi tên
   const MenuArrow = () => (
-    <i className="icon icon-arrow-down" style={{ 
-      marginLeft: '4px', 
+    <i className="icon icon-arrow-down" style={{
+      marginLeft: '4px',
       display: 'inline-block',
       verticalAlign: 'middle'
     }} />
@@ -162,9 +161,8 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       <li className="menu-item">
         <Link
           href="/"
-          className={`item-link ${Linkfs} ${textColor} ${
-            isMenuActive(allHomepages) ? "activeMenu" : ""
-          } `}
+          className={`item-link ${Linkfs} ${textColor} ${isMenuActive(allHomepages) ? "activeMenu" : ""
+            } `}
         >
           Trang Chủ
         </Link>
@@ -172,15 +170,14 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       <li className="menu-item">
         <Link
           href="/quiz"
-          className={`item-link ${Linkfs} ${textColor} ${
-            isMenuActive([
-              {
-                href: "/quiz",
-              },
-            ])
+          className={`item-link ${Linkfs} ${textColor} ${isMenuActive([
+            {
+              href: "/quiz",
+            },
+          ])
               ? "activeMenu"
               : ""
-          } `}
+            } `}
         >
           Khảo Sát Da
         </Link>
@@ -282,9 +279,8 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       <li className="menu-item">
         <Link
           href="/products"
-          className={`item-link ${Linkfs} ${textColor} ${
-            isMenuActive(productDetailPages) ? "activeMenu" : ""
-          }`}
+          className={`item-link ${Linkfs} ${textColor} ${isMenuActive(productDetailPages) ? "activeMenu" : ""
+            }`}
         >
           Sản Phẩm<i className="icon icon-arrow-down" style={{ display: 'inline-block', width: '12px', marginLeft: '1px' }}></i>
         </Link>
@@ -295,7 +291,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                 <div className="mega-menu-item">
                   <div className="menu-heading">Danh Mục</div>
                   {!categories.isLoading && renderCategories(categories.data)}
-                  
+
                   <div className="menu-heading mt-4">Loại Da</div>
                   <ul className="menu-list">
                     {Array.isArray(skinTypes) && skinTypes.length > 0 ? (
@@ -303,9 +299,8 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                         <li key={`skin-${index}`}>
                           <Link
                             href={`/products?skinTypeId=${skinType.id}`}
-                            className={`menu-link-text link position-relative ${
-                              isMenuActive({ href: `/products?skinTypeId=${skinType.id}` }) ? "activeMenu" : ""
-                            }`}
+                            className={`menu-link-text link position-relative ${isMenuActive({ href: `/products?skinTypeId=${skinType.id}` }) ? "activeMenu" : ""
+                              }`}
                           >
                             {skinType.name}
                           </Link>
@@ -356,7 +351,7 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                     {!products.isLoading &&
                       products.data?.slice(0, 6).map((elm, i) => (
                         <SwiperSlide key={i} className="swiper-slide">
-                          <ProductCard 
+                          <ProductCard
                             product={elm}
                             handleOpen={handleOpen}
                             addToCompareItem={addToCompareItem}
@@ -451,10 +446,9 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
       <li className="position-relative menu-item">
         <Link
           href="/blog"
-          className={`item-link ${Linkfs} ${textColor}  ${
-            isMenuActive(blogLinks) ? "activeMenu" : ""
-          }`}
-        > 
+          className={`item-link ${Linkfs} ${textColor}  ${isMenuActive(blogLinks) ? "activeMenu" : ""
+            }`}
+        >
           Blog
           {/* <div className="links-default sub-menu">
             <ul className="menu-list">

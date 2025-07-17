@@ -36,7 +36,7 @@ export default function Header2({
 
   useEffect(() => {
     if (!isLoggedIn || isStaff) return;
-    
+
     //> fetch data from server
     request
       .get("/cart-items/user/cart")

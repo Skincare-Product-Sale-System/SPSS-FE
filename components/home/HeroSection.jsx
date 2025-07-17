@@ -14,8 +14,10 @@ export default function HeroSection() {
         spaceBetween={0}
         centeredSlides={false}
         loop={true}
-        autoplay={false}
-        delay={2000}
+        autoplay={{
+          delay: 5000,
+          disableOnInteraction: false,
+        }}
         speed={1000}
         className="tf-sw-slideshow"
         modules={[Pagination, Autoplay]}
@@ -38,7 +40,7 @@ export default function HeroSection() {
                   }}
                 ></div>
                 <Image
-                  className="lazyload"
+                  className="lazyload banner-image"
                   data-src={slide.imgSrc}
                   alt={slide.imgAlt}
                   src={slide.imgSrc}
@@ -49,21 +51,36 @@ export default function HeroSection() {
                   style={{
                     objectFit: "cover",
                     objectPosition: "center",
-                    aspectRatio: "16/7",
+                    width: "100%",
                   }}
                 />
               </div>
-              <div className="box-content text-center" style={{ zIndex: 2 }}>
+              <div
+                className="box-content text-center"
+                style={{
+                  zIndex: 2,
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "100%",
+                  padding: "0 15px"
+                }}
+              >
                 <div className="container">
-                  <h2 className="fade-item fade-item-1 text-white heading" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                  <h2
+                    className="fade-item fade-item-1 text-white heading banner-heading"
+                  >
                     {slide.heading}
                   </h2>
-                  <p className="fade-item fade-item-2 text-white" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                  <p
+                    className="fade-item fade-item-2 text-white banner-description"
+                  >
                     {slide.description}
                   </p>
                   <Link
                     href={`/products`}
-                    className="fade-item fade-item-3 tf-btn btn-light-icon animate-hover-btn btn-xl radius-3"
+                    className="fade-item fade-item-3 tf-btn btn-light-icon animate-hover-btn btn-xl radius-3 banner-button"
                   >
                     <span>Bộ sưu tập</span>
                     <i className="icon icon-arrow-right" />

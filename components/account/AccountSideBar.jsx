@@ -28,12 +28,13 @@ export default function AccountSideBar({ onClose }) {
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
         overflow: 'hidden',
         border: `1px solid ${mainColor.lightGrey}`,
-        position: { xs: 'relative', md: 'sticky' },
-        top: { xs: 'auto', md: '20px' },
-        zIndex: 5,
+        position: 'sticky',
+        top: '20px',
+        zIndex: 10,
         height: { xs: 'auto', md: 'calc(100vh - 40px)' },
         display: 'flex',
         flexDirection: 'column',
+        mb: { xs: 3, md: 0 }
       }}
     >
       {/* Nút đóng trên mobile */}
@@ -83,8 +84,8 @@ export default function AccountSideBar({ onClose }) {
           sx={{
             padding: 0,
             '& .MuiListItemButton-root': {
-              py: { xs: 1.5, md: 2 },
-              px: { xs: 2, md: 3 },
+              py: { xs: 2, md: 2 },
+              px: { xs: 3, md: 3 },
               transition: 'all 0.3s ease',
               '&:hover': {
                 bgcolor: `${mainColor.light}`,
@@ -92,7 +93,7 @@ export default function AccountSideBar({ onClose }) {
             },
             '& .MuiListItemText-primary': {
               fontWeight: 500,
-              fontSize: { xs: '0.85rem', sm: '0.95rem' },
+              fontSize: { xs: '0.95rem', sm: '1rem' },
               color: mainColor.text,
               fontFamily: '"Roboto", sans-serif',
             },

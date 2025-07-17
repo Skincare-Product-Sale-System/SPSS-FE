@@ -53,6 +53,15 @@ export default function RealTimeChat() {
   const mainColor = useThemeColors();
   const { Id } = useAuthStore();
   const [userId, setUserId] = useState(null);
+  const [isStaff, setIsStaff] = useState(false);
+
+  // Kiểm tra userRole từ localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userRole = localStorage.getItem('userRole');
+      setIsStaff(userRole === 'Staff');
+    }
+  }, []);
 
   // Image upload states
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -147,7 +156,6 @@ export default function RealTimeChat() {
           {
             skipNegotiation: true,
             transport: signalR.HttpTransportType.WebSockets,
-            withCredentials: true
           }
         )
         .withAutomaticReconnect()
@@ -448,55 +456,63 @@ export default function RealTimeChat() {
   };
 
   return (
-    <div className="fixed">
-      {/* Chat icon */}
-      {!isOpen ? (
+    <>
+      {/* Chat button */}
+      {!isStaff && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-4 md:bottom-8 md:right-8 bg-blue-600 text-white rounded-full p-3 shadow-lg hover:bg-blue-700 transition-all z-[901]"
+          className="flex justify-center p-2 sm:p-3 rounded-full shadow-lg fixed hover:opacity-90 items-center left-2 sm:left-5 transition-opacity z-[1001] bottom-24"
           style={{
-            background: mainColor.primary,
+            backgroundColor: mainColor.secondary || "#85715e",
+            width: "48px",
+            height: "48px",
+            border: "none",
+            cursor: "pointer",
           }}
-          aria-label="Chat with support"
         >
-          <ChatIcon fontSize="medium" />
+          <ChatBubbleIcon sx={{ color: "white", fontSize: "1.3rem" }} />
         </button>
-      ) : (
+      )}
+
+      {/* Chat window */}
+      {isOpen && !isStaff && (
         <div
-          className="fixed bottom-36 right-4 md:bottom-24 md:right-8 bg-white rounded-lg shadow-xl z-[901] flex flex-col"
+          className="flex flex-col bg-white border rounded-lg shadow-lg w-[95%] sm:w-[450px] md:w-[600px] fixed left-2 sm:left-5 z-[1001] bottom-24"
           style={{
-            width: "350px",
-            maxWidth: "90vw",
-            height: "500px",
-            maxHeight: "60vh",
-            border: "1px solid #e0e0e0",
+            maxHeight: "calc(100vh - 160px - 4rem)", // Trừ thêm chiều cao của nav mobile
           }}
         >
-          {/* Chat header */}
+          {/* Header */}
           <div
-            className="p-3 flex justify-between items-center rounded-t-lg"
+            className="flex border-b justify-between p-2 sm:p-3 items-center"
             style={{
-              background: mainColor.primary,
+              backgroundColor: mainColor.secondary || "#85715e",
               color: "white",
+              borderRadius: "8px 8px 0 0",
             }}
           >
-            <div className="flex items-center">
-              <SupportAgentIcon fontSize="small" className="mr-2" />
-              <h3 className="text-lg font-medium">Hỗ trợ trực tuyến</h3>
+            <div className="flex gap-2 items-center">
+              <ChatIcon
+                sx={{
+                  fontSize: 22,
+                  filter: "drop-shadow(0px 1px 1px rgba(0,0,0,0.1))",
+                }}
+              />
+              <span className="font-medium">Chat với nhân viên Skincede</span>
             </div>
-            <button
+            <IconButton
               onClick={() => setIsOpen(false)}
-              className="text-white hover:text-gray-200"
-              aria-label="Close chat"
+              size="small"
+              sx={{ color: "white" }}
             >
               <CloseIcon fontSize="small" />
-            </button>
+            </IconButton>
           </div>
 
           {/* Messages area */}
           <div
-            className="flex-1 p-4 overflow-y-auto"
-            style={{ minHeight: "300px", maxHeight: "calc(100vh - 280px)" }}
+            className="flex-1 p-2 sm:p-4 overflow-y-auto"
+            style={{ minHeight: "250px", maxHeight: "calc(100vh - 280px)" }}
           >
             {messages.map((message, index) => (
               <MessageItem
@@ -524,7 +540,7 @@ export default function RealTimeChat() {
           </div>
 
           {/* Input area */}
-          <div className="border-t p-3">
+          <div className="border-t p-2 sm:p-3">
             <div className="flex gap-2">
               <input
                 type="file"
@@ -541,24 +557,24 @@ export default function RealTimeChat() {
                   border: `1px solid ${mainColor.secondary || "#85715e"}`,
                   backgroundColor: "white",
                   color: mainColor.secondary || "#85715e",
-                  width: "48px",
-                  height: "56px",
+                  width: "40px",
+                  height: "48px",
                 }}
                 disabled={uploadingImage || !isConnected}
               >
                 {uploadingImage ? (
                   <CircularProgress
-                    size={20}
+                    size={18}
                     sx={{ color: mainColor.secondary || "#85715e" }}
                   />
                 ) : (
-                  <ImageIcon sx={{ color: mainColor.secondary || "#85715e" }} />
+                  <ImageIcon sx={{ color: mainColor.secondary || "#85715e", fontSize: "1.2rem" }} />
                 )}
               </button>
               <textarea
-                className="flex-1 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 px-3 py-2 resize-none"
+                className="flex-1 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 px-2 sm:px-3 py-2 resize-none text-sm sm:text-base"
                 style={{
-                  height: "56px",
+                  height: "48px",
                   maxHeight: "120px",
                   overflowY: "auto",
                   focusRing: mainColor.secondary || "#85715e",
@@ -579,14 +595,14 @@ export default function RealTimeChat() {
                 className="flex justify-center rounded-r-lg text-white items-center"
                 style={{
                   backgroundColor: mainColor.secondary || "#85715e",
-                  width: "56px",
+                  width: "48px",
                 }}
                 disabled={isLoading || !newMessage.trim() || !isConnected}
               >
                 {isLoading ? (
-                  <CircularProgress size={20} sx={{ color: "white" }} />
+                  <CircularProgress size={18} sx={{ color: "white" }} />
                 ) : (
-                  <SendIcon />
+                  <SendIcon sx={{ fontSize: "1.2rem" }} />
                 )}
               </button>
             </div>
@@ -639,7 +655,7 @@ export default function RealTimeChat() {
           />
         </div>
       </Modal>
-    </div>
+    </>
   );
 }
 
@@ -682,10 +698,10 @@ function MessageItem({ data, mainColor, formatTime, onImageClick }) {
   const style = getMessageStyle();
 
   return (
-    <div className={`flex mb-4 items-end ${style.justify}`}>
+    <div className={`flex mb-3 sm:mb-4 items-end ${style.justify}`}>
       {(data.sender === "support" || data.sender === "staff") && (
-        <div className="flex bg-blue-100 h-8 justify-center rounded-full w-8 items-center mr-2">
-          <SupportAgentIcon sx={{ fontSize: 18, color: "#3b82f6" }} />
+        <div className="flex bg-blue-100 h-7 sm:h-8 justify-center rounded-full w-7 sm:w-8 items-center mr-1 sm:mr-2">
+          <SupportAgentIcon sx={{ fontSize: "0.9rem", color: "#3b82f6" }} />
         </div>
       )}
 

@@ -20,7 +20,14 @@ export default function BlogHeader() {
               color: "white",
             }}
           >
-            <div className="heading text-center" style={{ fontFamily: 'Playfair Display, serif' }}>
+            <div
+              className="heading text-center"
+              style={{
+                fontFamily: 'Playfair Display, serif',
+                fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
+                lineHeight: '1.3'
+              }}
+            >
               Blog
             </div>
             <p className="text-center text-2 mt_5" style={{ fontFamily: 'Roboto, sans-serif' }}>

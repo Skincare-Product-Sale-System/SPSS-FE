@@ -6,37 +6,38 @@ import { useTheme } from "@mui/material/styles";
 
 export default function BlogDetailHeader({ blog }) {
   const theme = useTheme();
-  
+
   return (
     <Box sx={{ mb: 6, textAlign: 'center' }}>
-      <Typography 
-        variant="h2" 
-        component="h1" 
-        sx={{ 
-          mb: 3, 
+      <Typography
+        variant="h2"
+        component="h1"
+        sx={{
+          mb: 3,
           fontWeight: 600,
           color: theme.palette.text.primary,
           fontFamily: 'Playfair Display, serif'
         }}
+        className="text-primary-800 text-xl md:text-2xl lg:text-3xl mb-2"
       >
         {blog.title}
       </Typography>
-      
+
       <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, mb: 4 }}>
-        <Typography 
-          variant="body2" 
-          color="text.secondary" 
-          sx={{ 
-            display: 'flex', 
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{
+            display: 'flex',
             alignItems: 'center',
-            fontFamily: 'Roboto, sans-serif' 
+            fontFamily: 'Roboto, sans-serif'
           }}
         >
           <span style={{ fontWeight: 500, marginRight: '4px' }}>Tác giả:</span> {blog.author}
         </Typography>
-        
-        <Typography 
-          variant="body2" 
+
+        <Typography
+          variant="body2"
           color="text.secondary"
           sx={{ fontFamily: 'Roboto, sans-serif' }}
         >
@@ -47,7 +48,7 @@ export default function BlogDetailHeader({ blog }) {
           })}
         </Typography>
       </Box>
-      
+
       <Box sx={{ position: 'relative', height: '500px', mb: 6 }}>
         <Image
           src={blog.thumbnail}
@@ -57,11 +58,11 @@ export default function BlogDetailHeader({ blog }) {
           priority
         />
       </Box>
-      
-      <Typography 
-        variant="body1" 
-        sx={{ 
-          fontSize: '1.1rem', 
+
+      <Typography
+        variant="body1"
+        sx={{
+          fontSize: '1.1rem',
           lineHeight: 1.8,
           color: theme.palette.text.secondary,
           maxWidth: '800px',
@@ -72,7 +73,7 @@ export default function BlogDetailHeader({ blog }) {
       >
         {blog.blogContent}
       </Typography>
-      
+
       <Divider sx={{ mb: 6 }} />
     </Box>
   );

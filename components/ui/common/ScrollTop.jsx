@@ -42,7 +42,7 @@ export default function ScrollTop() {
       .scroll-top-position {
         bottom: 180px !important; /* Increased distance from chat widget */
         right: 25px !important;
-        z-index: 100 !important;
+        z-index: 900 !important; /* Lower than chat buttons */
         background-color: ${theme?.palette?.primary?.main || "#25b5c1"} !important;
         box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
         width: 45px !important;
@@ -67,10 +67,10 @@ export default function ScrollTop() {
         }
       }
     `;
-    
+
     // Append to head
     document.head.appendChild(styleElement);
-    
+
     // Cleanup
     return () => {
       document.head.removeChild(styleElement);
