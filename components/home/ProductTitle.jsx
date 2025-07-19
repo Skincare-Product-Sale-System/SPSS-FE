@@ -6,14 +6,14 @@ import { useTheme } from "@mui/material/styles";
 
 export default function ProductTitle() {
   const theme = useTheme();
-  
+
   return (
     <>
-      <Typography 
-        variant="h4" 
-        component="h2" 
-        align="center" 
-        sx={{ 
+      <Typography
+        variant="h4"
+        component="h2"
+        align="center"
+        sx={{
           fontFamily: theme.typography.h4.fontFamily,
           color: theme.palette.text.primary,
           mb: 2,
@@ -22,7 +22,7 @@ export default function ProductTitle() {
       >
         Sản Phẩm Bán Chạy
       </Typography>
-      
+
       <Typography
         variant="body1"
         align="center"

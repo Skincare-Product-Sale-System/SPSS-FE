@@ -18,7 +18,7 @@ export default function ProductsSection() {
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
-  
+
   const [products] = useQueries({
     queries: [
       {
@@ -45,23 +45,23 @@ export default function ProductsSection() {
     <section className="py-16" style={{ backgroundColor: theme.palette.background.default }}>
       <div className="container mx-auto px-4">
         <ProductTitle />
-        
+
         <div className="relative">
           {/* Navigation buttons */}
-          <div 
+          <div
             className="sw-button-prev snbp265 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow cursor-pointer hover:bg-gray-100 absolute left-0 top-1/2 transform -translate-y-1/2 z-10 md:-left-5"
             style={{ color: theme.palette.text.primary }}
           >
             <i className="icon icon-arrow-left" />
           </div>
-          
-          <div 
+
+          <div
             className="sw-button-next snbn265 w-10 h-10 flex items-center justify-center rounded-full bg-white shadow cursor-pointer hover:bg-gray-100 absolute right-0 top-1/2 transform -translate-y-1/2 z-10 md:-right-5"
             style={{ color: theme.palette.text.primary }}
           >
             <i className="icon icon-arrow-right" />
           </div>
-          
+
           <Swiper
             dir="ltr"
             spaceBetween={24}
@@ -82,8 +82,8 @@ export default function ProductsSection() {
             {!products.isLoading &&
               products.data.map((product) => (
                 <SwiperSlide key={product.id}>
-                  <ProductCard 
-                    product={product} 
+                  <ProductCard
+                    product={product}
                     handleOpen={handleOpen}
                     addToCompareItem={addToCompareItem}
                     isAddedtoCompareItem={isAddedtoCompareItem}
@@ -92,7 +92,7 @@ export default function ProductsSection() {
                 </SwiperSlide>
               ))}
           </Swiper>
-          
+
           {/* Pagination dots */}
           <div className="sw-dots style-1 sw-pagination-slider justify-content-center spd265 mt-4" />
         </div>

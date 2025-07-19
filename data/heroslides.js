@@ -176,7 +176,9 @@ export const slides5 = [
     imgAlt: "skincare-slideshow-01",
     heading: "Chăm Sóc Da Đang Trở Thành Xu Hướng.",
     description: "Để mang lại hiệu quả tối đa, giảm thiểu lãng phí",
-    fontFamily: '"Playfair Display", serif'
+    fontFamily: '"Playfair Display", serif',
+    imgWidth: 1920,
+    imgHeight: 1080
   },
   {
     imgSrc:
@@ -184,7 +186,9 @@ export const slides5 = [
     imgAlt: "skincare-slideshow-02",
     heading: "Vẻ Đẹp Trong Từng Giọt",
     description: "Đắm mình trong sự xa xỉ của làn da hoàn hảo",
-    fontFamily: '"Playfair Display", serif'
+    fontFamily: '"Playfair Display", serif',
+    imgWidth: 1920,
+    imgHeight: 1080
   },
   {
     imgSrc:
@@ -192,7 +196,9 @@ export const slides5 = [
     imgAlt: "fashion-slideshow-03",
     heading: "Tình Yêu Làn Da, Được Giải Phóng",
     description: "Trải nghiệm điều kỳ diệu của việc tự chăm sóc bản thân với các sản phẩm skincare cao cấp",
-    fontFamily: '"Playfair Display", serif'
+    fontFamily: '"Playfair Display", serif',
+    imgWidth: 1920,
+    imgHeight: 1080
   },
 ];
 

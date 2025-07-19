@@ -78,6 +78,31 @@
     font-size: 0.875rem;
     padding: 0.5rem 1rem;
   }
+
+  /* Header mobile adjustments */
+  .header-default {
+    padding: 10px 0;
+  }
+
+  .header-default .wrapper-header {
+    min-height: 50px;
+  }
+
+  .nav-icon .icon {
+    font-size: 16px;
+  }
+
+  .nav-icon .count-box {
+    height: 16px;
+    min-width: 16px;
+    font-size: 9px;
+    top: -6px;
+    right: -8px;
+  }
+
+  .gap-20 {
+    gap: 15px !important;
+  }
 }
 
 @media (max-width: 576px) {
@@ -102,6 +127,51 @@
   .banner-button {
     font-size: 0.75rem;
     padding: 0.4rem 0.8rem;
+  }
+
+  /* Additional mobile-specific styles */
+  .tf-slideshow {
+    margin-bottom: 0 !important;
+  }
+
+  .wrap-pagination {
+    bottom: 5px !important;
+  }
+
+  .sw-dots {
+    margin-top: 0 !important;
+  }
+
+  /* Ensure no extra white space in mobile layout */
+  .wrap-slider {
+    margin-bottom: 0 !important;
+  }
+
+  /* Fix spacing between sections on mobile */
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  /* Mobile product section adjustments */
+  .section-heading {
+    font-size: 1.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .section-description {
+    font-size: 0.875rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Fix white space at bottom of mobile screens */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Fix spacing between sections */
+  section {
+    margin-bottom: 2rem !important;
   }
 }
 

@@ -19,6 +19,7 @@ export default function Header2({
   const [cartProducts, setCartProducts] = useState([]);
   const [isStaff, setIsStaff] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Kiểm tra xem người dùng có phải là staff hay không sử dụng localStorage
   useEffect(() => {
@@ -28,6 +29,20 @@ export default function Header2({
         const userRole = localStorage.getItem("userRole");
         console.log("Header2 - User role from localStorage:", userRole);
         setIsStaff(userRole === 'Staff');
+
+        // Check if mobile
+        const checkIfMobile = () => {
+          setIsMobile(window.innerWidth <= 768);
+        };
+
+        // Initial check
+        checkIfMobile();
+
+        // Add event listener
+        window.addEventListener('resize', checkIfMobile);
+
+        // Cleanup
+        return () => window.removeEventListener('resize', checkIfMobile);
       } catch (error) {
         console.error("Error reading role from localStorage:", error);
       }
@@ -58,7 +73,7 @@ export default function Header2({
       className={`header-default ${uppercase ? "header-uppercase" : ""}`}
     >
       <div className="lg-px_40 px_15">
-        <div className="row align-items-center wrapper-header">
+        <div className="row align-items-center wrapper-header" style={{ marginBottom: 0 }}>
           <div className="col-3 col-md-4 tf-lg-hidden">
             <a
               href="#mobileMenu"
@@ -84,8 +99,8 @@ export default function Header2({
               <img
                 alt="image"
                 src="/images/logo/logo-icon.png"
-                width="40"
-                height="21"
+                width={isMobile ? "30" : "40"}
+                height={isMobile ? "16" : "21"}
                 style={{
                   objectFit: "contain",
                 }}
@@ -93,9 +108,9 @@ export default function Header2({
               <div
                 className="font-sora"
                 style={{
-                  paddingTop: "10px",
+                  paddingTop: isMobile ? "5px" : "10px",
                   color: "#0077ffb2",
-                  fontSize: "30px",
+                  fontSize: isMobile ? "22px" : "30px",
                   fontWeight: "600",
                 }}
               >
@@ -183,7 +198,7 @@ export default function Header2({
                       window.location.href = '/';
                     }}
                   >
-                    <MdLogout size={20} />
+                    <MdLogout size={isMobile ? 16 : 20} />
                   </a>
                 </li>
               )}
