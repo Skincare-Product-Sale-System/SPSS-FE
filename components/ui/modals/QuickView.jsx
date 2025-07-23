@@ -134,12 +134,12 @@ export default function QuickView() {
 
   const handleAddToCart = async () => {
     if (!currentProductItem) {
-      toast.error("Please select all options first");
+      toast.error("Vui lòng chọn tất cả các tùy chọn");
       return;
     }
 
     if (currentProductItem.quantityInStock <= 0) {
-      toast.error("This product is out of stock");
+      toast.error("Sản phẩm này đã hết hàng");
       return;
     }
 
@@ -156,14 +156,28 @@ export default function QuickView() {
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
-      toast.error("Thêm vào giỏ hàng thất bại");
+
+      // Check if error is 403 Forbidden (authentication required)
+      if (error.response && error.response.status === 403) {
+        toast.error("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
+
+        // Close the current modal and open login modal
+        setOpen(false);
+        // Import and call openLoginModal
+        const { openLoginModal } = require("@/utils/openLoginModal");
+        setTimeout(() => {
+          openLoginModal();
+        }, 500);
+      } else {
+        toast.error("Thêm vào giỏ hàng thất bại");
+      }
     }
   };
 
   if (!productDetail) return null;
 
   // Calculate discount
-  const discountPercent = currentProductItem?.marketPrice && currentProductItem?.price 
+  const discountPercent = currentProductItem?.marketPrice && currentProductItem?.price
     ? calculateDiscount(currentProductItem.marketPrice, currentProductItem.price)
     : 0;
 
@@ -206,11 +220,11 @@ export default function QuickView() {
               {productDetail.name}
             </Typography>
             <Box sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
-              <PriceFormatter 
-                price={currentProductItem?.price} 
-                originalPrice={currentProductItem?.marketPrice} 
-                variant="h6" 
-                sx={{ color: theme.palette.primary.main, fontWeight: 600, mr: 2 }} 
+              <PriceFormatter
+                price={currentProductItem?.price}
+                originalPrice={currentProductItem?.marketPrice}
+                variant="h6"
+                sx={{ color: theme.palette.primary.main, fontWeight: 600, mr: 2 }}
               />
               {discountPercent > 0 && (
                 <Chip label={`-${discountPercent}%`} size="small" sx={{ backgroundColor: theme.palette.error.light }} />
@@ -352,7 +366,7 @@ export default function QuickView() {
               </Button>
             </Box>
             <Box sx={{ mt: 3 }}>
-              <Link 
+              <Link
                 href={`/product-detail?id=${productDetail.id}`}
                 style={{
                   color: theme.palette.primary.main,
