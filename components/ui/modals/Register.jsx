@@ -218,7 +218,32 @@ export default function Register({ isStandalone = false }) {
         }
       })
       .catch((e) => {
-        toast.error(e.response?.data?.message || "Đăng ký thất bại");
+        // Handle various error scenarios
+        console.error("Registration error:", e);
+
+        // Handle validation error from response
+        if (e.response) {
+          // Handle 400 validation error
+          if (e.response.data && e.response.data.message) {
+            toast.error(e.response.data.message);
+            return;
+          }
+
+          // Handle 500 server error 
+          if (e.response.status === 500) {
+            if (e.response.data && typeof e.response.data === 'string') {
+              toast.error(e.response.data);
+            } else if (e.response.data && e.response.data.message) {
+              toast.error(e.response.data.message);
+            } else {
+              toast.error("Lỗi máy chủ, vui lòng thử lại sau");
+            }
+            return;
+          }
+        }
+
+        // Default error message
+        toast.error("Đăng ký thất bại");
       });
   };
 

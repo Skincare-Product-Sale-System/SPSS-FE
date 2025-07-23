@@ -31,7 +31,7 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
     ward: "",
     province: "",
     postCode: "",
-    countryId: "",
+    countryId: "1", // Default to country ID 1
     isDefault: false
   });
 
@@ -78,8 +78,8 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
 
   const validateField = (name, value) => {
     let error = "";
-    
-    switch(name) {
+
+    switch (name) {
       case "customerName":
         if (!value.trim()) {
           error = "Tên khách hàng là bắt buộc";
@@ -138,19 +138,19 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
       default:
         break;
     }
-    
+
     return error;
   };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
-    
+
     setFormData({
       ...formData,
       [name]: newValue
     });
-    
+
     // Validate the field and update errors
     if (name !== 'addressLine2' && name !== 'isDefault') { // Skip validation for optional fields
       const error = validateField(name, newValue);
@@ -163,11 +163,11 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate all required fields before submission
     const newErrors = {};
     let isValid = true;
-    
+
     // Validate each field
     Object.keys(formData).forEach(key => {
       if (key !== 'addressLine2' && key !== 'isDefault') { // Skip validation for optional fields
@@ -178,21 +178,21 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
         }
       }
     });
-    
+
     setErrors(newErrors);
-    
+
     // If validation fails, don't submit
     if (!isValid) {
       return;
     }
-    
+
     setSaving(true);
     try {
       const payload = {
         ...formData,
         userId: Id
       };
-      
+
       if (address) {
         await request.patch(`/addresses/${address.id}`, payload);
         toast.success("Địa chỉ đã được cập nhật thành công");
@@ -200,14 +200,30 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
         await request.post("/addresses", payload);
         toast.success("Địa chỉ đã được thêm thành công");
       }
-      
+
       onSuccess();
       onClose();
     } catch (err) {
       console.error("Error saving address:", err);
-      toast.error(
-        address ? "Cập nhật địa chỉ thất bại" : "Thêm địa chỉ thất bại"
-      );
+
+      // Display validation errors from API
+      if (err.response?.status === 400 && err.response?.data?.errors) {
+        const apiErrors = err.response.data.errors;
+        const updatedErrors = { ...newErrors };
+
+        // Map API error fields to form fields
+        Object.keys(apiErrors).forEach(field => {
+          const errorMessage = apiErrors[field][0];
+          const fieldName = field.charAt(0).toLowerCase() + field.slice(1);
+          updatedErrors[fieldName] = errorMessage;
+        });
+
+        setErrors(updatedErrors);
+      } else {
+        toast.error(
+          address ? "Cập nhật địa chỉ thất bại" : "Thêm địa chỉ thất bại"
+        );
+      }
     } finally {
       setSaving(false);
     }
@@ -221,7 +237,7 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
         <h3 className="text-xl font-medium" style={{ color: theme.palette.text.primary }}>
           {address ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"}
         </h3>
-        <button 
+        <button
           onClick={onClose}
           className="text-gray-500 hover:text-gray-700"
         >
@@ -230,7 +246,7 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
           </svg>
         </button>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
@@ -238,7 +254,7 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
           </label>
           <input
             className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.customerName ? 'border-red-500' : ''}`}
-            style={{ 
+            style={{
               borderColor: errors.customerName ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
@@ -252,14 +268,14 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             <p className="text-xs text-red-500 mt-1">{errors.customerName}</p>
           )}
         </div>
-        
+
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
             Số điện thoại <span className="text-red-500">*</span>
           </label>
           <input
             className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.phoneNumber ? 'border-red-500' : ''}`}
-            style={{ 
+            style={{
               borderColor: errors.phoneNumber ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
@@ -273,14 +289,14 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             <p className="text-xs text-red-500 mt-1">{errors.phoneNumber}</p>
           )}
         </div>
-        
+
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
             Số nhà <span className="text-red-500">*</span>
           </label>
           <input
             className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.streetNumber ? 'border-red-500' : ''}`}
-            style={{ 
+            style={{
               borderColor: errors.streetNumber ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
@@ -294,14 +310,14 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             <p className="text-xs text-red-500 mt-1">{errors.streetNumber}</p>
           )}
         </div>
-        
+
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
             Địa chỉ 1 <span className="text-red-500">*</span>
           </label>
           <input
             className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.addressLine1 ? 'border-red-500' : ''}`}
-            style={{ 
+            style={{
               borderColor: errors.addressLine1 ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
@@ -315,14 +331,14 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             <p className="text-xs text-red-500 mt-1">{errors.addressLine1}</p>
           )}
         </div>
-        
+
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
             Địa chỉ 2 (Tùy chọn)
           </label>
           <input
             className="border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2"
-            style={{ 
+            style={{
               borderColor: theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
@@ -333,14 +349,14 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             onChange={handleInputChange}
           />
         </div>
-        
+
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
             Thành phố <span className="text-red-500">*</span>
           </label>
           <input
             className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.city ? 'border-red-500' : ''}`}
-            style={{ 
+            style={{
               borderColor: errors.city ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
@@ -354,14 +370,14 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             <p className="text-xs text-red-500 mt-1">{errors.city}</p>
           )}
         </div>
-        
+
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
             Phường/Xã <span className="text-red-500">*</span>
           </label>
           <input
             className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.ward ? 'border-red-500' : ''}`}
-            style={{ 
+            style={{
               borderColor: errors.ward ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
@@ -375,14 +391,14 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             <p className="text-xs text-red-500 mt-1">{errors.ward}</p>
           )}
         </div>
-        
+
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
             Quận/Huyện <span className="text-red-500">*</span>
           </label>
           <input
             className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.province ? 'border-red-500' : ''}`}
-            style={{ 
+            style={{
               borderColor: errors.province ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
@@ -396,14 +412,14 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             <p className="text-xs text-red-500 mt-1">{errors.province}</p>
           )}
         </div>
-        
+
         <div className="tf-field">
           <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
             Mã bưu điện <span className="text-red-500">*</span>
           </label>
           <input
             className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.postCode ? 'border-red-500' : ''}`}
-            style={{ 
+            style={{
               borderColor: errors.postCode ? 'red' : theme.palette.divider,
               focusRing: theme.palette.primary.light
             }}
@@ -417,38 +433,14 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             <p className="text-xs text-red-500 mt-1">{errors.postCode}</p>
           )}
         </div>
-        
-        <div className="md:col-span-2 tf-field">
-          <label className="text-sm block font-medium mb-1" style={{ color: theme.palette.text.secondary }}>
-            Quốc gia <span className="text-red-500">*</span>
-          </label>
-          <select
-            className={`border rounded-md w-full focus:outline-none focus:ring-2 px-3 py-2 ${errors.countryId ? 'border-red-500' : ''}`}
-            style={{ 
-              borderColor: errors.countryId ? 'red' : theme.palette.divider,
-              focusRing: theme.palette.primary.light
-            }}
-            id="countryId"
-            name="countryId"
-            value={formData.countryId}
-            onChange={handleInputChange}
-          >
-            <option value="">Select a country</option>
-            {countries && countries.length > 0 ? (
-              countries.map((country) => (
-                <option key={country.id} value={country.id}>
-                  {country.countryName}
-                </option>
-              ))
-            ) : (
-              <option disabled>No countries available</option>
-            )}
-          </select>
-          {errors.countryId && (
-            <p className="text-xs text-red-500 mt-1">{errors.countryId}</p>
-          )}
-        </div>
-        
+
+        <input
+          type="hidden"
+          name="countryId"
+          id="countryId"
+          value={formData.countryId}
+        />
+
         <div className="flex items-center md:col-span-2 mt-2">
           <input
             type="checkbox"
@@ -462,12 +454,12 @@ export default function AddressForm({ open, onClose, address, onSuccess }) {
             Đặt làm địa chỉ mặc định
           </label>
         </div>
-        
+
         <div className="flex justify-end gap-4 md:col-span-2 mt-4">
           <button
             type="button"
             className="border rounded-md px-4 py-2"
-            style={{ 
+            style={{
               borderColor: theme.palette.divider,
               color: theme.palette.text.primary
             }}

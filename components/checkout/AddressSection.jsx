@@ -5,12 +5,12 @@ import useAuthStore from "@/context/authStore";
 import toast from "react-hot-toast";
 import { useTheme } from "@mui/material/styles";
 
-export default function AddressSection({ 
-  addresses, 
-  selectedAddress, 
-  setSelectedAddress, 
+export default function AddressSection({
+  addresses,
+  selectedAddress,
+  setSelectedAddress,
   countries,
-  onAddressAdded 
+  onAddressAdded
 }) {
   const theme = useTheme();
   const { Id } = useAuthStore();
@@ -28,8 +28,8 @@ export default function AddressSection({
     ward: "",
     province: "",
     postCode: "",
-    countryId: "",
-    isDefault: false,
+    countryId: "1", // Default to country ID 1
+    isDefault: true, // Default checked
   });
 
   // Handle input change
@@ -53,8 +53,8 @@ export default function AddressSection({
       ward: "",
       province: "",
       postCode: "",
-      countryId: "",
-      isDefault: false,
+      countryId: "1", // Default to country ID 1
+      isDefault: true, // Default checked
     });
   };
 
@@ -95,10 +95,6 @@ export default function AddressSection({
       toast.error("Mã bưu điện là bắt buộc");
       return;
     }
-    if (!formData.countryId) {
-      toast.error("Quốc gia là bắt buộc");
-      return;
-    }
 
     setSaving(true);
     try {
@@ -114,7 +110,7 @@ export default function AddressSection({
 
         // Get the new address from the response
         const newAddress = response.data.data;
-        
+
         if (newAddress && newAddress.id) {
           // Call the callback to update parent state
           if (onAddressAdded) {
@@ -133,7 +129,19 @@ export default function AddressSection({
       }
     } catch (err) {
       console.error("Error saving address:", err);
-      toast.error("Thêm địa chỉ thất bại");
+
+      // Display validation errors from API
+      if (err.response?.status === 400 && err.response?.data?.errors) {
+        const apiErrors = err.response.data.errors;
+
+        // Show each validation error as toast message
+        Object.keys(apiErrors).forEach(field => {
+          const errorMessage = apiErrors[field][0];
+          toast.error(errorMessage);
+        });
+      } else {
+        toast.error("Thêm địa chỉ thất bại");
+      }
     } finally {
       setSaving(false);
     }
@@ -155,8 +163,8 @@ export default function AddressSection({
       </div>
 
       {selectedAddress && !showAddressForm && (
-        <div className="border rounded p-3 mb-2" 
-             style={{ borderColor: theme.palette.primary.light, backgroundColor: `${theme.palette.primary.main}08` }}>
+        <div className="border rounded p-3 mb-2"
+          style={{ borderColor: theme.palette.primary.light, backgroundColor: `${theme.palette.primary.main}08` }}>
           <div className="d-flex justify-content-between">
             <div>
               <p className="fw-medium mb-1">
@@ -164,11 +172,11 @@ export default function AddressSection({
               </p>
               <p className="fs-14 text-muted mb-0">
                 {selectedAddress.streetNumber}, {selectedAddress.addressLine1}
-                {selectedAddress.addressLine2 ? `, ${selectedAddress.addressLine2}` : ''}, 
+                {selectedAddress.addressLine2 ? `, ${selectedAddress.addressLine2}` : ''},
                 {selectedAddress.ward}, {selectedAddress.province}, {selectedAddress.city}
               </p>
             </div>
-            <button 
+            <button
               className="text-primary fs-14 text-decoration-underline bg-transparent border-0"
               onClick={() => document.getElementById('address-list').classList.toggle('d-none')}
             >
@@ -183,11 +191,10 @@ export default function AddressSection({
         {addresses.map((address) => (
           <div
             key={address.id}
-            className={`border rounded p-3 mb-2 cursor-pointer ${
-              selectedAddress?.id === address.id
-                ? "border-primary bg-light"
-                : ""
-            }`}
+            className={`border rounded p-3 mb-2 cursor-pointer ${selectedAddress?.id === address.id
+              ? "border-primary bg-light"
+              : ""
+              }`}
             onClick={() => {
               setSelectedAddress(address);
               document.getElementById('address-list').classList.add('d-none');
@@ -199,7 +206,7 @@ export default function AddressSection({
             </p>
             <p className="fs-14 text-muted mb-0">
               {address.streetNumber}, {address.addressLine1}
-              {address.addressLine2 ? `, ${address.addressLine2}` : ''}, 
+              {address.addressLine2 ? `, ${address.addressLine2}` : ''},
               {address.ward}, {address.province}, {address.city}
             </p>
           </div>
@@ -309,22 +316,11 @@ export default function AddressSection({
               />
             </div>
 
-            <div className="col-md-6">
-              <label className="form-label">Quốc Gia</label>
-              <select
-                className="form-select"
-                name="countryId"
-                value={formData.countryId}
-                onChange={handleInputChange}
-              >
-                <option value="">Chọn Quốc Gia</option>
-                {countries.map((country) => (
-                  <option key={country.id} value={country.id}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <input
+              type="hidden"
+              name="countryId"
+              value={formData.countryId}
+            />
 
             <div className="col-12">
               <div className="form-check">
