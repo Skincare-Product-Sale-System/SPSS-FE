@@ -162,7 +162,29 @@ export default function ShopCart() {
                                       revalidate();
                                     })
                                     .catch((err) => {
-                                      toast.error("Đã xảy ra lỗi");
+                                      console.error("Error updating cart:", err);
+
+                                      if (err.response && err.response.status === 403) {
+                                        toast.error("Vui lòng đăng nhập để thao tác với giỏ hàng");
+
+                                        // Close cart modal and open login modal
+                                        const bootstrap = require("bootstrap");
+                                        const modalElements = document.querySelectorAll(".modal.show");
+                                        modalElements.forEach((modal) => {
+                                          const modalInstance = bootstrap.Modal.getInstance(modal);
+                                          if (modalInstance) {
+                                            modalInstance.hide();
+                                          }
+                                        });
+
+                                        // Import and call openLoginModal
+                                        const { openLoginModal } = require("@/utils/openLoginModal");
+                                        setTimeout(() => {
+                                          openLoginModal();
+                                        }, 500);
+                                      } else {
+                                        toast.error("Đã xảy ra lỗi");
+                                      }
                                     });
                                 }}
                               >
@@ -189,8 +211,29 @@ export default function ShopCart() {
                                       revalidate();
                                     })
                                     .catch((err) => {
-                                      console.log("err", err);
-                                      toast.error("Đã xảy ra lỗi");
+                                      console.error("Error updating cart:", err);
+
+                                      if (err.response && err.response.status === 403) {
+                                        toast.error("Vui lòng đăng nhập để thao tác với giỏ hàng");
+
+                                        // Close cart modal and open login modal
+                                        const bootstrap = require("bootstrap");
+                                        const modalElements = document.querySelectorAll(".modal.show");
+                                        modalElements.forEach((modal) => {
+                                          const modalInstance = bootstrap.Modal.getInstance(modal);
+                                          if (modalInstance) {
+                                            modalInstance.hide();
+                                          }
+                                        });
+
+                                        // Import and call openLoginModal
+                                        const { openLoginModal } = require("@/utils/openLoginModal");
+                                        setTimeout(() => {
+                                          openLoginModal();
+                                        }, 500);
+                                      } else {
+                                        toast.error("Đã xảy ra lỗi");
+                                      }
                                     });
                                 }}
                               >
@@ -208,7 +251,32 @@ export default function ShopCart() {
                               onClick={() => {
                                 request
                                   .delete(`/cart-items/${elm.id}`)
-                                  .then((res) => revalidate());
+                                  .then((res) => revalidate())
+                                  .catch((err) => {
+                                    console.error("Error deleting cart item:", err);
+
+                                    if (err.response && err.response.status === 403) {
+                                      toast.error("Vui lòng đăng nhập để thao tác với giỏ hàng");
+
+                                      // Close cart modal and open login modal
+                                      const bootstrap = require("bootstrap");
+                                      const modalElements = document.querySelectorAll(".modal.show");
+                                      modalElements.forEach((modal) => {
+                                        const modalInstance = bootstrap.Modal.getInstance(modal);
+                                        if (modalInstance) {
+                                          modalInstance.hide();
+                                        }
+                                      });
+
+                                      // Import and call openLoginModal
+                                      const { openLoginModal } = require("@/utils/openLoginModal");
+                                      setTimeout(() => {
+                                        openLoginModal();
+                                      }, 500);
+                                    } else {
+                                      toast.error("Xóa sản phẩm thất bại");
+                                    }
+                                  });
                               }}
                             >
                               <DeleteOutlineIcon fontSize="small" />
