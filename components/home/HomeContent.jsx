@@ -4,6 +4,7 @@ import React from "react";
 import HeroSection from "./HeroSection";
 import ProductsSection from "./ProductsSection";
 import FeaturesSection from "./FeaturesSection";
+import QRCodeSection from "./QRCodeSection";
 
 export default function HomeContent() {
   return (
@@ -11,6 +12,7 @@ export default function HomeContent() {
       <HeroSection />
       <ProductsSection />
       <FeaturesSection />
+      <QRCodeSection />
     </>
   );
 } 
