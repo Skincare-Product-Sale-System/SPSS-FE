@@ -1,8 +1,8 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-// const baseURL = "http://localhost:5041/api";
-const baseURL = "https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/api";
+// API Base URL - sử dụng environment variable hoặc fallback về production URL
+const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/api";
 
 // Create an Axios instance
 const request = axios.create({

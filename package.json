@@ -24,7 +24,7 @@
     "drift-zoom": "^1.5.1",
     "framer-motion": "^12.6.0",
     "jwt-decode": "^4.0.0",
-    "next": "15.1.2",
+    "next": "15.2.8",
     "nextjs-toploader": "^3.7.15",
     "photoswipe": "^5.4.4",
     "rc-slider": "^11.1.8",
