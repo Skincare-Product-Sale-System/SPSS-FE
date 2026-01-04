@@ -235,8 +235,7 @@ export default function ChatAssistant() {
       ?.map((p) => p?.name)
       .join(
         ", "
-      )}. Bạn có thể xem chi tiết tại https://spss-fe-tuannguyen333s-projects.
-    vercel.app/products.`;
+      )}. Bạn có thể xem chi tiết tại https://skincede-spss.vercel.app/products.`;
     console.log(prompt);
 
     const body = {
@@ -247,7 +246,7 @@ export default function ChatAssistant() {
             ?.map((p) => p?.name + " " + p?.description)
             .join(
               ", "
-            )}. Bạn có thể xem chi tiết tại https://spss-fe-tuannguyen333s-projects.vercel.app/products.`,
+            )}. Bạn có thể xem chi tiết tại https://skincede-spss.vercel.app/products.`,
         },
       },
       contents: messages.map((item) => ({
