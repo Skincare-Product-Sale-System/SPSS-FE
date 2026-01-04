@@ -11,6 +11,30 @@ const request = axios.create({
 
 let isRefreshing = false;
 let failedQueue = [];
+let isRedirecting = false;
+
+// Helper để kiểm tra có đang ở trang guest (không cần auth) không
+const isGuestPage = () => {
+  if (typeof window === "undefined") return false;
+  const guestPaths = ["/login", "/register", "/forgot-password", "/reset-password"];
+  return guestPaths.some((path) => window.location.pathname.startsWith(path));
+};
+
+// Helper để redirect an toàn về login (tránh infinite loop)
+const safeRedirectToLogin = () => {
+  if (typeof window === "undefined") return;
+  if (isRedirecting) return;
+  if (isGuestPage()) return; // Không redirect nếu đang ở trang login/register
+  
+  isRedirecting = true;
+  // Xóa tất cả auth data
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("userRole");
+  localStorage.removeItem("auth"); // Zustand persist key
+  
+  window.location.href = "/login";
+};
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach(prom => {
@@ -39,9 +63,16 @@ request.interceptors.request.use(
       return config;
     }
 
+    // Token expired, kiểm tra refreshToken trước khi cố gắng refresh
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) {
+      // Không có refresh token, xóa access token và tiếp tục (không redirect)
+      localStorage.removeItem("accessToken");
+      return config;
+    }
+
     if (!isRefreshing) {
       isRefreshing = true;
-      const refreshToken = localStorage.getItem("refreshToken");
 
       try {
         const response = await axios.post(`${baseURL}/authentications/refresh`, {
@@ -59,9 +90,8 @@ request.interceptors.request.use(
         return config;
       } catch (error) {
         processQueue(error, null);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
+        // Sử dụng safeRedirectToLogin thay vì redirect trực tiếp
+        safeRedirectToLogin();
         return Promise.reject(error);
       } finally {
         isRefreshing = false;
@@ -116,6 +146,11 @@ request.interceptors.response.use(
       const refreshToken = localStorage.getItem("refreshToken");
       const accessToken = localStorage.getItem("accessToken");
 
+      // Nếu không có token, không cố gắng refresh - chỉ reject error (không redirect)
+      if (!accessToken || !refreshToken) {
+        return Promise.reject(error);
+      }
+
       const response = await axios.post(`${baseURL}/authentications/refresh`, {
         accessToken,
         refreshToken,
@@ -132,9 +167,8 @@ request.interceptors.response.use(
       return request(originalRequest);
     } catch (err) {
       processQueue(err, null);
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      window.location.href = "/login";
+      // Sử dụng safeRedirectToLogin thay vì redirect trực tiếp
+      safeRedirectToLogin();
       return Promise.reject(err);
     }
   }
