@@ -12,7 +12,7 @@
 
 *A modern, responsive e-commerce web application for skincare products, featuring AI-powered skin analysis, personalized product recommendations, real-time chat support, and seamless checkout experience.*
 
-[Live Demo](https://skincede-spss.vercel.app) • [Report Bug](#-contributing) • [Request Feature](#-contributing)
+[Live Demo](https://skincede-spss.vercel.app/) • [API Backend](https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/swagger) • [Report Bug](#-contributing) • [Request Feature](#-contributing)
 
 </div>
 
@@ -562,8 +562,8 @@ const theme = createTheme({
 Configure in Vercel Dashboard → Settings → Environment Variables:
 
 ```
-NEXT_PUBLIC_API_URL=https://your-api-url.com/api
-NEXT_PUBLIC_SIGNALR_URL=https://your-api-url.com
+NEXT_PUBLIC_API_URL=https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net/api
+NEXT_PUBLIC_SIGNALR_URL=https://spssapi-hxfzbchrcafgd2hg.southeastasia-01.azurewebsites.net
 ```
 
 ### Custom Domain
